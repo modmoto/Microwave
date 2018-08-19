@@ -28,6 +28,12 @@ namespace Adapters.Framework.EventStores
             await _domainObjectPersister.Store(DomainEvents);
         }
 
+        public async Task AppendAsync(DomainEvent domainEvent)
+        {
+            DomainEvents.Append(domainEvent);
+            await _domainObjectPersister.Store(DomainEvents);
+        }
+
         public T LoadAsync<T>(Guid commandEntityId) where T : Entity, new()
         {
             var entity = new T();

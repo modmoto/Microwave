@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection.Metadata.Ecma335;
 using System.Threading.Tasks;
 using Adapters.Framework.EventStores;
 using Domain.Framework;
@@ -30,19 +29,32 @@ namespace Adapters.Framework.Eventstores.Tests
         }
 
         [Fact]
-        public async Task AppendAsync()
+        public async Task AppendAsync_List()
         {
             var entityId = Guid.NewGuid();
             var domainEvents = new List<DomainEvent> { new TestEvent(entityId, "TestSession1"), new TestEvent(entityId, "TestSession2")};
 
             var persister = new Mock<IDomainObjectPersister>();
             persister.Setup(per => per.Load()).Returns(domainEvents);
-            persister.Setup(per => per.Store(It.IsAny<IEnumerable<DomainEvent>>())).Returns(Task.FromResult(true));
 
             var eventStore = new EventStore(persister.Object);
             await eventStore.AppendAsync(domainEvents);
 
             Assert.Equal(2, eventStore.DomainEvents.Count());
+        }
+
+        [Fact]
+        public async Task AppendAsync_SingleEvent()
+        {
+            var testEvent = new TestEvent(Guid.NewGuid(), "TestSession2");
+
+            var persister = new Mock<IDomainObjectPersister>();
+            persister.Setup(per => per.Load()).Returns(new List<DomainEvent> { testEvent });
+
+            var eventStore = new EventStore(persister.Object);
+            await eventStore.AppendAsync(testEvent);
+
+            Assert.Equal(1, eventStore.DomainEvents.Count());
         }
 
         [Fact]
