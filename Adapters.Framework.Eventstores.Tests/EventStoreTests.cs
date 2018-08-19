@@ -19,7 +19,7 @@ namespace Adapters.Framework.Eventstores.Tests
         public async Task SaveEvents()
         {
             var entityId = Guid.NewGuid();
-            var domainEvents = new List<DomainEvent> { new TestEvent(entityId, "TestSession1"), new TestEvent(entityId, "TestSession1")};
+            var domainEvents = new List<DomainEvent> { new TestEvent(entityId, "TestSession1"), new TestEvent(entityId, "TestSession2")};
             _filePath = "test.txt";
             var domainObjectPersister = new DomainObjectPersister(_filePath);
             await domainObjectPersister.Store(domainEvents);
