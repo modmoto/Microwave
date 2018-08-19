@@ -3,7 +3,6 @@
     <TargetFramework>netcoreapp2.1</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Application.Framework\Application.Framework.csproj" />
-    <ProjectReference Include="..\Domain.Seasons\Domain.Seasons.csproj" />
+    <ProjectReference Include="..\Domain.Framework\Domain.Framework.csproj" />
   </ItemGroup>
 </Project>
