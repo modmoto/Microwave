@@ -4,7 +4,7 @@ using Domain.Framework;
 
 namespace Adapters.Framework.EventStores
 {
-    public interface IDomainObjectPersister
+    public interface IDomainEventPersister
     {
         Task Store(IEnumerable<DomainEvent> domainEvents);
         IEnumerable<DomainEvent> Load();

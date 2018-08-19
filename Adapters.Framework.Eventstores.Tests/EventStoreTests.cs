@@ -18,7 +18,7 @@ namespace Adapters.Framework.Eventstores.Tests
         {
             var entityId = Guid.NewGuid();
             var domainEvents = new List<DomainEvent> { new TestEvent(entityId, "TestSession1"), new TestEvent(entityId, "TestSession2")};
-            var domainObjectPersister = new DomainObjectPersister(_filePath);
+            var domainObjectPersister = new DomainEventPersister(_filePath);
             await domainObjectPersister.Store(domainEvents);
             var savedEvents = domainObjectPersister.Load().ToList();
 
@@ -34,7 +34,7 @@ namespace Adapters.Framework.Eventstores.Tests
             var entityId = Guid.NewGuid();
             var domainEvents = new List<DomainEvent> { new TestEvent(entityId, "TestSession1"), new TestEvent(entityId, "TestSession2")};
 
-            var persister = new Mock<IDomainObjectPersister>();
+            var persister = new Mock<IDomainEventPersister>();
             persister.Setup(per => per.Load()).Returns(domainEvents);
 
             var eventStore = new EventStore(persister.Object);
@@ -48,7 +48,7 @@ namespace Adapters.Framework.Eventstores.Tests
         {
             var testEvent = new TestEvent(Guid.NewGuid(), "TestSession2");
 
-            var persister = new Mock<IDomainObjectPersister>();
+            var persister = new Mock<IDomainEventPersister>();
             persister.Setup(per => per.Load()).Returns(new List<DomainEvent> { testEvent });
 
             var eventStore = new EventStore(persister.Object);
@@ -63,7 +63,7 @@ namespace Adapters.Framework.Eventstores.Tests
             var entityId = Guid.NewGuid();
             var domainEvents = new List<DomainEvent> { new TestCreatedEvent(entityId, "OldName"), new TestChangeNameEvent(entityId, "NewName")};
 
-            var persister = new Mock<IDomainObjectPersister>();
+            var persister = new Mock<IDomainEventPersister>();
             persister.Setup(per => per.Load()).Returns(domainEvents);
 
             var eventStore = new EventStore(persister.Object);

@@ -9,13 +9,13 @@ namespace Adapters.Framework.EventStores
 {
     public class EventStore : IEventStore
     {
-        private readonly IDomainObjectPersister _domainObjectPersister;
+        private readonly IDomainEventPersister _domainEventPersister;
         public IEnumerable<DomainEvent> DomainEvents { get; }
 
-        public EventStore(IDomainObjectPersister domainObjectPersister)
+        public EventStore(IDomainEventPersister domainEventPersister)
         {
-            _domainObjectPersister = domainObjectPersister;
-            DomainEvents = domainObjectPersister.Load();
+            _domainEventPersister = domainEventPersister;
+            DomainEvents = domainEventPersister.Load();
         }
 
         public async Task AppendAsync(IEnumerable<DomainEvent> domainEvents)
@@ -25,13 +25,13 @@ namespace Adapters.Framework.EventStores
                 DomainEvents.Append(domainEvent);
             }
 
-            await _domainObjectPersister.Store(DomainEvents);
+            await _domainEventPersister.Store(DomainEvents);
         }
 
         public async Task AppendAsync(DomainEvent domainEvent)
         {
             DomainEvents.Append(domainEvent);
-            await _domainObjectPersister.Store(DomainEvents);
+            await _domainEventPersister.Store(DomainEvents);
         }
 
         public T LoadAsync<T>(Guid commandEntityId) where T : Entity, new()

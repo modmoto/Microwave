@@ -6,11 +6,11 @@ using Newtonsoft.Json;
 
 namespace Adapters.Framework.EventStores
 {
-    public class DomainObjectPersister : IDomainObjectPersister
+    public class DomainEventPersister : IDomainEventPersister
     {
         private readonly string _filePath;
 
-        public DomainObjectPersister(string filePath)
+        public DomainEventPersister(string filePath)
         {
             _filePath = filePath;
         }
