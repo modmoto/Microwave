@@ -17,7 +17,7 @@ namespace Application.Framework
         {
             var querry = await _objectPersister.GetAsync<T>();
             querry.Apply(createdEvent);
-            _objectPersister.Save(querry);
+            await _objectPersister.Save(querry);
         }
     }
 }
