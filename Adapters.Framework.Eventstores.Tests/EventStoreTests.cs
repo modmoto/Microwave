@@ -19,7 +19,7 @@ namespace Adapters.Framework.Eventstores.Tests
             var domainEvents = new List<DomainEvent> { new TestEvent(entityId, "TestSession1"), new TestEvent(entityId, "TestSession2")};
 
             var persister = new Mock<IDomainEventPersister>();
-            persister.Setup(per => per.Load()).Returns(domainEvents);
+            persister.Setup(per => per.GetAsync()).ReturnsAsync(domainEvents);
 
             var eventStore = new EventStore(persister.Object);
             await eventStore.AppendAsync(domainEvents);
@@ -33,7 +33,7 @@ namespace Adapters.Framework.Eventstores.Tests
             var testEvent = new TestEvent(Guid.NewGuid(), "TestSession2");
 
             var persister = new Mock<IDomainEventPersister>();
-            persister.Setup(per => per.Load()).Returns(new List<DomainEvent> { testEvent });
+            persister.Setup(per => per.GetAsync()).ReturnsAsync(new List<DomainEvent> { testEvent });
 
             var eventStore = new EventStore(persister.Object);
             await eventStore.AppendAsync(testEvent);
@@ -42,16 +42,16 @@ namespace Adapters.Framework.Eventstores.Tests
         }
 
         [Fact]
-        public void LoadEntity()
+        public async Task LoadEntity()
         {
             var entityId = Guid.NewGuid();
             var domainEvents = new List<DomainEvent> { new TestCreatedEvent(entityId, "OldName"), new TestChangeNameEvent(entityId, "NewName")};
 
             var persister = new Mock<IDomainEventPersister>();
-            persister.Setup(per => per.Load()).Returns(domainEvents);
+            persister.Setup(per => per.GetAsync()).ReturnsAsync(domainEvents);
 
             var eventStore = new EventStore(persister.Object);
-            var testEntity = eventStore.LoadAsync<TestEntity>(entityId);
+            var testEntity = await eventStore.LoadAsync<TestEntity>(entityId);
 
             Assert.Equal("NewName", testEntity.Name);
             Assert.Equal(entityId, testEntity.Id);

@@ -22,7 +22,7 @@ namespace Application.Seasons
 
         public async Task SetStartAndEndDate(ChangeDateCommand command)
         {
-            var season = EventStore.LoadAsync<Season>(command.EntityId);
+            var season = await EventStore.LoadAsync<Season>(command.EntityId);
             var domainResult = season.ChangeDate(command.StartDate, command.EndDate);
             if (domainResult.Failed) throw new DomainValidationException(domainResult.DomainErrors);
             await EventStore.AppendAsync(domainResult.DomainEvents);

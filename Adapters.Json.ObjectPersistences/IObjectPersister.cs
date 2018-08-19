@@ -2,9 +2,9 @@
 
 namespace Adapters.Json.ObjectPersistences
 {
-    public interface IObjectPersister
+    public interface IObjectPersister<T>
     {
-        Task<T> GetAsync<T>();
-        Task Save<T>(T querry);
+        Task<T> GetAsync();
+        Task Save(T querry);
     }
 }

@@ -18,8 +18,8 @@ namespace Adapters.Json.ObjectPersistence.UnitTests
             var entityId = Guid.NewGuid();
             var domainEvents = new List<DomainEvent> { new TestEvent(entityId, "TestSession1"), new TestEvent(entityId, "TestSession2")};
             var domainObjectPersister = new DomainEventPersister(_filePath);
-            await domainObjectPersister.Store(domainEvents);
-            var savedEvents = domainObjectPersister.Load().ToList();
+            await domainObjectPersister.Save(domainEvents);
+            var savedEvents = (await domainObjectPersister.GetAsync()).ToList();
 
             Assert.Equal(savedEvents[0].EntityId, domainEvents[0].EntityId);
             Assert.Equal(((TestEvent)savedEvents[0]).Name, ((TestEvent)domainEvents[0]).Name);
