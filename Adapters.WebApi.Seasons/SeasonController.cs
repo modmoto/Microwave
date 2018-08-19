@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Adapters.WebApi.Seasons
 {
-    [Route("api/seasons")]
+    [Route("Api/Seasons")]
     public class SeasonController : Controller
     {
         private readonly SeasonCommandHandler _commandHandler;
@@ -21,9 +21,9 @@ namespace Adapters.WebApi.Seasons
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetSeasons()
+        public IActionResult GetSeasons()
         {
-            var seasons = await _seasonQuerryHandler.GetAllSeasons();
+            var seasons = _seasonQuerryHandler.GetAllSeasons();
             return Ok(seasons);
         }
 
@@ -31,7 +31,7 @@ namespace Adapters.WebApi.Seasons
         public async Task<IActionResult> CreateSeason([FromBody] CreateSesonCommand command)
         {
             await _commandHandler.CreateSeason(command);
-            Ok();
+            return Ok();
         }
 
         [HttpPut("{entityId}/ChangeDate")]
@@ -45,7 +45,7 @@ namespace Adapters.WebApi.Seasons
             };
 
             await _commandHandler.SetStartAndEndDate(changeDateCommand);
-            Ok();
+            return Ok();
         }
     }
 

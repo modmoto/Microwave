@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Adapters.Framework.EventStores;
+using Adapters.Json.ObjectPersistences;
 using Domain.Framework;
 using Moq;
 using Xunit;
@@ -11,23 +12,6 @@ namespace Adapters.Framework.Eventstores.Tests
 {
     public class EventStoreTests
     {
-        private string _filePath = "test.txt";
-
-        [Fact]
-        public async Task SaveEvents()
-        {
-            var entityId = Guid.NewGuid();
-            var domainEvents = new List<DomainEvent> { new TestEvent(entityId, "TestSession1"), new TestEvent(entityId, "TestSession2")};
-            var domainObjectPersister = new DomainEventPersister(_filePath);
-            await domainObjectPersister.Store(domainEvents);
-            var savedEvents = domainObjectPersister.Load().ToList();
-
-            Assert.Equal(savedEvents[0].EntityId, domainEvents[0].EntityId);
-            Assert.Equal(((TestEvent)savedEvents[0]).Name, ((TestEvent)domainEvents[0]).Name);
-            Assert.Equal(savedEvents[1].EntityId, domainEvents[1].EntityId);
-            Assert.Equal(((TestEvent)savedEvents[1]).Name, ((TestEvent)domainEvents[1]).Name);
-        }
-
         [Fact]
         public async Task AppendAsync_List()
         {

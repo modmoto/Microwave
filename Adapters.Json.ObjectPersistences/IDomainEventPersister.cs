@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Domain.Framework;
 
-namespace Adapters.Framework.EventStores
+namespace Adapters.Json.ObjectPersistences
 {
     public interface IDomainEventPersister
     {
