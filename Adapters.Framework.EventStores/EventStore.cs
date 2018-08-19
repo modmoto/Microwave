@@ -15,7 +15,7 @@ namespace Adapters.Framework.EventStores
         public EventStore(IDomainObjectPersister domainObjectPersister)
         {
             _domainObjectPersister = domainObjectPersister;
-            DomainEvents = domainObjectPersister.Read();
+            DomainEvents = domainObjectPersister.Load();
         }
 
         public async Task AppendAsync(IEnumerable<DomainEvent> domainEvents)

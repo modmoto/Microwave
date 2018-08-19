@@ -7,6 +7,6 @@ namespace Adapters.Framework.EventStores
     public interface IDomainObjectPersister
     {
         Task Store(IEnumerable<DomainEvent> domainEvents);
-        IEnumerable<DomainEvent> Read();
+        IEnumerable<DomainEvent> Load();
     }
 }

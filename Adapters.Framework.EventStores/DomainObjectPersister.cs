@@ -22,7 +22,7 @@ namespace Adapters.Framework.EventStores
             await File.WriteAllTextAsync(_filePath, serializeObject);
         }
 
-        public IEnumerable<DomainEvent> Read()
+        public IEnumerable<DomainEvent> Load()
         {
             var readAllText = File.ReadAllText(_filePath);
             JsonSerializerSettings settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All };
