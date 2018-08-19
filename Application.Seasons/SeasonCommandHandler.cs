@@ -12,7 +12,7 @@ namespace Application.Seasons
 
         public async Task CreateSeason(CreateSesonCommand command)
         {
-            var domainResult = Season.Create(command.SeasonName);
+            var domainResult = Season.Create(command.SeasonName, command.MaxDaysBetweenGames);
             if (domainResult.Failed) throw new DomainValidationException(domainResult.DomainErrors);
             await EventStore.AppendAsync(domainResult.DomainEvents);
         }
@@ -20,7 +20,7 @@ namespace Application.Seasons
         public async Task SetStartAndEndDate(ChangeDateCommand command)
         {
             var season = await EventStore.LoadAsync<Season>(command.EntityId);
-            season.ChangeDate(command.StartDate, command.EndDate);
+            var domainResult = season.ChangeDate(command.StartDate, command.EndDate);
             if (domainResult.Failed) throw new DomainValidationException(domainResult.DomainErrors);
             await EventStore.AppendAsync(domainResult.DomainEvents);
         }

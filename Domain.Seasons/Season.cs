@@ -7,18 +7,20 @@ namespace Domain.Seasons
     public class Season : Entity
     {
         public string SeasonName { get; private set; }
+        public int TimeForGame { get; private set; }
         public DateTimeOffset StartDate { get; private set; }
         public DateTimeOffset EndDate { get; private set; }
 
-        public static DomainResult Create(string seasonName)
+        public static DomainResult Create(string seasonName, int maxDaysBetweenGames)
         {
-            var seasonCreatedEvent = new SeasonCreatedEvent(Guid.NewGuid(), seasonName);
+            var seasonCreatedEvent = new SeasonCreatedEvent(Guid.NewGuid(), seasonName, maxDaysBetweenGames);
             return DomainResult.OkResult(seasonCreatedEvent);
         }
 
         public void Apply(SeasonCreatedEvent domainEvent)
         {
             SeasonName = domainEvent.InitialName;
+            TimeForGame = domainEvent.MaxDaysBetweenGames;
             Id = domainEvent.EntityId;
         }
 
@@ -49,10 +51,12 @@ namespace Domain.Seasons
     public class SeasonCreatedEvent : DomainEvent
     {
         public string InitialName { get; }
+        public int MaxDaysBetweenGames { get; }
 
-        public SeasonCreatedEvent(Guid entityId, string initialName) : base(entityId)
+        public SeasonCreatedEvent(Guid entityId, string initialName, int daysBetweenGames) : base(entityId)
         {
             InitialName = initialName;
+            MaxDaysBetweenGames = daysBetweenGames;
         }
     }
 }
