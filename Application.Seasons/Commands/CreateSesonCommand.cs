@@ -1,4 +1,4 @@
-﻿namespace Application.Seasons
+﻿namespace Application.Seasons.Commands
 {
     public class CreateSesonCommand
     {

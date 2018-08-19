@@ -7,6 +7,11 @@ namespace Application.Seasons
 {
     public class SeasonQuerryHandler : IQuerryHandler<SeasonCreatedEvent>, IQuerryHandler<SeasonDateChangedEvent>
     {
+        public SeasonQuerryHandler(Io)
+        {
+
+        }
+
         public Task Handle(SeasonCreatedEvent createdEvent)
         {
 

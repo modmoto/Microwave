@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Domain.Framework;
 
-namespace Adapters.Framework.ObjectPersistence
+namespace Adapters.Framework.EventStores
 {
     public interface IDomainObjectPersister
     {

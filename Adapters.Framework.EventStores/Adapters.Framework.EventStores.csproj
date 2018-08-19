@@ -3,7 +3,9 @@
     <TargetFramework>netcoreapp2.1</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Adapters.Framework.ObjectPersistence\Adapters.Framework.ObjectPersistence.csproj" />
     <ProjectReference Include="..\Application.Framework\Application.Framework.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
   </ItemGroup>
 </Project>

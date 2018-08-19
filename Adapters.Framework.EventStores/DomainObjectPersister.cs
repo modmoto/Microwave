@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Domain.Framework;
 using Newtonsoft.Json;
 
-namespace Adapters.Framework.ObjectPersistence
+namespace Adapters.Framework.EventStores
 {
     public class DomainObjectPersister : IDomainObjectPersister
     {

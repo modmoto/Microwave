@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Application.Framework;
 using Application.Framework.Exceptions;
+using Application.Seasons.Commands;
 using Domain.Seasons;
 
 namespace Application.Seasons
