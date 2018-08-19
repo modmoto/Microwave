@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 
 namespace Adapters.Framework.EventStores
 {
-    class DomainObjectPersister : IDomainObjectPersister
+    public class DomainObjectPersister : IDomainObjectPersister
     {
         private readonly string _filePath;
 

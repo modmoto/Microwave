@@ -17,16 +17,4 @@ namespace Domain.Framework
             methodToExecute.Invoke(this, new object[] {domainEvent});
         }
     }
-
-    public abstract class DomainEvent
-    {
-        protected DomainEvent(Guid entityId)
-        {
-            EntityId = entityId;
-            Id = Guid.NewGuid();
-        }
-
-        public Guid Id { get; }
-        public Guid EntityId { get; }
-    }
 }
