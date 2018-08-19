@@ -12,7 +12,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Adapters.Framework.EventStores\Adapters.Framework.EventStores.csproj" />
-    <ProjectReference Include="..\Adapters.Framework.ObjectPersistence\Adapters.Framework.ObjectPersistence.csproj" />
     <ProjectReference Include="..\Domain.Framework\Domain.Framework.csproj" />
     <ProjectReference Include="..\Domain.Seasons\Domain.Seasons.csproj" />
   </ItemGroup>
