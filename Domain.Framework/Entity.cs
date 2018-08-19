@@ -23,6 +23,7 @@ namespace Domain.Framework
         protected DomainEvent(Guid entityId)
         {
             EntityId = entityId;
+            Id = Guid.NewGuid();
         }
 
         public Guid Id { get; }
