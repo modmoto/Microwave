@@ -18,6 +18,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application.Framework", "Ap
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Adapters.Framework.Eventstores.Tests", "Adapters.Framework.Eventstores.Tests\Adapters.Framework.Eventstores.Tests.csproj", "{B0FB3221-B8BD-42BF-B042-88836F474AF8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Adapters.Framework.ObjectPersistence", "Adapters.Framework.ObjectPersistence\Adapters.Framework.ObjectPersistence.csproj", "{1C357931-7724-424B-9A7A-34C5ED771F75}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Adapters.Framework.ObjectPersistence.Tests", "Adapters.Framework.ObjectPersistence.Tests\Adapters.Framework.ObjectPersistence.Tests.csproj", "{580E3B69-0734-45FC-B806-0EA0D5E87928}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -60,5 +64,13 @@ Global
 		{B0FB3221-B8BD-42BF-B042-88836F474AF8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B0FB3221-B8BD-42BF-B042-88836F474AF8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B0FB3221-B8BD-42BF-B042-88836F474AF8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1C357931-7724-424B-9A7A-34C5ED771F75}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1C357931-7724-424B-9A7A-34C5ED771F75}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1C357931-7724-424B-9A7A-34C5ED771F75}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1C357931-7724-424B-9A7A-34C5ED771F75}.Release|Any CPU.Build.0 = Release|Any CPU
+		{580E3B69-0734-45FC-B806-0EA0D5E87928}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{580E3B69-0734-45FC-B806-0EA0D5E87928}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{580E3B69-0734-45FC-B806-0EA0D5E87928}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{580E3B69-0734-45FC-B806-0EA0D5E87928}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

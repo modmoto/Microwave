@@ -1,11 +1,27 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Application.Framework;
 using Domain.Seasons;
 
 namespace Application.Seasons
 {
-    public interface ISeasonQuerryHandler
+    public class SeasonQuerryHandler : IQuerryHandler<SeasonCreatedEvent>, IQuerryHandler<SeasonDateChangedEvent>
     {
-        Task<IEnumerable<Season>> GetAllSeasons();
+        public Task Handle(SeasonCreatedEvent createdEvent)
+        {
+
+        }
+
+        public IEnumerable<Season> GetAllSeasons()
+        {
+            return AllSeasons;
+        }
+
+        public IEnumerable<Season> AllSeasons { get; }
+
+        public Task Handle(SeasonDateChangedEvent domainEvent)
+        {
+
+        }
     }
 }

@@ -1,6 +1,4 @@
-﻿using Application.Framework;
-
-namespace Application.Seasons
+﻿namespace Application.Framework
 {
     public class CommandHandlerBase
     {
