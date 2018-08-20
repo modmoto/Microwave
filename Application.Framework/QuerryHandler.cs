@@ -5,18 +5,19 @@ namespace Application.Framework
 {
     public class QuerryHandler<T> where T : Querry
     {
-        protected readonly IObjectPersister<T> _objectPersister;
+        protected readonly IObjectPersister<T> ObjectPersister;
+        protected readonly T QuerryObject;
 
-        public QuerryHandler(IObjectPersister<T> objectPersister)
+        public QuerryHandler(IObjectPersister<T> objectPersister, T querryObject)
         {
-            _objectPersister = objectPersister;
+            ObjectPersister = objectPersister;
+            QuerryObject = querryObject;
         }
 
         public async Task Handle(DomainEvent createdEvent)
         {
-            var querry = await _objectPersister.GetAsync();
-            querry.Apply(createdEvent);
-            await _objectPersister.Save(querry);
+            QuerryObject.Apply(createdEvent);
+            await ObjectPersister.Save(QuerryObject);
         }
     }
 }

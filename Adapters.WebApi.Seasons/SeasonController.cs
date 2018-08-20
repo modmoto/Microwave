@@ -26,6 +26,13 @@ namespace Adapters.WebApi.Seasons
             return Ok(seasons);
         }
 
+        [HttpGet("{entityId}")]
+        public async Task<IActionResult> GetSeason(Guid id)
+        {
+            var seasons = await _seasonQuerryHandler.GetSeason(id);
+            return Ok(seasons);
+        }
+
         [HttpPost("Create")]
         public async Task<IActionResult> CreateSeason([FromBody] CreateSesonCommand command)
         {

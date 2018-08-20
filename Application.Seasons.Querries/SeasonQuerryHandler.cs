@@ -1,17 +1,23 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Linq;
 using Application.Framework;
 
 namespace Application.Seasons.Querries
 {
     public class SeasonQuerryHandler : QuerryHandler<AllSeasonsQuery>
     {
-        public SeasonQuerryHandler(IObjectPersister<AllSeasonsQuery> persister) : base(persister)
+        public AllSeasonsQuery GetAllSeasons()
         {
+            return QuerryObject;
         }
 
-        public async Task<AllSeasonsQuery> GetAllSeasons()
+        public SeasonDto GetSeason(Guid id)
         {
-            return await _objectPersister.GetAsync();
+            return QuerryObject.Seasons.SingleOrDefault(season => season.Id == id);
+        }
+
+        public SeasonQuerryHandler(IObjectPersister<AllSeasonsQuery> objectPersister, AllSeasonsQuery querryObject) : base(objectPersister, querryObject)
+        {
         }
     }
 }
