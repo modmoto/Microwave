@@ -6,7 +6,7 @@ namespace Application.Seasons.Querries
 {
     public class AllSeasonsQuery : Querry
     {
-        public IList<SeasonDto> Seasons { get; set; }
+        public IList<SeasonDto> Seasons { get; } = new List<SeasonDto>();
 
         public void Apply(SeasonCreatedEvent createdEvent)
         {

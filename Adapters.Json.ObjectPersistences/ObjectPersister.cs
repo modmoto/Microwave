@@ -5,13 +5,14 @@ using Newtonsoft.Json;
 
 namespace Adapters.Json.ObjectPersistences
 {
-    public abstract class ObjectPersister<T> : IObjectPersister<T>
+    public class ObjectPersister<T> : IObjectPersister<T>
     {
         private readonly string _filePath;
 
-        public ObjectPersister(string filePath)
+        public ObjectPersister()
         {
-            _filePath = filePath;
+            if (!Directory.Exists("JsonDB")) Directory.CreateDirectory("JsonDB");
+            _filePath = $"JsonDB/DB_{typeof(T).Name}_{typeof(T).FullName}.json";
         }
 
         public async Task<T> GetAsync()

@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Domain.Framework;
 
 namespace Application.Framework
@@ -14,9 +15,19 @@ namespace Application.Framework
             QuerryObject = querryObject;
         }
 
-        public async Task Handle(DomainEvent createdEvent)
+        public async Task Handle(DomainEvent domainEvent)
         {
-            QuerryObject.Apply(createdEvent);
+            QuerryObject.Apply(domainEvent);
+            await _objectPersister.Save(QuerryObject);
+        }
+
+        public async Task Handle(IEnumerable<DomainEvent> domainEvents)
+        {
+            foreach (var domainEvent in domainEvents)
+            {
+                QuerryObject.Apply(domainEvent);
+            }
+
             await _objectPersister.Save(QuerryObject);
         }
     }

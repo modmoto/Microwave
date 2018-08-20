@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Application.Seasons;
 using Application.Seasons.Commands;
 using Application.Seasons.Querries;
+using Domain.Framework;
+using Domain.Seasons.Events;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Adapters.WebApi.Seasons
@@ -11,25 +14,35 @@ namespace Adapters.WebApi.Seasons
     public class SeasonController : Controller
     {
         private readonly SeasonCommandHandler _commandHandler;
-        private readonly SeasonQuerryHandler _seasonQuerryHandler;
+        private readonly SeasonQuerryHandler _querryHandler;
 
-        public SeasonController(SeasonCommandHandler commandHandler, SeasonQuerryHandler seasonQuerryHandler)
+        public SeasonController(SeasonCommandHandler commandHandler, SeasonQuerryHandler querryHandler)
         {
             _commandHandler = commandHandler;
-            _seasonQuerryHandler = seasonQuerryHandler;
+            _querryHandler = querryHandler;
+        }
+
+        [HttpPost("Event")]
+        public async Task<IActionResult> CreateSeason()
+        {
+            var seasonCreatedEvent = new SeasonCreatedEvent(Guid.NewGuid(), "season1", 10);
+            var seasonCreatedEvent2 = new SeasonCreatedEvent(Guid.NewGuid(), "season1", 20);
+            var domainEvents = new List<DomainEvent> {seasonCreatedEvent, seasonCreatedEvent2};
+            await _querryHandler.Handle(domainEvents);
+            return Ok();
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetSeasons()
+        public ActionResult GetSeasons()
         {
-            var seasons = await _seasonQuerryHandler.GetAllSeasons();
+            var seasons = _querryHandler.GetAllSeasons();
             return Ok(seasons);
         }
 
         [HttpGet("{entityId}")]
-        public async Task<IActionResult> GetSeason(Guid id)
+        public ActionResult GetSeason(Guid id)
         {
-            var seasons = await _seasonQuerryHandler.GetSeason(id);
+            var seasons = _querryHandler.GetSeason(id);
             return Ok(seasons);
         }
 

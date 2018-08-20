@@ -10,14 +10,12 @@ namespace Adapters.Json.ObjectPersistence.UnitTests
 {
     public class ObjectPersisterTests
     {
-        private string _filePath = "test.txt";
-
         [Fact]
         public async Task SaveEvents()
         {
             var entityId = Guid.NewGuid();
             var domainEvents = new List<DomainEvent> { new TestEvent(entityId, "TestSession1"), new TestEvent(entityId, "TestSession2")};
-            var domainObjectPersister = new DomainEventPersister(_filePath);
+            var domainObjectPersister = new DomainEventPersister();
             await domainObjectPersister.Save(domainEvents);
             var savedEvents = (await domainObjectPersister.GetAsync()).ToList();
 

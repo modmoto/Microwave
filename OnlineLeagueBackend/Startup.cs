@@ -1,4 +1,9 @@
-﻿using Adapters.WebApi.Seasons;
+﻿using Adapters.Framework.EventStores;
+using Adapters.Json.ObjectPersistences;
+using Adapters.WebApi.Seasons;
+using Application.Framework;
+using Application.Seasons;
+using Application.Seasons.Querries;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,6 +19,12 @@ namespace OnlineLeagueBackend
         {
             services.AddMvc();
             services.AddTransient<SeasonController>();
+            services.AddTransient<IEventStore, EventStore>();
+            services.AddTransient<IDomainEventPersister, DomainEventPersister>();
+            services.AddTransient<SeasonCommandHandler>();
+            services.AddSingleton<SeasonQuerryHandler>();
+            services.AddSingleton<AllSeasonsQuery>();
+            services.AddTransient<IObjectPersister<AllSeasonsQuery>, ObjectPersister<AllSeasonsQuery>>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
