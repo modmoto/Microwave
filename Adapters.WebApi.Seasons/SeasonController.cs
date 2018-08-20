@@ -22,16 +22,6 @@ namespace Adapters.WebApi.Seasons
             _querryHandler = querryHandler;
         }
 
-        [HttpPost("Event")]
-        public async Task<IActionResult> CreateSeason()
-        {
-            var seasonCreatedEvent = new SeasonCreatedEvent(Guid.NewGuid(), "season1", 10);
-            var seasonCreatedEvent2 = new SeasonCreatedEvent(Guid.NewGuid(), "season1", 20);
-            var domainEvents = new List<DomainEvent> {seasonCreatedEvent, seasonCreatedEvent2};
-            await _querryHandler.Handle(domainEvents);
-            return Ok();
-        }
-
         [HttpGet]
         public ActionResult GetSeasons()
         {
