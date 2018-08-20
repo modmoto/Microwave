@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Application.Seasons;
 using Application.Seasons.Commands;
 using Application.Seasons.Querries;
-using Domain.Framework;
-using Domain.Seasons.Events;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Adapters.WebApi.Seasons

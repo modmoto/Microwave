@@ -13,5 +13,6 @@
     <ProjectReference Include="..\Adapters.Json.ObjectPersistences\Adapters.Json.ObjectPersistences.csproj" />
     <ProjectReference Include="..\Adapters.WebApi.Seasons\Adapters.WebApi.Seasons.csproj" />
     <ProjectReference Include="..\Application.Seasons\Application.Seasons.csproj" />
+    <ProjectReference Include="..\DependencyInjection.Framework\DependencyInjection.Framework.csproj" />
   </ItemGroup>
 </Project>
