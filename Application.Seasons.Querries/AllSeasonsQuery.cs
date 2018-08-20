@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using Application.Framework;
-using Domain.Framework;
 using Domain.Seasons.Events;
 
 namespace Application.Seasons.Querries

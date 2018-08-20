@@ -20,9 +20,9 @@ namespace Adapters.WebApi.Seasons
         }
 
         [HttpGet]
-        public IActionResult GetSeasons()
+        public async Task<IActionResult> GetSeasons()
         {
-            var seasons = _seasonQuerryHandler.GetAllSeasons();
+            var seasons = await _seasonQuerryHandler.GetAllSeasons();
             return Ok(seasons);
         }
 

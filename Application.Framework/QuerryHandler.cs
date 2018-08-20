@@ -5,7 +5,7 @@ namespace Application.Framework
 {
     public class QuerryHandler<T> where T : Querry
     {
-        private readonly IObjectPersister<T> _objectPersister;
+        protected readonly IObjectPersister<T> _objectPersister;
 
         public QuerryHandler(IObjectPersister<T> objectPersister)
         {
