@@ -6,6 +6,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Mvc.ViewFeatures" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Application.Seasons.Querries\Application.Seasons.Querries.csproj" />
     <ProjectReference Include="..\Application.Seasons\Application.Seasons.csproj" />
     <ProjectReference Include="..\Domain.Seasons\Domain.Seasons.csproj" />
   </ItemGroup>

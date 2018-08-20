@@ -22,6 +22,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Adapters.Json.ObjectPersist
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Adapters.Json.ObjectPersistence.UnitTests", "Adapters.Json.ObjectPersistence.UnitTests\Adapters.Json.ObjectPersistence.UnitTests.csproj", "{B8ACEFED-BF7D-4C93-AE4D-344FAB31F8AA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application.Seasons.Querries", "Application.Seasons.Querries\Application.Seasons.Querries.csproj", "{FFB330FD-0FEC-4FB8-9F26-46C6D703B3CE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain.Seasons.Events", "Domain.Seasons.Events\Domain.Seasons.Events.csproj", "{6AC83EB8-CE25-4297-8741-0A8A39674128}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -72,5 +76,13 @@ Global
 		{B8ACEFED-BF7D-4C93-AE4D-344FAB31F8AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B8ACEFED-BF7D-4C93-AE4D-344FAB31F8AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B8ACEFED-BF7D-4C93-AE4D-344FAB31F8AA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FFB330FD-0FEC-4FB8-9F26-46C6D703B3CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FFB330FD-0FEC-4FB8-9F26-46C6D703B3CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FFB330FD-0FEC-4FB8-9F26-46C6D703B3CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FFB330FD-0FEC-4FB8-9F26-46C6D703B3CE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6AC83EB8-CE25-4297-8741-0A8A39674128}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6AC83EB8-CE25-4297-8741-0A8A39674128}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6AC83EB8-CE25-4297-8741-0A8A39674128}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6AC83EB8-CE25-4297-8741-0A8A39674128}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

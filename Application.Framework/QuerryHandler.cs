@@ -1,10 +1,9 @@
 ﻿using System.Threading.Tasks;
-using Adapters.Json.ObjectPersistences;
 using Domain.Framework;
 
 namespace Application.Framework
 {
-    public abstract class QuerryHandler<T> where T : Entity
+    public class QuerryHandler<T> where T : Entity
     {
         private readonly IObjectPersister<T> _objectPersister;
 

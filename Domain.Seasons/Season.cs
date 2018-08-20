@@ -1,5 +1,6 @@
 ﻿using System;
 using Domain.Framework;
+using Domain.Seasons.Events;
 
 namespace Domain.Seasons
 {
@@ -32,30 +33,6 @@ namespace Domain.Seasons
         public DomainResult ChangeDate(DateTimeOffset startDate, DateTimeOffset endDate)
         {
             return DomainResult.OkResult(new SeasonDateChangedEvent(Id, startDate, endDate));
-        }
-    }
-
-    public class SeasonDateChangedEvent : DomainEvent
-    {
-        public DateTimeOffset StartDate { get; }
-        public DateTimeOffset EndDate { get; }
-
-        public SeasonDateChangedEvent(Guid id, DateTimeOffset startDate, DateTimeOffset endDate) : base(id)
-        {
-            StartDate = startDate;
-            EndDate = endDate;
-        }
-    }
-
-    public class SeasonCreatedEvent : DomainEvent
-    {
-        public string InitialName { get; }
-        public int MaxDaysBetweenGames { get; }
-
-        public SeasonCreatedEvent(Guid entityId, string initialName, int daysBetweenGames) : base(entityId)
-        {
-            InitialName = initialName;
-            MaxDaysBetweenGames = daysBetweenGames;
         }
     }
 }

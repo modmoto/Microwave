@@ -1,16 +1,16 @@
 ﻿using System.Collections.Generic;
 using Domain.Framework;
-using Domain.Seasons;
+using Domain.Seasons.Events;
 
-namespace Application.Seasons
+namespace Application.Seasons.Querries
 {
     public class AllSeasonsQuery : Entity
     {
-        public IList<Season> Seasons { get; set; }
+        public IList<SeasonDto> Seasons { get; set; }
 
         public void Apply(SeasonCreatedEvent createdEvent)
         {
-            var season = new Season();
+            var season = new SeasonDto();
             season.Apply(createdEvent);
             Seasons.Add(season);
         }

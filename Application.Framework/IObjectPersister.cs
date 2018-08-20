@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace Adapters.Json.ObjectPersistences
+namespace Application.Framework
 {
     public interface IObjectPersister<T>
     {

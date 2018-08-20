@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Application.Seasons;
 using Application.Seasons.Commands;
+using Application.Seasons.Querries;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Adapters.WebApi.Seasons
