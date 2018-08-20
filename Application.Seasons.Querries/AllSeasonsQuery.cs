@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
+using Application.Framework;
 using Domain.Framework;
 using Domain.Seasons.Events;
 
 namespace Application.Seasons.Querries
 {
-    public class AllSeasonsQuery : Entity
+    public class AllSeasonsQuery : Querry
     {
         public IList<SeasonDto> Seasons { get; set; }
 

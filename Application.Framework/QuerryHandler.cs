@@ -3,7 +3,7 @@ using Domain.Framework;
 
 namespace Application.Framework
 {
-    public class QuerryHandler<T> where T : Entity
+    public class QuerryHandler<T> where T : Querry
     {
         private readonly IObjectPersister<T> _objectPersister;
 
