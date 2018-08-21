@@ -1,10 +1,10 @@
 ﻿namespace Application.Framework
 {
-    public class CommandHandlerBase
+    public class CommandHandler
     {
         protected readonly IEventStore EventStore;
 
-        public CommandHandlerBase(IEventStore eventStore)
+        public CommandHandler(IEventStore eventStore)
         {
             EventStore = eventStore;
         }

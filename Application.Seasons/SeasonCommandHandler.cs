@@ -7,7 +7,7 @@ using Domain.Seasons;
 
 namespace Application.Seasons
 {
-    public class SeasonCommandHandler : CommandHandlerBase
+    public class SeasonCommandHandler : CommandHandler
     {
         public SeasonCommandHandler(IEventStore eventStore) : base(eventStore)
         {
