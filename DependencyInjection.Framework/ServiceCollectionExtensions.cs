@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
+using Adapters.Framework.EventStores;
 using Adapters.Json.ObjectPersistences;
 using Application.Framework;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,28 +13,23 @@ namespace DependencyInjection.Framework
         public static IServiceCollection AddAllLoadedQuerries(this IServiceCollection collection, Assembly assembly)
         {
             var querries = assembly.GetTypes().Where(t => t.BaseType == typeof(Querry));
+            var eventStore = new EventStore(new DomainEventPersister());
+            var domainEvents = eventStore.GetEvents().Result.ToList();
             foreach (var querryType in querries)
             {
-                var persisterType = typeof(QuerryPersister<>);
-                Type[] typeArgs = { querryType };
-                var persister = persisterType.MakeGenericType(typeArgs);
-                object o = Activator.CreateInstance(persister);
-                var type = o.GetType();
-                var methodInfo = type.GetMethod("GetAsync");
-                var task = (Task) methodInfo.Invoke(o, new object [0]);
-
-                task.ConfigureAwait(false);
-
-                var resultProperty = task.GetType().GetProperty("Result");
-                var allSeasonQuery = resultProperty.GetValue(task);
+                var querry = (Querry) Activator.CreateInstance(querryType);
+                foreach (var domainEvent in domainEvents)
+                {
+                    querry.Apply(domainEvent);
+                }
 
                 var addSingletonFunction = typeof(ServiceCollectionServiceExtensions).GetMethods().Where(method =>
                     method.Name == "AddSingleton" && method.IsGenericMethod &&
                     method.GetGenericArguments().Length == 1 && method.GetParameters().Length == 2).ToList()[1];
 
 
-                var genericAddSingletonMethod = addSingletonFunction.MakeGenericMethod(allSeasonQuery.GetType());
-                genericAddSingletonMethod.Invoke(collection, new[] {collection, allSeasonQuery});
+                var genericAddSingletonMethod = addSingletonFunction.MakeGenericMethod(querryType);
+                genericAddSingletonMethod.Invoke(collection, new[] {collection, (object) querry});
             }
 
             return collection;

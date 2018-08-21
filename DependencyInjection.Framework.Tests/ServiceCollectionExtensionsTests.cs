@@ -1,7 +1,10 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using Adapters.Framework.EventStores;
 using Adapters.Json.ObjectPersistences;
 using Application.Framework;
+using Domain.Framework;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
@@ -12,27 +15,57 @@ namespace DependencyInjection.Framework.Tests
         [Fact]
         public async Task AddAllLoadedQuerries()
         {
-            var objectPersister = new QuerryPersister<TestQuerry>();
-            var testQuerry = new TestQuerry
+            var eventStore = new EventStore(new DomainEventPersister());
+            var entityId = Guid.NewGuid();
+            var domainEvents = new List<DomainEvent>
             {
-                Name = "Twstjeah",
-                Id = Guid.NewGuid()
+                new TestQuerryCreatedEvent(entityId, "NameFirst"),
+                new TestQuerryNameChangedEvent(entityId, "NameSecond")
             };
-            await objectPersister.Save(testQuerry);
+
+            await eventStore.AppendAsync(domainEvents);
 
             var serviceCollection = (IServiceCollection) new ServiceCollection();
             serviceCollection.AddAllLoadedQuerries(typeof(TestQuerry).Assembly);
             var buildServiceProvider = serviceCollection.BuildServiceProvider();
             var querryInDi = (TestQuerry) buildServiceProvider.GetService(typeof(TestQuerry));
 
-            Assert.Equal(testQuerry.Id, querryInDi.Id);
-            Assert.Equal(testQuerry.Name, querryInDi.Name );
+            Assert.Equal("NameSecond", querryInDi.Name);
         }
     }
 
     public class TestQuerry : Querry
     {
-        public string Name { get; set; }
-        public Guid Id { get; set; }
+        public string Name { get; private set; }
+
+        public void Apply(TestQuerryCreatedEvent domainEvent)
+        {
+            Name = domainEvent.Name;
+        }
+
+        public void Apply(TestQuerryNameChangedEvent domainEvent)
+        {
+            Name = domainEvent.Name;
+        }
+    }
+
+    public class TestQuerryNameChangedEvent : DomainEvent
+    {
+        public TestQuerryNameChangedEvent(Guid entityId, string name) : base(entityId)
+        {
+            Name = name;
+        }
+
+        public string Name { get; }
+    }
+
+    public class TestQuerryCreatedEvent : DomainEvent
+    {
+        public TestQuerryCreatedEvent(Guid entityId, string name) : base(entityId)
+        {
+            Name = name;
+        }
+
+        public string Name { get; }
     }
 }

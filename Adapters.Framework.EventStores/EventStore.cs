@@ -19,22 +19,25 @@ namespace Adapters.Framework.EventStores
 
         public async Task AppendAsync(IEnumerable<DomainEvent> domainEvents)
         {
-            if (_domainEvents == null) _domainEvents = await _domainEventPersister.GetAsync();
-            var events = _domainEvents.ToList();
+            if (_domainEvents == null) _domainEvents = await _domainEventPersister.GetAsync() ?? new List<DomainEvent>();
+
+            var domainEventsTemp = _domainEvents.ToList();
             foreach (var domainEvent in domainEvents)
             {
-                events.Append(domainEvent);
+                domainEventsTemp.Add(domainEvent);
             }
 
-            await _domainEventPersister.Save(events);
+            _domainEvents = domainEventsTemp;
+            await _domainEventPersister.Save(domainEventsTemp);
         }
 
         public async Task AppendAsync(DomainEvent domainEvent)
         {
             if (_domainEvents == null) _domainEvents = await _domainEventPersister.GetAsync();
-            var events = _domainEvents.ToList();
-            events.Append(domainEvent);
-            await _domainEventPersister.Save(events);
+            var domainEventsTemp = _domainEvents.ToList();
+            domainEventsTemp.Add(domainEvent);
+            _domainEvents = domainEventsTemp;
+            await _domainEventPersister.Save(domainEventsTemp);
         }
 
         public async Task<T> LoadAsync<T>(Guid commandEntityId) where T : Entity, new()

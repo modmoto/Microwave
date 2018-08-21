@@ -24,7 +24,7 @@ namespace Adapters.Framework.Eventstores.Tests
             var eventStore = new EventStore(persister.Object);
             await eventStore.AppendAsync(domainEvents);
 
-            Assert.Equal(2, eventStore.DomainEvents.Count());
+            Assert.Equal(2, (await eventStore.GetEvents()).Count());
         }
 
         [Fact]
@@ -38,7 +38,7 @@ namespace Adapters.Framework.Eventstores.Tests
             var eventStore = new EventStore(persister.Object);
             await eventStore.AppendAsync(testEvent);
 
-            Assert.Equal(1, eventStore.DomainEvents.Count());
+            Assert.Equal(1, (await eventStore.GetEvents()).Count());
         }
 
         [Fact]

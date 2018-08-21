@@ -17,6 +17,7 @@ namespace Adapters.Json.ObjectPersistences
 
         public async Task<T> GetAsync()
         {
+            if (!File.Exists(_filePath)) return default(T);
             var readAllText = await File.ReadAllTextAsync(_filePath);
             JsonSerializerSettings settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All };
             return JsonConvert.DeserializeObject<T>(readAllText, settings);

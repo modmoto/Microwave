@@ -12,6 +12,7 @@
     <DotNetCliToolReference Include="dotnet-xunit" Version="2.3.1" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Adapters.Framework.EventStores\Adapters.Framework.EventStores.csproj" />
     <ProjectReference Include="..\Application.Seasons.Querries\Application.Seasons.Querries.csproj" />
     <ProjectReference Include="..\DependencyInjection.Framework\DependencyInjection.Framework.csproj" />
   </ItemGroup>
