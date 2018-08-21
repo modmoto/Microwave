@@ -13,7 +13,22 @@ namespace Adapters.Framework.Eventstores.Tests
     public class EventStoreTests
     {
         [Fact]
-        public async Task AppendAsync_List()
+        public async Task AppendAsync_List_NoEventsPersisted()
+        {
+            var entityId = Guid.NewGuid();
+            var domainEvents = new List<DomainEvent> { new TestEvent(entityId, "TestSession1"), new TestEvent(entityId, "TestSession2")};
+
+            var persister = new Mock<IDomainEventPersister>();
+            persister.Setup(per => per.GetAsync()).ReturnsAsync(default(IEnumerable<DomainEvent>));
+
+            var eventStore = new EventStore(persister.Object);
+            await eventStore.AppendAsync(domainEvents);
+
+            Assert.Equal(2, (await eventStore.GetEvents()).Count());
+        }
+
+        [Fact]
+        public async Task AppendAsync_List_EventsAllreadyPresent()
         {
             var entityId = Guid.NewGuid();
             var domainEvents = new List<DomainEvent> { new TestEvent(entityId, "TestSession1"), new TestEvent(entityId, "TestSession2")};
@@ -24,7 +39,7 @@ namespace Adapters.Framework.Eventstores.Tests
             var eventStore = new EventStore(persister.Object);
             await eventStore.AppendAsync(domainEvents);
 
-            Assert.Equal(2, (await eventStore.GetEvents()).Count());
+            Assert.Equal(4, (await eventStore.GetEvents()).Count());
         }
 
         [Fact]
@@ -33,7 +48,7 @@ namespace Adapters.Framework.Eventstores.Tests
             var testEvent = new TestEvent(Guid.NewGuid(), "TestSession2");
 
             var persister = new Mock<IDomainEventPersister>();
-            persister.Setup(per => per.GetAsync()).ReturnsAsync(new List<DomainEvent> { testEvent });
+            persister.Setup(per => per.GetAsync()).ReturnsAsync(new List<DomainEvent>());
 
             var eventStore = new EventStore(persister.Object);
             await eventStore.AppendAsync(testEvent);
