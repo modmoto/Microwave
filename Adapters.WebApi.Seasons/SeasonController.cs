@@ -11,9 +11,9 @@ namespace Adapters.WebApi.Seasons
     public class SeasonController : Controller
     {
         private readonly SeasonCommandHandler _commandHandler;
-        private readonly SeasonQuerryHandler _querryHandler;
+        private readonly AllSeasonsQuerryHandler _querryHandler;
 
-        public SeasonController(SeasonCommandHandler commandHandler, SeasonQuerryHandler querryHandler)
+        public SeasonController(SeasonCommandHandler commandHandler, AllSeasonsQuerryHandler querryHandler)
         {
             _commandHandler = commandHandler;
             _querryHandler = querryHandler;

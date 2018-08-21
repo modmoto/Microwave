@@ -26,7 +26,7 @@ namespace OnlineLeagueBackend
 
             services.AddTransient<SeasonCommandHandler>();
 
-            services.AddTransient<SeasonQuerryHandler>();
+            services.AddTransient<AllSeasonsQuerryHandler>();
 
             services.AddAllLoadedQuerries(typeof(AllSeasonsQuery).Assembly);
         }

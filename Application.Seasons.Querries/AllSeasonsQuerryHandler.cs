@@ -4,7 +4,7 @@ using Application.Framework;
 
 namespace Application.Seasons.Querries
 {
-    public class SeasonQuerryHandler : QuerryHandler<AllSeasonsQuery>
+    public class AllSeasonsQuerryHandler : QuerryHandler<AllSeasonsQuery>
     {
         public AllSeasonsQuery GetAllSeasons()
         {
@@ -16,7 +16,7 @@ namespace Application.Seasons.Querries
             return QuerryObject.Seasons.SingleOrDefault(season => season.Id == id);
         }
 
-        public SeasonQuerryHandler(IObjectPersister<AllSeasonsQuery> objectPersister, AllSeasonsQuery querryObject) : base(objectPersister, querryObject)
+        public AllSeasonsQuerryHandler(IObjectPersister<AllSeasonsQuery> objectPersister, AllSeasonsQuery querryObject) : base(objectPersister, querryObject)
         {
         }
     }
