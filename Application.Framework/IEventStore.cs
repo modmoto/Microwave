@@ -9,5 +9,6 @@ namespace Application.Framework
     {
         Task AppendAsync(IEnumerable<DomainEvent> domainEvents);
         Task<T> LoadAsync<T>(Guid commandEntityId) where T : Entity,  new();
+        Task<IEnumerable<DomainEvent>> GetEvents();
     }
 }

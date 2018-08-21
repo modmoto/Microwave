@@ -10,7 +10,7 @@ namespace Adapters.Framework.EventStores
     public class EventStore : IEventStore
     {
         private readonly IDomainEventPersister _domainEventPersister;
-        public IEnumerable<DomainEvent> DomainEvents { get; private set; }
+        private IEnumerable<DomainEvent> _domainEvents;
 
         public EventStore(IDomainEventPersister domainEventPersister)
         {
@@ -19,8 +19,8 @@ namespace Adapters.Framework.EventStores
 
         public async Task AppendAsync(IEnumerable<DomainEvent> domainEvents)
         {
-            if (DomainEvents == null) DomainEvents = await _domainEventPersister.GetAsync();
-            var events = DomainEvents.ToList();
+            if (_domainEvents == null) _domainEvents = await _domainEventPersister.GetAsync();
+            var events = _domainEvents.ToList();
             foreach (var domainEvent in domainEvents)
             {
                 events.Append(domainEvent);
@@ -31,8 +31,8 @@ namespace Adapters.Framework.EventStores
 
         public async Task AppendAsync(DomainEvent domainEvent)
         {
-            if (DomainEvents == null) DomainEvents = await _domainEventPersister.GetAsync();
-            var events = DomainEvents.ToList();
+            if (_domainEvents == null) _domainEvents = await _domainEventPersister.GetAsync();
+            var events = _domainEvents.ToList();
             events.Append(domainEvent);
             await _domainEventPersister.Save(events);
         }
@@ -40,14 +40,20 @@ namespace Adapters.Framework.EventStores
         public async Task<T> LoadAsync<T>(Guid commandEntityId) where T : Entity, new()
         {
             var entity = new T();
-            if (DomainEvents == null) DomainEvents = await _domainEventPersister.GetAsync();
-            var domainEventsForEntity = DomainEvents.Where(domainEvent => domainEvent.EntityId == commandEntityId);
+            if (_domainEvents == null) _domainEvents = await _domainEventPersister.GetAsync();
+            var domainEventsForEntity = _domainEvents.Where(domainEvent => domainEvent.EntityId == commandEntityId);
             foreach (var domainEvent in domainEventsForEntity)
             {
                 entity.Apply(domainEvent);
             }
 
             return entity;
+        }
+
+        public async Task<IEnumerable<DomainEvent>> GetEvents()
+        {
+            if (_domainEvents == null) _domainEvents = await _domainEventPersister.GetAsync();
+            return _domainEvents;
         }
     }
 }

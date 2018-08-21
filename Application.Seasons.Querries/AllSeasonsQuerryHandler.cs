@@ -16,7 +16,7 @@ namespace Application.Seasons.Querries
             return QuerryObject.Seasons.SingleOrDefault(season => season.Id == id);
         }
 
-        public AllSeasonsQuerryHandler(IObjectPersister<AllSeasonsQuery> objectPersister, AllSeasonsQuery querryObject) : base(objectPersister, querryObject)
+        public AllSeasonsQuerryHandler(AllSeasonsQuery querryObject) : base(querryObject)
         {
         }
     }
