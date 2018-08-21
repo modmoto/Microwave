@@ -13,4 +13,9 @@
     <ProjectReference Include="..\Adapters.Json.ObjectPersistences\Adapters.Json.ObjectPersistences.csproj" />
     <ProjectReference Include="..\Domain.Framework\Domain.Framework.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <None Update="DB_IEnumerable`1_System.Collections.Generic.IEnumerable`1[[Domain.Framework.DomainEvent, Domain.Framework, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]].json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>
