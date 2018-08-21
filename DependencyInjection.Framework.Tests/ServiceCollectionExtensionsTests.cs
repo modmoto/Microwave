@@ -12,7 +12,7 @@ namespace DependencyInjection.Framework.Tests
         [Fact]
         public async Task AddAllLoadedQuerries()
         {
-            var objectPersister = new ObjectPersister<TestQuerry>();
+            var objectPersister = new QuerryPersister<TestQuerry>();
             var testQuerry = new TestQuerry
             {
                 Name = "Twstjeah",

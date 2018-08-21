@@ -15,7 +15,7 @@ namespace DependencyInjection.Framework
             var querries = assembly.GetTypes().Where(t => t.BaseType == typeof(Querry));
             foreach (var querryType in querries)
             {
-                var persisterType = typeof(ObjectPersister<>);
+                var persisterType = typeof(QuerryPersister<>);
                 Type[] typeArgs = { querryType };
                 var persister = persisterType.MakeGenericType(typeArgs);
                 object o = Activator.CreateInstance(persister);
