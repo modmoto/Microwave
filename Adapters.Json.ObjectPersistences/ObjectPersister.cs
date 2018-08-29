@@ -20,7 +20,7 @@ namespace Adapters.Json.ObjectPersistences
         {
             if (!File.Exists(_filePath)) return default(T);
             var readAllText = await File.ReadAllTextAsync(_filePath);
-            JsonSerializerSettings settings = new JsonSerializerSettings { Error = HandleDeserializationError, TypeNameHandling = TypeNameHandling.All };
+            JsonSerializerSettings settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All };
             return JsonConvert.DeserializeObject<T>(readAllText, settings);
         }
 
