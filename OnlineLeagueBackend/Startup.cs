@@ -20,7 +20,7 @@ namespace OnlineLeagueBackend
         {
             services.AddMvc();
             services.AddTransient<SeasonController>();
-            services.AddSingleton<IEventStore, EventStore>();
+            services.AddSingleton<IEventStore, ApplyUsingEventStore>();
             services.AddTransient<IObjectPersister<AllSeasonsQuery>, ObjectPersister<AllSeasonsQuery>>();
             services.AddTransient<IDomainEventPersister, DomainEventPersister>();
 

@@ -21,7 +21,7 @@ namespace Adapters.Framework.Eventstores.Tests
             var persister = new Mock<IDomainEventPersister>();
             persister.Setup(per => per.GetAsync()).ReturnsAsync(default(IEnumerable<DomainEvent>));
 
-            var eventStore = new EventStore(persister.Object);
+            var eventStore = new ApplyUsingEventStore(persister.Object);
             await eventStore.AppendAsync(domainEvents);
 
             Assert.Equal(2, (await eventStore.GetEvents()).Count());
@@ -36,7 +36,7 @@ namespace Adapters.Framework.Eventstores.Tests
             var persister = new Mock<IDomainEventPersister>();
             persister.Setup(per => per.GetAsync()).ReturnsAsync(domainEvents);
 
-            var eventStore = new EventStore(persister.Object);
+            var eventStore = new ApplyUsingEventStore(persister.Object);
             await eventStore.AppendAsync(domainEvents);
 
             Assert.Equal(4, (await eventStore.GetEvents()).Count());
@@ -50,7 +50,7 @@ namespace Adapters.Framework.Eventstores.Tests
             var persister = new Mock<IDomainEventPersister>();
             persister.Setup(per => per.GetAsync()).ReturnsAsync(new List<DomainEvent>());
 
-            var eventStore = new EventStore(persister.Object);
+            var eventStore = new ApplyUsingEventStore(persister.Object);
             await eventStore.AppendAsync(testEvent);
 
             Assert.Equal(1, (await eventStore.GetEvents()).Count());
@@ -65,7 +65,7 @@ namespace Adapters.Framework.Eventstores.Tests
             var persister = new Mock<IDomainEventPersister>();
             persister.Setup(per => per.GetAsync()).ReturnsAsync(domainEvents);
 
-            var eventStore = new EventStore(persister.Object);
+            var eventStore = new ApplyUsingEventStore(persister.Object);
             var testEntity = await eventStore.LoadAsync<TestEntity>(entityId);
 
             Assert.Equal("NewName", testEntity.Name);
