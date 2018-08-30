@@ -72,11 +72,12 @@ namespace Adapters.Framework.EventStores
 
             foreach (var eventProperty in eventProperties)
             {
-                var customAttributes = eventProperty.GetCustomAttributes(typeof(PropertyPath));
+                var customAttributes = eventProperty.GetCustomAttributes(typeof(ActualPropertyName));
                 var attributes = customAttributes.ToList();
-                var pathName = !attributes.Any() ? eventProperty.Name : ((PropertyPath) attributes.First()).PropetyName;
+                var pathName = !attributes.Any() ? eventProperty.Name : ((ActualPropertyName) attributes.First()).Path;
 
-                var propertyOnEntity = entityProperties.First(property => property.Name == pathName);
+                var propertyOnEntity = entityProperties.FirstOrDefault(property => property.Name == pathName);
+                if (propertyOnEntity == null) throw new ApplicationException($"Property {pathName} does not exist on entity, check the ActualPropertyName Attribute on Property {eventProperty.Name} of Event {domainEvent.GetType().Name}");
                 var eventValue = eventProperty.GetValue(domainEvent);
                 propertyOnEntity.SetValue(entity, eventValue);
             }

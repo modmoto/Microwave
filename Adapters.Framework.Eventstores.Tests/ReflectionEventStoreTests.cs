@@ -26,14 +26,39 @@ namespace Adapters.Framework.Eventstores.Tests
             Assert.Equal("NewName", testEntity.Name);
             Assert.Equal(entityId, testEntity.Id);
         }
+
+        [Fact]
+        public async Task LoadEntity_PropNotExisting()
+        {
+            var entityId = Guid.NewGuid();
+            var domainEvents = new List<DomainEvent> { new TestCreatedReflectionEvent(entityId, "OldName"), new TestChangeNameReflectionEventPropNotExisting(entityId, "NewName")};
+
+            var persister = new Mock<IDomainEventPersister>();
+            persister.Setup(per => per.GetAsync()).ReturnsAsync(domainEvents);
+
+            var eventStore = new ReflectionEventStore(persister.Object);
+            var throwsAsync = await Assert.ThrowsAsync<ApplicationException>(async () => await eventStore.LoadAsync<TestReflectionEntity>(entityId));
+            Assert.Equal("Property ThisPropIsWrong does not exist on entity, check the ActualPropertyName Attribute on Property NewName of Event TestChangeNameReflectionEventPropNotExisting", throwsAsync.Message);
+        }
     }
 
     internal class TestChangeNameReflectionEvent : DomainEvent
     {
-        [PropertyPath("Name")]
+        [ActualPropertyName("Name")]
         public string NewName { get; }
 
         public TestChangeNameReflectionEvent(Guid entityId, string newName) : base(entityId)
+        {
+            NewName = newName;
+        }
+    }
+
+    internal class TestChangeNameReflectionEventPropNotExisting : DomainEvent
+    {
+        [ActualPropertyName("ThisPropIsWrong")]
+        public string NewName { get; }
+
+        public TestChangeNameReflectionEventPropNotExisting(Guid entityId, string newName) : base(entityId)
         {
             NewName = newName;
         }
