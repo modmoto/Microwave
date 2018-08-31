@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Application.Framework;
 using Domain.Framework;
+using Newtonsoft.Json;
 
 namespace Adapters.Framework.EventStores
 {
@@ -48,7 +49,7 @@ namespace Adapters.Framework.EventStores
             var domainEventsForEntity = _domainEvents.Where(domainEvent => domainEvent.EntityId == commandEntityId);
             foreach (var domainEvent in domainEventsForEntity)
             {
-                Apply(entity, domainEvent);
+                entity = Apply(entity, domainEvent);
             }
 
             SetId(entity, commandEntityId);
@@ -63,24 +64,56 @@ namespace Adapters.Framework.EventStores
             entityId.SetValue(entity, commandEntityId);
         }
 
-        private void Apply<T>(T entity, DomainEvent domainEvent) where T : Entity, new()
+        private IDictionary<string, object> ToDictionary<T>(T obj)
+        {
+            var expando = new Dictionary<string, Object>();
+
+            foreach (var propertyInfo in typeof(T).GetProperties())
+            {
+                var currentValue = propertyInfo.GetValue(obj);
+                expando.Add(propertyInfo.Name, currentValue);
+            }
+
+            return expando;
+        }
+
+        private T Apply<T>(T entity, DomainEvent domainEvent) where T : Entity, new()
         {
             var eventType = domainEvent.GetType();
             var entityType = entity.GetType();
             var entityProperties = entityType.GetProperties();
             var eventProperties = eventType.GetProperties().Where(eventProp => eventProp.Name != nameof(DomainEvent.Id) && eventProp.Name != nameof(DomainEvent.EntityId));
 
+            var dynamicEntity = ToDictionary(entity);
+
             foreach (var eventProperty in eventProperties)
             {
                 var customAttributes = eventProperty.GetCustomAttributes(typeof(ActualPropertyName));
                 var attributes = customAttributes.ToList();
-                var pathName = !attributes.Any() ? eventProperty.Name : ((ActualPropertyName) attributes.First()).Path;
 
-                var propertyOnEntity = entityProperties.FirstOrDefault(property => property.Name == pathName);
-                if (propertyOnEntity == null) throw new ApplicationException($"Property {pathName} does not exist on entity, check the ActualPropertyName Attribute on Property {eventProperty.Name} of Event {domainEvent.GetType().Name}");
+                string pathName;
+                if (!attributes.Any())
+                {
+                    pathName = eventProperty.Name;
+                }
+                else
+                {
+                    pathName = ((ActualPropertyName) attributes.First()).Path;
+                    var propertyOnEntity = entityProperties.FirstOrDefault(property => property.Name == pathName);
+                    if (propertyOnEntity == null) throw new ApplicationException($"Property {pathName} does not exist on entity, check the ActualPropertyName Attribute on Property {eventProperty.Name} of Event {domainEvent.GetType().Name}");
+                }
+
                 var eventValue = eventProperty.GetValue(domainEvent);
-                propertyOnEntity.SetValue(entity, eventValue);
+                if (dynamicEntity.ContainsKey(pathName)) dynamicEntity[pathName] = eventValue;
+                else
+                {
+                    dynamicEntity.Add(pathName, eventValue);
+                }
             }
+
+            var serializeObject = JsonConvert.SerializeObject(dynamicEntity);
+            var deserializeObject = JsonConvert.DeserializeObject<T>(serializeObject);
+            return deserializeObject;
         }
 
         public async Task<IEnumerable<DomainEvent>> GetEvents()

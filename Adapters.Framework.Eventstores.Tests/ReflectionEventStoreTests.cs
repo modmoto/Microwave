@@ -28,6 +28,22 @@ namespace Adapters.Framework.Eventstores.Tests
         }
 
         [Fact]
+        public async Task LoadEntity_OldUnusedPropIsCalled()
+        {
+            var entityId = Guid.NewGuid();
+            var domainEvents = new List<DomainEvent> { new TestCreatedReflectionEvent(entityId, "OldName"), new TestCreatedReflectionEventOldLastNameEvent(entityId, "Old entity Name")};
+
+            var persister = new Mock<IDomainEventPersister>();
+            persister.Setup(per => per.GetAsync()).ReturnsAsync(domainEvents);
+
+            var eventStore = new ReflectionEventStore(persister.Object);
+            var testEntity = await eventStore.LoadAsync<TestReflectionEntity>(entityId);
+
+            Assert.Equal("OldName", testEntity.Name);
+            Assert.Equal(entityId, testEntity.Id);
+        }
+
+        [Fact]
         public async Task LoadEntity_PropNotExisting()
         {
             var entityId = Guid.NewGuid();
@@ -74,8 +90,19 @@ namespace Adapters.Framework.Eventstores.Tests
         }
     }
 
+    internal class TestCreatedReflectionEventOldLastNameEvent : DomainEvent
+    {
+        public string LastName { get; }
+
+        public TestCreatedReflectionEventOldLastNameEvent(Guid entityId, string name) : base(entityId)
+        {
+            LastName = name;
+        }
+    }
+
     internal class TestReflectionEntity : Entity
     {
-        public string Name { get; private set; }
+        //TODO make this private set shit better
+        public string Name { get; set; }
     }
 }
