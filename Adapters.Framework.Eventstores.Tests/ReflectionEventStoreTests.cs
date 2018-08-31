@@ -60,6 +60,24 @@ namespace Adapters.Framework.Eventstores.Tests
             Assert.Equal("New Street Name", testEntity.Adress.Street);
             Assert.Equal(12, testEntity.Adress.Number);
         }
+
+        [Fact]
+        public async Task LoadEntity_OverridingPropertyByAccident()
+        {
+            var entityId = Guid.NewGuid();
+            var domainEvents = new List<DomainEvent> { new TestCreatedNestedEvent(entityId, "OldName", new Adress("OldStreet", 12)), new TestStreetChangedEvent_WithError(entityId, "NewName of street", 15)};
+
+            var persister = new Mock<IDomainEventPersister>();
+            persister.Setup(per => per.GetAsync()).ReturnsAsync(domainEvents);
+
+            var eventStore = new ReflectionEventStore(persister.Object);
+            var testEntity = await eventStore.LoadAsync<TestNestedEntity>(entityId);
+
+            Assert.Equal("NewName of street", testEntity.Name);
+            Assert.Equal(entityId, testEntity.Id);
+            Assert.Equal("OldStreet", testEntity.Adress.Street);
+            Assert.Equal(15, testEntity.Adress.Number);
+        }
     }
 
     internal class TestChangeNameReflectionEvent : DomainEvent
@@ -113,6 +131,20 @@ namespace Adapters.Framework.Eventstores.Tests
         public TestStreetChangedEvent(Guid entityId, string street) : base(entityId)
         {
             Street = street;
+        }
+    }
+
+    internal class TestStreetChangedEvent_WithError : DomainEvent
+    {
+        public string Name { get; }
+
+        [ActualPropertyName("Adress.Number")]
+        public int Number { get; }
+
+        public TestStreetChangedEvent_WithError(Guid entityId, string streetName, int number) : base(entityId)
+        {
+            Name = streetName;
+            Number = number;
         }
     }
 

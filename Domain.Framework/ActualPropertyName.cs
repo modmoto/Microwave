@@ -7,6 +7,11 @@ namespace Domain.Framework
     {
         public string[] Path { get; }
 
+        public ActualPropertyName(string[] path)
+        {
+            Path = path;
+        }
+
         public ActualPropertyName(string path)
         {
             var doesNotStartOrEndWithDots = new Regex("^[^.].*[^.]$");
