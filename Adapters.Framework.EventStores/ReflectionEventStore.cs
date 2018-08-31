@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Application.Framework;
 using Domain.Framework;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Adapters.Framework.EventStores
 {
@@ -64,56 +65,53 @@ namespace Adapters.Framework.EventStores
             entityId.SetValue(entity, commandEntityId);
         }
 
-        private IDictionary<string, object> ToDictionary<T>(T obj)
-        {
-            var expando = new Dictionary<string, Object>();
-
-            foreach (var propertyInfo in typeof(T).GetProperties())
-            {
-                var currentValue = propertyInfo.GetValue(obj);
-                expando.Add(propertyInfo.Name, currentValue);
-            }
-
-            return expando;
-        }
-
         private T Apply<T>(T entity, DomainEvent domainEvent) where T : Entity, new()
         {
             var eventType = domainEvent.GetType();
-            var entityType = entity.GetType();
-            var entityProperties = entityType.GetProperties();
             var eventProperties = eventType.GetProperties().Where(eventProp => eventProp.Name != nameof(DomainEvent.Id) && eventProp.Name != nameof(DomainEvent.EntityId));
 
-            var dynamicEntity = ToDictionary(entity);
+            var eventJson = JObject.Parse(JsonConvert.SerializeObject(domainEvent));
 
             foreach (var eventProperty in eventProperties)
             {
                 var customAttributes = eventProperty.GetCustomAttributes(typeof(ActualPropertyName));
                 var attributes = customAttributes.ToList();
 
-                string pathName;
-                if (!attributes.Any())
+                if (attributes.Any())
                 {
-                    pathName = eventProperty.Name;
-                }
-                else
-                {
-                    pathName = ((ActualPropertyName) attributes.First()).Path;
-                    var propertyOnEntity = entityProperties.FirstOrDefault(property => property.Name == pathName);
-                    if (propertyOnEntity == null) throw new ApplicationException($"Property {pathName} does not exist on entity, check the ActualPropertyName Attribute on Property {eventProperty.Name} of Event {domainEvent.GetType().Name}");
-                }
-
-                var eventValue = eventProperty.GetValue(domainEvent);
-                if (dynamicEntity.ContainsKey(pathName)) dynamicEntity[pathName] = eventValue;
-                else
-                {
-                    dynamicEntity.Add(pathName, eventValue);
+                    var pathSplitted = ((ActualPropertyName) attributes.First()).Path;
+                    var eventValue = eventProperty.GetValue(domainEvent);
+                    var dynamicObject = CreateDynamicObject(pathSplitted, new Dictionary<string, object>(), eventValue);
+                    var dynamicObjectJson = JObject.Parse(JsonConvert.SerializeObject(dynamicObject));
+                    eventJson.Merge(dynamicObjectJson, new JsonMergeSettings
+                    {
+                        MergeArrayHandling = MergeArrayHandling.Union
+                    });
                 }
             }
 
-            var serializeObject = JsonConvert.SerializeObject(dynamicEntity);
-            var deserializeObject = JsonConvert.DeserializeObject<T>(serializeObject);
+            var entityJson = JObject.Parse(JsonConvert.SerializeObject(entity));
+
+            entityJson.Merge(eventJson, new JsonMergeSettings
+            {
+                MergeArrayHandling = MergeArrayHandling.Union
+            });
+            var deserializeObject = entityJson.ToObject<T>();
             return deserializeObject;
+        }
+
+        private IDictionary<string, object> CreateDynamicObject(string[] pathSplitted, Dictionary<string, object> dictionary, object eventValue)
+        {
+            if (pathSplitted.Length == 1)
+            {
+                var dic = new Dictionary<string, object>();
+                dic.Add(pathSplitted[0], eventValue);
+                return dic;
+            }
+
+            var dynamicObject = CreateDynamicObject(pathSplitted.Skip(1).ToArray(), dictionary, eventValue);
+            dictionary.Add(pathSplitted[0], dynamicObject);
+            return dictionary;
         }
 
         public async Task<IEnumerable<DomainEvent>> GetEvents()
@@ -121,5 +119,7 @@ namespace Adapters.Framework.EventStores
             if (_domainEvents == null) _domainEvents = await _domainEventPersister.GetAsync();
             return _domainEvents;
         }
+
+
     }
 }

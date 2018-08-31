@@ -44,17 +44,21 @@ namespace Adapters.Framework.Eventstores.Tests
         }
 
         [Fact]
-        public async Task LoadEntity_PropNotExisting()
+        public async Task LoadEntity_CascadingProp()
         {
             var entityId = Guid.NewGuid();
-            var domainEvents = new List<DomainEvent> { new TestCreatedReflectionEvent(entityId, "OldName"), new TestChangeNameReflectionEventPropNotExisting(entityId, "NewName")};
+            var domainEvents = new List<DomainEvent> { new TestCreatedNestedEvent(entityId, "OldName", new Adress("OldStreet", 12)), new TestStreetChangedEvent(entityId, "New Street Name")};
 
             var persister = new Mock<IDomainEventPersister>();
             persister.Setup(per => per.GetAsync()).ReturnsAsync(domainEvents);
 
             var eventStore = new ReflectionEventStore(persister.Object);
-            var throwsAsync = await Assert.ThrowsAsync<ApplicationException>(async () => await eventStore.LoadAsync<TestReflectionEntity>(entityId));
-            Assert.Equal("Property ThisPropIsWrong does not exist on entity, check the ActualPropertyName Attribute on Property NewName of Event TestChangeNameReflectionEventPropNotExisting", throwsAsync.Message);
+            var testEntity = await eventStore.LoadAsync<TestNestedEntity>(entityId);
+
+            Assert.Equal("OldName", testEntity.Name);
+            Assert.Equal(entityId, testEntity.Id);
+            Assert.Equal("New Street Name", testEntity.Adress.Street);
+            Assert.Equal(12, testEntity.Adress.Number);
         }
     }
 
@@ -64,17 +68,6 @@ namespace Adapters.Framework.Eventstores.Tests
         public string NewName { get; }
 
         public TestChangeNameReflectionEvent(Guid entityId, string newName) : base(entityId)
-        {
-            NewName = newName;
-        }
-    }
-
-    internal class TestChangeNameReflectionEventPropNotExisting : DomainEvent
-    {
-        [ActualPropertyName("ThisPropIsWrong")]
-        public string NewName { get; }
-
-        public TestChangeNameReflectionEventPropNotExisting(Guid entityId, string newName) : base(entityId)
         {
             NewName = newName;
         }
@@ -100,9 +93,61 @@ namespace Adapters.Framework.Eventstores.Tests
         }
     }
 
+    internal class TestCreatedNestedEvent : DomainEvent
+    {
+        public string Name { get; }
+        public Adress Adress { get; }
+
+        public TestCreatedNestedEvent(Guid entityId, string name, Adress adress) : base(entityId)
+        {
+            Name = name;
+            Adress = adress;
+        }
+    }
+
+    internal class TestStreetChangedEvent : DomainEvent
+    {
+        [ActualPropertyName("Adress.Street")]
+        public string Street { get; }
+
+        public TestStreetChangedEvent(Guid entityId, string street) : base(entityId)
+        {
+            Street = street;
+        }
+    }
+
     internal class TestReflectionEntity : Entity
     {
         //TODO make this private set shit better
         public string Name { get; set; }
+    }
+
+    internal class TestNestedEntity : Entity
+    {
+        public TestNestedEntity(string name, Adress adress)
+        {
+            Name = name;
+            Adress = adress;
+        }
+
+        public TestNestedEntity()
+        {
+        }
+
+        //TODO make this private set shit better
+        public string Name { get; set; }
+        public Adress Adress { get; set; }
+    }
+
+    internal class Adress
+    {
+        public Adress(string street, int number)
+        {
+            Street = street;
+            Number = number;
+        }
+
+        public string Street { get; set; }
+        public int Number { get; set; }
     }
 }
