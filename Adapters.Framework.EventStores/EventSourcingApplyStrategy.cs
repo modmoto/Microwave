@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using Domain.Framework;
 
 namespace Adapters.Framework.EventStores
@@ -15,10 +14,6 @@ namespace Adapters.Framework.EventStores
             if (methodToExecute == null || methodToExecute.GetParameters().Length != 1) return entity;
             methodToExecute.Invoke(entity, new object[] {domainEvent});
             return entity;
-        }
-
-        public void SetId<T>(T entity, Guid commandEntityId)
-        {
         }
     }
 }

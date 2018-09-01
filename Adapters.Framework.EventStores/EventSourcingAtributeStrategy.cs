@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Domain.Framework;
@@ -13,7 +12,7 @@ namespace Adapters.Framework.EventStores
         public T Apply<T>(T entity, DomainEvent domainEvent)
         {
             var eventType = domainEvent.GetType();
-            var eventProperties = eventType.GetProperties().Where(eventProp => eventProp.Name != nameof(DomainEvent.Id) && eventProp.Name != nameof(DomainEvent.EntityId));
+            var eventProperties = eventType.GetProperties().Where(eventProp => eventProp.Name != nameof(DomainEvent.Id));
 
             var eventJson = JObject.Parse(JsonConvert.SerializeObject(domainEvent));
             var entityJson = JObject.Parse(JsonConvert.SerializeObject(entity));
@@ -44,13 +43,6 @@ namespace Adapters.Framework.EventStores
             MergeOnto(entityJson, eventJson);
             var deserializeObject = entityJson.ToObject<T>();
             return deserializeObject;
-        }
-
-        public void SetId<T>(T entity, Guid commandEntityId)
-        {
-            var entityType = entity.GetType();
-            var entityId = entityType.GetProperties().First(prop => prop.Name == nameof(Entity.Id));
-            entityId.SetValue(entity, commandEntityId);
         }
 
         private void MergeOnto(JObject target, object source)

@@ -52,8 +52,6 @@ namespace Adapters.Framework.EventStores
                 entity = _eventSourcingStrategy.Apply(entity, domainEvent);
             }
 
-            _eventSourcingStrategy.SetId(entity, commandEntityId);
-
             return entity;
         }
 
