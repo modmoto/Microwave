@@ -65,7 +65,7 @@ namespace Adapters.Framework.Eventstores.Tests
         public async Task LoadEntity_OverridingPropertyByAccident()
         {
             var entityId = Guid.NewGuid();
-            var domainEvents = new List<DomainEvent> { new TestCreatedNestedEvent(entityId, "OldName", new Adress("OldStreet", 12)), new TestStreetChangedEvent_WithError(entityId, "NewName of street", 15)};
+            var domainEvents = new List<DomainEvent> { new TestCreatedNestedEvent(entityId, "OldName", new Adress("OldStreet", 12)), new TestStreetChangedEventWithError(entityId, "NewName of street", 15)};
 
             var persister = new Mock<IDomainEventPersister>();
             persister.Setup(per => per.GetAsync()).ReturnsAsync(domainEvents);
@@ -77,6 +77,23 @@ namespace Adapters.Framework.Eventstores.Tests
             Assert.Equal(entityId, testEntity.Id);
             Assert.Equal("OldStreet", testEntity.Adress.Street);
             Assert.Equal(15, testEntity.Adress.Number);
+        }
+
+        [Fact]
+        public async Task LoadEntity_OverridingProperty_ThatStillFillsOtherProperty()
+        {
+            var entityId = Guid.NewGuid();
+            var domainEvents = new List<DomainEvent> { new TestCreatedReflectionEvent(entityId, "ThePreName"), new TestCreatedReflectionEventLastNameEventWithAccidentlyOverridingOtherName(entityId, "TheLastName")};
+
+            var persister = new Mock<IDomainEventPersister>();
+            persister.Setup(per => per.GetAsync()).ReturnsAsync(domainEvents);
+
+            var eventStore = new ReflectionEventStore(persister.Object);
+            var testEntity = await eventStore.LoadAsync<TestNestedEntity>(entityId);
+
+            Assert.Equal("TheLastName", testEntity.LastName);
+            Assert.Equal("ThePreName", testEntity.Name);
+            Assert.Equal(entityId, testEntity.Id);
         }
     }
 
@@ -111,6 +128,17 @@ namespace Adapters.Framework.Eventstores.Tests
         }
     }
 
+    internal class TestCreatedReflectionEventLastNameEventWithAccidentlyOverridingOtherName : DomainEvent
+    {
+        [ActualPropertyName("LastName")]
+        public string Name { get; }
+
+        public TestCreatedReflectionEventLastNameEventWithAccidentlyOverridingOtherName(Guid entityId, string name) : base(entityId)
+        {
+            Name = name;
+        }
+    }
+
     internal class TestCreatedNestedEvent : DomainEvent
     {
         public string Name { get; }
@@ -134,14 +162,14 @@ namespace Adapters.Framework.Eventstores.Tests
         }
     }
 
-    internal class TestStreetChangedEvent_WithError : DomainEvent
+    internal class TestStreetChangedEventWithError : DomainEvent
     {
         public string Name { get; }
 
         [ActualPropertyName("Adress.Number")]
         public int Number { get; }
 
-        public TestStreetChangedEvent_WithError(Guid entityId, string streetName, int number) : base(entityId)
+        public TestStreetChangedEventWithError(Guid entityId, string streetName, int number) : base(entityId)
         {
             Name = streetName;
             Number = number;
@@ -168,6 +196,7 @@ namespace Adapters.Framework.Eventstores.Tests
 
         //TODO make this private set shit better
         public string Name { get; set; }
+        public string LastName { get; set; }
         public Adress Adress { get; set; }
     }
 

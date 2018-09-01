@@ -81,23 +81,34 @@ namespace Adapters.Framework.EventStores
                 {
                     var pathSplitted = ((ActualPropertyName) attributes.First()).Path;
                     var eventValue = eventProperty.GetValue(domainEvent);
-                    var dynamicObject = CreateDynamicObject(pathSplitted, new Dictionary<string, object>(), eventValue);
-                    var dynamicObjectJson = JObject.Parse(JsonConvert.SerializeObject(dynamicObject));
-                    eventJson.Merge(dynamicObjectJson, new JsonMergeSettings
+                    var dynamicObjectRenamed = CreateDynamicObject(pathSplitted, new Dictionary<string, object>(), eventValue);
+                    eventJson = MergeOnto(eventJson, dynamicObjectRenamed);
+
+                    var eventPropertyName = eventProperty.Name;
+                    var entityValueProperty = entity.GetType().GetProperty(eventPropertyName);
+                    if (entityValueProperty != null)
                     {
-                        MergeArrayHandling = MergeArrayHandling.Union
-                    });
+                        var entityValue = entityValueProperty.GetValue(entity);
+                        var dynamicObjectOld = CreateDynamicObject(new [] { eventPropertyName }, new Dictionary<string, object>(), entityValue);
+                        eventJson = MergeOnto(eventJson, dynamicObjectOld);
+                    }
                 }
             }
 
             var entityJson = JObject.Parse(JsonConvert.SerializeObject(entity));
-
-            entityJson.Merge(eventJson, new JsonMergeSettings
-            {
-                MergeArrayHandling = MergeArrayHandling.Union
-            });
+            entityJson = MergeOnto(entityJson, eventJson);
             var deserializeObject = entityJson.ToObject<T>();
             return deserializeObject;
+        }
+
+        private JObject MergeOnto(JObject eventJson, object dynamicObjectOld)
+        {
+            var dynamicObjectOldJson = JObject.Parse(JsonConvert.SerializeObject(dynamicObjectOld));
+            eventJson.Merge(dynamicObjectOldJson, new JsonMergeSettings
+            {
+                MergeArrayHandling = MergeArrayHandling.Merge
+            });
+            return eventJson;
         }
 
         private IDictionary<string, object> CreateDynamicObject(string[] pathSplitted, Dictionary<string, object> dictionary, object eventValue)
