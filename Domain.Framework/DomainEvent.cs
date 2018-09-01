@@ -4,10 +4,6 @@ namespace Domain.Framework
 {
     public abstract class DomainEvent
     {
-        private DomainEvent()
-        {
-        }
-
         protected DomainEvent(Guid entityId)
         {
             EntityId = entityId;
