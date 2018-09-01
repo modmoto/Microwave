@@ -14,23 +14,29 @@ namespace Adapters.Json.ObjectPersistence.UnitTests
         public async Task SaveAndLoadEvents()
         {
             var entityId = Guid.NewGuid();
-            var domainEvents = new List<DomainEvent> { new TestEvent(entityId, "TestSession1"), new TestEventOld(entityId, "TestSession2", "TestSession3")};
+            var domainEvent = new TestEvent(entityId);
+            domainEvent.SetName("TestSession1");
+            var domainEvents = new List<DomainEvent> { domainEvent, new TestEventOld(entityId, "TestSession2", "TestSession3")};
             var domainObjectPersister = new DomainEventPersister();
             await domainObjectPersister.Save(domainEvents);
             var savedEvents = (await domainObjectPersister.GetAsync()).ToList();
 
             Assert.Equal(savedEvents[0].EntityId, domainEvents[0].EntityId);
-            Assert.Equal(((TestEvent)savedEvents[0]).Name, ((TestEvent)domainEvents[0]).Name);
+            Assert.Equal(((TestEvent)domainEvents[0]).Name, ((TestEvent)savedEvents[0]).Name);
             Assert.Equal(savedEvents[1].EntityId, domainEvents[1].EntityId);
-            Assert.Equal(((TestEventOld)savedEvents[1]).Name, ((TestEventOld)domainEvents[1]).Name);
+            Assert.Equal(((TestEventOld)domainEvents[1]).Name, ((TestEventOld)savedEvents[1]).Name);
         }
     }
 
     internal class TestEvent : DomainEvent
     {
-        public string Name { get; }
+        public string Name { get; private set; }
 
-        public TestEvent(Guid guid, string name) : base(guid)
+        public TestEvent(Guid guid) : base(guid)
+        {
+        }
+
+        public void SetName(string name)
         {
             Name = name;
         }
