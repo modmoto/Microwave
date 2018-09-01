@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using Application.Framework;
 using Newtonsoft.Json;
-using ErrorEventArgs = Newtonsoft.Json.Serialization.ErrorEventArgs;
 
 namespace Adapters.Json.ObjectPersistences
 {
@@ -20,17 +19,13 @@ namespace Adapters.Json.ObjectPersistences
         {
             if (!File.Exists(_filePath)) return default(T);
             var readAllText = await File.ReadAllTextAsync(_filePath);
-            JsonSerializerSettings settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All };
+            JsonSerializerSettings settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All, ContractResolver = new PrivateContractResolver() };
             return JsonConvert.DeserializeObject<T>(readAllText, settings);
-        }
-
-        protected virtual void HandleDeserializationError(object sender, ErrorEventArgs errorArgs)
-        {
         }
 
         public async Task Save(T querry)
         {
-            JsonSerializerSettings settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All };
+            JsonSerializerSettings settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All, ContractResolver = new PrivateContractResolver()};
             var serializeObject = JsonConvert.SerializeObject(querry, settings);
             await File.WriteAllTextAsync(_filePath, serializeObject);
         }
