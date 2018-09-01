@@ -12,7 +12,7 @@ namespace Adapters.Json.ObjectPersistences
             if (jProperty.Writable)
                 return jProperty;
 
-            jProperty.Writable = true;
+            jProperty.Writable = IsPropertyWithSetter(member);
 
             return jProperty;
         }
