@@ -42,7 +42,7 @@ namespace Adapters.Framework.EventStores
             await _domainEventPersister.Save(domainEventsTemp);
         }
 
-        public async Task<T> LoadAsync<T>(Guid commandEntityId) where T : Entity, new()
+        public async Task<T> LoadAsync<T>(Guid commandEntityId) where T : new()
         {
             var entity = new T();
             if (_domainEvents == null) _domainEvents = await _domainEventPersister.GetAsync();
