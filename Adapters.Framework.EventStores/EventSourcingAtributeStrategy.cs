@@ -2,70 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
-using Application.Framework;
 using Domain.Framework;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace Adapters.Framework.EventStores
 {
-    public class ReflectionEventStore : IEventStore
+    public class EventSourcingAtributeStrategy : IEventSourcingStrategy
     {
-        private readonly IDomainEventPersister _domainEventPersister;
-        private IEnumerable<DomainEvent> _domainEvents;
-
-        public ReflectionEventStore(IDomainEventPersister domainEventPersister)
-        {
-            _domainEventPersister = domainEventPersister;
-        }
-
-        public async Task AppendAsync(IEnumerable<DomainEvent> domainEvents)
-        {
-            if (_domainEvents == null) _domainEvents = await _domainEventPersister.GetAsync() ?? new List<DomainEvent>();
-
-            var domainEventsTemp = _domainEvents.ToList();
-            foreach (var domainEvent in domainEvents)
-            {
-                domainEventsTemp.Add(domainEvent);
-            }
-
-            _domainEvents = domainEventsTemp;
-            await _domainEventPersister.Save(domainEventsTemp);
-        }
-
-        public async Task AppendAsync(DomainEvent domainEvent)
-        {
-            if (_domainEvents == null) _domainEvents = await _domainEventPersister.GetAsync();
-            var domainEventsTemp = _domainEvents.ToList();
-            domainEventsTemp.Add(domainEvent);
-            _domainEvents = domainEventsTemp;
-            await _domainEventPersister.Save(domainEventsTemp);
-        }
-
-        public async Task<T> LoadAsync<T>(Guid commandEntityId) where T : Entity, new()
-        {
-            var entity = new T();
-            if (_domainEvents == null) _domainEvents = await _domainEventPersister.GetAsync();
-            var domainEventsForEntity = _domainEvents.Where(domainEvent => domainEvent.EntityId == commandEntityId);
-            foreach (var domainEvent in domainEventsForEntity)
-            {
-                entity = Apply(entity, domainEvent);
-            }
-
-            SetId(entity, commandEntityId);
-
-            return entity;
-        }
-
-        private void SetId<T>(T entity, Guid commandEntityId) where T : Entity, new()
-        {
-            var entityType = entity.GetType();
-            var entityId = entityType.GetProperties().First(prop => prop.Name == nameof(Entity.Id));
-            entityId.SetValue(entity, commandEntityId);
-        }
-
-        private T Apply<T>(T entity, DomainEvent domainEvent) where T : Entity, new()
+        public T Apply<T>(T entity, DomainEvent domainEvent)
         {
             var eventType = domainEvent.GetType();
             var eventProperties = eventType.GetProperties().Where(eventProp => eventProp.Name != nameof(DomainEvent.Id) && eventProp.Name != nameof(DomainEvent.EntityId));
@@ -101,6 +46,13 @@ namespace Adapters.Framework.EventStores
             return deserializeObject;
         }
 
+        public void SetId<T>(T entity, Guid commandEntityId)
+        {
+            var entityType = entity.GetType();
+            var entityId = entityType.GetProperties().First(prop => prop.Name == nameof(Entity.Id));
+            entityId.SetValue(entity, commandEntityId);
+        }
+
         private void MergeOnto(JObject target, object source)
         {
             var dynamicObjectOldJson = JObject.Parse(JsonConvert.SerializeObject(source));
@@ -123,13 +75,5 @@ namespace Adapters.Framework.EventStores
             dictionary.Add(pathSplitted[0], dynamicObject);
             return dictionary;
         }
-
-        public async Task<IEnumerable<DomainEvent>> GetEvents()
-        {
-            if (_domainEvents == null) _domainEvents = await _domainEventPersister.GetAsync();
-            return _domainEvents;
-        }
-
-
     }
 }

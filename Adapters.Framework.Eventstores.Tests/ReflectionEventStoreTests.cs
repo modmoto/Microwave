@@ -20,7 +20,7 @@ namespace Adapters.Framework.Eventstores.Tests
             var persister = new Mock<IDomainEventPersister>();
             persister.Setup(per => per.GetAsync()).ReturnsAsync(domainEvents);
 
-            var eventStore = new ReflectionEventStore(persister.Object);
+            var eventStore = new EventStore(persister.Object, new EventSourcingAtributeStrategy());
             var testEntity = await eventStore.LoadAsync<TestReflectionEntity>(entityId);
 
             Assert.Equal("NewName", testEntity.Name);
@@ -36,7 +36,7 @@ namespace Adapters.Framework.Eventstores.Tests
             var persister = new Mock<IDomainEventPersister>();
             persister.Setup(per => per.GetAsync()).ReturnsAsync(domainEvents);
 
-            var eventStore = new ReflectionEventStore(persister.Object);
+            var eventStore = new EventStore(persister.Object, new EventSourcingAtributeStrategy());
             var testEntity = await eventStore.LoadAsync<TestReflectionEntity>(entityId);
 
             Assert.Equal("OldName", testEntity.Name);
@@ -52,7 +52,7 @@ namespace Adapters.Framework.Eventstores.Tests
             var persister = new Mock<IDomainEventPersister>();
             persister.Setup(per => per.GetAsync()).ReturnsAsync(domainEvents);
 
-            var eventStore = new ReflectionEventStore(persister.Object);
+            var eventStore = new EventStore(persister.Object, new EventSourcingAtributeStrategy());
             var testEntity = await eventStore.LoadAsync<TestNestedEntity>(entityId);
 
             Assert.Equal("OldName", testEntity.Name);
@@ -70,7 +70,7 @@ namespace Adapters.Framework.Eventstores.Tests
             var persister = new Mock<IDomainEventPersister>();
             persister.Setup(per => per.GetAsync()).ReturnsAsync(domainEvents);
 
-            var eventStore = new ReflectionEventStore(persister.Object);
+            var eventStore = new EventStore(persister.Object, new EventSourcingAtributeStrategy());
             var testEntity = await eventStore.LoadAsync<TestNestedEntity>(entityId);
 
             Assert.Equal("NewName of street", testEntity.Name);
@@ -88,7 +88,7 @@ namespace Adapters.Framework.Eventstores.Tests
             var persister = new Mock<IDomainEventPersister>();
             persister.Setup(per => per.GetAsync()).ReturnsAsync(domainEvents);
 
-            var eventStore = new ReflectionEventStore(persister.Object);
+            var eventStore = new EventStore(persister.Object, new EventSourcingAtributeStrategy());
             var testEntity = await eventStore.LoadAsync<TestNestedEntity>(entityId);
 
             Assert.Equal("TheLastName", testEntity.LastName);

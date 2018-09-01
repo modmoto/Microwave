@@ -21,7 +21,7 @@ namespace Adapters.Framework.Eventstores.Tests
             var persister = new Mock<IDomainEventPersister>();
             persister.Setup(per => per.GetAsync()).ReturnsAsync(default(IEnumerable<DomainEvent>));
 
-            var eventStore = new ApplyUsingEventStore(persister.Object);
+            var eventStore = new EventStore(persister.Object, new EventSourcingAtributeStrategy());
             await eventStore.AppendAsync(domainEvents);
 
             Assert.Equal(2, (await eventStore.GetEvents()).Count());
@@ -36,7 +36,7 @@ namespace Adapters.Framework.Eventstores.Tests
             var persister = new Mock<IDomainEventPersister>();
             persister.Setup(per => per.GetAsync()).ReturnsAsync(domainEvents);
 
-            var eventStore = new ApplyUsingEventStore(persister.Object);
+            var eventStore = new EventStore(persister.Object, new EventSourcingApplyStrategy());
             await eventStore.AppendAsync(domainEvents);
 
             Assert.Equal(4, (await eventStore.GetEvents()).Count());
@@ -50,14 +50,14 @@ namespace Adapters.Framework.Eventstores.Tests
             var persister = new Mock<IDomainEventPersister>();
             persister.Setup(per => per.GetAsync()).ReturnsAsync(new List<DomainEvent>());
 
-            var eventStore = new ApplyUsingEventStore(persister.Object);
+            var eventStore = new EventStore(persister.Object, new EventSourcingApplyStrategy());
             await eventStore.AppendAsync(testEvent);
 
             Assert.Equal(1, (await eventStore.GetEvents()).Count());
         }
 
         [Fact]
-        public async Task LoadEntity()
+        public async Task ApplyStrategy()
         {
             var entityId = Guid.NewGuid();
             var domainEvents = new List<DomainEvent> { new TestCreatedEvent(entityId, "OldName"), new TestChangeNameEvent(entityId, "NewName")};
@@ -65,7 +65,7 @@ namespace Adapters.Framework.Eventstores.Tests
             var persister = new Mock<IDomainEventPersister>();
             persister.Setup(per => per.GetAsync()).ReturnsAsync(domainEvents);
 
-            var eventStore = new ApplyUsingEventStore(persister.Object);
+            var eventStore = new EventStore(persister.Object, new EventSourcingApplyStrategy());
             var testEntity = await eventStore.LoadAsync<TestEntity>(entityId);
 
             Assert.Equal("NewName", testEntity.Name);

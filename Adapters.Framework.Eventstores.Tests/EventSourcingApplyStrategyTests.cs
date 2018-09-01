@@ -1,40 +1,46 @@
 using System;
+using Adapters.Framework.EventStores;
+using Domain.Framework;
 using Xunit;
 
-namespace Domain.Framework.Tests
+namespace Adapters.Framework.Eventstores.Tests
 {
-    public class EntityTests
+    public class EventSourcingApplyStrategyTests
     {
         [Fact]
         public void ApplyGenericMethod()
         {
-            var testUser = (Entity) new TestUser();
+            var testUser = new TestUser();
             var newGuid = Guid.NewGuid();
-            testUser.Apply(new TestUserCreatedEvent(newGuid));
+            var eventSourcingApplyStrategy = new EventSourcingApplyStrategy();
+            eventSourcingApplyStrategy.Apply(testUser, new TestUserCreatedEvent(newGuid));
             Assert.Equal(newGuid, testUser.Id);
         }
 
         [Fact]
         public void ApplyGenericMethod_NoApplyMethodFound()
         {
-            var testUser = (Entity) new TestUser();
-            testUser.Apply(new TestUserNeverDidThatEvent(Guid.NewGuid()));
+            var testUser = new TestUser();
+            var eventSourcingApplyStrategy = new EventSourcingApplyStrategy();
+            eventSourcingApplyStrategy.Apply(testUser, new TestUserNeverDidThatEvent(Guid.NewGuid()));
             Assert.Equal(new Guid(), testUser.Id);
         }
 
         [Fact]
         public void ApplyGenericMethod_ApplyMethodWithNotParameter()
         {
-            var testUser = (Entity) new TestUserWithNoApplyMethod();
-            testUser.Apply(new TestUserCreatedEvent(Guid.NewGuid()));
+            var testUser = new TestUserWithNoApplyMethod();
+            var eventSourcingApplyStrategy = new EventSourcingApplyStrategy();
+            eventSourcingApplyStrategy.Apply(testUser, new TestUserCreatedEvent(Guid.NewGuid()));
             Assert.Equal(new Guid(), testUser.Id);
         }
 
         [Fact]
         public void ApplyGenericMethod_ApplyMethodWithMultipleApplyParameters()
         {
-            var testUser = (Entity) new TestUserMultipleNoApplyMethod();
-            testUser.Apply(new TestUserCreatedEvent(Guid.NewGuid()));
+            var testUser = new TestUserMultipleNoApplyMethod();
+            var eventSourcingApplyStrategy = new EventSourcingApplyStrategy();
+            eventSourcingApplyStrategy.Apply(testUser, new TestUserCreatedEvent(Guid.NewGuid()));
             Assert.Equal(new Guid(), testUser.Id);
         }
     }
@@ -69,6 +75,10 @@ namespace Domain.Framework.Tests
 
     internal class TestUser : Entity
     {
+        public TestUser()
+        {
+        }
+
         public void Apply(TestUserCreatedEvent domainEvent)
         {
             Id = domainEvent.EntityId;

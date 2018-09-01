@@ -15,7 +15,7 @@ namespace DependencyInjection.Framework.Tests
         [Fact]
         public async Task AddAllLoadedQuerries()
         {
-            var eventStore = new ApplyUsingEventStore(new DomainEventPersister());
+            var eventStore = new EventStore(new DomainEventPersister(), new EventSourcingApplyStrategy());
             var entityId = Guid.NewGuid();
             var domainEvents = new List<DomainEvent>
             {

@@ -7,14 +7,16 @@ using Domain.Framework;
 
 namespace Adapters.Framework.EventStores
 {
-    public class ApplyUsingEventStore : IEventStore
+    public class EventStore : IEventStore
     {
         private readonly IDomainEventPersister _domainEventPersister;
+        private readonly IEventSourcingStrategy _eventSourcingStrategy;
         private IEnumerable<DomainEvent> _domainEvents;
 
-        public ApplyUsingEventStore(IDomainEventPersister domainEventPersister)
+        public EventStore(IDomainEventPersister domainEventPersister, IEventSourcingStrategy eventSourcingStrategy)
         {
             _domainEventPersister = domainEventPersister;
+            _eventSourcingStrategy = eventSourcingStrategy;
         }
 
         public async Task AppendAsync(IEnumerable<DomainEvent> domainEvents)
@@ -47,8 +49,10 @@ namespace Adapters.Framework.EventStores
             var domainEventsForEntity = _domainEvents.Where(domainEvent => domainEvent.EntityId == commandEntityId);
             foreach (var domainEvent in domainEventsForEntity)
             {
-                entity.Apply(domainEvent);
+                entity = _eventSourcingStrategy.Apply(entity, domainEvent);
             }
+
+            _eventSourcingStrategy.SetId(entity, commandEntityId);
 
             return entity;
         }
