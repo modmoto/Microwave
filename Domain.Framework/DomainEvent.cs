@@ -10,9 +10,8 @@ namespace Domain.Framework
             Id = Guid.NewGuid();
         }
 
-        // Todo find a way to fill them from json parsing
-        public Guid Id { get; set; }
+        public Guid Id { get; private set;  }
         [ActualPropertyName(nameof(Entity.Id))]
-        public Guid EntityId { get; set; }
+        public Guid EntityId { get; private set;  }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Adapters.Json.ObjectPersistences;
 using Domain.Framework;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -40,8 +41,12 @@ namespace Adapters.Framework.EventStores
                 }
             }
 
-            MergeOnto(entityJson, eventJson);
-            var deserializeObject = entityJson.ToObject<T>();
+            entityJson.Merge(eventJson, new JsonMergeSettings
+            {
+                MergeArrayHandling = MergeArrayHandling.Merge
+            });
+
+            var deserializeObject = entityJson.ToObject<T>(JsonSerializer.Create(new JsonSerializerSettings { ContractResolver = new PrivateSetterContractResolver() }));
             return deserializeObject;
         }
 

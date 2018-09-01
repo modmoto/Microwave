@@ -5,6 +5,7 @@ using Adapters.Framework.EventStores;
 using Application.Framework;
 using Domain.Framework;
 using Moq;
+using Newtonsoft.Json;
 using Xunit;
 
 namespace Adapters.Framework.Eventstores.Tests
@@ -178,8 +179,7 @@ namespace Adapters.Framework.Eventstores.Tests
 
     internal class TestReflectionEntity : Entity
     {
-        //TODO make this private set shit better
-        public string Name { get; set; }
+        public string Name { get; private set; }
     }
 
     internal class TestNestedEntity : Entity
@@ -194,10 +194,9 @@ namespace Adapters.Framework.Eventstores.Tests
         {
         }
 
-        //TODO make this private set shit better
-        public string Name { get; set; }
-        public string LastName { get; set; }
-        public Adress Adress { get; set; }
+        public string Name { get; private set; }
+        public string LastName { get; private set;  }
+        public Adress Adress { get; private set;  }
     }
 
     internal class Adress
@@ -208,7 +207,7 @@ namespace Adapters.Framework.Eventstores.Tests
             Number = number;
         }
 
-        public string Street { get; set; }
-        public int Number { get; set; }
+        public string Street { get; private set;  }
+        public int Number { get; private set;  }
     }
 }
