@@ -5,11 +5,11 @@ using Newtonsoft.Json;
 
 namespace Adapters.Json.ObjectPersistences
 {
-    public class ObjectPersister<T> : IObjectPersister<T>
+    public class JsonFileObjectPersister<T> : IObjectPersister<T>
     {
         private readonly string _filePath;
 
-        public ObjectPersister()
+        public JsonFileObjectPersister()
         {
             if (!Directory.Exists("JsonDB")) Directory.CreateDirectory("JsonDB");
             _filePath = $"JsonDB/DB_{typeof(T).Name}_{typeof(T).FullName}.json";

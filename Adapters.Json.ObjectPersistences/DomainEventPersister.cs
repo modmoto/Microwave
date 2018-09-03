@@ -4,7 +4,7 @@ using Domain.Framework;
 
 namespace Adapters.Json.ObjectPersistences
 {
-    public class DomainEventPersister : ObjectPersister<IEnumerable<DomainEvent>>, IDomainEventPersister
+    public class DomainEventPersister : JsonFileObjectPersister<IEnumerable<DomainEvent>>, IDomainEventPersister
     {
     }
 }
