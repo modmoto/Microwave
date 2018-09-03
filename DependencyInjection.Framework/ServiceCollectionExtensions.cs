@@ -2,18 +2,19 @@
 using System.Linq;
 using System.Reflection;
 using Adapters.Framework.EventStores;
-using Adapters.Json.ObjectPersistences;
 using Application.Framework;
+using EventStore.ClientAPI;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace DependencyInjection.Framework
 {
     public static class ServiceCollectionExtensions
     {
-        public static IServiceCollection AddAllLoadedQuerries(this IServiceCollection collection, Assembly assembly)
+        public static IServiceCollection AddAllLoadedQuerries(this IServiceCollection collection, Assembly assembly,
+            IEventStoreConnection conection, EventStoreConfig config)
         {
             var querries = assembly.GetTypes().Where(t => t.BaseType == typeof(Querry));
-            var eventStore = new EventStore(new DomainEventPersister(), new EventSourcingApplyStrategy());
+            var eventStore = new EventStoreFacade(new EventSourcingApplyStrategy(), conection, config);
             var domainEvents = eventStore.GetEvents().Result.ToList();
             foreach (var querryType in querries)
             {

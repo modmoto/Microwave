@@ -4,57 +4,60 @@ using System.Threading.Tasks;
 using Adapters.Framework.EventStores;
 using Application.Framework;
 using Domain.Framework;
+using EventStore.ClientAPI;
 using Moq;
-using Newtonsoft.Json;
 using Xunit;
 
 namespace Adapters.Framework.Eventstores.Tests
 {
-    public class ReflectionEventStoreTests
+    public class ReflectionEventStoreStrategyTests
     {
         [Fact]
-        public async Task LoadEntity()
+        public void LoadEntity()
         {
             var entityId = Guid.NewGuid();
             var domainEvents = new List<DomainEvent> { new TestCreatedReflectionEvent(entityId, "OldName"), new TestChangeNameReflectionEvent(entityId, "NewName")};
 
-            var persister = new Mock<IDomainEventPersister>();
-            persister.Setup(per => per.GetAsync()).ReturnsAsync(domainEvents);
-
-            var eventStore = new EventStore(persister.Object, new EventSourcingAtributeStrategy());
-            var testEntity = await eventStore.LoadAsync<TestReflectionEntity>(entityId);
+            var eventSourcingApplyStrategy = new EventSourcingAtributeStrategy();
+            var testEntity = new TestReflectionEntity();
+            foreach (var domainEvent in domainEvents)
+            {
+                testEntity = eventSourcingApplyStrategy.Apply(testEntity, domainEvent);
+            }
 
             Assert.Equal("NewName", testEntity.Name);
             Assert.Equal(entityId, testEntity.Id);
         }
 
         [Fact]
-        public async Task LoadEntity_OldUnusedPropIsCalled()
+        public void LoadEntity_OldUnusedPropIsCalled()
         {
             var entityId = Guid.NewGuid();
             var domainEvents = new List<DomainEvent> { new TestCreatedReflectionEvent(entityId, "OldName"), new TestCreatedReflectionEventOldLastNameEvent(entityId, "Old entity Name")};
 
-            var persister = new Mock<IDomainEventPersister>();
-            persister.Setup(per => per.GetAsync()).ReturnsAsync(domainEvents);
-
-            var eventStore = new EventStore(persister.Object, new EventSourcingAtributeStrategy());
-            var testEntity = await eventStore.LoadAsync<TestReflectionEntity>(entityId);
+            var eventSourcingApplyStrategy = new EventSourcingAtributeStrategy();
+            var testEntity = new TestReflectionEntity();
+            foreach (var domainEvent in domainEvents)
+            {
+                testEntity = eventSourcingApplyStrategy.Apply(testEntity, domainEvent);
+            }
 
             Assert.Equal("OldName", testEntity.Name);
             Assert.Equal(entityId, testEntity.Id);
         }
 
         [Fact]
-        public async Task LoadEntity_CascadingProp()
+        public void LoadEntity_CascadingProp()
         {
             var entityId = Guid.NewGuid();
             var domainEvents = new List<DomainEvent> { new TestCreatedNestedEvent(entityId, "OldName", new Adress("OldStreet", 12)), new TestStreetChangedEvent(entityId, "New Street Name")};
 
-            var persister = new Mock<IDomainEventPersister>();
-            persister.Setup(per => per.GetAsync()).ReturnsAsync(domainEvents);
-
-            var eventStore = new EventStore(persister.Object, new EventSourcingAtributeStrategy());
-            var testEntity = await eventStore.LoadAsync<TestNestedEntity>(entityId);
+            var eventSourcingApplyStrategy = new EventSourcingAtributeStrategy();
+            var testEntity = new TestNestedEntity();
+            foreach (var domainEvent in domainEvents)
+            {
+                testEntity = eventSourcingApplyStrategy.Apply(testEntity, domainEvent);
+            }
 
             Assert.Equal("OldName", testEntity.Name);
             Assert.Equal(entityId, testEntity.Id);
@@ -63,16 +66,17 @@ namespace Adapters.Framework.Eventstores.Tests
         }
 
         [Fact]
-        public async Task LoadEntity_OverridingPropertyByAccident()
+        public void LoadEntity_OverridingPropertyByAccident()
         {
             var entityId = Guid.NewGuid();
             var domainEvents = new List<DomainEvent> { new TestCreatedNestedEvent(entityId, "OldName", new Adress("OldStreet", 12)), new TestStreetChangedEventWithError(entityId, "NewName of street", 15)};
 
-            var persister = new Mock<IDomainEventPersister>();
-            persister.Setup(per => per.GetAsync()).ReturnsAsync(domainEvents);
-
-            var eventStore = new EventStore(persister.Object, new EventSourcingAtributeStrategy());
-            var testEntity = await eventStore.LoadAsync<TestNestedEntity>(entityId);
+            var eventSourcingApplyStrategy = new EventSourcingAtributeStrategy();
+            var testEntity = new TestNestedEntity();
+            foreach (var domainEvent in domainEvents)
+            {
+                testEntity = eventSourcingApplyStrategy.Apply(testEntity, domainEvent);
+            }
 
             Assert.Equal("NewName of street", testEntity.Name);
             Assert.Equal(entityId, testEntity.Id);
@@ -81,16 +85,17 @@ namespace Adapters.Framework.Eventstores.Tests
         }
 
         [Fact]
-        public async Task LoadEntity_OverridingProperty_ThatStillFillsOtherProperty()
+        public void  LoadEntity_OverridingProperty_ThatStillFillsOtherProperty()
         {
             var entityId = Guid.NewGuid();
             var domainEvents = new List<DomainEvent> { new TestCreatedReflectionEvent(entityId, "ThePreName"), new TestCreatedReflectionEventLastNameEventWithAccidentlyOverridingOtherName(entityId, "TheLastName")};
 
-            var persister = new Mock<IDomainEventPersister>();
-            persister.Setup(per => per.GetAsync()).ReturnsAsync(domainEvents);
-
-            var eventStore = new EventStore(persister.Object, new EventSourcingAtributeStrategy());
-            var testEntity = await eventStore.LoadAsync<TestNestedEntity>(entityId);
+            var eventSourcingApplyStrategy = new EventSourcingAtributeStrategy();
+            var testEntity = new TestNestedEntity();
+            foreach (var domainEvent in domainEvents)
+            {
+                testEntity = eventSourcingApplyStrategy.Apply(testEntity, domainEvent);
+            }
 
             Assert.Equal("TheLastName", testEntity.LastName);
             Assert.Equal("ThePreName", testEntity.Name);

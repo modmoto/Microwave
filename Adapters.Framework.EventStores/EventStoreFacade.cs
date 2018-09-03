@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Adapters.Json.ObjectPersistences;
 using Application.Framework;
 using Domain.Framework;
 using EventStore.ClientAPI;
@@ -10,35 +11,34 @@ using Newtonsoft.Json;
 
 namespace Adapters.Framework.EventStores
 {
-    public class EventStore : IEventStore
+    public class EventStoreFacade : IEventStore
     {
         private readonly IEventSourcingStrategy _eventSourcingStrategy;
         private readonly IEventStoreConnection _eventStoreConnection;
-        private readonly IEventStoreConfig _eventStoreConfig;
+        private readonly EventStoreConfig _realEventStoreConfig;
 
-        public EventStore(IEventSourcingStrategy eventSourcingStrategy, IEventStoreConnection eventStoreConnection, IEventStoreConfig eventStoreConfig)
+        public EventStoreFacade(IEventSourcingStrategy eventSourcingStrategy, IEventStoreConnection eventStoreConnection, EventStoreConfig realEventStoreConfig)
         {
             _eventSourcingStrategy = eventSourcingStrategy;
             _eventStoreConnection = eventStoreConnection;
-            _eventStoreConfig = eventStoreConfig;
+            _realEventStoreConfig = realEventStoreConfig;
             _eventStoreConnection.ConnectAsync();
         }
 
         public async Task AppendAsync(IEnumerable<DomainEvent> domainEvents)
         {
-            foreach (var domainEvent in domainEvents)
-            {
-                var domainEventSerialized = JsonConvert.SerializeObject(domainEvent);
-                await _eventStoreConnection.AppendToStreamAsync(_eventStoreConfig.EventStream, ExpectedVersion.Any,
-                    new EventData(Guid.NewGuid(), nameof(domainEvent.GetType), true, Encoding.UTF8.GetBytes(domainEventSerialized),
-                        null));
-            }
+            JsonSerializerSettings settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All, ContractResolver = new PrivateSetterContractResolver() };
+            var convertedElements = domainEvents.Select(eve => new EventData(Guid.NewGuid(), nameof(eve.GetType), true,
+                Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(eve, settings)), null));
+            await _eventStoreConnection.AppendToStreamAsync(_realEventStoreConfig.EventStream, ExpectedVersion.Any,
+                    convertedElements);
         }
 
         public async Task AppendAsync(DomainEvent domainEvent)
         {
-            var domainEventSerialized = JsonConvert.SerializeObject(domainEvent);
-            await _eventStoreConnection.AppendToStreamAsync(_eventStoreConfig.EventStream, ExpectedVersion.Any,
+            JsonSerializerSettings settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All, ContractResolver = new PrivateSetterContractResolver() };
+            var domainEventSerialized = JsonConvert.SerializeObject(domainEvent, settings);
+            await _eventStoreConnection.AppendToStreamAsync(_realEventStoreConfig.EventStream, ExpectedVersion.Any,
                 new EventData(Guid.NewGuid(), nameof(domainEvent.GetType), true, Encoding.UTF8.GetBytes(domainEventSerialized),
                     null));
         }
@@ -58,7 +58,7 @@ namespace Adapters.Framework.EventStores
 
         public async Task<IEnumerable<DomainEvent>> GetEvents(int from = 0, int to = 100)
         {
-            var streamEventsSlice = await _eventStoreConnection.ReadStreamEventsForwardAsync(_eventStoreConfig.EventStream, from, to, true);
+            var streamEventsSlice = await _eventStoreConnection.ReadStreamEventsForwardAsync(_realEventStoreConfig.EventStream, from, to, true);
             if (streamEventsSlice.IsEndOfStream) return ToDomainEventList(streamEventsSlice.Events);
             var domainEvents = await GetEvents(to + 1, to + 101);
             var domainEventsTemp = domainEvents.ToList();
@@ -69,17 +69,13 @@ namespace Adapters.Framework.EventStores
 
         private IEnumerable<DomainEvent> ToDomainEventList(ResolvedEvent[] events)
         {
+            JsonSerializerSettings settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All, ContractResolver = new PrivateSetterContractResolver() };
             foreach (var resolvedEvent in events)
             {
                 var eventData = Encoding.UTF8.GetString(resolvedEvent.Event.Data);
-                var deserializeObject = JsonConvert.DeserializeObject<DomainEvent>(eventData);
+                var deserializeObject = JsonConvert.DeserializeObject<DomainEvent>(eventData, settings);
                 yield return deserializeObject;
             }
         }
-    }
-
-    public interface IEventStoreConfig
-    {
-        string EventStream { get; set; }
     }
 }

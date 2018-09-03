@@ -2,9 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Adapters.Framework.EventStores;
-using Adapters.Json.ObjectPersistences;
 using Application.Framework;
 using Domain.Framework;
+using EventStore.ClientAPI;
+using EventStore.ClientAPI.SystemData;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
@@ -15,7 +16,11 @@ namespace DependencyInjection.Framework.Tests
         [Fact]
         public async Task AddAllLoadedQuerries()
         {
-            var eventStore = new EventStore(new DomainEventPersister(), new EventSourcingApplyStrategy());
+            var eventStoreConnection = EventStoreConnection.Create(new Uri("tcp://admin:changeit@localhost:1113"), "MyTestCon");
+            await eventStoreConnection.ConnectAsync();
+            await eventStoreConnection.DeleteStreamAsync(new TestEventStoreConfig().EventStream, ExpectedVersion.Any,
+                new UserCredentials("admin", "changeit"));
+            var eventStore = new EventStoreFacade(new EventSourcingApplyStrategy(), eventStoreConnection, new TestEventStoreConfig());
             var entityId = Guid.NewGuid();
             var domainEvents = new List<DomainEvent>
             {
@@ -26,7 +31,7 @@ namespace DependencyInjection.Framework.Tests
             await eventStore.AppendAsync(domainEvents);
 
             var serviceCollection = (IServiceCollection) new ServiceCollection();
-            serviceCollection.AddAllLoadedQuerries(typeof(TestQuerry).Assembly);
+            serviceCollection.AddAllLoadedQuerries(typeof(TestQuerry).Assembly, eventStoreConnection, new TestEventStoreConfig());
             var buildServiceProvider = serviceCollection.BuildServiceProvider();
             var querryInDi = (TestQuerry) buildServiceProvider.GetService(typeof(TestQuerry));
 

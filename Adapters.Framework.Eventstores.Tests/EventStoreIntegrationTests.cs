@@ -3,43 +3,39 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Adapters.Framework.EventStores;
-using Application.Framework;
 using Domain.Framework;
-using Moq;
+using EventStore.ClientAPI;
+using EventStore.ClientAPI.SystemData;
 using Xunit;
 
+[assembly: CollectionBehavior(MaxParallelThreads = 1)]
 namespace Adapters.Framework.Eventstores.Tests
 {
-    public class EventStoreTests
+    public class EventStoreIntegrationTests : IAsyncLifetime
     {
+        private IEventStoreConnection _eventStoreConnection;
+        public async Task InitializeAsync()
+        {
+            _eventStoreConnection = EventStoreConnection.Create(new Uri("tcp://admin:changeit@localhost:1113"), "MyTestCon");
+            await _eventStoreConnection.ConnectAsync();
+            await _eventStoreConnection.DeleteStreamAsync(new TestEventStoreConfig().EventStream, ExpectedVersion.Any, new UserCredentials("admin", "changeit"));
+        }
+
+        public Task DisposeAsync()
+        {
+            return Task.CompletedTask;
+        }
+
         [Fact]
         public async Task AppendAsync_List_NoEventsPersisted()
         {
             var entityId = Guid.NewGuid();
             var domainEvents = new List<DomainEvent> { new TestEvent(entityId, "TestSession1"), new TestEvent(entityId, "TestSession2")};
 
-            var persister = new Mock<IDomainEventPersister>();
-            persister.Setup(per => per.GetAsync()).ReturnsAsync(default(IEnumerable<DomainEvent>));
-
-            var eventStore = new EventStore(persister.Object, new EventSourcingAtributeStrategy());
+            var eventStore = new EventStoreFacade(new EventSourcingAtributeStrategy(), _eventStoreConnection, new TestEventStoreConfig());
             await eventStore.AppendAsync(domainEvents);
 
             Assert.Equal(2, (await eventStore.GetEvents()).Count());
-        }
-
-        [Fact]
-        public async Task AppendAsync_List_EventsAllreadyPresent()
-        {
-            var entityId = Guid.NewGuid();
-            var domainEvents = new List<DomainEvent> { new TestEvent(entityId, "TestSession1"), new TestEvent(entityId, "TestSession2")};
-
-            var persister = new Mock<IDomainEventPersister>();
-            persister.Setup(per => per.GetAsync()).ReturnsAsync(domainEvents);
-
-            var eventStore = new EventStore(persister.Object, new EventSourcingApplyStrategy());
-            await eventStore.AppendAsync(domainEvents);
-
-            Assert.Equal(4, (await eventStore.GetEvents()).Count());
         }
 
         [Fact]
@@ -47,10 +43,7 @@ namespace Adapters.Framework.Eventstores.Tests
         {
             var testEvent = new TestEvent(Guid.NewGuid(), "TestSession2");
 
-            var persister = new Mock<IDomainEventPersister>();
-            persister.Setup(per => per.GetAsync()).ReturnsAsync(new List<DomainEvent>());
-
-            var eventStore = new EventStore(persister.Object, new EventSourcingApplyStrategy());
+            var eventStore = new EventStoreFacade(new EventSourcingApplyStrategy(), _eventStoreConnection, new TestEventStoreConfig());
             await eventStore.AppendAsync(testEvent);
 
             Assert.Equal(1, (await eventStore.GetEvents()).Count());
@@ -62,13 +55,37 @@ namespace Adapters.Framework.Eventstores.Tests
             var entityId = Guid.NewGuid();
             var domainEvents = new List<DomainEvent> { new TestCreatedEvent(entityId, "OldName"), new TestChangeNameEvent(entityId, "NewName")};
 
-            var persister = new Mock<IDomainEventPersister>();
-            persister.Setup(per => per.GetAsync()).ReturnsAsync(domainEvents);
-
-            var eventStore = new EventStore(persister.Object, new EventSourcingApplyStrategy());
+            var eventStore = new EventStoreFacade(new EventSourcingApplyStrategy(), _eventStoreConnection, new TestEventStoreConfig());
+            await eventStore.AppendAsync(domainEvents);
             var testEntity = await eventStore.LoadAsync<TestEntity>(entityId);
 
             Assert.Equal("NewName", testEntity.Name);
+            Assert.Equal(entityId, testEntity.Id);
+        }
+
+        [Fact]
+        public async Task GetEventsMoreThan100()
+        {
+            await Task.Delay(1000);
+
+            var eventStore = new EventStoreFacade(new EventSourcingApplyStrategy(), _eventStoreConnection, new TestEventStoreConfig());
+            var entityId = Guid.NewGuid();
+
+            var testCreatedEvent = new TestCreatedEvent(entityId, "OldName");
+
+            var domainEvents = new List<DomainEvent>();
+            domainEvents.Add(testCreatedEvent);
+
+            for (int i = 0; i <= 120; i++)
+            {
+                var testChangeNameEvent = new TestChangeNameEvent(entityId, $"NewName{i}");
+                domainEvents.Add(testChangeNameEvent);
+            }
+
+            await eventStore.AppendAsync(domainEvents);
+            var testEntity = await eventStore.LoadAsync<TestEntity>(entityId);
+
+            Assert.Equal("NewName120", testEntity.Name);
             Assert.Equal(entityId, testEntity.Id);
         }
     }
