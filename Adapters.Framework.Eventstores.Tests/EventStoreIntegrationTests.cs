@@ -35,18 +35,19 @@ namespace Adapters.Framework.Eventstores.Tests
             var eventStore = new EventStoreFacade(new EventSourcingAtributeStrategy(), _eventStoreConnection, new TestEventStoreConfig());
             await eventStore.AppendAsync(domainEvents);
 
-            Assert.Equal(2, (await eventStore.GetEvents()).Count());
+            Assert.Equal(2, (await eventStore.GetEvents(entityId)).Count());
         }
 
         [Fact]
         public async Task AppendAsync_SingleEvent()
         {
-            var testEvent = new TestEvent(Guid.NewGuid(), "TestSession2");
+            var entityId = Guid.NewGuid();
+            var testEvent = new TestEvent(entityId, "TestSession2");
 
             var eventStore = new EventStoreFacade(new EventSourcingApplyStrategy(), _eventStoreConnection, new TestEventStoreConfig());
             await eventStore.AppendAsync(testEvent);
 
-            Assert.Equal(1, (await eventStore.GetEvents()).Count());
+            Assert.Equal(1, (await eventStore.GetEvents(entityId)).Count());
         }
 
         [Fact]

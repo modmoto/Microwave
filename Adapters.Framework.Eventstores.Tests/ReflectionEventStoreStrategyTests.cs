@@ -1,11 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using Adapters.Framework.EventStores;
-using Application.Framework;
 using Domain.Framework;
-using EventStore.ClientAPI;
-using Moq;
 using Xunit;
 
 namespace Adapters.Framework.Eventstores.Tests

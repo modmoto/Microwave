@@ -3,15 +3,18 @@
     public abstract class EventStoreConfig
     {
         public abstract string EventStream { get; }
+        public abstract string EntityStream { get; }
     }
 
     public class RealEventStoreConfig : EventStoreConfig
     {
-        public override string EventStream => "MyRealStream";
+        public override string EventStream => "SeasonEvents";
+        public override string EntityStream => "Season";
     }
 
     public class TestEventStoreConfig : EventStoreConfig
     {
-        public override string EventStream => "MyTestStream";
+        public override string EventStream => "SeasonEvents_INT";
+        public override string EntityStream => "Season_INT";
     }
 }

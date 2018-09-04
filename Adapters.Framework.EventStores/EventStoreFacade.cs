@@ -45,10 +45,9 @@ namespace Adapters.Framework.EventStores
 
         public async Task<T> LoadAsync<T>(Guid commandEntityId) where T : new()
         {
-            var events = await GetEvents();
+            var events = await GetEvents(commandEntityId);
             var entity = new T();
-            var domainEventsForEntity = events.Where(domainEvent => domainEvent.EntityId == commandEntityId);
-            foreach (var domainEvent in domainEventsForEntity)
+            foreach (var domainEvent in events)
             {
                 entity = _eventSourcingStrategy.Apply(entity, domainEvent);
             }
@@ -56,11 +55,20 @@ namespace Adapters.Framework.EventStores
             return entity;
         }
 
-        public async Task<IEnumerable<DomainEvent>> GetEvents(int from = 0, int to = 100)
+        public async Task<IEnumerable<DomainEvent>> GetEvents(Guid entityId = default(Guid), int from = 0, int to = 100)
         {
-            var streamEventsSlice = await _eventStoreConnection.ReadStreamEventsForwardAsync(_realEventStoreConfig.EventStream, from, to, true);
+            StreamEventsSlice streamEventsSlice;
+            if (entityId == default(Guid))
+            {
+                streamEventsSlice = await _eventStoreConnection.ReadStreamEventsForwardAsync($"{_realEventStoreConfig.EntityStream}-{entityId}", from, to, true);
+            }
+            else
+            {
+                streamEventsSlice = await _eventStoreConnection.ReadStreamEventsForwardAsync(_realEventStoreConfig.EventStream, from, to, true);
+            }
+
             if (streamEventsSlice.IsEndOfStream) return ToDomainEventList(streamEventsSlice.Events);
-            var domainEvents = await GetEvents(to + 1, to + 101);
+            var domainEvents = await GetEvents(entityId, to + 1, to + 101);
             var domainEventsTemp = domainEvents.ToList();
             domainEventsTemp.AddRange(ToDomainEventList(streamEventsSlice.Events));
             return domainEventsTemp;
