@@ -30,7 +30,10 @@ namespace OnlineLeagueBackend
 
             services.AddTransient<AllSeasonsQuerryHandler>();
 
-            services.AddAllLoadedQuerries(typeof(AllSeasonsQuery).Assembly);
+            var buildServiceProvider = services.BuildServiceProvider();
+
+            var eventStore = (IEventStore) buildServiceProvider.GetService(typeof(IEventStore));
+            services.AddAllLoadedQuerries(typeof(AllSeasonsQuery).Assembly, eventStore);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -60,11 +60,11 @@ namespace Adapters.Framework.EventStores
             StreamEventsSlice streamEventsSlice;
             if (entityId == default(Guid))
             {
-                streamEventsSlice = await _eventStoreConnection.ReadStreamEventsForwardAsync($"{_realEventStoreConfig.EntityStream}-{entityId}", from, to, true);
+                streamEventsSlice = await _eventStoreConnection.ReadStreamEventsForwardAsync(_realEventStoreConfig.EventStream, from, to, true);
             }
             else
             {
-                streamEventsSlice = await _eventStoreConnection.ReadStreamEventsForwardAsync(_realEventStoreConfig.EventStream, from, to, true);
+                streamEventsSlice = await _eventStoreConnection.ReadStreamEventsForwardAsync($"{_realEventStoreConfig.EntityStream}-{entityId}", from, to, true);
             }
 
             if (streamEventsSlice.IsEndOfStream) return ToDomainEventList(streamEventsSlice.Events);

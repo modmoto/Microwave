@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Reflection;
-using Adapters.Framework.EventStores;
 using Application.Framework;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -9,10 +8,9 @@ namespace DependencyInjection.Framework
 {
     public static class ServiceCollectionExtensions
     {
-        public static IServiceCollection AddAllLoadedQuerries(this IServiceCollection collection, Assembly assembly)
+        public static IServiceCollection AddAllLoadedQuerries(this IServiceCollection collection, Assembly assembly, IEventStore eventStore)
         {
             var querries = assembly.GetTypes().Where(t => t.BaseType == typeof(Querry));
-            var eventStore = new EventStoreFacade(new EventSourcingApplyStrategy(), null, null);
             var domainEvents = eventStore.GetEvents().Result.ToList();
             foreach (var querryType in querries)
             {

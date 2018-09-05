@@ -31,7 +31,7 @@ namespace DependencyInjection.Framework.Tests
             await eventStore.AppendAsync(domainEvents);
 
             var serviceCollection = (IServiceCollection) new ServiceCollection();
-            serviceCollection.AddAllLoadedQuerries(typeof(TestQuerry).Assembly);
+            serviceCollection.AddAllLoadedQuerries(typeof(TestQuerry).Assembly, eventStore);
             var buildServiceProvider = serviceCollection.BuildServiceProvider();
             var querryInDi = (TestQuerry) buildServiceProvider.GetService(typeof(TestQuerry));
 
