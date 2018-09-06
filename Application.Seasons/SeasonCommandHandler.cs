@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Application.Framework;
 using Application.Framework.Exceptions;
 using Application.Seasons.Commands;
@@ -27,12 +26,13 @@ namespace Application.Seasons
             if (domainResult.Failed) throw new DomainValidationException(domainResult.DomainErrors);
             await EventStore.AppendAsync(domainResult.DomainEvents);
         }
-    }
 
-    public class ChangeDateCommand
-    {
-        public Guid EntityId { get; set; }
-        public DateTimeOffset StartDate { get; set; }
-        public DateTimeOffset EndDate { get; set; }
+        public async Task ChangeName(ChangeNameCommand command)
+        {
+            var season = await EventStore.LoadAsync<Season>(command.EntityId);
+            var domainResult = season.ChangeName(command.Name);
+            if (domainResult.Failed) throw new DomainValidationException(domainResult.DomainErrors);
+            await EventStore.AppendAsync(domainResult.DomainEvents);
+        }
     }
 }

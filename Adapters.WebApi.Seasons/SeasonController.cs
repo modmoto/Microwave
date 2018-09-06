@@ -41,7 +41,7 @@ namespace Adapters.WebApi.Seasons
         }
 
         [HttpPut("{entityId}/ChangeDate")]
-        public async Task<IActionResult> CreateSeason(Guid entityId,[FromBody] ChangeDateApiCommand command)
+        public async Task<IActionResult> ChangeDate(Guid entityId,[FromBody] ChangeDateApiCommand command)
         {
             var changeDateCommand = new ChangeDateCommand
             {
@@ -53,6 +53,24 @@ namespace Adapters.WebApi.Seasons
             await _commandHandler.SetStartAndEndDate(changeDateCommand);
             return Ok();
         }
+
+        [HttpPut("{entityId}/ChangeName")]
+        public async Task<IActionResult> ChangeName(Guid entityId,[FromBody] ChangeNameApiCommand command)
+        {
+            var changeDateCommand = new ChangeNameCommand
+            {
+                EntityId = entityId,
+                Name = command.Name
+            };
+
+            await _commandHandler.ChangeName(changeDateCommand);
+            return Ok();
+        }
+    }
+
+    public class ChangeNameApiCommand
+    {
+        public string Name { get; set; }
     }
 
     public class ChangeDateApiCommand

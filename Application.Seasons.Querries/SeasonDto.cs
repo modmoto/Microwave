@@ -25,5 +25,10 @@ namespace Application.Seasons.Querries
             StartDate = domainEvent.StartDate;
             EndDate = domainEvent.EndDate;
         }
+
+        public void Apply(SeasonNameChangedEvent nameChangedEvent)
+        {
+            Name = nameChangedEvent.Name;
+        }
     }
 }

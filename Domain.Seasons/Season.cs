@@ -34,5 +34,10 @@ namespace Domain.Seasons
         {
             return DomainResult.OkResult(new SeasonDateChangedEvent(Id, startDate, endDate));
         }
+
+        public DomainResult ChangeName(string commandName)
+        {
+            return DomainResult.OkResult(new SeasonNameChangedEvent(Id, commandName));
+        }
     }
 }

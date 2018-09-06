@@ -22,5 +22,14 @@ namespace Application.Seasons.Querries
                 if (season.Id == createdEvent.EntityId) season.Apply(createdEvent);
             }
         }
+
+        public void Apply(SeasonNameChangedEvent nameChangedEvent)
+        {
+            foreach (var season in Seasons)
+            {
+                if (season.Id == nameChangedEvent.EntityId) season.Apply(nameChangedEvent);
+            }
+        }
+
     }
 }
