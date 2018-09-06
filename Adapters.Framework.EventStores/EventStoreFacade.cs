@@ -28,7 +28,7 @@ namespace Adapters.Framework.EventStores
         public async Task AppendAsync(IEnumerable<DomainEvent> domainEvents)
         {
             JsonSerializerSettings settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All, ContractResolver = new PrivateSetterContractResolver() };
-            var convertedElements = domainEvents.Select(eve => new EventData(Guid.NewGuid(), nameof(eve.GetType), true,
+            var convertedElements = domainEvents.Select(eve => new EventData(Guid.NewGuid(), eve.GetType().Name, true,
                 Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(eve, settings)), null));
             await _eventStoreConnection.AppendToStreamAsync(_realEventStoreConfig.EventStream, ExpectedVersion.Any,
                     convertedElements);
@@ -39,7 +39,7 @@ namespace Adapters.Framework.EventStores
             JsonSerializerSettings settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All, ContractResolver = new PrivateSetterContractResolver() };
             var domainEventSerialized = JsonConvert.SerializeObject(domainEvent, settings);
             await _eventStoreConnection.AppendToStreamAsync(_realEventStoreConfig.EventStream, ExpectedVersion.Any,
-                new EventData(Guid.NewGuid(), nameof(domainEvent.GetType), true, Encoding.UTF8.GetBytes(domainEventSerialized),
+                new EventData(Guid.NewGuid(), domainEvent.GetType().Name, true, Encoding.UTF8.GetBytes(domainEventSerialized),
                     null));
         }
 
