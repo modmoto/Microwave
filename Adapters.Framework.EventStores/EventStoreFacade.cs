@@ -70,9 +70,9 @@ namespace Adapters.Framework.EventStores
             if (streamEventsSlice.IsEndOfStream) return ToDomainEventList(streamEventsSlice.Events);
             var domainEvents = await GetEvents(entityId, to + 1, to + 101);
             var domainEventsTemp = domainEvents.ToList();
-            domainEventsTemp.AddRange(ToDomainEventList(streamEventsSlice.Events));
-            return domainEventsTemp;
-
+            var domainEventList = ToDomainEventList(streamEventsSlice.Events).ToList();
+            domainEventList.AddRange(domainEventsTemp);
+            return domainEventList;
         }
 
         private IEnumerable<DomainEvent> ToDomainEventList(ResolvedEvent[] events)
