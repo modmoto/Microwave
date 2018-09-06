@@ -25,8 +25,14 @@ namespace DependencyInjection.Framework
                     method.GetGenericArguments().Length == 1 && method.GetParameters().Length == 2).ToList()[1];
 
 
+                var subscribeEventTypeForQuerryType = typeof(SubscribedEventTypes<>);
+                var genericType = subscribeEventTypeForQuerryType.MakeGenericType(querryType);
+                var subscribeEventTypeForQuerry = Activator.CreateInstance(genericType);
+
                 var genericAddSingletonMethod = addSingletonFunction.MakeGenericMethod(querryType);
                 genericAddSingletonMethod.Invoke(collection, new[] {collection, (object) querry});
+                var genericAddSingletonMethod2 = addSingletonFunction.MakeGenericMethod(subscribeEventTypeForQuerry.GetType());
+                genericAddSingletonMethod2.Invoke(collection, new[] {collection, subscribeEventTypeForQuerry});
             }
 
             return collection;

@@ -34,8 +34,11 @@ namespace DependencyInjection.Framework.Tests
             serviceCollection.AddAllLoadedQuerries(typeof(TestQuery).Assembly, eventStore);
             var buildServiceProvider = serviceCollection.BuildServiceProvider();
             var querryInDi = (TestQuery) buildServiceProvider.GetService(typeof(TestQuery));
+            var allowedEventsOfQuerry = (SubscribedEventTypes<TestQuery>) buildServiceProvider.GetService(typeof(SubscribedEventTypes<TestQuery>));
 
             Assert.Equal("NameSecond", querryInDi.Name);
+            Assert.Equal(nameof(TestQuerryCreatedEvent), allowedEventsOfQuerry[0].Name);
+            Assert.Equal(nameof(TestQuerryNameChangedEvent), allowedEventsOfQuerry[1].Name);
         }
     }
 
