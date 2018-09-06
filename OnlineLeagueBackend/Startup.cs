@@ -28,7 +28,7 @@ namespace OnlineLeagueBackend
 
             services.AddTransient<SeasonCommandHandler>();
 
-            services.AddTransient<AllSeasonsQuerryHandler>();
+            services.AddTransient<AllSeasonsQueryHandler>();
 
             var buildServiceProvider = services.BuildServiceProvider();
 

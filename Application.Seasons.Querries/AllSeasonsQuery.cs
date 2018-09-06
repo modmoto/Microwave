@@ -4,7 +4,7 @@ using Domain.Seasons.Events;
 
 namespace Application.Seasons.Querries
 {
-    public class AllSeasonsQuery : Querry
+    public class AllSeasonsQuery : Query
     {
         public IList<SeasonDto> Seasons { get; } = new List<SeasonDto>();
 

@@ -31,15 +31,15 @@ namespace DependencyInjection.Framework.Tests
             await eventStore.AppendAsync(domainEvents);
 
             var serviceCollection = (IServiceCollection) new ServiceCollection();
-            serviceCollection.AddAllLoadedQuerries(typeof(TestQuerry).Assembly, eventStore);
+            serviceCollection.AddAllLoadedQuerries(typeof(TestQuery).Assembly, eventStore);
             var buildServiceProvider = serviceCollection.BuildServiceProvider();
-            var querryInDi = (TestQuerry) buildServiceProvider.GetService(typeof(TestQuerry));
+            var querryInDi = (TestQuery) buildServiceProvider.GetService(typeof(TestQuery));
 
             Assert.Equal("NameSecond", querryInDi.Name);
         }
     }
 
-    public class TestQuerry : Querry
+    public class TestQuery : Query
     {
         public string Name { get; private set; }
 
