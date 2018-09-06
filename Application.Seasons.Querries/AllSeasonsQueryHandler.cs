@@ -17,17 +17,8 @@ namespace Application.Seasons.Querries
             return QueryObject.Seasons.SingleOrDefault(season => season.Id == id);
         }
 
-        public AllSeasonsQueryHandler(AllSeasonsQuery queryObject, AllSeasonsQuerySubscribedEventTypes eventTypes) : base(queryObject, eventTypes)
+        public AllSeasonsQueryHandler(AllSeasonsQuery queryObject, SubscribedEventTypes<AllSeasonsQuery> eventTypes) : base(queryObject, eventTypes)
         {
-        }
-    }
-
-    public class AllSeasonsQuerySubscribedEventTypes : SubscribedEventTypes
-    {
-        public AllSeasonsQuerySubscribedEventTypes()
-        {
-            Add(typeof(SeasonDateChangedEvent));
-            Add(typeof(SeasonCreatedEvent));
         }
     }
 }
