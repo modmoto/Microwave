@@ -7,7 +7,7 @@ namespace Domain.Seasons
 {
     public class DomainResult
     {
-        public Boolean Ok => DomainErrors.Count() != 0;
+        public Boolean Ok => !DomainErrors.Any();
         public Boolean Failed => !Ok;
 
         public IEnumerable<DomainEvent> DomainEvents { get; }

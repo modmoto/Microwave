@@ -3,7 +3,7 @@ using Domain.Framework;
 
 namespace Application.Framework
 {
-    public abstract class Query
+    public class Query
     {
         public void Apply(DomainEvent domainEvent)
         {

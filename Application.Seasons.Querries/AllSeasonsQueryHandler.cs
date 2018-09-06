@@ -1,15 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Application.Framework;
-using Domain.Seasons.Events;
 
 namespace Application.Seasons.Querries
 {
     public class AllSeasonsQueryHandler : QueryHandler<AllSeasonsQuery>
     {
-        public AllSeasonsQuery GetAllSeasons()
+        public IEnumerable<SeasonDto> GetAllSeasons()
         {
-            return QueryObject;
+            return QueryObject.Seasons;
         }
 
         public SeasonDto GetSeason(Guid id)

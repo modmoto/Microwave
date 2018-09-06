@@ -1,10 +1,12 @@
-﻿using Adapters.Framework.EventStores;
+﻿using System;
+using Adapters.Framework.EventStores;
 using Adapters.Json.ObjectPersistences;
 using Adapters.WebApi.Seasons;
 using Application.Framework;
 using Application.Seasons;
 using Application.Seasons.Querries;
 using DependencyInjection.Framework;
+using EventStore.ClientAPI;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,8 +25,10 @@ namespace OnlineLeagueBackend
             services.AddTransient<IEventSourcingStrategy, EventSourcingApplyStrategy>();
             services.AddTransient<EventStoreConfig, RealEventStoreConfig>();
             services.AddSingleton<IEventStore, EventStoreFacade>();
+            services.AddTransient(provider => EventStoreConnection.Create(new Uri("tcp://admin:changeit@localhost:1113"), "MyTestCon"));
             services.AddTransient<IObjectPersister<AllSeasonsQuery>, JsonFileObjectPersister<AllSeasonsQuery>>();
             services.AddTransient<IDomainEventPersister, DomainEventPersister>();
+            services.AddTransient<SubscribedEventTypes<AllSeasonsQuery>>();
 
             services.AddTransient<SeasonCommandHandler>();
 

@@ -5,7 +5,7 @@ using Domain.Framework;
 
 namespace Application.Framework
 {
-    public abstract class SubscribedEventTypes<T> : List<Type>
+    public class SubscribedEventTypes<T> : List<Type>
     {
         public SubscribedEventTypes()
         {
