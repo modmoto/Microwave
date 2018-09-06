@@ -34,6 +34,7 @@ namespace Adapters.Framework.Eventstores.Tests
 
             var eventStore = new EventStoreFacade(new EventSourcingAtributeStrategy(), _eventStoreConnection, new TestEventStoreConfig());
             await eventStore.AppendAsync(domainEvents);
+            await Task.Delay(1000);
 
             Assert.Equal(2, (await eventStore.GetEvents(entityId)).Count());
         }
@@ -46,6 +47,7 @@ namespace Adapters.Framework.Eventstores.Tests
 
             var eventStore = new EventStoreFacade(new EventSourcingApplyStrategy(), _eventStoreConnection, new TestEventStoreConfig());
             await eventStore.AppendAsync(testEvent);
+            await Task.Delay(1000);
 
             Assert.Equal(1, (await eventStore.GetEvents(entityId)).Count());
         }
@@ -58,6 +60,7 @@ namespace Adapters.Framework.Eventstores.Tests
 
             var eventStore = new EventStoreFacade(new EventSourcingApplyStrategy(), _eventStoreConnection, new TestEventStoreConfig());
             await eventStore.AppendAsync(domainEvents);
+            await Task.Delay(1000);
             var testEntity = await eventStore.LoadAsync<TestEntity>(entityId);
 
             Assert.Equal("NewName", testEntity.Name);
@@ -84,6 +87,7 @@ namespace Adapters.Framework.Eventstores.Tests
             }
 
             await eventStore.AppendAsync(domainEvents);
+            await Task.Delay(1000);
             var testEntity = await eventStore.LoadAsync<TestEntity>(entityId);
 
             Assert.Equal("NewName120", testEntity.Name);
