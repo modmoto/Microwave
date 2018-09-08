@@ -5,7 +5,7 @@ using Domain.Framework;
 
 namespace Application.Framework
 {
-    public interface IEventStore
+    public interface IEventStoreFacade
     {
         Task AppendAsync(IEnumerable<DomainEvent> domainEvents);
         Task<T> LoadAsync<T>(Guid commandEntityId) where T : new();

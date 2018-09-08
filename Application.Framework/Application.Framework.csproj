@@ -5,4 +5,9 @@
   <ItemGroup>
     <ProjectReference Include="..\Domain.Framework\Domain.Framework.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Reference Include="EventStore.ClientAPI.NetCore, Version=4.1.0.23, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\..\..\.nuget\packages\eventstore.clientapi.netcore\4.1.0.23\lib\netstandard2.0\EventStore.ClientAPI.NetCore.dll</HintPath>
+    </Reference>
+  </ItemGroup>
 </Project>

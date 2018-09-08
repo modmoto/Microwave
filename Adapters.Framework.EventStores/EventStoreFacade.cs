@@ -7,50 +7,39 @@ using Adapters.Json.ObjectPersistences;
 using Application.Framework;
 using Domain.Framework;
 using EventStore.ClientAPI;
-using Newtonsoft.Json;
 
 namespace Adapters.Framework.EventStores
 {
-    public class EventStoreFacade : IEventStore
+    public class EventStoreFacade : IEventStoreFacade
     {
         private readonly IEventSourcingStrategy _eventSourcingStrategy;
         private readonly IEventStoreConnection _eventStoreConnection;
-        private readonly EventStoreConfig _realEventStoreConfig;
+        private readonly EventStoreConfig _eventStoreConfig;
+        private readonly IDomainEventConverter _eventConverter;
 
-        public EventStoreFacade(IEventSourcingStrategy eventSourcingStrategy, IEventStoreConnection eventStoreConnection, EventStoreConfig realEventStoreConfig)
+        public EventStoreFacade(IEventSourcingStrategy eventSourcingStrategy,
+            IEventStoreConnection eventStoreConnection, EventStoreConfig eventStoreConfig, IDomainEventConverter eventConverter)
         {
             _eventSourcingStrategy = eventSourcingStrategy;
             _eventStoreConnection = eventStoreConnection;
-            _realEventStoreConfig = realEventStoreConfig;
+            _eventStoreConfig = eventStoreConfig;
+            _eventConverter = eventConverter;
             _eventStoreConnection.ConnectAsync();
         }
 
         public async Task AppendAsync(IEnumerable<DomainEvent> domainEvents)
         {
-            JsonSerializerSettings settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All, ContractResolver = new PrivateSetterContractResolver() };
             var convertedElements = domainEvents.Select(eve => new EventData(Guid.NewGuid(), eve.GetType().Name, true,
-                Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(eve, settings)), null));
-            await _eventStoreConnection.AppendToStreamAsync(_realEventStoreConfig.EventStream, ExpectedVersion.Any,
-                    convertedElements);
-        }
-
-        public async Task AppendAsync(DomainEvent domainEvent)
-        {
-            JsonSerializerSettings settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All, ContractResolver = new PrivateSetterContractResolver() };
-            var domainEventSerialized = JsonConvert.SerializeObject(domainEvent, settings);
-            await _eventStoreConnection.AppendToStreamAsync(_realEventStoreConfig.EventStream, ExpectedVersion.Any,
-                new EventData(Guid.NewGuid(), domainEvent.GetType().Name, true, Encoding.UTF8.GetBytes(domainEventSerialized),
-                    null));
+                Encoding.UTF8.GetBytes(_eventConverter.Serialize(eve)), null));
+            await _eventStoreConnection.AppendToStreamAsync(_eventStoreConfig.EventStream, ExpectedVersion.Any,
+                convertedElements);
         }
 
         public async Task<T> LoadAsync<T>(Guid commandEntityId) where T : new()
         {
             var events = await GetEvents(commandEntityId);
             var entity = new T();
-            foreach (var domainEvent in events)
-            {
-                entity = _eventSourcingStrategy.Apply(entity, domainEvent);
-            }
+            foreach (var domainEvent in events) entity = _eventSourcingStrategy.Apply(entity, domainEvent);
 
             return entity;
         }
@@ -59,13 +48,13 @@ namespace Adapters.Framework.EventStores
         {
             StreamEventsSlice streamEventsSlice;
             if (entityId == default(Guid))
-            {
-                streamEventsSlice = await _eventStoreConnection.ReadStreamEventsForwardAsync(_realEventStoreConfig.EventStream, from, to, true);
-            }
+                streamEventsSlice =
+                    await _eventStoreConnection.ReadStreamEventsForwardAsync(_eventStoreConfig.EventStream, from,
+                        to, true);
             else
-            {
-                streamEventsSlice = await _eventStoreConnection.ReadStreamEventsForwardAsync($"{_realEventStoreConfig.EntityStream}-{entityId}", from, to, true);
-            }
+                streamEventsSlice =
+                    await _eventStoreConnection.ReadStreamEventsForwardAsync(
+                        $"{_eventStoreConfig.EntityStream}-{entityId}", from, to, true);
 
             if (streamEventsSlice.IsEndOfStream) return ToDomainEventList(streamEventsSlice.Events);
             var domainEvents = await GetEvents(entityId, to + 1, to + 101);
@@ -75,15 +64,18 @@ namespace Adapters.Framework.EventStores
             return domainEventList;
         }
 
+        public async Task AppendAsync(DomainEvent domainEvent)
+        {
+            var domainEventSerialized = _eventConverter.Serialize(domainEvent);
+            await _eventStoreConnection.AppendToStreamAsync(_eventStoreConfig.EventStream, ExpectedVersion.Any,
+                new EventData(Guid.NewGuid(), domainEvent.GetType().Name, true,
+                    Encoding.UTF8.GetBytes(domainEventSerialized),
+                    null));
+        }
+
         private IEnumerable<DomainEvent> ToDomainEventList(ResolvedEvent[] events)
         {
-            JsonSerializerSettings settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All, ContractResolver = new PrivateSetterContractResolver() };
-            foreach (var resolvedEvent in events)
-            {
-                var eventData = Encoding.UTF8.GetString(resolvedEvent.Event.Data);
-                var deserializeObject = JsonConvert.DeserializeObject<DomainEvent>(eventData, settings);
-                yield return deserializeObject;
-            }
+            foreach (var resolvedEvent in events) yield return _eventConverter.Deserialize(resolvedEvent);
         }
     }
 }

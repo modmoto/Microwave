@@ -2,11 +2,11 @@
 {
     public class CommandHandler
     {
-        protected readonly IEventStore EventStore;
+        protected readonly IEventStoreFacade EventStoreFacade;
 
-        public CommandHandler(IEventStore eventStore)
+        public CommandHandler(IEventStoreFacade eventStoreFacade)
         {
-            EventStore = eventStore;
+            EventStoreFacade = eventStoreFacade;
         }
     }
 }

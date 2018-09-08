@@ -8,7 +8,7 @@ namespace Application.Seasons
 {
     public class SeasonCommandHandler : CommandHandler
     {
-        public SeasonCommandHandler(IEventStore eventStore) : base(eventStore)
+        public SeasonCommandHandler(IEventStoreFacade eventStoreFacade) : base(eventStoreFacade)
         {
         }
 
@@ -16,23 +16,23 @@ namespace Application.Seasons
         {
             var domainResult = Season.Create(command.SeasonName, command.MaxDaysBetweenGames);
             if (domainResult.Failed) throw new DomainValidationException(domainResult.DomainErrors);
-            await EventStore.AppendAsync(domainResult.DomainEvents);
+            await EventStoreFacade.AppendAsync(domainResult.DomainEvents);
         }
 
         public async Task SetStartAndEndDate(ChangeDateCommand command)
         {
-            var season = await EventStore.LoadAsync<Season>(command.EntityId);
+            var season = await EventStoreFacade.LoadAsync<Season>(command.EntityId);
             var domainResult = season.ChangeDate(command.StartDate, command.EndDate);
             if (domainResult.Failed) throw new DomainValidationException(domainResult.DomainErrors);
-            await EventStore.AppendAsync(domainResult.DomainEvents);
+            await EventStoreFacade.AppendAsync(domainResult.DomainEvents);
         }
 
         public async Task ChangeName(ChangeNameCommand command)
         {
-            var season = await EventStore.LoadAsync<Season>(command.EntityId);
+            var season = await EventStoreFacade.LoadAsync<Season>(command.EntityId);
             var domainResult = season.ChangeName(command.Name);
             if (domainResult.Failed) throw new DomainValidationException(domainResult.DomainErrors);
-            await EventStore.AppendAsync(domainResult.DomainEvents);
+            await EventStoreFacade.AppendAsync(domainResult.DomainEvents);
         }
     }
 }

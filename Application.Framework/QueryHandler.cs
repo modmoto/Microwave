@@ -1,10 +1,18 @@
-﻿using Domain.Framework;
+﻿using System;
+using System.Collections.Generic;
+using Domain.Framework;
 
 namespace Application.Framework
 {
-    public abstract class QueryHandler<T> where T : Query
+    public interface IQueryHandler
     {
-        protected readonly SubscribedEventTypes<T> SubscribedEventTypes;
+        void Handle(DomainEvent domainEvent);
+        IEnumerable<Type> SubscribedTypes { get; }
+    }
+
+    public abstract class QueryHandler<T> : IQueryHandler where T : Query
+    {
+        public readonly SubscribedEventTypes<T> SubscribedEventTypes;
         protected readonly T QueryObject;
 
         public QueryHandler(T queryObject, SubscribedEventTypes<T> subscribedEventTypes)
@@ -20,5 +28,7 @@ namespace Application.Framework
                 QueryObject.Apply(domainEvent);
             }
         }
+
+        public IEnumerable<Type> SubscribedTypes => SubscribedEventTypes;
     }
 }

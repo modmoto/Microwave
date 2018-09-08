@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Adapters.Framework.EventStores;
+using Adapters.Json.ObjectPersistences;
 using Application.Framework;
 using Domain.Framework;
 using EventStore.ClientAPI;
@@ -20,7 +21,7 @@ namespace DependencyInjection.Framework.Tests
             await eventStoreConnection.ConnectAsync();
             await eventStoreConnection.DeleteStreamAsync(new TestEventStoreConfig().EventStream, ExpectedVersion.Any,
                 new UserCredentials("admin", "changeit"));
-            var eventStore = new EventStoreFacade(new EventSourcingApplyStrategy(), eventStoreConnection, new TestEventStoreConfig());
+            var eventStore = new EventStoreFacade(new EventSourcingApplyStrategy(), eventStoreConnection, new TestEventStoreConfig(), new DomainEventConverter());
             var entityId = Guid.NewGuid();
             var domainEvents = new List<DomainEvent>
             {

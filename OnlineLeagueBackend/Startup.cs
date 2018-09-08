@@ -24,8 +24,8 @@ namespace OnlineLeagueBackend
             services.AddTransient<SeasonController>();
             services.AddTransient<IEventSourcingStrategy, EventSourcingApplyStrategy>();
             services.AddTransient<EventStoreConfig, RealEventStoreConfig>();
-            services.AddSingleton<IEventStore, EventStoreFacade>();
-            services.AddTransient(provider => EventStoreConnection.Create(new Uri("tcp://admin:changeit@localhost:1113"), "MyTestCon"));
+            services.AddTransient<IEventStoreFacade, EventStoreFacade>();
+            services.AddSingleton(provider => EventStoreConnection.Create(new Uri("tcp://admin:changeit@localhost:1113"), "MyTestCon"));
             services.AddTransient<IObjectPersister<AllSeasonsQuery>, JsonFileObjectPersister<AllSeasonsQuery>>();
             services.AddTransient<IDomainEventPersister, DomainEventPersister>();
 
@@ -35,7 +35,7 @@ namespace OnlineLeagueBackend
 
             var buildServiceProvider = services.BuildServiceProvider();
 
-            var eventStore = (IEventStore) buildServiceProvider.GetService(typeof(IEventStore));
+            var eventStore = (IEventStoreFacade) buildServiceProvider.GetService(typeof(IEventStoreFacade));
             services.AddAllLoadedQuerries(typeof(AllSeasonsQuery).Assembly, eventStore);
         }
 

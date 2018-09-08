@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Adapters.Framework.EventStores;
+using Adapters.Json.ObjectPersistences;
 using Domain.Framework;
 using EventStore.ClientAPI;
 using EventStore.ClientAPI.SystemData;
@@ -19,6 +20,8 @@ namespace Adapters.Framework.Eventstores.Tests
             _eventStoreConnection = EventStoreConnection.Create(new Uri("tcp://admin:changeit@localhost:1113"), "MyTestCon");
             await _eventStoreConnection.ConnectAsync();
             await _eventStoreConnection.DeleteStreamAsync(new TestEventStoreConfig().EventStream, ExpectedVersion.Any, new UserCredentials("admin", "changeit"));
+            await _eventStoreConnection.DeleteStreamAsync($"{new TestEventStoreConfig().EventStream}-{nameof(TestEvent)}", ExpectedVersion.Any, new UserCredentials("admin", "changeit"));
+            await _eventStoreConnection.DeleteStreamAsync($"{new TestEventStoreConfig().EventStream}-{nameof(TestCreatedEvent)}", ExpectedVersion.Any, new UserCredentials("admin", "changeit"));
         }
 
         public Task DisposeAsync()
@@ -32,7 +35,7 @@ namespace Adapters.Framework.Eventstores.Tests
             var entityId = Guid.NewGuid();
             var domainEvents = new List<DomainEvent> { new TestEvent(entityId, "TestSession1"), new TestEvent(entityId, "TestSession2")};
 
-            var eventStore = new EventStoreFacade(new EventSourcingAtributeStrategy(), _eventStoreConnection, new TestEventStoreConfig());
+            var eventStore = new EventStoreFacade(new EventSourcingAtributeStrategy(), _eventStoreConnection, new TestEventStoreConfig(), new DomainEventConverter());
             await eventStore.AppendAsync(domainEvents);
             await Task.Delay(1000);
 
@@ -45,7 +48,7 @@ namespace Adapters.Framework.Eventstores.Tests
             var entityId = Guid.NewGuid();
             var testEvent = new TestEvent(entityId, "TestSession2");
 
-            var eventStore = new EventStoreFacade(new EventSourcingApplyStrategy(), _eventStoreConnection, new TestEventStoreConfig());
+            var eventStore = new EventStoreFacade(new EventSourcingApplyStrategy(), _eventStoreConnection, new TestEventStoreConfig(), new DomainEventConverter());
             await eventStore.AppendAsync(testEvent);
             await Task.Delay(1000);
 
@@ -58,7 +61,7 @@ namespace Adapters.Framework.Eventstores.Tests
             var entityId = Guid.NewGuid();
             var domainEvents = new List<DomainEvent> { new TestCreatedEvent(entityId, "OldName"), new TestChangeNameEvent(entityId, "NewName")};
 
-            var eventStore = new EventStoreFacade(new EventSourcingApplyStrategy(), _eventStoreConnection, new TestEventStoreConfig());
+            var eventStore = new EventStoreFacade(new EventSourcingApplyStrategy(), _eventStoreConnection, new TestEventStoreConfig(), new DomainEventConverter());
             await eventStore.AppendAsync(domainEvents);
             await Task.Delay(1000);
             var testEntity = await eventStore.LoadAsync<TestEntity>(entityId);
@@ -72,7 +75,7 @@ namespace Adapters.Framework.Eventstores.Tests
         {
             await Task.Delay(1000);
 
-            var eventStore = new EventStoreFacade(new EventSourcingApplyStrategy(), _eventStoreConnection, new TestEventStoreConfig());
+            var eventStore = new EventStoreFacade(new EventSourcingApplyStrategy(), _eventStoreConnection, new TestEventStoreConfig(), new DomainEventConverter());
             var entityId = Guid.NewGuid();
 
             var testCreatedEvent = new TestCreatedEvent(entityId, "OldName");
@@ -87,7 +90,7 @@ namespace Adapters.Framework.Eventstores.Tests
             }
 
             await eventStore.AppendAsync(domainEvents);
-            await Task.Delay(1000);
+            await Task.Delay(2000);
             var testEntity = await eventStore.LoadAsync<TestEntity>(entityId);
 
             Assert.Equal("NewName120", testEntity.Name);

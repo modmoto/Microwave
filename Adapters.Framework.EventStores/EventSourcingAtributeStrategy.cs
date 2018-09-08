@@ -13,7 +13,7 @@ namespace Adapters.Framework.EventStores
         public T Apply<T>(T entity, DomainEvent domainEvent)
         {
             var eventType = domainEvent.GetType();
-            var eventProperties = eventType.GetProperties().Where(eventProp => eventProp.Name != nameof(DomainEvent.Id));
+            var eventProperties = eventType.GetProperties();
 
             var eventJson = JObject.Parse(JsonConvert.SerializeObject(domainEvent));
             var entityJson = JObject.Parse(JsonConvert.SerializeObject(entity));

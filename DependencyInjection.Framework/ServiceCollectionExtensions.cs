@@ -8,10 +8,10 @@ namespace DependencyInjection.Framework
 {
     public static class ServiceCollectionExtensions
     {
-        public static IServiceCollection AddAllLoadedQuerries(this IServiceCollection collection, Assembly assembly, IEventStore eventStore)
+        public static IServiceCollection AddAllLoadedQuerries(this IServiceCollection collection, Assembly assembly, IEventStoreFacade eventStoreFacade)
         {
             var querries = assembly.GetTypes().Where(t => t.BaseType == typeof(Query));
-            var domainEvents = eventStore.GetEvents().Result.ToList();
+            var domainEvents = eventStoreFacade.GetEvents().Result.ToList();
             foreach (var querryType in querries)
             {
                 var querry = (Query) Activator.CreateInstance(querryType);
