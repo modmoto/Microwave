@@ -9,20 +9,21 @@ namespace Adapters.Framework.EventStores
     public class QueryEventDelegator
     {
         public readonly IEnumerable<IQueryHandler> HandlerList;
-        private readonly IEventStoreConnection _connection;
+        public readonly ICollection<EventStoreSubscription> StoreSubscriptions = new List<EventStoreSubscription>();
         private readonly IDomainEventConverter _domainEventConverter;
+        public IEventStoreConnection _connection;
 
         public QueryEventDelegator(IEnumerable<IQueryHandler> handlerList, IEventStoreConnection connection, EventStoreConfig eventStoreConfig, IDomainEventConverter domainEventConverter)
         {
             var queryHandlers = handlerList.ToList();
             HandlerList = queryHandlers;
-            _connection = connection;
-            _connection.ConnectAsync().Wait();
             _domainEventConverter = domainEventConverter;
+            _connection = connection;
             var subscriptionTypes = HandlerList.SelectMany(handler => handler.SubscribedTypes);
             foreach (var queryHandler in subscriptionTypes)
             {
                 var eventStoreSubscription = connection.SubscribeToStreamAsync($"{eventStoreConfig.EventStream}-{queryHandler.Name}", true, HandleSubscription).Result;
+                StoreSubscriptions.Add(eventStoreSubscription);
             }
         }
 

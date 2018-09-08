@@ -23,7 +23,6 @@ namespace Adapters.Framework.EventStores
             _eventStoreConnection = eventStoreConnection;
             _eventStoreConfig = eventStoreConfig;
             _eventConverter = eventConverter;
-            _eventStoreConnection.ConnectAsync();
         }
 
         public async Task AppendAsync(IEnumerable<DomainEvent> domainEvents)
