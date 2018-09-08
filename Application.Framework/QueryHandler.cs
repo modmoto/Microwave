@@ -4,13 +4,7 @@ using Domain.Framework;
 
 namespace Application.Framework
 {
-    public interface IQueryHandler
-    {
-        void Handle(DomainEvent domainEvent);
-        IEnumerable<Type> SubscribedTypes { get; }
-    }
-
-    public abstract class QueryHandler<T> : IQueryHandler where T : Query
+    public class QueryHandler<T> : IQueryHandler where T : Query
     {
         public readonly SubscribedEventTypes<T> SubscribedEventTypes;
         public readonly T QueryObject;

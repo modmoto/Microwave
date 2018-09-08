@@ -12,6 +12,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Adapters.Framework.EventStores\Adapters.Framework.EventStores.csproj" />
+    <ProjectReference Include="..\Application.Seasons.Querries\Application.Seasons.Querries.csproj" />
     <ProjectReference Include="..\Domain.Framework\Domain.Framework.csproj" />
     <ProjectReference Include="..\Domain.Seasons\Domain.Seasons.csproj" />
   </ItemGroup>

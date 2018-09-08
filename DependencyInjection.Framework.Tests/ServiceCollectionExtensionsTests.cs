@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Adapters.Framework.EventStores;
 using Adapters.Json.ObjectPersistences;
@@ -36,10 +37,14 @@ namespace DependencyInjection.Framework.Tests
             var buildServiceProvider = serviceCollection.BuildServiceProvider();
             var querryInDi = (TestQuery) buildServiceProvider.GetService(typeof(TestQuery));
             var allowedEventsOfQuerry = (SubscribedEventTypes<TestQuery>) buildServiceProvider.GetService(typeof(SubscribedEventTypes<TestQuery>));
+            var querryHandler = buildServiceProvider.GetService<TestQuerryHandler>();
+            var querryHandlers = buildServiceProvider.GetServices<IQueryHandler>().ToList();
 
             Assert.Equal("NameSecond", querryInDi.Name);
             Assert.Equal(nameof(TestQuerryCreatedEvent), allowedEventsOfQuerry[0].Name);
             Assert.Equal(nameof(TestQuerryNameChangedEvent), allowedEventsOfQuerry[1].Name);
+            Assert.Equal(querryInDi, querryHandler.QueryObject);
+            Assert.Equal(1, querryHandlers.Count);
         }
     }
 
@@ -55,6 +60,13 @@ namespace DependencyInjection.Framework.Tests
         public void Apply(TestQuerryNameChangedEvent domainEvent)
         {
             Name = domainEvent.Name;
+        }
+    }
+
+    public class TestQuerryHandler : QueryHandler<TestQuery>
+    {
+        public TestQuerryHandler(TestQuery queryObject, SubscribedEventTypes<TestQuery> subscribedEventTypes) : base(queryObject, subscribedEventTypes)
+        {
         }
     }
 

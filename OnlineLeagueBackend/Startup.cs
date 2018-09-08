@@ -28,15 +28,14 @@ namespace OnlineLeagueBackend
             services.AddSingleton(provider => EventStoreConnection.Create(new Uri("tcp://admin:changeit@localhost:1113"), "MyTestCon"));
             services.AddTransient<IObjectPersister<AllSeasonsQuery>, JsonFileObjectPersister<AllSeasonsQuery>>();
             services.AddTransient<IDomainEventPersister, DomainEventPersister>();
+            services.AddTransient<IDomainEventConverter, DomainEventConverter>();
+            services.AddSingleton<QueryEventDelegator>();
 
             services.AddTransient<SeasonCommandHandler>();
 
-            services.AddTransient<AllSeasonsQueryHandler>();
-
-            var buildServiceProvider = services.BuildServiceProvider();
-
-            var eventStore = (IEventStoreFacade) buildServiceProvider.GetService(typeof(IEventStoreFacade));
+            var eventStore = (IEventStoreFacade) services.BuildServiceProvider().GetService(typeof(IEventStoreFacade));
             services.AddAllLoadedQuerries(typeof(AllSeasonsQuery).Assembly, eventStore);
+            var queryEventDelegator = (QueryEventDelegator) services.BuildServiceProvider().GetService(typeof(QueryEventDelegator));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
