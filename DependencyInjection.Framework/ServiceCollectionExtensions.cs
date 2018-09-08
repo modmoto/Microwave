@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Reflection;
+using Adapters.Framework.EventStores;
 using Application.Framework;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -11,6 +12,8 @@ namespace DependencyInjection.Framework
         public static IServiceCollection AddAllLoadedQuerries(this IServiceCollection collection, Assembly assembly,
             IEventStoreFacade eventStoreFacade)
         {
+            collection.AddSingleton<QueryEventDelegator>();
+
             var querries = assembly.GetTypes().Where(t => t.BaseType == typeof(Query));
             var domainEvents = eventStoreFacade.GetEvents().Result.ToList();
 

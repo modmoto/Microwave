@@ -25,19 +25,18 @@ namespace OnlineLeagueBackend
             services.AddTransient<IEventSourcingStrategy, EventSourcingApplyStrategy>();
             services.AddTransient<EventStoreConfig, RealEventStoreConfig>();
             services.AddTransient<IEventStoreFacade, EventStoreFacade>();
-            var eventStoreConnection = EventStoreConnection.Create(new Uri("tcp://admin:changeit@localhost:1113"), "MyTestCon");
-            eventStoreConnection.ConnectAsync().Wait();
-            services.AddSingleton(eventStoreConnection);
+            var connection = EventStoreConnection.Create(new Uri("tcp://admin:changeit@localhost:1113"), "MyTestCon");
+            connection.ConnectAsync().Wait();
+            services.AddSingleton(connection);
             services.AddTransient<IObjectPersister<AllSeasonsQuery>, JsonFileObjectPersister<AllSeasonsQuery>>();
             services.AddTransient<IDomainEventPersister, DomainEventPersister>();
             services.AddTransient<IDomainEventConverter, DomainEventConverter>();
-            services.AddSingleton<QueryEventDelegator>();
 
             services.AddTransient<SeasonCommandHandler>();
 
             var eventStore = (IEventStoreFacade) services.BuildServiceProvider().GetService(typeof(IEventStoreFacade));
             services.AddAllLoadedQuerries(typeof(AllSeasonsQuery).Assembly, eventStore);
-            var queryEventDelegator = (QueryEventDelegator) services.BuildServiceProvider().GetService(typeof(QueryEventDelegator));
+            RecallReferenceHolder = (QueryEventDelegator) services.BuildServiceProvider().GetService(typeof(QueryEventDelegator));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -50,5 +49,7 @@ namespace OnlineLeagueBackend
 
             app.UseMvc();
         }
+
+        public static QueryEventDelegator RecallReferenceHolder;
     }
 }
