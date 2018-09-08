@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Adapters.Json.ObjectPersistences;
 using Application.Framework;
 using Domain.Framework;
 using EventStore.ClientAPI;

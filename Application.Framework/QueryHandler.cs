@@ -13,7 +13,7 @@ namespace Application.Framework
     public abstract class QueryHandler<T> : IQueryHandler where T : Query
     {
         public readonly SubscribedEventTypes<T> SubscribedEventTypes;
-        protected readonly T QueryObject;
+        public readonly T QueryObject;
 
         public QueryHandler(T queryObject, SubscribedEventTypes<T> subscribedEventTypes)
         {
