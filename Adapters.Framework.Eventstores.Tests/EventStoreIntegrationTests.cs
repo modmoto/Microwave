@@ -39,20 +39,7 @@ namespace Adapters.Framework.Eventstores.Tests
             await eventStore.AppendAsync(domainEvents);
             await Task.Delay(1000);
 
-            Assert.Equal(2, (await eventStore.GetEvents(entityId)).Count());
-        }
-
-        [Fact]
-        public async Task AppendAsync_SingleEvent()
-        {
-            var entityId = Guid.NewGuid();
-            var testEvent = new TestEvent(entityId, "TestSession2");
-
-            var eventStore = new EventStoreFacade(new EventSourcingApplyStrategy(), _eventStoreConnection, new TestEventStoreConfig(), new DomainEventConverter());
-            await eventStore.AppendAsync(testEvent);
-            await Task.Delay(1000);
-
-            Assert.Equal(1, (await eventStore.GetEvents(entityId)).Count());
+            Assert.Equal(2, (await eventStore.GetEvents(entityId)).Result.Count());
         }
 
         [Fact]
@@ -66,8 +53,8 @@ namespace Adapters.Framework.Eventstores.Tests
             await Task.Delay(1000);
             var testEntity = await eventStore.LoadAsync<TestEntity>(entityId);
 
-            Assert.Equal("NewName", testEntity.Name);
-            Assert.Equal(entityId, testEntity.Id);
+            Assert.Equal("NewName", testEntity.Result.Name);
+            Assert.Equal(entityId, testEntity.Result.Id);
         }
 
         [Fact]
@@ -93,8 +80,8 @@ namespace Adapters.Framework.Eventstores.Tests
             await Task.Delay(3000);
             var testEntity = await eventStore.LoadAsync<TestEntity>(entityId);
 
-            Assert.Equal("NewName120", testEntity.Name);
-            Assert.Equal(entityId, testEntity.Id);
+            Assert.Equal("NewName120", testEntity.Result.Name);
+            Assert.Equal(entityId, testEntity.Result.Id);
         }
     }
 

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Application.Framework;
+using Application.Framework.Results;
 using Domain.Framework;
 using EventStore.ClientAPI;
 
@@ -25,24 +26,24 @@ namespace Adapters.Framework.EventStores
             _eventConverter = eventConverter;
         }
 
-        public async Task AppendAsync(IEnumerable<DomainEvent> domainEvents)
+        public async Task AppendAsync(IEnumerable<DomainEvent> domainEvents, long entityVersion)
         {
             var convertedElements = domainEvents.Select(eve => new EventData(Guid.NewGuid(), eve.GetType().Name, true,
                 Encoding.UTF8.GetBytes(_eventConverter.Serialize(eve)), null));
-            await _eventStoreConnection.AppendToStreamAsync(_eventStoreConfig.EventStream, ExpectedVersion.Any,
+            await _eventStoreConnection.AppendToStreamAsync(_eventStoreConfig.EventStream, entityVersion,
                 convertedElements);
         }
 
-        public async Task<T> LoadAsync<T>(Guid commandEntityId) where T : new()
+        public async Task<EventStoreResult<T>> LoadAsync<T>(Guid commandEntityId) where T : new()
         {
             var events = await GetEvents(commandEntityId);
             var entity = new T();
-            foreach (var domainEvent in events) entity = _eventSourcingStrategy.Apply(entity, domainEvent);
+            foreach (var domainEvent in events.Result) entity = _eventSourcingStrategy.Apply(entity, domainEvent);
 
-            return entity;
+            return EventStoreResult<T>.Ok(entity, events.EntityVersion);
         }
 
-        public async Task<IEnumerable<DomainEvent>> GetEvents(Guid entityId = default(Guid), int from = 0, int to = 100)
+        public async Task<EventStoreResult<IEnumerable<DomainEvent>>> GetEvents(Guid entityId = default(Guid), int from = 0, int to = 100)
         {
             var streamEventsSlice = await GetStreamEventsSlice(entityId, from, to);
             var domainEvents = streamEventsSlice.Events.ToList();
@@ -54,43 +55,31 @@ namespace Adapters.Framework.EventStores
                 domainEvents.AddRange(streamEventsSlice.Events);
             }
 
-            return ToDomainEventList(domainEvents);
+            return EventStoreResult<IEnumerable<DomainEvent>>.Ok(ToDomainEventList(domainEvents), streamEventsSlice.LastEventNumber);
         }
 
-        private async Task<StreamEventsSlice> GetStreamEventsSlice(Guid entityId, int @from, int to)
+        public async Task AppendAsync(IEnumerable<DomainEvent> domainResultDomainEvents)
+        {
+            await AppendAsync(domainResultDomainEvents, ExpectedVersion.Any);
+        }
+
+        private async Task<StreamEventsSlice> GetStreamEventsSlice(Guid entityId, int from, int to)
         {
             StreamEventsSlice streamEventsSlice;
             if (entityId == default(Guid))
                 streamEventsSlice =
-                    await _eventStoreConnection.ReadStreamEventsForwardAsync(_eventStoreConfig.EventStream, @from,
+                    await _eventStoreConnection.ReadStreamEventsForwardAsync(_eventStoreConfig.EventStream, from,
                         to, true);
             else
                 streamEventsSlice =
                     await _eventStoreConnection.ReadStreamEventsForwardAsync(
-                        $"{_eventStoreConfig.EntityStream}-{entityId}", @from, to, true);
+                        $"{_eventStoreConfig.EntityStream}-{entityId}", from, to, true);
             return streamEventsSlice;
-        }
-
-        public async Task AppendAsync(DomainEvent domainEvent)
-        {
-            var domainEventSerialized = _eventConverter.Serialize(domainEvent);
-            await _eventStoreConnection.AppendToStreamAsync(_eventStoreConfig.EventStream, ExpectedVersion.Any,
-                new EventData(Guid.NewGuid(), domainEvent.GetType().Name, true,
-                    Encoding.UTF8.GetBytes(domainEventSerialized),
-                    null));
         }
 
         private IEnumerable<DomainEvent> ToDomainEventList(List<ResolvedEvent> events)
         {
             foreach (var resolvedEvent in events) yield return _eventConverter.Deserialize(resolvedEvent);
-        }
-    }
-
-    public class ApplicationResult
-    {
-        public ApplicationResult()
-        {
-
         }
     }
 }

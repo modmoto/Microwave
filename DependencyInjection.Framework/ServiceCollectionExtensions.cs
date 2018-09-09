@@ -15,7 +15,7 @@ namespace DependencyInjection.Framework
             collection.AddSingleton<QueryEventDelegator>();
 
             var querries = assembly.GetTypes().Where(t => t.BaseType == typeof(Query));
-            var domainEvents = eventStoreFacade.GetEvents().Result.ToList();
+            var domainEvents = eventStoreFacade.GetEvents().Result.Result.ToList();
 
             var addSingletonFunctionConcrete = typeof(ServiceCollectionServiceExtensions).GetMethods().Where(method =>
                 method.Name == "AddSingleton" && method.IsGenericMethod &&
@@ -26,7 +26,6 @@ namespace DependencyInjection.Framework
             {
                 var querry = (Query) Activator.CreateInstance(querryType);
                 foreach (var domainEvent in domainEvents) querry.Apply(domainEvent);
-
 
                 var subscribeEventTypeForQuerryType = typeof(SubscribedEventTypes<>);
                 var genericType = subscribeEventTypeForQuerryType.MakeGenericType(querryType);

@@ -21,18 +21,20 @@ namespace Application.Seasons
 
         public async Task SetStartAndEndDate(ChangeDateCommand command)
         {
-            var season = await EventStoreFacade.LoadAsync<Season>(command.EntityId);
+            var seasonResult = await EventStoreFacade.LoadAsync<Season>(command.EntityId);
+            var season = seasonResult.Result;
             var domainResult = season.ChangeDate(command.StartDate, command.EndDate);
             if (domainResult.Failed) throw new DomainValidationException(domainResult.DomainErrors);
-            await EventStoreFacade.AppendAsync(domainResult.DomainEvents);
+            await EventStoreFacade.AppendAsync(domainResult.DomainEvents, seasonResult.EntityVersion);
         }
 
         public async Task ChangeName(ChangeNameCommand command)
         {
-            var season = await EventStoreFacade.LoadAsync<Season>(command.EntityId);
+            var seasonResult = await EventStoreFacade.LoadAsync<Season>(command.EntityId);
+            var season = seasonResult.Result;
             var domainResult = season.ChangeName(command.Name);
             if (domainResult.Failed) throw new DomainValidationException(domainResult.DomainErrors);
-            await EventStoreFacade.AppendAsync(domainResult.DomainEvents);
+            await EventStoreFacade.AppendAsync(domainResult.DomainEvents, seasonResult.EntityVersion);
         }
     }
 }
