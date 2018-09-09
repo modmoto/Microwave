@@ -90,7 +90,7 @@ namespace Adapters.Framework.Eventstores.Tests
             }
 
             await eventStore.AppendAsync(domainEvents);
-            await Task.Delay(2000);
+            await Task.Delay(3000);
             var testEntity = await eventStore.LoadAsync<TestEntity>(entityId);
 
             Assert.Equal("NewName120", testEntity.Name);

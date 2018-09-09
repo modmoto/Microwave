@@ -44,22 +44,31 @@ namespace Adapters.Framework.EventStores
 
         public async Task<IEnumerable<DomainEvent>> GetEvents(Guid entityId = default(Guid), int from = 0, int to = 100)
         {
+            var streamEventsSlice = await GetStreamEventsSlice(entityId, from, to);
+            var domainEvents = streamEventsSlice.Events.ToList();
+            while (!streamEventsSlice.IsEndOfStream)
+            {
+                from = to + 1;
+                to += 100;
+                streamEventsSlice = await GetStreamEventsSlice(entityId, from, to);
+                domainEvents.AddRange(streamEventsSlice.Events);
+            }
+
+            return ToDomainEventList(domainEvents);
+        }
+
+        private async Task<StreamEventsSlice> GetStreamEventsSlice(Guid entityId, int @from, int to)
+        {
             StreamEventsSlice streamEventsSlice;
             if (entityId == default(Guid))
                 streamEventsSlice =
-                    await _eventStoreConnection.ReadStreamEventsForwardAsync(_eventStoreConfig.EventStream, from,
+                    await _eventStoreConnection.ReadStreamEventsForwardAsync(_eventStoreConfig.EventStream, @from,
                         to, true);
             else
                 streamEventsSlice =
                     await _eventStoreConnection.ReadStreamEventsForwardAsync(
-                        $"{_eventStoreConfig.EntityStream}-{entityId}", from, to, true);
-
-            if (streamEventsSlice.IsEndOfStream) return ToDomainEventList(streamEventsSlice.Events);
-            var domainEvents = await GetEvents(entityId, to + 1, to + 101);
-            var domainEventsTemp = domainEvents.ToList();
-            var domainEventList = ToDomainEventList(streamEventsSlice.Events).ToList();
-            domainEventList.AddRange(domainEventsTemp);
-            return domainEventList;
+                        $"{_eventStoreConfig.EntityStream}-{entityId}", @from, to, true);
+            return streamEventsSlice;
         }
 
         public async Task AppendAsync(DomainEvent domainEvent)
@@ -71,9 +80,17 @@ namespace Adapters.Framework.EventStores
                     null));
         }
 
-        private IEnumerable<DomainEvent> ToDomainEventList(ResolvedEvent[] events)
+        private IEnumerable<DomainEvent> ToDomainEventList(List<ResolvedEvent> events)
         {
             foreach (var resolvedEvent in events) yield return _eventConverter.Deserialize(resolvedEvent);
+        }
+    }
+
+    public class ApplicationResult
+    {
+        public ApplicationResult()
+        {
+
         }
     }
 }
