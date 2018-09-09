@@ -136,6 +136,42 @@ namespace Adapters.Framework.Eventstores.Tests
             Assert.Equal(entityId, testEntity.Result.Id);
             Assert.Equal(entityId, testEntityAfterBetweenCommig.Result.Id);
         }
+
+//        [Fact]
+//        public async Task Append_NoVersionConflictOnDifferentEntity()
+//        {
+//            var eventStore = new EventStoreFacade(new EventSourcingApplyStrategy(), _eventStoreConnection, new TestEventStoreConfig(), new DomainEventConverter());
+//            var entityId = Guid.NewGuid();
+//
+//            var domainEvents = new List<DomainEvent> { new TestCreatedEvent(entityId, "OldName"), new TestChangeNameEvent(entityId, "NewName")};
+//
+//            await eventStore.AppendAsync(domainEvents);
+//
+//            await Task.Delay(1000);
+//            var testEntity = await eventStore.LoadAsync<TestEntity>(entityId);
+//
+//            var newGuid = Guid.NewGuid();
+//            var domainEventsNew = new List<DomainEvent> { new TestCreatedEvent(newGuid, "MyDifferentThing")};
+//            var convertedElements = domainEventsNew.Select(eve => new EventData(Guid.NewGuid(), eve.GetType().Name, true,
+//                Encoding.UTF8.GetBytes(new DomainEventConverter().Serialize(eve)), null));;
+//            await _eventStoreConnection.AppendToStreamAsync(new TestEventStoreConfig().EventStream, ExpectedVersion.Any,
+//                convertedElements);
+//
+//            await Task.Delay(1000);
+//
+//            var domainEventsCreateInBetween = new List<DomainEvent> { new TestChangeNameEvent(entityId, "NewName3")};
+//            Assert.Equal("NewName", testEntity.Result.Name);
+//            Assert.Equal(entityId, testEntity.Result.Id);
+//            await eventStore.AppendAsync(domainEventsCreateInBetween, testEntity.EntityVersion);
+//
+//            var testEntityNew = await eventStore.LoadAsync<TestEntity>(newGuid);
+//            Assert.Equal("MyDifferentThing", testEntityNew.Result.Name);
+//            Assert.Equal(newGuid, testEntityNew.Result.Id);
+//
+//            var testEntityUpdated = await eventStore.LoadAsync<TestEntity>(entityId);
+//            Assert.Equal("NewName3", testEntityUpdated.Result.Name);
+//            Assert.Equal(entityId, testEntityUpdated.Result.Id);
+//        }
     }
 
     internal class TestChangeNameEvent : DomainEvent
