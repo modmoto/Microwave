@@ -55,7 +55,8 @@ namespace Adapters.Framework.EventStores
                 domainEvents.AddRange(streamEventsSlice.Events);
             }
 
-            return EventStoreResult<IEnumerable<DomainEvent>>.Ok(ToDomainEventList(domainEvents), streamEventsSlice.LastEventNumber);
+            var eventEventNumber = streamEventsSlice.Events.Last().Event.EventNumber;
+            return EventStoreResult<IEnumerable<DomainEvent>>.Ok(ToDomainEventList(domainEvents), eventEventNumber);
         }
 
         public async Task AppendAsync(IEnumerable<DomainEvent> domainResultDomainEvents)

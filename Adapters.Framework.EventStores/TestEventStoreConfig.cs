@@ -14,7 +14,7 @@
 
     public class TestEventStoreConfig : EventStoreConfig
     {
-        public override string EventStream => "SeasonEvents_INT";
-        public override string EntityStream => "Season_INT";
+        public override string EventStream => "SeasonEventsINT";
+        public override string EntityStream => "SeasonINT";
     }
 }

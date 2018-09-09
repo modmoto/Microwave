@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Adapters.Framework.EventStores;
 using Adapters.Json.ObjectPersistences;
 using Domain.Framework;
 using EventStore.ClientAPI;
+using EventStore.ClientAPI.Exceptions;
 using EventStore.ClientAPI.SystemData;
 using Xunit;
 
@@ -60,8 +62,6 @@ namespace Adapters.Framework.Eventstores.Tests
         [Fact]
         public async Task GetEventsMoreThan100()
         {
-            await Task.Delay(1000);
-
             var eventStore = new EventStoreFacade(new EventSourcingApplyStrategy(), _eventStoreConnection, new TestEventStoreConfig(), new DomainEventConverter());
             var entityId = Guid.NewGuid();
 
@@ -82,6 +82,59 @@ namespace Adapters.Framework.Eventstores.Tests
 
             Assert.Equal("NewName120", testEntity.Result.Name);
             Assert.Equal(entityId, testEntity.Result.Id);
+        }
+
+        [Fact]
+        public async Task Append_VersionConflict()
+        {
+            var eventStore = new EventStoreFacade(new EventSourcingApplyStrategy(), _eventStoreConnection, new TestEventStoreConfig(), new DomainEventConverter());
+            var entityId = Guid.NewGuid();
+
+            var domainEvents = new List<DomainEvent> { new TestCreatedEvent(entityId, "OldName"), new TestChangeNameEvent(entityId, "NewName")};
+
+            await eventStore.AppendAsync(domainEvents);
+
+            await Task.Delay(1000);
+            var testEntity = await eventStore.LoadAsync<TestEntity>(entityId);
+
+            var domainEventsNew = new List<DomainEvent> { new TestChangeNameEvent(entityId, "NewName2")};
+            var convertedElements = domainEventsNew.Select(eve => new EventData(Guid.NewGuid(), eve.GetType().Name, true,
+                Encoding.UTF8.GetBytes(new DomainEventConverter().Serialize(eve)), null));;
+            await _eventStoreConnection.AppendToStreamAsync(new TestEventStoreConfig().EventStream, ExpectedVersion.Any,
+                convertedElements);
+
+            await Task.Delay(1000);
+
+            var domainEventsCreateInBetween = new List<DomainEvent> { new TestChangeNameEvent(entityId, "NewName3")};
+            Assert.Equal("NewName", testEntity.Result.Name);
+            Assert.Equal(entityId, testEntity.Result.Id);
+            await Assert.ThrowsAsync<WrongExpectedVersionException>(async () => await eventStore.AppendAsync(domainEventsCreateInBetween, testEntity.EntityVersion));
+        }
+
+        [Fact]
+        public async Task Append_NoVersionConflict()
+        {
+            var eventStore = new EventStoreFacade(new EventSourcingApplyStrategy(), _eventStoreConnection, new TestEventStoreConfig(), new DomainEventConverter());
+            var entityId = Guid.NewGuid();
+
+            var domainEvents = new List<DomainEvent> { new TestCreatedEvent(entityId, "OldName"), new TestChangeNameEvent(entityId, "NewName")};
+
+            await eventStore.AppendAsync(domainEvents);
+
+            await Task.Delay(1000);
+            var testEntity = await eventStore.LoadAsync<TestEntity>(entityId);
+
+            var domainEventsCreateInBetween = new List<DomainEvent> { new TestChangeNameEvent(entityId, "NewName2")};
+
+            await eventStore.AppendAsync(domainEventsCreateInBetween, testEntity.EntityVersion);
+            await Task.Delay(1000);
+
+            var testEntityAfterBetweenCommig = await eventStore.LoadAsync<TestEntity>(entityId);
+
+            Assert.Equal("NewName", testEntity.Result.Name);
+            Assert.Equal("NewName2", testEntityAfterBetweenCommig.Result.Name);
+            Assert.Equal(entityId, testEntity.Result.Id);
+            Assert.Equal(entityId, testEntityAfterBetweenCommig.Result.Id);
         }
     }
 
