@@ -14,7 +14,7 @@ namespace Application.Framework
             SubscribedTypes = subscribedEventTypes;
         }
 
-        public void Handle(DomainEvent domainEvent, long version = 0)
+        public void Handle(DomainEvent domainEvent, long version)
         {
             QueryObject.Apply(domainEvent);
             LastSubscriptionVersion = version;
