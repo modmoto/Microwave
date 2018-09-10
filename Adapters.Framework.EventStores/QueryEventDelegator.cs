@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Threading.Tasks;
 using Application.Framework;
 using EventStore.ClientAPI;
@@ -8,12 +9,13 @@ namespace Adapters.Framework.EventStores
 {
     public class QueryEventDelegator
     {
-        private readonly IEnumerable<IQueryHandler> _handlerList;
         private readonly IEventStoreConnection _connection;
-        private readonly EventStoreConfig _eventStoreConfig;
         private readonly IDomainEventConverter _domainEventConverter;
+        private readonly EventStoreConfig _eventStoreConfig;
+        private readonly IEnumerable<IQueryHandler> _handlerList;
 
-        public QueryEventDelegator(IEnumerable<IQueryHandler> handlerList, IEventStoreConnection connection, EventStoreConfig eventStoreConfig, IDomainEventConverter domainEventConverter)
+        public QueryEventDelegator(IEnumerable<IQueryHandler> handlerList, IEventStoreConnection connection,
+            EventStoreConfig eventStoreConfig, IDomainEventConverter domainEventConverter)
         {
             _handlerList = handlerList;
             _connection = connection;
@@ -21,24 +23,29 @@ namespace Adapters.Framework.EventStores
             _domainEventConverter = domainEventConverter;
         }
 
-        public async Task SubscribeToStreams()
+        public void SubscribeToStreamsAndStartLoading()
         {
-            var subscriptionTypes = _handlerList.SelectMany(handler => handler.SubscribedTypes);
-            foreach (var queryHandler in subscriptionTypes)
+            foreach (var queryHandler in _handlerList)
             {
-                await _connection.SubscribeToStreamAsync($"{_eventStoreConfig.EventStream}-{queryHandler.Name}", true, HandleSubscription);
+                foreach (var subscribedType in queryHandler.SubscribedTypes)
+                {
+                    var eventStoreStreamCatchUpSubscription = _connection.SubscribeToStreamFrom($"{_eventStoreConfig.EventStream}-{subscribedType.Name}",
+                        queryHandler.LastSubscriptionVersion,
+                        new CatchUpSubscriptionSettings(int.MaxValue, 100, false, true), HandleSubscription);
+                    Subs.Add(eventStoreStreamCatchUpSubscription);
+                }
             }
         }
 
-        private Task HandleSubscription(EventStoreSubscription subscription, ResolvedEvent resolvedEvent)
+        public IList<EventStoreCatchUpSubscription> Subs { get; private set; } = new List<EventStoreCatchUpSubscription>();
+
+        private Task HandleSubscription(EventStoreCatchUpSubscription subscription, ResolvedEvent resolvedEvent)
         {
             var domainEvent = _domainEventConverter.Deserialize(resolvedEvent);
             var eventType = domainEvent.GetType();
-            var subscribedQueryHandlers = _handlerList.Where(handler => handler.SubscribedTypes.Any(type => type == eventType));
-            foreach (var queryHandler in subscribedQueryHandlers)
-            {
-                queryHandler.Handle(domainEvent);
-            }
+            var subscribedQueryHandlers =
+                _handlerList.Where(handler => handler.SubscribedTypes.Any(type => type == eventType));
+            foreach (var queryHandler in subscribedQueryHandlers) queryHandler.Handle(domainEvent, resolvedEvent.OriginalEventNumber);
             return Task.CompletedTask;
         }
     }

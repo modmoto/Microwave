@@ -50,7 +50,6 @@ namespace Adapters.Framework.Eventstores.Tests
                     testQueryHandler1,
                     testQueryHandler2
                 }, _eventStoreConnection, new TestEventStoreConfig(), new DomainEventConverter());
-            await queryEventDelegator.SubscribeToStreams();
 
             var convertedElements = domainEvents.Select(eve => new EventData(Guid.NewGuid(), eve.GetType().Name, true,
                 Encoding.UTF8.GetBytes(new DomainEventConverter().Serialize(eve)), null));
@@ -59,6 +58,8 @@ namespace Adapters.Framework.Eventstores.Tests
                 convertedElements);
 
             await Task.Delay(2000);
+
+            queryEventDelegator.SubscribeToStreamsAndStartLoading();
 
             var queryObject1 = testQueryHandler1.QueryObject;
             var queryObject2 = testQueryHandler2.QueryObject;

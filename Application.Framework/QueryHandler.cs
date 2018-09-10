@@ -15,14 +15,13 @@ namespace Application.Framework
             SubscribedEventTypes = subscribedEventTypes;
         }
 
-        public void Handle(DomainEvent domainEvent)
+        public void Handle(DomainEvent domainEvent, long version = 0)
         {
-            if (SubscribedEventTypes.Contains(domainEvent.GetType()))
-            {
-                QueryObject.Apply(domainEvent);
-            }
+            QueryObject.Apply(domainEvent);
+            LastSubscriptionVersion = version;
         }
 
         public IEnumerable<Type> SubscribedTypes => SubscribedEventTypes;
+        public long LastSubscriptionVersion { get; private set; }
     }
 }

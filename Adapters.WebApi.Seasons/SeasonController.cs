@@ -27,9 +27,9 @@ namespace Adapters.WebApi.Seasons
         }
 
         [HttpGet("{entityId}")]
-        public ActionResult GetSeason(Guid id)
+        public ActionResult GetSeason(Guid entityId)
         {
-            var seasons = _queryHandler.GetSeason(id);
+            var seasons = _queryHandler.GetSeason(entityId);
             return Ok(seasons);
         }
 
@@ -41,7 +41,7 @@ namespace Adapters.WebApi.Seasons
         }
 
         [HttpPut("{entityId}/ChangeName")]
-        public async Task<IActionResult> ChangeName(Guid entityId,[FromBody] ChangeNameApiCommand command)
+        public async Task<IActionResult> ChangeName(Guid entityId, [FromBody] ChangeNameApiCommand command)
         {
             var changeDateCommand = new ChangeNameCommand
             {

@@ -22,6 +22,5 @@ namespace Application.Seasons.Querries
                 if (season.Id == nameChangedEvent.EntityId) season.Apply(nameChangedEvent);
             }
         }
-
     }
 }
