@@ -32,7 +32,7 @@ namespace Adapters.Framework.Eventstores.Tests
         }
 
         [Fact]
-        public async Task ActivateSubscription()
+        public async Task ActivateAndRecallSubscriptions()
         {
             var entityGuid = Guid.NewGuid();
             var domainEvents = new List<DomainEvent>
@@ -44,13 +44,13 @@ namespace Adapters.Framework.Eventstores.Tests
 
             var testQueryHandler1 = new TestQueryHandler1(new TestQ1(), new SubscribedEventTypes<TestQ1>());
             var testQueryHandler2 = new TestQueryHandler2(new TestQ2(), new SubscribedEventTypes<TestQ2>());
-            // ReSharper disable once ObjectCreationAsStatement
-            new QueryEventDelegator(
+            var queryEventDelegator = new QueryEventDelegator(
                 new List<IQueryHandler>
                 {
                     testQueryHandler1,
                     testQueryHandler2
                 }, _eventStoreConnection, new TestEventStoreConfig(), new DomainEventConverter());
+            await queryEventDelegator.SubscribeToStreams();
 
             var convertedElements = domainEvents.Select(eve => new EventData(Guid.NewGuid(), eve.GetType().Name, true,
                 Encoding.UTF8.GetBytes(new DomainEventConverter().Serialize(eve)), null));
@@ -63,7 +63,6 @@ namespace Adapters.Framework.Eventstores.Tests
             var queryObject1 = testQueryHandler1.QueryObject;
             var queryObject2 = testQueryHandler2.QueryObject;
 
-            Assert.Equal(2, queryObject1.Count);
             Assert.Equal("Name3", queryObject1.Name);
             Assert.Equal("LastName2", queryObject1.LastName);
             Assert.Equal("Name2", queryObject2.Name);

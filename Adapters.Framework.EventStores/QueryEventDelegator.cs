@@ -8,20 +8,25 @@ namespace Adapters.Framework.EventStores
 {
     public class QueryEventDelegator
     {
-        public readonly IEnumerable<IQueryHandler> HandlerList;
-        public readonly ICollection<EventStoreSubscription> StoreSubscriptions = new List<EventStoreSubscription>();
+        private readonly IEnumerable<IQueryHandler> _handlerList;
+        private readonly IEventStoreConnection _connection;
+        private readonly EventStoreConfig _eventStoreConfig;
         private readonly IDomainEventConverter _domainEventConverter;
 
         public QueryEventDelegator(IEnumerable<IQueryHandler> handlerList, IEventStoreConnection connection, EventStoreConfig eventStoreConfig, IDomainEventConverter domainEventConverter)
         {
-            var queryHandlers = handlerList.ToList();
-            HandlerList = queryHandlers;
+            _handlerList = handlerList;
+            _connection = connection;
+            _eventStoreConfig = eventStoreConfig;
             _domainEventConverter = domainEventConverter;
-            var subscriptionTypes = HandlerList.SelectMany(handler => handler.SubscribedTypes);
+        }
+
+        public async Task SubscribeToStreams()
+        {
+            var subscriptionTypes = _handlerList.SelectMany(handler => handler.SubscribedTypes);
             foreach (var queryHandler in subscriptionTypes)
             {
-                var eventStoreSubscription = connection.SubscribeToStreamAsync($"{eventStoreConfig.EventStream}-{queryHandler.Name}", true, HandleSubscription).Result;
-                StoreSubscriptions.Add(eventStoreSubscription);
+                await _connection.SubscribeToStreamAsync($"{_eventStoreConfig.EventStream}-{queryHandler.Name}", true, HandleSubscription);
             }
         }
 
@@ -29,7 +34,7 @@ namespace Adapters.Framework.EventStores
         {
             var domainEvent = _domainEventConverter.Deserialize(resolvedEvent);
             var eventType = domainEvent.GetType();
-            var subscribedQueryHandlers = HandlerList.Where(handler => handler.SubscribedTypes.Any(type => type == eventType));
+            var subscribedQueryHandlers = _handlerList.Where(handler => handler.SubscribedTypes.Any(type => type == eventType));
             foreach (var queryHandler in subscribedQueryHandlers)
             {
                 queryHandler.Handle(domainEvent);

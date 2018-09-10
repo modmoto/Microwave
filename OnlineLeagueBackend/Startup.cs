@@ -34,9 +34,7 @@ namespace OnlineLeagueBackend
 
             services.AddTransient<SeasonCommandHandler>();
 
-            var eventStore = (IEventStoreFacade) services.BuildServiceProvider().GetService(typeof(IEventStoreFacade));
-            services.AddAllLoadedQuerries(typeof(AllSeasonsQuery).Assembly, eventStore);
-            RecallReferenceHolder = (QueryEventDelegator) services.BuildServiceProvider().GetService(typeof(QueryEventDelegator));
+            services.AddAllEmptyQuerries(typeof(AllSeasonsQuery).Assembly);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -49,7 +47,5 @@ namespace OnlineLeagueBackend
 
             app.UseMvc();
         }
-
-        public static QueryEventDelegator RecallReferenceHolder;
     }
 }
