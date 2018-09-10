@@ -40,20 +40,6 @@ namespace Adapters.WebApi.Seasons
             return Ok();
         }
 
-        [HttpPut("{entityId}/ChangeDate")]
-        public async Task<IActionResult> ChangeDate(Guid entityId,[FromBody] ChangeDateApiCommand command)
-        {
-            var changeDateCommand = new ChangeDateCommand
-            {
-                EntityId = entityId,
-                StartDate = command.StartDate,
-                EndDate = command.EndDate
-            };
-
-            await _commandHandler.SetStartAndEndDate(changeDateCommand);
-            return Ok();
-        }
-
         [HttpPut("{entityId}/ChangeName")]
         public async Task<IActionResult> ChangeName(Guid entityId,[FromBody] ChangeNameApiCommand command)
         {
@@ -71,11 +57,5 @@ namespace Adapters.WebApi.Seasons
     public class ChangeNameApiCommand
     {
         public string Name { get; set; }
-    }
-
-    public class ChangeDateApiCommand
-    {
-        public DateTimeOffset StartDate { get; set; }
-        public DateTimeOffset EndDate { get; set; }
     }
 }

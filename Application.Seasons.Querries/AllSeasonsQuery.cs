@@ -15,14 +15,6 @@ namespace Application.Seasons.Querries
             Seasons.Add(season);
         }
 
-        public void Apply(SeasonDateChangedEvent createdEvent)
-        {
-            foreach (var season in Seasons)
-            {
-                if (season.Id == createdEvent.EntityId) season.Apply(createdEvent);
-            }
-        }
-
         public void Apply(SeasonNameChangedEvent nameChangedEvent)
         {
             foreach (var season in Seasons)

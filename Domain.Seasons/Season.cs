@@ -7,32 +7,22 @@ namespace Domain.Seasons
     public class Season : Entity
     {
         public string SeasonName { get; private set; }
-        public int TimeForGame { get; private set; }
-        public DateTimeOffset StartDate { get; private set; }
-        public DateTimeOffset EndDate { get; private set; }
 
-        public static DomainResult Create(string seasonName, int maxDaysBetweenGames)
+        public static DomainResult Create(string seasonName)
         {
-            var seasonCreatedEvent = new SeasonCreatedEvent(Guid.NewGuid(), seasonName, maxDaysBetweenGames);
+            var seasonCreatedEvent = new SeasonCreatedEvent(Guid.NewGuid(), seasonName);
             return DomainResult.OkResult(seasonCreatedEvent);
         }
 
         public void Apply(SeasonCreatedEvent domainEvent)
         {
             SeasonName = domainEvent.InitialName;
-            TimeForGame = domainEvent.MaxDaysBetweenGames;
             Id = domainEvent.EntityId;
         }
 
-        public void Apply(SeasonDateChangedEvent domainEvent)
+        public void Apply(SeasonNameChangedEvent domainEvent)
         {
-            StartDate = domainEvent.StartDate;
-            EndDate = domainEvent.EndDate;
-        }
-
-        public DomainResult ChangeDate(DateTimeOffset startDate, DateTimeOffset endDate)
-        {
-            return DomainResult.OkResult(new SeasonDateChangedEvent(Id, startDate, endDate));
+            SeasonName = domainEvent.Name;
         }
 
         public DomainResult ChangeName(string commandName)

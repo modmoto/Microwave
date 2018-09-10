@@ -14,18 +14,9 @@ namespace Application.Seasons
 
         public async Task CreateSeason(CreateSesonCommand command)
         {
-            var domainResult = Season.Create(command.SeasonName, command.MaxDaysBetweenGames);
+            var domainResult = Season.Create(command.SeasonName);
             if (domainResult.Failed) throw new DomainValidationException(domainResult.DomainErrors);
             await EventStoreFacade.AppendAsync(domainResult.DomainEvents);
-        }
-
-        public async Task SetStartAndEndDate(ChangeDateCommand command)
-        {
-            var seasonResult = await EventStoreFacade.LoadAsync<Season>(command.EntityId);
-            var season = seasonResult.Result;
-            var domainResult = season.ChangeDate(command.StartDate, command.EndDate);
-            if (domainResult.Failed) throw new DomainValidationException(domainResult.DomainErrors);
-            await EventStoreFacade.AppendAsync(domainResult.DomainEvents, seasonResult.EntityVersion);
         }
 
         public async Task ChangeName(ChangeNameCommand command)
