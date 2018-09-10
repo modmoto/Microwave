@@ -28,15 +28,12 @@ namespace Adapters.Framework.EventStores
             {
                 foreach (var subscribedType in queryHandler.SubscribedTypes)
                 {
-                    var eventStoreStreamCatchUpSubscription = _connection.SubscribeToStreamFrom($"{_eventStoreConfig.EventStream}-{subscribedType.Name}",
+                    _connection.SubscribeToStreamFrom($"{_eventStoreConfig.EventStream}-{subscribedType.Name}",
                         queryHandler.LastSubscriptionVersion,
-                        new CatchUpSubscriptionSettings(int.MaxValue, 100, false, true), HandleSubscription);
-                    Subs.Add(eventStoreStreamCatchUpSubscription);
+                        new CatchUpSubscriptionSettings(int.MaxValue, 100, true, true), HandleSubscription);
                 }
             }
         }
-
-        public IList<EventStoreCatchUpSubscription> Subs { get; private set; } = new List<EventStoreCatchUpSubscription>();
 
         private Task HandleSubscription(EventStoreCatchUpSubscription subscription, ResolvedEvent resolvedEvent)
         {
