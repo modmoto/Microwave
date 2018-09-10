@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using Domain.Framework;
-
-namespace Application.Framework.Results
+﻿namespace Application.Framework.Results
 {
     public class EventStoreResult
     {
