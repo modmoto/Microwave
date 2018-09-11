@@ -11,7 +11,6 @@ using EventStore.ClientAPI.Exceptions;
 using EventStore.ClientAPI.SystemData;
 using Xunit;
 
-[assembly: CollectionBehavior(MaxParallelThreads = 1)]
 namespace Adapters.Framework.Eventstores.Tests
 {
     public class EventStoreIntegrationTests : IAsyncLifetime
