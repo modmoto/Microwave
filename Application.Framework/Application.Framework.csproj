@@ -9,8 +9,5 @@
     <Reference Include="EventStore.ClientAPI.NetCore, Version=4.1.0.23, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\..\.nuget\packages\eventstore.clientapi.netcore\4.1.0.23\lib\netstandard2.0\EventStore.ClientAPI.NetCore.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed">
-      <HintPath>..\..\..\.nuget\packages\newtonsoft.json\9.0.1\lib\netstandard1.0\Newtonsoft.Json.dll</HintPath>
-    </Reference>
   </ItemGroup>
 </Project>

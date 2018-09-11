@@ -30,7 +30,7 @@ namespace OnlineLeagueBackend
             services.AddSingleton(connection);
             services.AddTransient<IObjectPersister<AllSeasonsQuery>, JsonFileObjectPersister<AllSeasonsQuery>>();
             services.AddTransient<IDomainEventPersister, DomainEventPersister>();
-            services.AddTransient<DomainEventConverter>();
+            services.AddTransient<IDomainEventConverter, DomainEventConverter>();
 
             services.AddTransient<SeasonCommandHandler>();
 

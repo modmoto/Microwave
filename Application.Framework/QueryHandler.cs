@@ -6,7 +6,7 @@ namespace Application.Framework
 {
     public class QueryHandler<T> : IQueryHandler where T : Query
     {
-        public T QueryObject { get; private set; }
+        public readonly T QueryObject;
 
         public QueryHandler(T queryObject, SubscribedEventTypes<T> subscribedEventTypes)
         {
@@ -14,17 +14,13 @@ namespace Application.Framework
             SubscribedTypes = subscribedEventTypes;
         }
 
-        public void Handle(DomainEvent domainEvent)
+        public void Handle(DomainEvent domainEvent, long version)
         {
             QueryObject.Apply(domainEvent);
+            LastSubscriptionVersion = version;
         }
 
         public IEnumerable<Type> SubscribedTypes { get; }
-        public Type HandledQuery => typeof(T);
-
-        public void SetObject(Query snapShotQuerry)
-        {
-            QueryObject = (T) snapShotQuerry;
-        }
+        public long LastSubscriptionVersion { get; private set; }
     }
 }

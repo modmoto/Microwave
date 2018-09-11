@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Adapters.Json.ObjectPersistences;
 using Application.Framework;
 using Application.Framework.Results;
 using Domain.Framework;
@@ -16,10 +15,10 @@ namespace Adapters.Framework.EventStores
         private readonly IEventSourcingStrategy _eventSourcingStrategy;
         private readonly IEventStoreConnection _eventStoreConnection;
         private readonly EventStoreConfig _eventStoreConfig;
-        private readonly DomainEventConverter _eventConverter;
+        private readonly IDomainEventConverter _eventConverter;
 
         public EventStoreFacade(IEventSourcingStrategy eventSourcingStrategy,
-            IEventStoreConnection eventStoreConnection, EventStoreConfig eventStoreConfig, DomainEventConverter eventConverter)
+            IEventStoreConnection eventStoreConnection, EventStoreConfig eventStoreConfig, IDomainEventConverter eventConverter)
         {
             _eventSourcingStrategy = eventSourcingStrategy;
             _eventStoreConnection = eventStoreConnection;
