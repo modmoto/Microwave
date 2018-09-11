@@ -103,6 +103,8 @@ namespace Adapters.Framework.Eventstores.Tests
 
             queryEventDelegator.SubscribeToStreamsFrom();
 
+            await Task.Delay(1000);
+
             var queryObject1 = testQueryHandler1.QueryObject;
             var queryObject2 = testQueryHandler2.QueryObject;
 
