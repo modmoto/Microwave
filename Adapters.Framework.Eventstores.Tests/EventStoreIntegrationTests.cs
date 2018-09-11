@@ -171,6 +171,27 @@ namespace Adapters.Framework.Eventstores.Tests
 //            Assert.Equal("NewName3", testEntityUpdated.Result.Name);
 //            Assert.Equal(entityId, testEntityUpdated.Result.Id);
 //        }
+
+        [Fact]
+        public async Task Load_NestingEntity()
+        {
+            var eventStore = new EventStoreFacade(new EventSourcingApplyStrategy(), _eventStoreConnection, new TestEventStoreConfig(), new DomainEventConverter());
+            var entityId = Guid.NewGuid();
+            var childId = Guid.NewGuid();
+
+            var domainEvents = new List<DomainEvent> { new TestCreatedEvent(entityId, "ParentName"), new TestCreateNestedChildEntityEvent(childId, entityId, "OldChildName"), new TestChangeNestedChildEntityNameEvent(childId, "NewChildName")};
+
+            await eventStore.AppendAsync(domainEvents);
+
+            await Task.Delay(1000);
+            var testEntity = await eventStore.LoadAsync<TestEntityNestedParent>(entityId);
+
+            Assert.Equal("ParentName", testEntity.Result.ParentName);
+            Assert.Equal(entityId, testEntity.Result.Id);
+            Assert.Equal("NewChildName", testEntity.Result.Child.ChildName);
+            Assert.Equal(childId, testEntity.Result.Child.Id);
+        }
+
     }
 
     internal class TestChangeNameEvent : DomainEvent
@@ -207,6 +228,88 @@ namespace Adapters.Framework.Eventstores.Tests
         }
 
         public string Name { get; private set; }
+    }
+
+    internal class TestEntityNestedParent : Entity
+    {
+        public void Apply(TestCreatedEvent domainEvent)
+        {
+            Id = domainEvent.EntityId;
+            ParentName = domainEvent.Name;
+        }
+
+        public void Apply(TestChangeNestedChildEntityNameEvent domainEvent)
+        {
+            if (domainEvent?.EntityId == Child.Id)
+            {
+                Child.Apply(domainEvent);
+            }
+        }
+
+        public void Apply(TestCreateNestedChildEntityEvent domainEvent)
+        {
+            if (domainEvent.ParentId == Id)
+            {
+                var testEntityNestedChild = new TestEntityNestedChild();
+                testEntityNestedChild.Apply(domainEvent);
+                Child = testEntityNestedChild;
+            }
+        }
+
+        public TestEntityNestedChild Child { get; set; }
+
+        public string ParentName { get; private set; }
+    }
+
+    internal class TestCreateNestedChildEntityEvent : DomainEvent
+    {
+        public TestCreateNestedChildEntityEvent(Guid entityId, Guid parentId, string childName) : base(entityId)
+        {
+            ParentId = parentId;
+            ChildName = childName;
+        }
+
+        public Guid ParentId { get; }
+        public string ChildName { get; }
+    }
+
+    internal class TestChangeNestedChildEvent : DomainEvent
+    {
+        public TestChangeNestedChildEvent(Guid entityId) : base(entityId)
+        {
+        }
+    }
+
+    internal class TestEntityNestedChild : Entity
+    {
+        public void Apply(TestCreatedEvent domainEvent)
+        {
+            Id = domainEvent.EntityId;
+            ChildName = domainEvent.Name;
+        }
+
+        public void Apply(TestChangeNestedChildEntityNameEvent domainEvent)
+        {
+            ChildName = domainEvent.NewName;
+        }
+
+        public string ChildName { get; private set; }
+
+        public void Apply(TestCreateNestedChildEntityEvent domainEvent)
+        {
+            Id = domainEvent.EntityId;
+            ChildName = domainEvent.ChildName;
+        }
+    }
+
+    internal class TestChangeNestedChildEntityNameEvent : DomainEvent
+    {
+        public TestChangeNestedChildEntityNameEvent(Guid entityId, string newName) : base(entityId)
+        {
+            NewName = newName;
+        }
+
+        public string NewName { get; }
     }
 
     internal class TestEvent : DomainEvent
