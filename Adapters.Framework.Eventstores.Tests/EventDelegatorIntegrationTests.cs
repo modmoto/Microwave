@@ -40,6 +40,7 @@ namespace Adapters.Framework.Eventstores.Tests
                 new TestEvent2(entityGuid) {Name = "Name2", LastName = "LastName2"},
                 new TestEvent1(entityGuid) {Name = "Name3"},
             };
+            var eventStoreFacade = new EventStoreFacade(new EventSourcingApplyStrategy(), _eventStoreConnection, new TestEventStoreConfig(), new DomainEventConverter());
 
             var testQueryHandler1 = new TestQueryHandler1(new TestQ1(), new SubscribedEventTypes<TestQ1>());
             var testQueryHandler2 = new TestQueryHandler2(new TestQ2(), new SubscribedEventTypes<TestQ2>());
@@ -48,7 +49,9 @@ namespace Adapters.Framework.Eventstores.Tests
                 {
                     testQueryHandler1,
                     testQueryHandler2
-                }, _eventStoreConnection, new TestEventStoreConfig(), new DomainEventConverter());
+                }, eventStoreFacade);
+
+            await queryEventDelegator.SubscribeToStreamsAndStartLoading();
 
             var convertedElements = domainEvents.Select(eve => new EventData(Guid.NewGuid(), eve.GetType().Name, true,
                 Encoding.UTF8.GetBytes(new DomainEventConverter().Serialize(eve)), null));
@@ -57,8 +60,6 @@ namespace Adapters.Framework.Eventstores.Tests
                 convertedElements);
 
             await Task.Delay(2000);
-
-            queryEventDelegator.SubscribeToStreamsAndStartLoading();
 
             var queryObject1 = testQueryHandler1.QueryObject;
             var queryObject2 = testQueryHandler2.QueryObject;

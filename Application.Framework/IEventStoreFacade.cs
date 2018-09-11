@@ -12,5 +12,7 @@ namespace Application.Framework
         Task<EventStoreResult<T>> LoadAsync<T>(Guid commandEntityId) where T : new();
         Task<EventStoreResult<IEnumerable<DomainEvent>>>  GetEvents(Guid entityId = default(Guid), int from = 0, int to = 100);
         Task AppendAsync(IEnumerable<DomainEvent> domainResultDomainEvents);
+        Task Subscribe(Type domainEventType, Action<DomainEvent> subscribeMethod);
+        void SubscribeFrom(Type domainEventType, long version, Action<DomainEvent> subscribeMethod);
     }
 }

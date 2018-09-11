@@ -13,13 +13,14 @@ namespace Adapters.Framework.EventStores
 {
     public class EventStoreFacade : IEventStoreFacade
     {
-        private readonly IEventSourcingStrategy _eventSourcingStrategy;
-        private readonly IEventStoreConnection _eventStoreConnection;
-        private readonly EventStoreConfig _eventStoreConfig;
         private readonly DomainEventConverter _eventConverter;
+        private readonly IEventSourcingStrategy _eventSourcingStrategy;
+        private readonly EventStoreConfig _eventStoreConfig;
+        private readonly IEventStoreConnection _eventStoreConnection;
 
         public EventStoreFacade(IEventSourcingStrategy eventSourcingStrategy,
-            IEventStoreConnection eventStoreConnection, EventStoreConfig eventStoreConfig, DomainEventConverter eventConverter)
+            IEventStoreConnection eventStoreConnection, EventStoreConfig eventStoreConfig,
+            DomainEventConverter eventConverter)
         {
             _eventSourcingStrategy = eventSourcingStrategy;
             _eventStoreConnection = eventStoreConnection;
@@ -44,7 +45,8 @@ namespace Adapters.Framework.EventStores
             return EventStoreResult<T>.Ok(entity, events.EntityVersion);
         }
 
-        public async Task<EventStoreResult<IEnumerable<DomainEvent>>> GetEvents(Guid entityId = default(Guid), int from = 0, int to = 100)
+        public async Task<EventStoreResult<IEnumerable<DomainEvent>>> GetEvents(Guid entityId = default(Guid),
+            int from = 0, int to = 100)
         {
             var streamEventsSlice = await GetStreamEventsSlice(entityId, from, to);
             var domainEvents = streamEventsSlice.Events.ToList();
@@ -64,6 +66,30 @@ namespace Adapters.Framework.EventStores
         {
             await AppendAsync(domainResultDomainEvents, ExpectedVersion.Any);
         }
+
+        public async Task Subscribe(Type domainEventType, Action<DomainEvent> subscribeMethod)
+        {
+            var subscribeToStreamAsync = await _eventStoreConnection.SubscribeToStreamAsync(
+                $"{_eventStoreConfig.EventStream}-{domainEventType.Name}", true,
+                (arg1, arg2) =>
+                {
+                    var domainEvent = _eventConverter.Deserialize(arg2);
+                    subscribeMethod.Invoke(domainEvent);
+                });
+        }
+
+        public void SubscribeFrom(Type domainEventType, long version, Action<DomainEvent> subscribeMethod)
+        {
+            _eventStoreConnection.SubscribeToStreamFrom($"{_eventStoreConfig.EventStream}-{domainEventType.Name}",
+                0,
+                new CatchUpSubscriptionSettings(int.MaxValue, 100, false, true),
+                (arg1, arg2) =>
+                {
+                    var domainEvent = _eventConverter.Deserialize(arg2);
+                    subscribeMethod.Invoke(domainEvent);
+                });
+        }
+
 
         private async Task<StreamEventsSlice> GetStreamEventsSlice(Guid entityId, int from, int to)
         {
