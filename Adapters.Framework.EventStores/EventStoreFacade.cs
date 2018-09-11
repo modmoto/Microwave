@@ -69,7 +69,7 @@ namespace Adapters.Framework.EventStores
 
         public async Task Subscribe(Type domainEventType, Action<DomainEvent> subscribeMethod)
         {
-            var subscribeToStreamAsync = await _eventStoreConnection.SubscribeToStreamAsync(
+            await _eventStoreConnection.SubscribeToStreamAsync(
                 $"{_eventStoreConfig.EventStream}-{domainEventType.Name}", true,
                 (arg1, arg2) =>
                 {

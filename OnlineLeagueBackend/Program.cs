@@ -10,7 +10,7 @@ namespace OnlineLeagueBackend
         {
             var webHost = CreateWebHostBuilder(args).Build();
             var recallReferenceHolder = (QueryEventDelegator) webHost.Services.GetService(typeof(QueryEventDelegator));
-            recallReferenceHolder.SubscribeToStreamsAndStartLoading();
+            recallReferenceHolder.SubscribeToStreamsFrom();
             webHost.Run();
         }
 

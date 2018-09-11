@@ -17,13 +17,13 @@ namespace Adapters.Framework.EventStores
             _facade = facade;
         }
 
-        public async Task SubscribeToStreamsAndStartLoading()
+        public void SubscribeToStreamsFrom(long version = 0)
         {
             foreach (var queryHandler in _handlerList)
             {
                 foreach (var subscribedType in queryHandler.SubscribedTypes)
                 {
-                    await _facade.Subscribe(subscribedType, HandleSubscription);
+                    _facade.SubscribeFrom(subscribedType, version, HandleSubscription);
                 }
             }
         }
@@ -36,6 +36,17 @@ namespace Adapters.Framework.EventStores
             foreach (var queryHandler in subscribedQueryHandlers)
             {
                 queryHandler.Handle(domainEvent);
+            }
+        }
+
+        public async Task SubscribeToStreams()
+        {
+            foreach (var queryHandler in _handlerList)
+            {
+                foreach (var subscribedType in queryHandler.SubscribedTypes)
+                {
+                    await _facade.Subscribe(subscribedType, HandleSubscription);
+                }
             }
         }
     }
