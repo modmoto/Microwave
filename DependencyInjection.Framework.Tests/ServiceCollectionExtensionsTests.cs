@@ -16,31 +16,16 @@ namespace DependencyInjection.Framework.Tests
     public class ServiceCollectionExtensionsTests
     {
         [Fact]
-        public async Task AddAllLoadedQuerries()
+        public void AddAllEmptyQuerries()
         {
-            var eventStoreConnection = EventStoreConnection.Create(new Uri("tcp://admin:changeit@localhost:1113"), "MyTestCon");
-            await eventStoreConnection.ConnectAsync();
-            await eventStoreConnection.DeleteStreamAsync(new TestEventStoreConfig().EventStream, ExpectedVersion.Any,
-                new UserCredentials("admin", "changeit"));
-            var eventStore = new EventStoreFacade(new EventSourcingApplyStrategy(), eventStoreConnection, new TestEventStoreConfig(), new DomainEventConverter());
-            var entityId = Guid.NewGuid();
-            var domainEvents = new List<DomainEvent>
-            {
-                new TestQuerryCreatedEvent(entityId, "NameFirst"),
-                new TestQuerryNameChangedEvent(entityId, "NameSecond")
-            };
-
-            await eventStore.AppendAsync(domainEvents);
-
             var serviceCollection = (IServiceCollection) new ServiceCollection();
-            serviceCollection.AddAllLoadedQuerries(typeof(TestQuery).Assembly, eventStore);
+            serviceCollection.AddAllEmptyQuerries(typeof(TestQuery).Assembly);
             var buildServiceProvider = serviceCollection.BuildServiceProvider();
             var querryInDi = (TestQuery) buildServiceProvider.GetService(typeof(TestQuery));
             var allowedEventsOfQuerry = (SubscribedEventTypes<TestQuery>) buildServiceProvider.GetService(typeof(SubscribedEventTypes<TestQuery>));
             var querryHandler = buildServiceProvider.GetService<TestQuerryHandler>();
             var querryHandlers = buildServiceProvider.GetServices<IQueryHandler>().ToList();
 
-            Assert.Equal("NameSecond", querryInDi.Name);
             Assert.Equal(nameof(TestQuerryCreatedEvent), allowedEventsOfQuerry[0].Name);
             Assert.Equal(nameof(TestQuerryNameChangedEvent), allowedEventsOfQuerry[1].Name);
             Assert.Equal(querryInDi, querryHandler.QueryObject);
