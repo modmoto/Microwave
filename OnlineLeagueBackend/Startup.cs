@@ -28,8 +28,6 @@ namespace OnlineLeagueBackend
             var connection = EventStoreConnection.Create(new Uri("tcp://admin:changeit@localhost:1113"), "MyTestCon");
             connection.ConnectAsync().Wait();
             services.AddSingleton(connection);
-            services.AddTransient<IObjectPersister<AllSeasonsQuery>, JsonFileObjectPersister<AllSeasonsQuery>>();
-            services.AddTransient<IDomainEventPersister, DomainEventPersister>();
             services.AddTransient<DomainEventConverter>();
 
             services.AddTransient<SeasonCommandHandler>();

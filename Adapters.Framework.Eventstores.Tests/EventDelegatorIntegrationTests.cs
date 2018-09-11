@@ -48,7 +48,7 @@ namespace Adapters.Framework.Eventstores.Tests
                 {
                     testQueryHandler1,
                     testQueryHandler2
-                }, _eventStoreConnection, new TestEventStoreConfig(), new DomainEventConverter(), new QuerryConverter());
+                }, _eventStoreConnection, new TestEventStoreConfig(), new DomainEventConverter());
 
             var convertedElements = domainEvents.Select(eve => new EventData(Guid.NewGuid(), eve.GetType().Name, true,
                 Encoding.UTF8.GetBytes(new DomainEventConverter().Serialize(eve)), null));
