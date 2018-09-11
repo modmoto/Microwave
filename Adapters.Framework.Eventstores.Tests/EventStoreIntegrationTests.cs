@@ -185,13 +185,16 @@ namespace Adapters.Framework.Eventstores.Tests
 
             await Task.Delay(1000);
             var testEntity = await eventStore.LoadAsync<TestEntityNestedParent>(entityId);
+            var testEntityChild = await eventStore.LoadAsync<TestEntityNestedChild>(entityId);
 
             Assert.Equal("ParentName", testEntity.Result.ParentName);
             Assert.Equal(entityId, testEntity.Result.Id);
+            Assert.Equal("NewChildName", testEntityChild.Result.ChildName);
+            Assert.Equal(childId, testEntityChild.Result.Id);
+
             Assert.Equal("NewChildName", testEntity.Result.Child.ChildName);
             Assert.Equal(childId, testEntity.Result.Child.Id);
         }
-
     }
 
     internal class TestChangeNameEvent : DomainEvent
