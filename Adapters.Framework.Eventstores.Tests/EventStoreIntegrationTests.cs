@@ -210,7 +210,9 @@ namespace Adapters.Framework.Eventstores.Tests
             await eventStore.AppendAsync(domainEvents);
 
             await Task.Delay(1000);
-            var testEntity = await eventStore.LoadAsync<TestEntityNestedParent>(entityId);
+            var testEntity = await eventStore
+                .Include<TestEntityNestedParent>(nameof(TestEntityNestedParent.Child))
+                .LoadAsync<TestEntityNestedParent>(entityId);
             var testEntityChild = await eventStore.LoadAsync<TestEntityNestedChild>(childId);
 
             Assert.Equal("ParentName", testEntity.Result.ParentName);
