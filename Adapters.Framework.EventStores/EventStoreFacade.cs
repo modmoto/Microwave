@@ -55,26 +55,24 @@ namespace Adapters.Framework.EventStores
 
             var type = typeof(T);
             var enumerable = list.ToList();
-            if (enumerable.Count > 0)
+
+            var alsoLoad = enumerable.ToList();
+            list = MoveOneStepDown(alsoLoad).ToList();
+
+            foreach (var loadKey in alsoLoad)
             {
-                var alsoLoad = enumerable.ToList();
-                list = MoveOneStepDown(alsoLoad).ToList();
+                var propertyInfos = type.GetProperty(loadKey);
+                var entityType = propertyInfos.PropertyType;
+                var methodInfo = GetType().GetMethod("LoadAsyncRecursive");
+                var makeGenericMethod = methodInfo.MakeGenericMethod(entityType);
 
-                foreach (var loadKey in alsoLoad)
-                {
-                    var propertyInfos = type.GetProperty(loadKey);
-                    var entityType = propertyInfos.PropertyType;
-                    var methodInfo = GetType().GetMethod("LoadAsyncRecursive");
-                    var makeGenericMethod = methodInfo.MakeGenericMethod(entityType);
-
-                    var guid = ((Entity) propertyInfos.GetValue(entity)).Id;
-                    var invoke = (Task) makeGenericMethod.Invoke(this, new object[]{ guid, list });
-                    await invoke;
-                    var propertyInfo = invoke.GetType().GetProperty("Result");
-                    var value = propertyInfo.GetValue(invoke);
-                    var ent = value.GetType().GetProperty("Result").GetValue(value);
-                    entity = Merge(entity, ent, loadKey);
-                }
+                var guid = ((Entity) propertyInfos.GetValue(entity)).Id;
+                var invoke = (Task) makeGenericMethod.Invoke(this, new object[]{ guid, list });
+                await invoke;
+                var propertyInfo = invoke.GetType().GetProperty("Result");
+                var value = propertyInfo.GetValue(invoke);
+                var ent = value.GetType().GetProperty("Result").GetValue(value);
+                entity = Merge(entity, ent, loadKey);
             }
 
             return EventStoreResult<T>.Ok(entity, events.EntityVersion);
