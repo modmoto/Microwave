@@ -44,6 +44,7 @@ namespace Adapters.Framework.EventStores
         {
             var eventStoreResult = await LoadAsyncRecursive<T>(commandEntityId, AlsoLoad);
             AlsoLoad = new List<string>();
+            AlsoLoadChilds = new List<ParentChild>();
             return eventStoreResult;
         }
 
@@ -54,12 +55,8 @@ namespace Adapters.Framework.EventStores
             foreach (var domainEvent in events.Result) entity = _eventSourcingStrategy.Apply(entity, domainEvent);
 
             var type = typeof(T);
-            var enumerable = list.ToList();
 
-            var alsoLoad = enumerable.ToList();
-            list = MoveOneStepDown(alsoLoad).ToList();
-
-            foreach (var loadKey in alsoLoad)
+            foreach (var loadKey in list)
             {
                 var propertyInfos = type.GetProperty(loadKey);
                 var entityType = propertyInfos.PropertyType;
@@ -67,7 +64,9 @@ namespace Adapters.Framework.EventStores
                 var makeGenericMethod = methodInfo.MakeGenericMethod(entityType);
 
                 var guid = ((Entity) propertyInfos.GetValue(entity)).Id;
-                var invoke = (Task) makeGenericMethod.Invoke(this, new object[]{ guid, list });
+
+                var listNew = AlsoLoadChilds.Where(item => item.NameOfParent == loadKey).Select(item => item.NameOfChild);
+                var invoke = (Task) makeGenericMethod.Invoke(this, new object[]{ guid, listNew });
                 await invoke;
                 var propertyInfo = invoke.GetType().GetProperty("Result");
                 var value = propertyInfo.GetValue(invoke);
@@ -76,19 +75,6 @@ namespace Adapters.Framework.EventStores
             }
 
             return EventStoreResult<T>.Ok(entity, events.EntityVersion);
-        }
-
-        private IEnumerable<string> MoveOneStepDown(List<string> alsoLoad)
-        {
-            foreach (var s in alsoLoad)
-            {
-                var enumerable = s.Split(".").Skip(1).ToList();
-                if (enumerable.Count != 0)
-                {
-                    var join = string.Join(".", enumerable.ToList());
-                    yield return join;
-                }
-            }
         }
 
         public T Merge<T>(T entity, object nestedEntity, string path)
@@ -177,7 +163,14 @@ namespace Adapters.Framework.EventStores
             return this;
         }
 
+        public IEventStoreFacade FurtherInclude(string nameOfParent, string nameOfChild)
+        {
+            AlsoLoadChilds.Add(new ParentChild(nameOfParent, nameOfChild));
+            return this;
+        }
+
         public ICollection<string> AlsoLoad { get; private set; } = new Collection<string>();
+        public ICollection<ParentChild> AlsoLoadChilds { get; private set; } = new Collection<ParentChild>();
 
 
         private async Task<StreamEventsSlice> GetStreamEventsSlice(Guid entityId, int from, int to)
@@ -197,6 +190,18 @@ namespace Adapters.Framework.EventStores
         private IEnumerable<DomainEvent> ToDomainEventList(List<ResolvedEvent> events)
         {
             foreach (var resolvedEvent in events) yield return _eventConverter.Deserialize(resolvedEvent);
+        }
+    }
+
+    public class ParentChild
+    {
+        public string NameOfParent { get; }
+        public string NameOfChild { get; }
+
+        public ParentChild(string nameOfParent, string nameOfChild)
+        {
+            NameOfParent = nameOfParent;
+            NameOfChild = nameOfChild;
         }
     }
 }

@@ -14,6 +14,6 @@ namespace Application.Framework
         Task AppendAsync(IEnumerable<DomainEvent> domainResultDomainEvents);
         Task Subscribe(Type domainEventType, Action<DomainEvent> subscribeMethod);
         void SubscribeFrom(Type domainEventType, long version, Action<DomainEvent> subscribeMethod);
-        IEventStoreFacade Include(string nameOfProperty);
+        IEventStoreFacade FurtherInclude(string nameOfProperty, string nextchild);
     }
 }

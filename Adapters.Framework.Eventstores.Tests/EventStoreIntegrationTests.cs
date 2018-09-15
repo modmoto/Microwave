@@ -238,7 +238,7 @@ namespace Adapters.Framework.Eventstores.Tests
                 new TestCreatedNestedEntityEvent(entityId, "ParentName"),
                 new TestCreateNestedChildEntityEvent(childId, "OldChildName"),
                 new TestCreateNestedChildEntityEvent(childChildId, "OldNestedNestedChildName"),
-                new TestAddNextChildEvent(childChildId, childId),
+                new TestAddNextChildEvent(childId, childChildId),
                 new TestAddedNestedChildEntityToParent(entityId, childId),
                 new TestChangeNestedChildEntityNameEvent(childChildId, "NewNestedNestedChildName")
             };
@@ -248,18 +248,17 @@ namespace Adapters.Framework.Eventstores.Tests
             await Task.Delay(1000);
             var testEntity = await eventStore
                 .Include("Child")
-                .Include("Child.NextChild")
+                .FurtherInclude("Child", "NextChild")
                 .LoadAsync<TestEntityNestedParent>(entityId);
             var testEntityChild = await eventStore.LoadAsync<TestEntityNestedChild>(childChildId);
 
             Assert.Equal("ParentName", testEntity.Result.ParentName);
             Assert.Equal(entityId, testEntity.Result.Id);
-            Assert.Equal("OldNestedNestedChildName", testEntityChild.Result.ChildName);
+            Assert.Equal("NewNestedNestedChildName", testEntityChild.Result.ChildName);
             Assert.Equal(childChildId, testEntityChild.Result.Id);
             Assert.Equal(childId, testEntity.Result.Child.Id);
             Assert.Equal(childChildId, testEntity.Result.Child.NextChild.Id);
-
-            Assert.Equal("NewNestedNestedChildName", testEntity.Result.Child.ChildName);
+            Assert.Equal("NewNestedNestedChildName", testEntity.Result.Child.NextChild.ChildName);
         }
     }
 
@@ -324,7 +323,8 @@ namespace Adapters.Framework.Eventstores.Tests
             ChildId = childId;
         }
 
-        [ActualPropertyName("Child.Id")] public Guid ChildId { get; }
+        [ActualPropertyName("Child.Id")]
+        public Guid ChildId { get; }
     }
 
     internal class TestCreateNestedChildEntityEvent : DomainEvent
@@ -339,6 +339,7 @@ namespace Adapters.Framework.Eventstores.Tests
 
     internal class TestAddNextChildEvent : DomainEvent
     {
+        [ActualPropertyName("NextChild.Id")]
         public Guid ChildId { get; }
 
         public TestAddNextChildEvent(Guid entityId, Guid childId) : base(entityId)
