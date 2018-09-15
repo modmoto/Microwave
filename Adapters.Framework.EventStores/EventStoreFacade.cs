@@ -40,27 +40,35 @@ namespace Adapters.Framework.EventStores
                 convertedElements);
         }
 
-        public async Task<EventStoreResult<T>> LoadAsync<T>(Guid commandEntityId, bool loadNestedEntities = false) where T : new()
+        public async Task<EventStoreResult<T>> LoadAsync<T>(Guid commandEntityId) where T : new()
+        {
+            var eventStoreResult = await LoadAsyncRecursive<T>(commandEntityId, AlsoLoad);
+            AlsoLoad = new List<string>();
+            return eventStoreResult;
+        }
+
+        public async Task<EventStoreResult<T>> LoadAsyncRecursive<T>(Guid commandEntityId, IEnumerable<string> list) where T : new()
         {
             var events = await GetEvents(commandEntityId);
             var entity = new T();
             foreach (var domainEvent in events.Result) entity = _eventSourcingStrategy.Apply(entity, domainEvent);
 
             var type = typeof(T);
-            if (AlsoLoad.Count > 0)
+            var enumerable = list.ToList();
+            if (enumerable.Count > 0)
             {
-                var alsoLoad = AlsoLoad.ToList();
-                AlsoLoad = new List<string>();
+                var alsoLoad = enumerable.ToList();
+                list = MoveOneStepDown(alsoLoad).ToList();
 
                 foreach (var loadKey in alsoLoad)
                 {
                     var propertyInfos = type.GetProperty(loadKey);
                     var entityType = propertyInfos.PropertyType;
-                    var methodInfo = GetType().GetMethod("LoadAsync");
+                    var methodInfo = GetType().GetMethod("LoadAsyncRecursive");
                     var makeGenericMethod = methodInfo.MakeGenericMethod(entityType);
 
                     var guid = ((Entity) propertyInfos.GetValue(entity)).Id;
-                    var invoke = (Task) makeGenericMethod.Invoke(this, new object[]{ guid, true });
+                    var invoke = (Task) makeGenericMethod.Invoke(this, new object[]{ guid, list });
                     await invoke;
                     var propertyInfo = invoke.GetType().GetProperty("Result");
                     var value = propertyInfo.GetValue(invoke);
@@ -70,6 +78,19 @@ namespace Adapters.Framework.EventStores
             }
 
             return EventStoreResult<T>.Ok(entity, events.EntityVersion);
+        }
+
+        private IEnumerable<string> MoveOneStepDown(List<string> alsoLoad)
+        {
+            foreach (var s in alsoLoad)
+            {
+                var enumerable = s.Split(".").Skip(1).ToList();
+                if (enumerable.Count != 0)
+                {
+                    var join = string.Join(".", enumerable.ToList());
+                    yield return join;
+                }
+            }
         }
 
         public T Merge<T>(T entity, object nestedEntity, string path)
@@ -152,7 +173,7 @@ namespace Adapters.Framework.EventStores
                 });
         }
 
-        public IEventStoreFacade Include<T>(string nameOfProperty) where T : Entity
+        public IEventStoreFacade Include(string nameOfProperty)
         {
             AlsoLoad.Add(nameOfProperty);
             return this;

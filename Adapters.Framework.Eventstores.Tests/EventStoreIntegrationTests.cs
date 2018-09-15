@@ -202,7 +202,7 @@ namespace Adapters.Framework.Eventstores.Tests
             var domainEvents = new List<DomainEvent>
             {
                 new TestCreatedNestedEntityEvent(entityId, "ParentName"),
-                new TestCreateNestedChildEntityEvent(childId, entityId, "OldChildName"),
+                new TestCreateNestedChildEntityEvent(childId, "OldChildName"),
                 new TestAddedNestedChildEntityToParent(entityId, childId),
                 new TestChangeNestedChildEntityNameEvent(childId, "NewChildName")
             };
@@ -211,7 +211,7 @@ namespace Adapters.Framework.Eventstores.Tests
 
             await Task.Delay(1000);
             var testEntity = await eventStore
-                .Include<TestEntityNestedParent>(nameof(TestEntityNestedParent.Child))
+                .Include(nameof(TestEntityNestedParent.Child))
                 .LoadAsync<TestEntityNestedParent>(entityId);
             var testEntityChild = await eventStore.LoadAsync<TestEntityNestedChild>(childId);
 
@@ -222,6 +222,44 @@ namespace Adapters.Framework.Eventstores.Tests
             Assert.Equal(childId, testEntity.Result.Child.Id);
 
             Assert.Equal("NewChildName", testEntity.Result.Child.ChildName);
+        }
+
+        [Fact]
+        public async Task Load_DoubleNestingEntity()
+        {
+            var eventStore = new EventStoreFacade(new EventSourcingAtributeStrategy(), _eventStoreConnection,
+                new TestEventStoreConfig(), new DomainEventConverter());
+            var entityId = Guid.NewGuid();
+            var childId = Guid.NewGuid();
+            var childChildId = Guid.NewGuid();
+
+            var domainEvents = new List<DomainEvent>
+            {
+                new TestCreatedNestedEntityEvent(entityId, "ParentName"),
+                new TestCreateNestedChildEntityEvent(childId, "OldChildName"),
+                new TestCreateNestedChildEntityEvent(childChildId, "OldNestedNestedChildName"),
+                new TestAddNextChildEvent(childChildId, childId),
+                new TestAddedNestedChildEntityToParent(entityId, childId),
+                new TestChangeNestedChildEntityNameEvent(childChildId, "NewNestedNestedChildName")
+            };
+
+            await eventStore.AppendAsync(domainEvents);
+
+            await Task.Delay(1000);
+            var testEntity = await eventStore
+                .Include("Child")
+                .Include("Child.NextChild")
+                .LoadAsync<TestEntityNestedParent>(entityId);
+            var testEntityChild = await eventStore.LoadAsync<TestEntityNestedChild>(childChildId);
+
+            Assert.Equal("ParentName", testEntity.Result.ParentName);
+            Assert.Equal(entityId, testEntity.Result.Id);
+            Assert.Equal("OldNestedNestedChildName", testEntityChild.Result.ChildName);
+            Assert.Equal(childChildId, testEntityChild.Result.Id);
+            Assert.Equal(childId, testEntity.Result.Child.Id);
+            Assert.Equal(childChildId, testEntity.Result.Child.NextChild.Id);
+
+            Assert.Equal("NewNestedNestedChildName", testEntity.Result.Child.ChildName);
         }
     }
 
@@ -277,27 +315,6 @@ namespace Adapters.Framework.Eventstores.Tests
         public TestEntityNestedChild Child { get; set; }
 
         public string ParentName { get; private set; }
-
-        public void Apply(TestCreatedEvent domainEvent)
-        {
-            Id = domainEvent.EntityId;
-            ParentName = domainEvent.Name;
-        }
-
-        public void Apply(TestChangeNestedChildEntityNameEvent domainEvent)
-        {
-            if (domainEvent?.EntityId == Child.Id) Child.Apply(domainEvent);
-        }
-
-        public void Apply(TestCreateNestedChildEntityEvent domainEvent)
-        {
-            if (domainEvent.ParentId == Id)
-            {
-                var testEntityNestedChild = new TestEntityNestedChild();
-                testEntityNestedChild.Apply(domainEvent);
-                Child = testEntityNestedChild;
-            }
-        }
     }
 
     internal class TestAddedNestedChildEntityToParent : DomainEvent
@@ -312,43 +329,28 @@ namespace Adapters.Framework.Eventstores.Tests
 
     internal class TestCreateNestedChildEntityEvent : DomainEvent
     {
-        public TestCreateNestedChildEntityEvent(Guid entityId, Guid parentId, string childName) : base(entityId)
+        public TestCreateNestedChildEntityEvent(Guid entityId, string childName) : base(entityId)
         {
-            ParentId = parentId;
             ChildName = childName;
         }
 
-        public Guid ParentId { get; }
         public string ChildName { get; }
     }
 
-    internal class TestChangeNestedChildEvent : DomainEvent
+    internal class TestAddNextChildEvent : DomainEvent
     {
-        public TestChangeNestedChildEvent(Guid entityId) : base(entityId)
+        public Guid ChildId { get; }
+
+        public TestAddNextChildEvent(Guid entityId, Guid childId) : base(entityId)
         {
+            ChildId = childId;
         }
     }
 
     internal class TestEntityNestedChild : Entity
     {
         public string ChildName { get; private set; }
-
-        public void Apply(TestCreatedEvent domainEvent)
-        {
-            Id = domainEvent.EntityId;
-            ChildName = domainEvent.Name;
-        }
-
-        public void Apply(TestChangeNestedChildEntityNameEvent domainEvent)
-        {
-            ChildName = domainEvent.NewName;
-        }
-
-        public void Apply(TestCreateNestedChildEntityEvent domainEvent)
-        {
-            Id = domainEvent.EntityId;
-            ChildName = domainEvent.ChildName;
-        }
+        public TestEntityNestedChild NextChild { get; private set; }
     }
 
     internal class TestChangeNestedChildEntityNameEvent : DomainEvent
