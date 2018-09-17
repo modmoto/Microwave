@@ -1,13 +1,7 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using Adapters.Framework.EventStores;
-using Adapters.Json.ObjectPersistences;
 using Application.Framework;
 using Domain.Framework;
-using EventStore.ClientAPI;
-using EventStore.ClientAPI.SystemData;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 

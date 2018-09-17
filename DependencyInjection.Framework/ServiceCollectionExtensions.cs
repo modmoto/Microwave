@@ -3,6 +3,7 @@ using System.Linq;
 using System.Reflection;
 using Adapters.Framework.EventStores;
 using Application.Framework;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace DependencyInjection.Framework
@@ -53,6 +54,13 @@ namespace DependencyInjection.Framework
             }
 
             return collection;
+        }
+
+        public static void UseEventStoreSubscriptions(this IApplicationBuilder builder)
+        {
+            var builderApplicationServices = builder.ApplicationServices;
+            var recallReferenceHolder = (QueryEventDelegator) builderApplicationServices.GetService(typeof(QueryEventDelegator));
+            recallReferenceHolder.SubscribeToStreamsFrom();
         }
     }
 }

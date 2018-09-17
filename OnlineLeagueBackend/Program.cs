@@ -1,5 +1,4 @@
-﻿using Adapters.Framework.EventStores;
-using Microsoft.AspNetCore;
+﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 
 namespace OnlineLeagueBackend
@@ -9,8 +8,6 @@ namespace OnlineLeagueBackend
         public static void Main(string[] args)
         {
             var webHost = CreateWebHostBuilder(args).Build();
-            var recallReferenceHolder = (QueryEventDelegator) webHost.Services.GetService(typeof(QueryEventDelegator));
-            recallReferenceHolder.SubscribeToStreamsFrom();
             webHost.Run();
         }
 

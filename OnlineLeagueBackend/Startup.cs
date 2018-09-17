@@ -43,6 +43,7 @@ namespace OnlineLeagueBackend
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseEventStoreSubscriptions();
             app.UseMvc();
         }
     }
