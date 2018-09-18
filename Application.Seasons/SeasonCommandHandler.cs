@@ -16,7 +16,7 @@ namespace Application.Seasons
         {
             var domainResult = Season.Create(command.SeasonName);
             if (domainResult.Failed) throw new DomainValidationException(domainResult.DomainErrors);
-            await EventStoreFacade.AppendAsync(domainResult.DomainEvents);
+            await EventStoreFacade.AppendAsync(domainResult.DomainEvents, 0);
         }
 
         public async Task ChangeName(ChangeNameCommand command)

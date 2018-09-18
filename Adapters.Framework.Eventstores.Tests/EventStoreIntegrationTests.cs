@@ -16,25 +16,21 @@ namespace Adapters.Framework.Eventstores.Tests
     public class EventStoreIntegrationTests : IAsyncLifetime
     {
         private IEventStoreConnection _eventStoreConnection;
+        private Guid _entityId;
 
         public async Task InitializeAsync()
         {
+            _entityId = Guid.NewGuid();
             _eventStoreConnection =
                 EventStoreConnection.Create(new Uri("tcp://admin:changeit@localhost:1113"), "MyTestCon");
             await _eventStoreConnection.ConnectAsync();
-            await _eventStoreConnection.DeleteStreamAsync(new TestEventStoreConfig().EventStream, ExpectedVersion.Any,
-                new UserCredentials("admin", "changeit"));
-            await _eventStoreConnection.DeleteStreamAsync(
-                $"{new TestEventStoreConfig().EventStream}-{nameof(TestEvent)}", ExpectedVersion.Any,
-                new UserCredentials("admin", "changeit"));
-            await _eventStoreConnection.DeleteStreamAsync(
-                $"{new TestEventStoreConfig().EventStream}-{nameof(TestCreatedEvent)}", ExpectedVersion.Any,
-                new UserCredentials("admin", "changeit"));
+
         }
 
-        public Task DisposeAsync()
+        public async Task DisposeAsync()
         {
-            return Task.CompletedTask;
+            await _eventStoreConnection.DeleteStreamAsync($"{new TestEventStoreConfig().WriteStream}-{_entityId}", ExpectedVersion.Any,
+                new UserCredentials("admin", "changeit"));
         }
 
         [Fact]
@@ -42,27 +38,25 @@ namespace Adapters.Framework.Eventstores.Tests
         {
             var eventStore = new EventStoreFacade(new EventSourcingApplyStrategy(), _eventStoreConnection,
                 new TestEventStoreConfig(), new DomainEventConverter());
-            var entityId = Guid.NewGuid();
 
             var domainEvents = new List<DomainEvent>
-                {new TestCreatedEvent(entityId, "OldName"), new TestChangeNameEvent(entityId, "NewName")};
+                {new TestCreatedEvent(_entityId, "OldName"), new TestChangeNameEvent(_entityId, "NewName")};
 
-            await eventStore.AppendAsync(domainEvents);
+            await eventStore.AppendAsync(domainEvents, 0);
 
-            await Task.Delay(1000);
-            var testEntity = await eventStore.LoadAsync<TestEntity>(entityId);
+            var testEntity = await eventStore.LoadAsync<TestEntity>(_entityId);
 
-            var domainEventsCreateInBetween = new List<DomainEvent> {new TestChangeNameEvent(entityId, "NewName2")};
+            var domainEventsCreateInBetween = new List<DomainEvent> {new TestChangeNameEvent(_entityId, "NewName2")};
 
             await eventStore.AppendAsync(domainEventsCreateInBetween, testEntity.EntityVersion);
-            await Task.Delay(1000);
 
-            var testEntityAfterBetweenCommig = await eventStore.LoadAsync<TestEntity>(entityId);
+            var testEntityAfterBetweenCommig = await eventStore.LoadAsync<TestEntity>(_entityId);
 
+            Assert.Equal(1, testEntity.EntityVersion);
             Assert.Equal("NewName", testEntity.Result.Name);
             Assert.Equal("NewName2", testEntityAfterBetweenCommig.Result.Name);
-            Assert.Equal(entityId, testEntity.Result.Id);
-            Assert.Equal(entityId, testEntityAfterBetweenCommig.Result.Id);
+            Assert.Equal(_entityId, testEntity.Result.Id);
+            Assert.Equal(_entityId, testEntityAfterBetweenCommig.Result.Id);
         }
 
         [Fact]
@@ -70,29 +64,25 @@ namespace Adapters.Framework.Eventstores.Tests
         {
             var eventStore = new EventStoreFacade(new EventSourcingApplyStrategy(), _eventStoreConnection,
                 new TestEventStoreConfig(), new DomainEventConverter());
-            var entityId = Guid.NewGuid();
 
             var domainEvents = new List<DomainEvent>
-                {new TestCreatedEvent(entityId, "OldName"), new TestChangeNameEvent(entityId, "NewName")};
+                {new TestCreatedEvent(_entityId, "OldName"), new TestChangeNameEvent(_entityId, "NewName")};
 
-            await eventStore.AppendAsync(domainEvents);
+            await eventStore.AppendAsync(domainEvents, 0);
 
-            await Task.Delay(1000);
-            var testEntity = await eventStore.LoadAsync<TestEntity>(entityId);
+            var testEntity = await eventStore.LoadAsync<TestEntity>(_entityId);
 
-            var domainEventsNew = new List<DomainEvent> {new TestChangeNameEvent(entityId, "NewName2")};
+            var domainEventsNew = new List<DomainEvent> {new TestChangeNameEvent(_entityId, "NewName2")};
             var convertedElements = domainEventsNew.Select(eve => new EventData(Guid.NewGuid(), eve.GetType().Name,
                 true,
                 Encoding.UTF8.GetBytes(new DomainEventConverter().Serialize(eve)), null));
             ;
-            await _eventStoreConnection.AppendToStreamAsync(new TestEventStoreConfig().EventStream, ExpectedVersion.Any,
+            await _eventStoreConnection.AppendToStreamAsync($"{new TestEventStoreConfig().WriteStream}-{_entityId}", ExpectedVersion.Any,
                 convertedElements);
 
-            await Task.Delay(1000);
-
-            var domainEventsCreateInBetween = new List<DomainEvent> {new TestChangeNameEvent(entityId, "NewName3")};
+            var domainEventsCreateInBetween = new List<DomainEvent> {new TestChangeNameEvent(_entityId, "NewName3")};
             Assert.Equal("NewName", testEntity.Result.Name);
-            Assert.Equal(entityId, testEntity.Result.Id);
+            Assert.Equal(_entityId, testEntity.Result.Id);
             await Assert.ThrowsAsync<WrongExpectedVersionException>(async () =>
                 await eventStore.AppendAsync(domainEventsCreateInBetween, testEntity.EntityVersion));
         }
@@ -100,33 +90,29 @@ namespace Adapters.Framework.Eventstores.Tests
         [Fact]
         public async Task AppendAsync_List_NoEventsPersisted()
         {
-            var entityId = Guid.NewGuid();
             var domainEvents = new List<DomainEvent>
-                {new TestEvent(entityId, "TestSession1"), new TestEvent(entityId, "TestSession2")};
+                {new TestEvent(_entityId, "TestSession1"), new TestEvent(_entityId, "TestSession2")};
 
             var eventStore = new EventStoreFacade(new EventSourcingAtributeStrategy(), _eventStoreConnection,
                 new TestEventStoreConfig(), new DomainEventConverter());
-            await eventStore.AppendAsync(domainEvents);
-            await Task.Delay(1000);
+            await eventStore.AppendAsync(domainEvents, 0);
 
-            Assert.Equal(2, (await eventStore.GetEvents(entityId)).Result.Count());
+            Assert.Equal(2, (await eventStore.GetEvents(_entityId)).Result.Count());
         }
 
         [Fact]
         public async Task ApplyStrategy()
         {
-            var entityId = Guid.NewGuid();
             var domainEvents = new List<DomainEvent>
-                {new TestCreatedEvent(entityId, "OldName"), new TestChangeNameEvent(entityId, "NewName")};
+                {new TestCreatedEvent(_entityId, "OldName"), new TestChangeNameEvent(_entityId, "NewName")};
 
             var eventStore = new EventStoreFacade(new EventSourcingApplyStrategy(), _eventStoreConnection,
                 new TestEventStoreConfig(), new DomainEventConverter());
-            await eventStore.AppendAsync(domainEvents);
-            await Task.Delay(1000);
-            var testEntity = await eventStore.LoadAsync<TestEntity>(entityId);
+            await eventStore.AppendAsync(domainEvents, 0);
+            var testEntity = await eventStore.LoadAsync<TestEntity>(_entityId);
 
             Assert.Equal("NewName", testEntity.Result.Name);
-            Assert.Equal(entityId, testEntity.Result.Id);
+            Assert.Equal(_entityId, testEntity.Result.Id);
         }
 
         [Fact]
@@ -134,89 +120,81 @@ namespace Adapters.Framework.Eventstores.Tests
         {
             var eventStore = new EventStoreFacade(new EventSourcingApplyStrategy(), _eventStoreConnection,
                 new TestEventStoreConfig(), new DomainEventConverter());
-            var entityId = Guid.NewGuid();
 
-            var testCreatedEvent = new TestCreatedEvent(entityId, "OldName");
+            var testCreatedEvent = new TestCreatedEvent(_entityId, "OldName");
 
             var domainEvents = new List<DomainEvent>();
             domainEvents.Add(testCreatedEvent);
 
             for (var i = 0; i <= 120; i++)
             {
-                var testChangeNameEvent = new TestChangeNameEvent(entityId, $"NewName{i}");
+                var testChangeNameEvent = new TestChangeNameEvent(_entityId, $"NewName{i}");
                 domainEvents.Add(testChangeNameEvent);
             }
 
-            await eventStore.AppendAsync(domainEvents);
-            await Task.Delay(3000);
-            var testEntity = await eventStore.LoadAsync<TestEntity>(entityId);
+            await eventStore.AppendAsync(domainEvents, 0);
+            var testEntity = await eventStore.LoadAsync<TestEntity>(_entityId);
 
             Assert.Equal("NewName120", testEntity.Result.Name);
-            Assert.Equal(entityId, testEntity.Result.Id);
+            Assert.Equal(_entityId, testEntity.Result.Id);
         }
 
-//        [Fact]
-//        public async Task Append_NoVersionConflictOnDifferentEntity()
-//        {
-//            var eventStore = new EventStoreFacade(new EventSourcingApplyStrategy(), _eventStoreConnection, new TestEventStoreConfig(), new DomainEventConverter());
-//            var entityId = Guid.NewGuid();
-//
-//            var domainEvents = new List<DomainEvent> { new TestCreatedEvent(entityId, "OldName"), new TestChangeNameEvent(entityId, "NewName")};
-//
-//            await eventStore.AppendAsync(domainEvents);
-//
-//            await Task.Delay(1000);
-//            var testEntity = await eventStore.LoadAsync<TestEntity>(entityId);
-//
-//            var newGuid = Guid.NewGuid();
-//            var domainEventsNew = new List<DomainEvent> { new TestCreatedEvent(newGuid, "MyDifferentThing")};
-//            var convertedElements = domainEventsNew.Select(eve => new EventData(Guid.NewGuid(), eve.GetType().Name, true,
-//                Encoding.UTF8.GetBytes(new DomainEventConverter().Serialize(eve)), null));;
-//            await _eventStoreConnection.AppendToStreamAsync(new TestEventStoreConfig().EventStream, ExpectedVersion.Any,
-//                convertedElements);
-//
-//            await Task.Delay(1000);
-//
-//            var domainEventsCreateInBetween = new List<DomainEvent> { new TestChangeNameEvent(entityId, "NewName3")};
-//            Assert.Equal("NewName", testEntity.Result.Name);
-//            Assert.Equal(entityId, testEntity.Result.Id);
-//            await eventStore.AppendAsync(domainEventsCreateInBetween, testEntity.EntityVersion);
-//
-//            var testEntityNew = await eventStore.LoadAsync<TestEntity>(newGuid);
-//            Assert.Equal("MyDifferentThing", testEntityNew.Result.Name);
-//            Assert.Equal(newGuid, testEntityNew.Result.Id);
-//
-//            var testEntityUpdated = await eventStore.LoadAsync<TestEntity>(entityId);
-//            Assert.Equal("NewName3", testEntityUpdated.Result.Name);
-//            Assert.Equal(entityId, testEntityUpdated.Result.Id);
-//        }
+        [Fact]
+        public async Task Append_NoVersionConflictOnDifferentEntity()
+        {
+            var eventStore = new EventStoreFacade(new EventSourcingApplyStrategy(), _eventStoreConnection, new TestEventStoreConfig(), new DomainEventConverter());
+
+            var domainEvents = new List<DomainEvent> { new TestCreatedEvent(_entityId, "OldName"), new TestChangeNameEvent(_entityId, "NewName")};
+
+            await eventStore.AppendAsync(domainEvents, 0);
+
+            var testEntity = await eventStore.LoadAsync<TestEntity>(_entityId);
+
+            var newGuid = Guid.NewGuid();
+            var domainEventsNew = new List<DomainEvent> { new TestCreatedEvent(newGuid, "MyDifferentThing")};
+            var convertedElements = domainEventsNew.Select(eve => new EventData(Guid.NewGuid(), eve.GetType().Name, true,
+                Encoding.UTF8.GetBytes(new DomainEventConverter().Serialize(eve)), null));
+            await _eventStoreConnection.AppendToStreamAsync(new TestEventStoreConfig().ReadStream, ExpectedVersion.Any,
+                convertedElements);
+
+            var domainEventsCreateInBetween = new List<DomainEvent> { new TestChangeNameEvent(_entityId, "NewName3")};
+            Assert.Equal("NewName", testEntity.Result.Name);
+            Assert.Equal(_entityId, testEntity.Result.Id);
+            await eventStore.AppendAsync(domainEventsCreateInBetween, testEntity.EntityVersion);
+
+            var testEntityNew = await eventStore.LoadAsync<TestEntity>(newGuid);
+            Assert.Equal("MyDifferentThing", testEntityNew.Result.Name);
+            Assert.Equal(newGuid, testEntityNew.Result.Id);
+
+            var testEntityUpdated = await eventStore.LoadAsync<TestEntity>(_entityId);
+            Assert.Equal("NewName3", testEntityUpdated.Result.Name);
+            Assert.Equal(_entityId, testEntityUpdated.Result.Id);
+        }
 
         [Fact]
         public async Task Load_NestingEntity()
         {
             var eventStore = new EventStoreFacade(new EventSourcingAtributeStrategy(), _eventStoreConnection,
                 new TestEventStoreConfig(), new DomainEventConverter());
-            var entityId = Guid.NewGuid();
             var childId = Guid.NewGuid();
 
             var domainEvents = new List<DomainEvent>
             {
-                new TestCreatedNestedEntityEvent(entityId, "ParentName"),
+                new TestCreatedNestedEntityEvent(_entityId, "ParentName"),
                 new TestCreateNestedChildEntityEvent(childId, "OldChildName"),
-                new TestAddedNestedChildEntityToParent(entityId, childId),
+                new TestAddedNestedChildEntityToParent(_entityId, childId),
                 new TestChangeNestedChildEntityNameEvent(childId, "NewChildName")
             };
 
-            await eventStore.AppendAsync(domainEvents);
+            await eventStore.AppendAsync(domainEvents, 0);
 
-            await Task.Delay(1000);
             var testEntity = await eventStore
                 .Include(nameof(TestEntityNestedParent.Child))
-                .LoadAsync<TestEntityNestedParent>(entityId);
+                .LoadAsync<TestEntityNestedParent>(_entityId);
             var testEntityChild = await eventStore.LoadAsync<TestEntityNestedChild>(childId);
 
             Assert.Equal("ParentName", testEntity.Result.ParentName);
-            Assert.Equal(entityId, testEntity.Result.Id);
+            Assert.Equal(_entityId, testEntity.Result.Id);
             Assert.Equal("NewChildName", testEntityChild.Result.ChildName);
             Assert.Equal(childId, testEntityChild.Result.Id);
             Assert.Equal(childId, testEntity.Result.Child.Id);
@@ -229,31 +207,29 @@ namespace Adapters.Framework.Eventstores.Tests
         {
             var eventStore = new EventStoreFacade(new EventSourcingAtributeStrategy(), _eventStoreConnection,
                 new TestEventStoreConfig(), new DomainEventConverter());
-            var entityId = Guid.NewGuid();
             var childId = Guid.NewGuid();
             var childChildId = Guid.NewGuid();
 
             var domainEvents = new List<DomainEvent>
             {
-                new TestCreatedNestedEntityEvent(entityId, "ParentName"),
+                new TestCreatedNestedEntityEvent(_entityId, "ParentName"),
                 new TestCreateNestedChildEntityEvent(childId, "OldChildName"),
                 new TestCreateNestedChildEntityEvent(childChildId, "OldNestedNestedChildName"),
                 new TestAddNextChildEvent(childId, childChildId),
-                new TestAddedNestedChildEntityToParent(entityId, childId),
+                new TestAddedNestedChildEntityToParent(_entityId, childId),
                 new TestChangeNestedChildEntityNameEvent(childChildId, "NewNestedNestedChildName")
             };
 
-            await eventStore.AppendAsync(domainEvents);
+            await eventStore.AppendAsync(domainEvents, 0);
 
-            await Task.Delay(1000);
             var testEntity = await eventStore
                 .Include("Child")
                 .FurtherInclude("Child", "NextChild")
-                .LoadAsync<TestEntityNestedParent>(entityId);
+                .LoadAsync<TestEntityNestedParent>(_entityId);
             var testEntityChild = await eventStore.LoadAsync<TestEntityNestedChild>(childChildId);
 
             Assert.Equal("ParentName", testEntity.Result.ParentName);
-            Assert.Equal(entityId, testEntity.Result.Id);
+            Assert.Equal(_entityId, testEntity.Result.Id);
             Assert.Equal("NewNestedNestedChildName", testEntityChild.Result.ChildName);
             Assert.Equal(childChildId, testEntityChild.Result.Id);
             Assert.Equal(childId, testEntity.Result.Child.Id);

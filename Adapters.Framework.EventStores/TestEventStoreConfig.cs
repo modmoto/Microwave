@@ -2,19 +2,19 @@
 {
     public abstract class EventStoreConfig
     {
-        public abstract string EventStream { get; }
-        public abstract string EntityStream { get; }
+        public abstract string ReadStream { get; }
+        public abstract string WriteStream { get; }
     }
 
     public class RealEventStoreConfig : EventStoreConfig
     {
-        public override string EventStream => "SeasonEvents";
-        public override string EntityStream => "Season";
+        public override string ReadStream => "SeasonRead";
+        public override string WriteStream => "SeasonWrite";
     }
 
     public class TestEventStoreConfig : EventStoreConfig
     {
-        public override string EventStream => "SeasonEventsINT";
-        public override string EntityStream => "SeasonINT";
+        public override string ReadStream => "SeasonReadTest";
+        public override string WriteStream => "SeasonWriteTest";
     }
 }

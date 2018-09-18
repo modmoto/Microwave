@@ -10,8 +10,7 @@ namespace Application.Framework
     {
         Task AppendAsync(IEnumerable<DomainEvent> domainEvents, long entityVersion);
         Task<EventStoreResult<T>> LoadAsync<T>(Guid commandEntityId) where T : new();
-        Task<EventStoreResult<IEnumerable<DomainEvent>>>  GetEvents(Guid entityId = default(Guid), int from = 0, int to = 100);
-        Task AppendAsync(IEnumerable<DomainEvent> domainResultDomainEvents);
+        Task<EventStoreResult<IEnumerable<DomainEvent>>> GetEvents(Guid entityId = default(Guid), int from = 0, int to = 100);
         Task Subscribe(Type domainEventType, Action<DomainEvent> subscribeMethod);
         void SubscribeFrom(Type domainEventType, long version, Action<DomainEvent> subscribeMethod);
         IEventStoreFacade FurtherInclude(string nameOfProperty, string nextchild);

@@ -33,10 +33,15 @@ namespace Adapters.Framework.EventStores
 
         public async Task AppendAsync(IEnumerable<DomainEvent> domainEvents, long entityVersion)
         {
-            var convertedElements = domainEvents.Select(eve => new EventData(Guid.NewGuid(), eve.GetType().Name, true,
-                Encoding.UTF8.GetBytes(_eventConverter.Serialize(eve)), null));
-            await _eventStoreConnection.AppendToStreamAsync(_eventStoreConfig.EventStream, entityVersion,
-                convertedElements);
+            if (entityVersion == 0) entityVersion = -1;
+            var groupBy = domainEvents.GroupBy(domainEvent => domainEvent.EntityId);
+            foreach (var result in groupBy)
+            {
+                var convertedElements = result.Select(eve => new EventData(Guid.NewGuid(), eve.GetType().Name, true,
+                    Encoding.UTF8.GetBytes(_eventConverter.Serialize(eve)), null));
+                await _eventStoreConnection.AppendToStreamAsync($"{_eventStoreConfig.WriteStream}-{result.Key}", entityVersion,
+                    convertedElements);
+            }
         }
 
         public async Task<EventStoreResult<T>> LoadAsync<T>(Guid commandEntityId) where T : new()
@@ -128,15 +133,10 @@ namespace Adapters.Framework.EventStores
             return EventStoreResult<IEnumerable<DomainEvent>>.Ok(ToDomainEventList(domainEvents), eventEventNumber);
         }
 
-        public async Task AppendAsync(IEnumerable<DomainEvent> domainResultDomainEvents)
-        {
-            await AppendAsync(domainResultDomainEvents, ExpectedVersion.Any);
-        }
-
         public async Task Subscribe(Type domainEventType, Action<DomainEvent> subscribeMethod)
         {
             await _eventStoreConnection.SubscribeToStreamAsync(
-                $"{_eventStoreConfig.EventStream}-{domainEventType.Name}", true,
+                $"{_eventStoreConfig.ReadStream}-{domainEventType.Name}", true,
                 (arg1, arg2) =>
                 {
                     var domainEvent = _eventConverter.Deserialize(arg2);
@@ -146,7 +146,7 @@ namespace Adapters.Framework.EventStores
 
         public void SubscribeFrom(Type domainEventType, long version, Action<DomainEvent> subscribeMethod)
         {
-            _eventStoreConnection.SubscribeToStreamFrom($"{_eventStoreConfig.EventStream}-{domainEventType.Name}",
+            _eventStoreConnection.SubscribeToStreamFrom($"{_eventStoreConfig.ReadStream}-{domainEventType.Name}",
                 0,
                 new CatchUpSubscriptionSettings(int.MaxValue, 100, false, true),
                 (arg1, arg2) =>
@@ -177,12 +177,12 @@ namespace Adapters.Framework.EventStores
             StreamEventsSlice streamEventsSlice;
             if (entityId == default(Guid))
                 streamEventsSlice =
-                    await _eventStoreConnection.ReadStreamEventsForwardAsync(_eventStoreConfig.EventStream, from,
+                    await _eventStoreConnection.ReadStreamEventsForwardAsync(_eventStoreConfig.ReadStream, from,
                         to, true);
             else
                 streamEventsSlice =
                     await _eventStoreConnection.ReadStreamEventsForwardAsync(
-                        $"{_eventStoreConfig.EntityStream}-{entityId}", from, to, true);
+                        $"{_eventStoreConfig.WriteStream}-{entityId}", from, to, true);
             return streamEventsSlice;
         }
 
