@@ -154,7 +154,7 @@ namespace Adapters.Framework.Eventstores.Tests
             var domainEventsNew = new List<DomainEvent> { new TestCreatedEvent(newGuid, "MyDifferentThing")};
             var convertedElements = domainEventsNew.Select(eve => new EventData(Guid.NewGuid(), eve.GetType().Name, true,
                 Encoding.UTF8.GetBytes(new DomainEventConverter().Serialize(eve)), null));
-            await _eventStoreConnection.AppendToStreamAsync(new TestEventStoreConfig().ReadStream, ExpectedVersion.Any,
+            await _eventStoreConnection.AppendToStreamAsync($"{new TestEventStoreConfig().WriteStream}-{newGuid}", ExpectedVersion.Any,
                 convertedElements);
 
             var domainEventsCreateInBetween = new List<DomainEvent> { new TestChangeNameEvent(_entityId, "NewName3")};
