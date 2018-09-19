@@ -4,15 +4,15 @@ using Domain.Framework;
 
 namespace Application.Framework
 {
-    public class QueryHandler<T> : IQueryHandler where T : Query
+    public class QueryEventHandler<T> : IEventHandler where T : Query
     {
         public T QueryObject { get; }
-        public IEnumerable<Type> SubscribedTypes { get; }
+        public IEnumerable<Type> SubscribedDomainEventTypes { get; }
 
-        public QueryHandler(T queryObject, SubscribedEventTypes<T> subscribedEventTypes)
+        public QueryEventHandler(T queryObject, SubscribedEventTypes<T> subscribedEventTypes)
         {
             QueryObject = queryObject;
-            SubscribedTypes = subscribedEventTypes;
+            SubscribedDomainEventTypes = subscribedEventTypes;
         }
 
         public void Handle(DomainEvent domainEvent)

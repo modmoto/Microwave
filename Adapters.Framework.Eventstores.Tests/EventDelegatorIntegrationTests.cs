@@ -40,10 +40,10 @@ namespace Adapters.Framework.Eventstores.Tests
             };
             var eventStoreFacade = new EventStoreFacade(new EventSourcingApplyStrategy(), _eventStoreConnection, new TestEventStoreConfig(), new DomainEventConverter());
 
-            var testQueryHandler1 = new TestQueryHandler1(new TestQ1(), new SubscribedEventTypes<TestQ1>());
-            var testQueryHandler2 = new TestQueryHandler2(new TestQ2(), new SubscribedEventTypes<TestQ2>());
+            var testQueryHandler1 = new TestQueryEventHandler1(new TestQ1(), new SubscribedEventTypes<TestQ1>());
+            var testQueryHandler2 = new TestQueryEventHandler2(new TestQ2(), new SubscribedEventTypes<TestQ2>());
             var queryEventDelegator = new QueryEventDelegator(
-                new List<IQueryHandler>
+                new List<IEventHandler>
                 {
                     testQueryHandler1,
                     testQueryHandler2
@@ -75,15 +75,15 @@ namespace Adapters.Framework.Eventstores.Tests
             };
             var eventStoreFacade = new EventStoreFacade(new EventSourcingApplyStrategy(), _eventStoreConnection, new TestEventStoreConfig(), new DomainEventConverter());
 
-            var testQueryHandler1 = new TestQueryHandler1(new TestQ1(), new SubscribedEventTypes<TestQ1>());
-            var testQueryHandler2 = new TestQueryHandler2(new TestQ2(), new SubscribedEventTypes<TestQ2>());
+            var testQueryHandler1 = new TestQueryEventHandler1(new TestQ1(), new SubscribedEventTypes<TestQ1>());
+            var testQueryHandler2 = new TestQueryEventHandler2(new TestQ2(), new SubscribedEventTypes<TestQ2>());
 
             await eventStoreFacade.AppendAsync(domainEvents, 0);
 
             await Task.Delay(5000);
 
             var queryEventDelegator = new QueryEventDelegator(
-                new List<IQueryHandler>
+                new List<IEventHandler>
                 {
                     testQueryHandler1,
                     testQueryHandler2
@@ -102,17 +102,17 @@ namespace Adapters.Framework.Eventstores.Tests
         }
     }
 
-    internal class TestQueryHandler1 : QueryHandler<TestQ1>
+    internal class TestQueryEventHandler1 : Application.Framework.QueryEventHandler<TestQ1>
     {
-        public TestQueryHandler1(TestQ1 queryObject, SubscribedEventTypes<TestQ1> subscribedEventTypes) : base(
+        public TestQueryEventHandler1(TestQ1 queryObject, SubscribedEventTypes<TestQ1> subscribedEventTypes) : base(
             queryObject, subscribedEventTypes)
         {
         }
     }
 
-    internal class TestQueryHandler2 : QueryHandler<TestQ2>
+    internal class TestQueryEventHandler2 : Application.Framework.QueryEventHandler<TestQ2>
     {
-        public TestQueryHandler2(TestQ2 queryObject, SubscribedEventTypes<TestQ2> subscribedEventTypes) : base(
+        public TestQueryEventHandler2(TestQ2 queryObject, SubscribedEventTypes<TestQ2> subscribedEventTypes) : base(
             queryObject, subscribedEventTypes)
         {
         }

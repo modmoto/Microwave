@@ -8,10 +8,10 @@ namespace Adapters.Framework.EventStores
 {
     public class QueryEventDelegator
     {
-        private readonly IEnumerable<IQueryHandler> _handlerList;
+        private readonly IEnumerable<IEventHandler> _handlerList;
         private readonly IEventStoreFacade _facade;
 
-        public QueryEventDelegator(IEnumerable<IQueryHandler> handlerList, IEventStoreFacade facade)
+        public QueryEventDelegator(IEnumerable<IEventHandler> handlerList, IEventStoreFacade facade)
         {
             _handlerList = handlerList;
             _facade = facade;
@@ -21,7 +21,7 @@ namespace Adapters.Framework.EventStores
         {
             foreach (var queryHandler in _handlerList)
             {
-                foreach (var subscribedType in queryHandler.SubscribedTypes)
+                foreach (var subscribedType in queryHandler.SubscribedDomainEventTypes)
                 {
                     _facade.SubscribeFrom(subscribedType, version, HandleSubscription);
                 }
@@ -32,7 +32,7 @@ namespace Adapters.Framework.EventStores
         {
             var eventType = domainEvent.GetType();
             var subscribedQueryHandlers =
-                _handlerList.Where(handler => handler.SubscribedTypes.Any(type => type == eventType));
+                _handlerList.Where(handler => handler.SubscribedDomainEventTypes.Any(type => type == eventType));
             foreach (var queryHandler in subscribedQueryHandlers)
             {
                 queryHandler.Handle(domainEvent);
@@ -43,7 +43,7 @@ namespace Adapters.Framework.EventStores
         {
             foreach (var queryHandler in _handlerList)
             {
-                foreach (var subscribedType in queryHandler.SubscribedTypes)
+                foreach (var subscribedType in queryHandler.SubscribedDomainEventTypes)
                 {
                     await _facade.Subscribe(subscribedType, HandleSubscription);
                 }

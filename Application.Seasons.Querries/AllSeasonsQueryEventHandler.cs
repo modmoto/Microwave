@@ -5,8 +5,13 @@ using Application.Framework;
 
 namespace Application.Seasons.Querries
 {
-    public class AllSeasonsQueryHandler : QueryHandler<AllSeasonsQuery>
+    public class AllSeasonsQueryEventHandler : QueryEventHandler<AllSeasonsQuery>
     {
+        public AllSeasonsQueryEventHandler(AllSeasonsQuery queryObject,
+            SubscribedEventTypes<AllSeasonsQuery> eventTypes) : base(queryObject, eventTypes)
+        {
+        }
+
         public IEnumerable<SeasonDto> GetAllSeasons()
         {
             return QueryObject.Seasons;
@@ -15,10 +20,6 @@ namespace Application.Seasons.Querries
         public SeasonDto GetSeason(Guid id)
         {
             return QueryObject.Seasons.SingleOrDefault(season => season.Id == id);
-        }
-
-        public AllSeasonsQueryHandler(AllSeasonsQuery queryObject, SubscribedEventTypes<AllSeasonsQuery> eventTypes) : base(queryObject, eventTypes)
-        {
         }
     }
 }

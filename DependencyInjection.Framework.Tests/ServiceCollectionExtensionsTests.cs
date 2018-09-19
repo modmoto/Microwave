@@ -18,7 +18,7 @@ namespace DependencyInjection.Framework.Tests
             var querryInDi = (TestQuery) buildServiceProvider.GetService(typeof(TestQuery));
             var allowedEventsOfQuerry = (SubscribedEventTypes<TestQuery>) buildServiceProvider.GetService(typeof(SubscribedEventTypes<TestQuery>));
             var querryHandler = buildServiceProvider.GetService<TestQuerryHandler>();
-            var querryHandlers = buildServiceProvider.GetServices<IQueryHandler>().ToList();
+            var querryHandlers = buildServiceProvider.GetServices<IEventHandler>().ToList();
 
             Assert.Equal(nameof(TestQuerryCreatedEvent), allowedEventsOfQuerry[0].Name);
             Assert.Equal(nameof(TestQuerryNameChangedEvent), allowedEventsOfQuerry[1].Name);
@@ -42,7 +42,7 @@ namespace DependencyInjection.Framework.Tests
         }
     }
 
-    public class TestQuerryHandler : QueryHandler<TestQuery>
+    public class TestQuerryHandler : Application.Framework.QueryEventHandler<TestQuery>
     {
         public TestQuerryHandler(TestQuery queryObject, SubscribedEventTypes<TestQuery> subscribedEventTypes) : base(queryObject, subscribedEventTypes)
         {

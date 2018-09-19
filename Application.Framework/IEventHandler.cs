@@ -4,9 +4,9 @@ using Domain.Framework;
 
 namespace Application.Framework
 {
-    public interface IQueryHandler
+    public interface IEventHandler
     {
         void Handle(DomainEvent domainEvent);
-        IEnumerable<Type> SubscribedTypes { get; }
+        IEnumerable<Type> SubscribedDomainEventTypes { get; }
     }
 }
