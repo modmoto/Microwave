@@ -9,7 +9,6 @@ using EventStore.ClientAPI;
 using EventStore.ClientAPI.SystemData;
 using Xunit;
 
-
 namespace Adapters.Framework.Eventstores.Tests
 {
     public class EventDelegatorIntegrationTests : IAsyncLifetime
