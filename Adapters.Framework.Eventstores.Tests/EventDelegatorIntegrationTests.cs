@@ -102,7 +102,7 @@ namespace Adapters.Framework.Eventstores.Tests
         }
     }
 
-    internal class TestQueryEventHandler1 : Application.Framework.QueryEventHandler<TestQ1>
+    internal class TestQueryEventHandler1 : QueryEventHandler<TestQ1>
     {
         public TestQueryEventHandler1(TestQ1 queryObject, SubscribedEventTypes<TestQ1> subscribedEventTypes) : base(
             queryObject, subscribedEventTypes)
@@ -110,7 +110,7 @@ namespace Adapters.Framework.Eventstores.Tests
         }
     }
 
-    internal class TestQueryEventHandler2 : Application.Framework.QueryEventHandler<TestQ2>
+    internal class TestQueryEventHandler2 : QueryEventHandler<TestQ2>
     {
         public TestQueryEventHandler2(TestQ2 queryObject, SubscribedEventTypes<TestQ2> subscribedEventTypes) : base(
             queryObject, subscribedEventTypes)

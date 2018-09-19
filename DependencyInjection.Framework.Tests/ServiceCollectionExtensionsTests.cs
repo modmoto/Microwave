@@ -42,7 +42,7 @@ namespace DependencyInjection.Framework.Tests
         }
     }
 
-    public class TestQuerryHandler : Application.Framework.QueryEventHandler<TestQuery>
+    public class TestQuerryHandler : QueryEventHandler<TestQuery>
     {
         public TestQuerryHandler(TestQuery queryObject, SubscribedEventTypes<TestQuery> subscribedEventTypes) : base(queryObject, subscribedEventTypes)
         {
