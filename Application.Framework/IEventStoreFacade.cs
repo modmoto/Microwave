@@ -13,6 +13,5 @@ namespace Application.Framework
         Task<EventStoreResult<IEnumerable<DomainEvent>>> GetEvents(Guid entityId = default(Guid), int from = 0, int to = 100);
         Task Subscribe(Type domainEventType, Action<DomainEvent> subscribeMethod);
         void SubscribeFrom(Type domainEventType, long version, Action<DomainEvent> subscribeMethod);
-        IEventStoreFacade FurtherInclude(string nameOfProperty, string nextchild);
     }
 }

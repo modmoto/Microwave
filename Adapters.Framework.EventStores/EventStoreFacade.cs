@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,8 +8,6 @@ using Application.Framework;
 using Application.Framework.Results;
 using Domain.Framework;
 using EventStore.ClientAPI;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Adapters.Framework.EventStores
 {
@@ -34,86 +31,28 @@ namespace Adapters.Framework.EventStores
         public async Task AppendAsync(IEnumerable<DomainEvent> domainEvents, long entityVersion)
         {
             if (entityVersion == 0) entityVersion = -1;
-            var groupBy = domainEvents.GroupBy(domainEvent => domainEvent.EntityId);
-            foreach (var result in groupBy)
+            var eventList = domainEvents.ToList();
+            var firstEvent = eventList.FirstOrDefault();
+            if (firstEvent != null)
             {
-                var convertedElements = result.Select(eve => new EventData(Guid.NewGuid(), eve.GetType().Name, true,
+                if (eventList.Any(ev => ev.EntityId != firstEvent.EntityId))
+                    throw new ArgumentException(
+                        "Entity Ids have to be the same, can not write to two or more streams with optimistic concurrency");
+                var convertedElements = eventList.Select(eve => new EventData(Guid.NewGuid(), eve.GetType().Name, true,
                     Encoding.UTF8.GetBytes(_eventConverter.Serialize(eve)), null));
-                await _eventStoreConnection.AppendToStreamAsync($"{_eventStoreConfig.WriteStream}-{result.Key}", entityVersion,
+                await _eventStoreConnection.AppendToStreamAsync(
+                    $"{_eventStoreConfig.WriteStream}-{firstEvent.EntityId}", entityVersion,
                     convertedElements);
             }
         }
 
         public async Task<EventStoreResult<T>> LoadAsync<T>(Guid commandEntityId) where T : new()
         {
-            var eventStoreResult = await LoadAsyncRecursive<T>(commandEntityId, AlsoLoad);
-            AlsoLoad = new List<string>();
-            AlsoLoadChilds = new List<ParentChild>();
-            return eventStoreResult;
-        }
-
-        public async Task<EventStoreResult<T>> LoadAsyncRecursive<T>(Guid commandEntityId, IEnumerable<string> list) where T : new()
-        {
             var events = await GetEvents(commandEntityId);
             var entity = new T();
             foreach (var domainEvent in events.Result) entity = _eventSourcingStrategy.Apply(entity, domainEvent);
 
-            var type = typeof(T);
-
-            foreach (var loadKey in list)
-            {
-                var propertyInfos = type.GetProperty(loadKey);
-                var entityType = propertyInfos.PropertyType;
-                var methodInfo = GetType().GetMethod("LoadAsyncRecursive");
-                var makeGenericMethod = methodInfo.MakeGenericMethod(entityType);
-
-                var guid = ((Entity) propertyInfos.GetValue(entity)).Id;
-
-                var listNew = AlsoLoadChilds.Where(item => item.NameOfParent == loadKey).Select(item => item.NameOfChild);
-                var invoke = (Task) makeGenericMethod.Invoke(this, new object[]{ guid, listNew });
-                await invoke;
-                var propertyInfo = invoke.GetType().GetProperty("Result");
-                var value = propertyInfo.GetValue(invoke);
-                var ent = value.GetType().GetProperty("Result").GetValue(value);
-                entity = Merge(entity, ent, loadKey);
-            }
-
             return EventStoreResult<T>.Ok(entity, events.EntityVersion);
-        }
-
-        public T Merge<T>(T entity, object nestedEntity, string path)
-        {
-            var pathSplitted = path.Split(".");
-
-            var entityJson = JObject.Parse(JsonConvert.SerializeObject(entity));
-
-
-            var jObject = JObject.Parse(JsonConvert.SerializeObject(nestedEntity));
-            var dynamicObjectOld = CreateDynamicObject(pathSplitted, new Dictionary<string, object>(), jObject);
-
-            var serializeObject = JObject.Parse(JsonConvert.SerializeObject(dynamicObjectOld));
-
-            entityJson.Merge(serializeObject, new JsonMergeSettings
-            {
-                MergeArrayHandling = MergeArrayHandling.Merge
-            });
-
-            var deserializeObject = entityJson.ToObject<T>(JsonSerializer.Create(new JsonSerializerSettings { ContractResolver = new PrivateSetterContractResolver() }));
-            return deserializeObject;
-        }
-
-        private IDictionary<string, object> CreateDynamicObject(string[] pathSplitted, Dictionary<string, object> dictionary, JObject jObject)
-        {
-            if (pathSplitted.Length == 1)
-            {
-                var dic = new Dictionary<string, object>();
-                dic.Add(pathSplitted[0], jObject);
-                return dic;
-            }
-
-            var dynamicObject = CreateDynamicObject(pathSplitted.Skip(1).ToArray(), dictionary, jObject);
-            dictionary.Add(pathSplitted[0], dynamicObject);
-            return dictionary;
         }
 
         public async Task<EventStoreResult<IEnumerable<DomainEvent>>> GetEvents(Guid entityId = default(Guid),
@@ -156,22 +95,6 @@ namespace Adapters.Framework.EventStores
                 });
         }
 
-        public IEventStoreFacade Include(string nameOfProperty)
-        {
-            AlsoLoad.Add(nameOfProperty);
-            return this;
-        }
-
-        public IEventStoreFacade FurtherInclude(string nameOfParent, string nameOfChild)
-        {
-            AlsoLoadChilds.Add(new ParentChild(nameOfParent, nameOfChild));
-            return this;
-        }
-
-        public ICollection<string> AlsoLoad { get; private set; } = new Collection<string>();
-        public ICollection<ParentChild> AlsoLoadChilds { get; private set; } = new Collection<ParentChild>();
-
-
         private async Task<StreamEventsSlice> GetStreamEventsSlice(Guid entityId, int from, int to)
         {
             StreamEventsSlice streamEventsSlice;
@@ -189,18 +112,6 @@ namespace Adapters.Framework.EventStores
         private IEnumerable<DomainEvent> ToDomainEventList(List<ResolvedEvent> events)
         {
             foreach (var resolvedEvent in events) yield return _eventConverter.Deserialize(resolvedEvent);
-        }
-    }
-
-    public class ParentChild
-    {
-        public string NameOfParent { get; }
-        public string NameOfChild { get; }
-
-        public ParentChild(string nameOfParent, string nameOfChild)
-        {
-            NameOfParent = nameOfParent;
-            NameOfChild = nameOfChild;
         }
     }
 }
