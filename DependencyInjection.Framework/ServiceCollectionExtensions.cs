@@ -78,7 +78,7 @@ namespace DependencyInjection.Framework
             var builderApplicationServices = builder.ApplicationServices;
             var recallReferenceHolder =
                 (QueryEventDelegator) builderApplicationServices.GetService(typeof(QueryEventDelegator));
-            recallReferenceHolder.SubscribeToStreamsFrom();
+            recallReferenceHolder.SubscribeToStreams();
         }
     }
 }

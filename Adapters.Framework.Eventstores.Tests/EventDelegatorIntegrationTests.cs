@@ -49,7 +49,7 @@ namespace Adapters.Framework.Eventstores.Tests
                     testQueryHandler2
                 }, eventStoreFacade);
 
-            queryEventDelegator.SubscribeToStreamsFrom();
+            queryEventDelegator.SubscribeToStreams();
 
             await eventStoreFacade.AppendAsync(domainEvents, 0);
 
@@ -89,7 +89,7 @@ namespace Adapters.Framework.Eventstores.Tests
                     testQueryHandler2
                 }, eventStoreFacade);
 
-            queryEventDelegator.SubscribeToStreamsFrom();
+            queryEventDelegator.SubscribeToStreams();
 
             await Task.Delay(1000);
 

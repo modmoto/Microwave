@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Application.Framework;
 using Domain.Framework;
 
@@ -8,8 +7,8 @@ namespace Adapters.Framework.EventStores
 {
     public class QueryEventDelegator
     {
-        private readonly IEnumerable<IEventHandler> _handlerList;
         private readonly IEventStoreFacade _facade;
+        private readonly IEnumerable<IEventHandler> _handlerList;
 
         public QueryEventDelegator(IEnumerable<IEventHandler> handlerList, IEventStoreFacade facade)
         {
@@ -17,37 +16,31 @@ namespace Adapters.Framework.EventStores
             _facade = facade;
         }
 
-        public void SubscribeToStreamsFrom(long version = 0)
+        public void SubscribeToStreams()
         {
-            foreach (var queryHandler in _handlerList)
+            var queryHandlers = _handlerList.Where(handler =>
+                handler.GetType().BaseType.IsGenericType && handler.GetType().BaseType.GetGenericTypeDefinition() ==
+                typeof(QueryEventHandler<>));
+            foreach (var queryHandler in queryHandlers) {
+                foreach (var subscribedType in queryHandler.SubscribedDomainEventTypes)
+                    _facade.SubscribeFrom(subscribedType, 0, HandleSubscription);
+            }
+
+            var eventHandlers = _handlerList.Where(handler =>
+                handler.GetType().BaseType.IsGenericType && handler.GetType().BaseType.GetGenericTypeDefinition() ==
+                typeof(ReactiveEventHandler<>));
+            foreach (var queryHandler in eventHandlers)
             {
                 foreach (var subscribedType in queryHandler.SubscribedDomainEventTypes)
-                {
-                    _facade.SubscribeFrom(subscribedType, version, HandleSubscription);
-                }
+                    _facade.Subscribe(subscribedType, HandleSubscription);
             }
         }
 
         private void HandleSubscription(DomainEvent domainEvent)
         {
             var eventType = domainEvent.GetType();
-            var subscribedQueryHandlers =
-                _handlerList.Where(handler => handler.SubscribedDomainEventTypes.Any(type => type == eventType));
-            foreach (var queryHandler in subscribedQueryHandlers)
-            {
-                queryHandler.Handle(domainEvent);
-            }
-        }
-
-        public async Task SubscribeToStreams()
-        {
-            foreach (var queryHandler in _handlerList)
-            {
-                foreach (var subscribedType in queryHandler.SubscribedDomainEventTypes)
-                {
-                    await _facade.Subscribe(subscribedType, HandleSubscription);
-                }
-            }
+            var handlers = _handlerList.Where(handler => handler.SubscribedDomainEventTypes.Any(type => type == eventType));
+            foreach (var handler in handlers) handler.Handle(domainEvent);
         }
     }
 }

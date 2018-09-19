@@ -1,4 +1,5 @@
-﻿using Application.Framework;
+﻿using System;
+using Application.Framework;
 using Domain.Seasons.Events;
 
 namespace Application.Seasons.Querries
@@ -11,6 +12,7 @@ namespace Application.Seasons.Querries
 
         public void Handle(SeasonCreatedEvent domainEvent)
         {
+            Console.WriteLine("THingy called");
         }
     }
 }
