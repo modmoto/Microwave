@@ -10,7 +10,7 @@ namespace DependencyInjection.Framework
 {
     public static class ServiceCollectionExtensions
     {
-        public static IServiceCollection AddAllEmptyQuerries(this IServiceCollection collection, Assembly assembly)
+        public static IServiceCollection AddQuerryAndEventHandler(this IServiceCollection collection, Assembly assembly)
         {
             collection.AddSingleton<QueryEventDelegator>();
 
@@ -28,28 +28,45 @@ namespace DependencyInjection.Framework
                 var genericType = subscribeEventTypeForQuerryType.MakeGenericType(querryType);
                 var subscribeEventTypeForQuerry = Activator.CreateInstance(genericType);
 
-                var genericAddSingletonMethod = addSingletonFunctionConcrete.MakeGenericMethod(querryType);
-                genericAddSingletonMethod.Invoke(collection, new[] {collection, (object) querry});
-                var genericAddSingletonMethod2 =
+                var addSingletonForQuerry = addSingletonFunctionConcrete.MakeGenericMethod(querryType);
+                addSingletonForQuerry.Invoke(collection, new[] {collection, (object) querry});
+                var addSingletonForSubscridedEvents =
                     addSingletonFunctionConcrete.MakeGenericMethod(subscribeEventTypeForQuerry.GetType());
-                genericAddSingletonMethod2.Invoke(collection, new[] {collection, subscribeEventTypeForQuerry});
+                addSingletonForSubscridedEvents.Invoke(collection, new[] {collection, subscribeEventTypeForQuerry});
             }
 
-            var addSingletonFunctionTypeBase = typeof(ServiceCollectionServiceExtensions).GetMethods().First(method =>
-                method.Name == "AddTransient" && method.IsGenericMethod &&
-                method.GetGenericArguments().Length == 2 && method.GetParameters().Length == 1);
+            var eventHandlers = assembly.GetTypes().Where(type => type.BaseType.IsGenericType
+                                                                  && type.BaseType.GetGenericTypeDefinition() ==
+                                                                  typeof(ReactiveEventHandler<>)).ToList();
+            foreach (var eventHandlerType in eventHandlers)
+            {
+                var subscribedEventsType = typeof(SubscribedEventTypes<>);
+                var genericTypeForEvents = subscribedEventsType.MakeGenericType(eventHandlerType);
+                var subscribedEvents = Activator.CreateInstance(genericTypeForEvents);
 
-            var addSingletonFunctionTypeBase2 = typeof(ServiceCollectionServiceExtensions).GetMethods().First(method =>
+                var addSingleton =
+                    addSingletonFunctionConcrete.MakeGenericMethod(subscribedEvents.GetType());
+                addSingleton.Invoke(collection,
+                    new[] {collection, subscribedEvents});
+            }
+
+            var addTransientWithInterfaceAndImplementation = typeof(ServiceCollectionServiceExtensions).GetMethods()
+                .First(method =>
+                    method.Name == "AddTransient" && method.IsGenericMethod &&
+                    method.GetGenericArguments().Length == 2 && method.GetParameters().Length == 1);
+
+            var addTransientWithClass = typeof(ServiceCollectionServiceExtensions).GetMethods().First(method =>
                 method.Name == "AddTransient" && method.IsGenericMethod &&
                 method.GetGenericArguments().Length == 1 && method.GetParameters().Length == 1);
 
             var handlerTypes = assembly.GetTypes().Where(t => t.GetInterfaces().Contains(typeof(IEventHandler)));
             foreach (var handlerType in handlerTypes)
             {
-                var addSingleton = addSingletonFunctionTypeBase.MakeGenericMethod(typeof(IEventHandler), handlerType);
+                var addSingleton =
+                    addTransientWithInterfaceAndImplementation.MakeGenericMethod(typeof(IEventHandler), handlerType);
                 addSingleton.Invoke(collection, new object[] {collection});
 
-                var addSingleton2 = addSingletonFunctionTypeBase2.MakeGenericMethod(handlerType);
+                var addSingleton2 = addTransientWithClass.MakeGenericMethod(handlerType);
                 addSingleton2.Invoke(collection, new object[] {collection});
             }
 
@@ -59,7 +76,8 @@ namespace DependencyInjection.Framework
         public static void UseEventStoreSubscriptions(this IApplicationBuilder builder)
         {
             var builderApplicationServices = builder.ApplicationServices;
-            var recallReferenceHolder = (QueryEventDelegator) builderApplicationServices.GetService(typeof(QueryEventDelegator));
+            var recallReferenceHolder =
+                (QueryEventDelegator) builderApplicationServices.GetService(typeof(QueryEventDelegator));
             recallReferenceHolder.SubscribeToStreamsFrom();
         }
     }

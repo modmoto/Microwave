@@ -13,17 +13,36 @@ namespace DependencyInjection.Framework.Tests
         public void AddAllEmptyQuerries()
         {
             var serviceCollection = (IServiceCollection) new ServiceCollection();
-            serviceCollection.AddAllEmptyQuerries(typeof(TestQuery).Assembly);
+            serviceCollection.AddQuerryAndEventHandler(typeof(TestQuery).Assembly);
             var buildServiceProvider = serviceCollection.BuildServiceProvider();
             var querryInDi = (TestQuery) buildServiceProvider.GetService(typeof(TestQuery));
-            var allowedEventsOfQuerry = (SubscribedEventTypes<TestQuery>) buildServiceProvider.GetService(typeof(SubscribedEventTypes<TestQuery>));
+            var allowedEventsOfQuerry =
+                (SubscribedEventTypes<TestQuery>) buildServiceProvider.GetService(
+                    typeof(SubscribedEventTypes<TestQuery>));
             var querryHandler = buildServiceProvider.GetService<TestQuerryHandler>();
             var querryHandlers = buildServiceProvider.GetServices<IEventHandler>().ToList();
 
             Assert.Equal(nameof(TestQuerryCreatedEvent), allowedEventsOfQuerry[0].Name);
             Assert.Equal(nameof(TestQuerryNameChangedEvent), allowedEventsOfQuerry[1].Name);
             Assert.Equal(querryInDi, querryHandler.QueryObject);
-            Assert.Equal(1, querryHandlers.Count);
+            Assert.Equal(2, querryHandlers.Count);
+        }
+
+        [Fact]
+        public void AddAllEventHandlers()
+        {
+            var serviceCollection = (IServiceCollection) new ServiceCollection();
+            serviceCollection.AddQuerryAndEventHandler(typeof(TestReactiveEventHandler).Assembly);
+            var buildServiceProvider = serviceCollection.BuildServiceProvider();
+            var allowedEventsOfQuerry =
+                (SubscribedEventTypes<TestReactiveEventHandler>) buildServiceProvider.GetService(
+                    typeof(SubscribedEventTypes<TestReactiveEventHandler>));
+            var eventHandler = buildServiceProvider.GetService<TestQuerryHandler>();
+            var eventHandlers = buildServiceProvider.GetServices<IEventHandler>().ToList();
+
+            Assert.Equal(nameof(TestQuerryNameChangedEvent), allowedEventsOfQuerry[0].Name);
+            Assert.NotNull(eventHandler);
+            Assert.Equal(2, eventHandlers.Count);
         }
     }
 
@@ -44,7 +63,20 @@ namespace DependencyInjection.Framework.Tests
 
     public class TestQuerryHandler : QueryEventHandler<TestQuery>
     {
-        public TestQuerryHandler(TestQuery queryObject, SubscribedEventTypes<TestQuery> subscribedEventTypes) : base(queryObject, subscribedEventTypes)
+        public TestQuerryHandler(TestQuery queryObject, SubscribedEventTypes<TestQuery> subscribedEventTypes) : base(
+            queryObject, subscribedEventTypes)
+        {
+        }
+    }
+
+    public class TestReactiveEventHandler : ReactiveEventHandler<TestReactiveEventHandler>
+    {
+        public TestReactiveEventHandler(SubscribedEventTypes<TestReactiveEventHandler> subscribedEventTypes) : base(
+            subscribedEventTypes)
+        {
+        }
+
+        public void Apply(TestQuerryNameChangedEvent domainEvent)
         {
         }
     }
