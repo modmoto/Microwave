@@ -87,7 +87,7 @@ namespace Adapters.Framework.EventStores
 
         private void dropped(EventStoreCatchUpSubscription sub, SubscriptionDropReason reas, Exception exc)
         {
-            Console.WriteLine("Dropped");
+            Console.WriteLine("Dropped");ss
         }
 
         public async Task<long> GetLastProcessedVersion(IEventHandler eventHandler, string eventName)
