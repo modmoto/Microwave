@@ -90,7 +90,8 @@ namespace Adapters.Framework.EventStores
             var streamName = $"{_eventStoreConfig.ProcessedEventCounterStream}-{eventHandler.GetType().Name}-{eventName}";
             var streamEventsSlice = await _eventStoreConnection.ReadStreamEventsBackwardAsync(
                 streamName, StreamPosition.End, 1, true);
-            var resolvedEvent = streamEventsSlice.Events.Single();
+            if (streamEventsSlice.Events.Length == 0) return 0;
+            var resolvedEvent = streamEventsSlice.Events.First();
             var eventData = Encoding.UTF8.GetString(resolvedEvent.Event.Data);
             var eventMarker = JsonConvert.DeserializeObject<LastProcessedEventMarker>(eventData);
             return eventMarker.LastProcessedVersion;
