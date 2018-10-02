@@ -35,7 +35,7 @@ namespace Adapters.Framework.Eventstores.Tests
             {
                 new TestEvent1(entityGuid) {Name = "Name1"},
                 new TestEvent2(entityGuid) {Name = "Name2", LastName = "LastName2"},
-                new TestEvent1(entityGuid) {Name = "Name3"},
+                new TestEvent1(entityGuid) {Name = "Name3"}
             };
             var eventStoreFacade = new EventStoreFacade(new EventSourcingApplyStrategy(), _eventStoreConnection, new TestEventStoreConfig(), new DomainEventConverter());
 
@@ -50,9 +50,9 @@ namespace Adapters.Framework.Eventstores.Tests
 
             queryEventDelegator.SubscribeToStreams();
 
-            await eventStoreFacade.AppendAsync(domainEvents, 0);
+            await eventStoreFacade.AppendAsync(domainEvents, -1);
 
-            await Task.Delay(5000);
+            await Task.Delay(1000);
 
             var queryObject1 = testQueryHandler1.QueryObject;
             var queryObject2 = testQueryHandler2.QueryObject;
@@ -70,16 +70,16 @@ namespace Adapters.Framework.Eventstores.Tests
             {
                 new TestEvent1(entityGuid) {Name = "Name1"},
                 new TestEvent2(entityGuid) {Name = "Name2", LastName = "LastName2"},
-                new TestEvent1(entityGuid) {Name = "Name3"},
+                new TestEvent1(entityGuid) {Name = "Name3"}
             };
             var eventStoreFacade = new EventStoreFacade(new EventSourcingApplyStrategy(), _eventStoreConnection, new TestEventStoreConfig(), new DomainEventConverter());
 
             var testQueryHandler1 = new TestQueryEventHandler1(new TestQ1(), new SubscribedEventTypes<TestQ1>());
             var testQueryHandler2 = new TestQueryEventHandler2(new TestQ2(), new SubscribedEventTypes<TestQ2>());
 
-            await eventStoreFacade.AppendAsync(domainEvents, 0);
+            await eventStoreFacade.AppendAsync(domainEvents, -1);
 
-            await Task.Delay(5000);
+            await Task.Delay(1000);
 
             var queryEventDelegator = new QueryEventDelegator(
                 new List<IEventHandler>

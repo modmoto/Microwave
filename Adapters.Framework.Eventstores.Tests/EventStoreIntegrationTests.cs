@@ -42,7 +42,7 @@ namespace Adapters.Framework.Eventstores.Tests
             var domainEvents = new List<DomainEvent>
                 {new TestCreatedEvent(_entityId, "OldName"), new TestChangeNameEvent(_entityId, "NewName")};
 
-            await eventStore.AppendAsync(domainEvents, 0);
+            await eventStore.AppendAsync(domainEvents, -1);
 
             var testEntity = await eventStore.LoadAsync<TestEntity>(_entityId);
 
@@ -68,7 +68,7 @@ namespace Adapters.Framework.Eventstores.Tests
             var domainEvents = new List<DomainEvent>
                 {new TestCreatedEvent(_entityId, "OldName"), new TestChangeNameEvent(_entityId, "NewName")};
 
-            await eventStore.AppendAsync(domainEvents, 0);
+            await eventStore.AppendAsync(domainEvents, -1);
 
             var testEntity = await eventStore.LoadAsync<TestEntity>(_entityId);
 
@@ -95,7 +95,7 @@ namespace Adapters.Framework.Eventstores.Tests
 
             var eventStore = new EventStoreFacade(new EventSourcingAtributeStrategy(), _eventStoreConnection,
                 new TestEventStoreConfig(), new DomainEventConverter());
-            await eventStore.AppendAsync(domainEvents, 0);
+            await eventStore.AppendAsync(domainEvents, -1);
 
             Assert.Equal(2, (await eventStore.GetEvents(_entityId)).Result.Count());
         }
@@ -108,7 +108,7 @@ namespace Adapters.Framework.Eventstores.Tests
 
             var eventStore = new EventStoreFacade(new EventSourcingApplyStrategy(), _eventStoreConnection,
                 new TestEventStoreConfig(), new DomainEventConverter());
-            await eventStore.AppendAsync(domainEvents, 0);
+            await eventStore.AppendAsync(domainEvents, -1);
             var testEntity = await eventStore.LoadAsync<TestEntity>(_entityId);
 
             Assert.Equal("NewName", testEntity.Result.Name);
@@ -132,7 +132,7 @@ namespace Adapters.Framework.Eventstores.Tests
                 domainEvents.Add(testChangeNameEvent);
             }
 
-            await eventStore.AppendAsync(domainEvents, 0);
+            await eventStore.AppendAsync(domainEvents, -1);
             var testEntity = await eventStore.LoadAsync<TestEntity>(_entityId);
 
             Assert.Equal("NewName120", testEntity.Result.Name);
@@ -146,7 +146,7 @@ namespace Adapters.Framework.Eventstores.Tests
 
             var domainEvents = new List<DomainEvent> { new TestCreatedEvent(_entityId, "OldName"), new TestChangeNameEvent(_entityId, "NewName")};
 
-            await eventStore.AppendAsync(domainEvents, 0);
+            await eventStore.AppendAsync(domainEvents, -1);
 
             var testEntity = await eventStore.LoadAsync<TestEntity>(_entityId);
 

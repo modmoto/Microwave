@@ -8,6 +8,7 @@ using Application.Framework;
 using Application.Framework.Results;
 using Domain.Framework;
 using EventStore.ClientAPI;
+using Newtonsoft.Json;
 
 namespace Adapters.Framework.EventStores
 {
@@ -17,6 +18,7 @@ namespace Adapters.Framework.EventStores
         private readonly IEventSourcingStrategy _eventSourcingStrategy;
         private readonly EventStoreConfig _eventStoreConfig;
         private readonly IEventStoreConnection _eventStoreConnection;
+
 
         public EventStoreFacade(IEventSourcingStrategy eventSourcingStrategy,
             IEventStoreConnection eventStoreConnection, EventStoreConfig eventStoreConfig,
@@ -30,7 +32,6 @@ namespace Adapters.Framework.EventStores
 
         public async Task AppendAsync(IEnumerable<DomainEvent> domainEvents, long entityVersion)
         {
-            if (entityVersion == 0) entityVersion = -1;
             var eventList = domainEvents.ToList();
             var firstEvent = eventList.FirstOrDefault();
             if (firstEvent != null)
@@ -72,17 +73,6 @@ namespace Adapters.Framework.EventStores
             return EventStoreResult<IEnumerable<DomainEvent>>.Ok(ToDomainEventList(domainEvents), eventEventNumber);
         }
 
-        public async Task Subscribe(Type domainEventType, Action<DomainEvent> subscribeMethod)
-        {
-            await _eventStoreConnection.SubscribeToStreamAsync(
-                $"{_eventStoreConfig.ReadStream}-{domainEventType.Name}", true,
-                (arg1, arg2) =>
-                {
-                    var domainEvent = _eventConverter.Deserialize(arg2);
-                    subscribeMethod.Invoke(domainEvent);
-                });
-        }
-
         public void SubscribeFrom(Type domainEventType, long version, Action<DomainEvent> subscribeMethod)
         {
             _eventStoreConnection.SubscribeToStreamFrom($"{_eventStoreConfig.ReadStream}-{domainEventType.Name}",
@@ -93,6 +83,30 @@ namespace Adapters.Framework.EventStores
                     var domainEvent = _eventConverter.Deserialize(arg2);
                     subscribeMethod.Invoke(domainEvent);
                 });
+        }
+
+        public async Task<long> GetLastProcessedVersion(IEventHandler eventHandler, string eventName)
+        {
+            var streamName = $"{_eventStoreConfig.ProcessedEventCounterStream}-{eventHandler.GetType().Name}-{eventName}";
+            var streamEventsSlice = await _eventStoreConnection.ReadStreamEventsBackwardAsync(
+                streamName, StreamPosition.End, 1, true);
+            var resolvedEvent = streamEventsSlice.Events.Single();
+            var eventData = Encoding.UTF8.GetString(resolvedEvent.Event.Data);
+            var eventMarker = JsonConvert.DeserializeObject<LastProcessedEventMarker>(eventData);
+            return eventMarker.LastProcessedVersion;
+        }
+
+        public async Task SaveLastProcessedVersion(IEventHandler eventHandler, DomainEvent prozessedEvent, long lastProcessedVersion)
+        {
+            var handlerName = eventHandler.GetType().Name;
+            var lastProcessedEventMarker = new LastProcessedEventMarker(lastProcessedVersion);
+            var serializedEvent = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(lastProcessedEventMarker));
+            var processedEvent = new EventData(Guid.NewGuid(),
+                $"{_eventStoreConfig.ProcessedEventCounterStream}-{eventHandler.GetType().Name}-{prozessedEvent.GetType().Name}", true, serializedEvent,
+                new byte[] { });
+            await _eventStoreConnection.AppendToStreamAsync(
+                $"{_eventStoreConfig.WriteStream}-{handlerName}", ExpectedVersion.Any,
+                processedEvent);
         }
 
         private async Task<StreamEventsSlice> GetStreamEventsSlice(Guid entityId, int from, int to)
@@ -112,6 +126,16 @@ namespace Adapters.Framework.EventStores
         private IEnumerable<DomainEvent> ToDomainEventList(List<ResolvedEvent> events)
         {
             foreach (var resolvedEvent in events) yield return _eventConverter.Deserialize(resolvedEvent);
+        }
+
+        public class LastProcessedEventMarker
+        {
+            public LastProcessedEventMarker(long lastProcessedVersion)
+            {
+                LastProcessedVersion = lastProcessedVersion;
+            }
+
+            public long LastProcessedVersion { get; }
         }
     }
 }

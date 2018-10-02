@@ -1,8 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Application.Framework;
 using Domain.Framework;
+using EventStore.ClientAPI;
 
 namespace Adapters.Framework.EventStores
 {
@@ -29,13 +30,19 @@ namespace Adapters.Framework.EventStores
         {
             foreach (var queryHandler in _queryHandlers) {
                 foreach (var subscribedType in queryHandler.SubscribedDomainEventTypes)
+                {
                     _facade.SubscribeFrom(subscribedType, 0, HandleQuerySubscription);
+                    Task.Delay(100).Wait();
+                }
             }
 
-            foreach (var queryHandler in _eventHandlers)
+            foreach (var eventHandler in _eventHandlers)
             {
-                foreach (var subscribedType in queryHandler.SubscribedDomainEventTypes)
-                    _facade.Subscribe(subscribedType, HandleEventSubscription);
+                foreach (var subscribedType in eventHandler.SubscribedDomainEventTypes)
+                {
+                    var lastProcessedEvent = _facade.GetLastProcessedVersion(eventHandler, subscribedType.Name).Result;
+                    _facade.SubscribeFrom(subscribedType, lastProcessedEvent, HandleEventSubscription);
+                }
             }
         }
 
