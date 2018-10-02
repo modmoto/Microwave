@@ -76,13 +76,18 @@ namespace Adapters.Framework.EventStores
         public void SubscribeFrom(Type domainEventType, long version, Action<DomainEvent> subscribeMethod)
         {
             _eventStoreConnection.SubscribeToStreamFrom($"{_eventStoreConfig.ReadStream}-{domainEventType.Name}",
-                0,
-                new CatchUpSubscriptionSettings(int.MaxValue, 100, false, true),
+                version,
+                new CatchUpSubscriptionSettings(int.MaxValue, 100, true, true),
                 (arg1, arg2) =>
                 {
                     var domainEvent = _eventConverter.Deserialize(arg2);
                     subscribeMethod.Invoke(domainEvent);
-                });
+                }, subscriptionDropped: dropped);
+        }
+
+        private void dropped(EventStoreCatchUpSubscription sub, SubscriptionDropReason reas, Exception exc)
+        {
+            Console.WriteLine("Dropped");
         }
 
         public async Task<long> GetLastProcessedVersion(IEventHandler eventHandler, string eventName)

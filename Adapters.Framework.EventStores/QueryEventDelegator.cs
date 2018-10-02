@@ -32,7 +32,6 @@ namespace Adapters.Framework.EventStores
                 foreach (var subscribedType in queryHandler.SubscribedDomainEventTypes)
                 {
                     _facade.SubscribeFrom(subscribedType, 0, HandleQuerySubscription);
-                    Task.Delay(100).Wait();
                 }
             }
 

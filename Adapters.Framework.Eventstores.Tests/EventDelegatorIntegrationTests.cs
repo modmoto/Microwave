@@ -52,7 +52,7 @@ namespace Adapters.Framework.Eventstores.Tests
 
             await eventStoreFacade.AppendAsync(domainEvents, -1);
 
-            await Task.Delay(1000);
+            await Task.Delay(5000);
 
             var queryObject1 = testQueryHandler1.QueryObject;
             var queryObject2 = testQueryHandler2.QueryObject;
@@ -90,7 +90,7 @@ namespace Adapters.Framework.Eventstores.Tests
 
             queryEventDelegator.SubscribeToStreams();
 
-            await Task.Delay(1000);
+            await Task.Delay(5000);
 
             var queryObject1 = testQueryHandler1.QueryObject;
             var queryObject2 = testQueryHandler2.QueryObject;
