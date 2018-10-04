@@ -4,9 +4,9 @@ using Domain.Seasons.Events;
 
 namespace Application.Seasons.Querries
 {
-    public class NewUserEventHandler : ReactiveEventHandler<NewUserEventHandler>
+    public class SeasonCreatedEventHandler : ReactiveEventHandler<SeasonCreatedEventHandler>
     {
-        public NewUserEventHandler(SubscribedEventTypes<NewUserEventHandler> subscribedEventTypes) : base(subscribedEventTypes)
+        public SeasonCreatedEventHandler(SubscribedEventTypes<SeasonCreatedEventHandler> subscribedEventTypes) : base(subscribedEventTypes)
         {
         }
 
