@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Application.Framework;
@@ -9,6 +10,9 @@ namespace Adapters.Framework.EventStores
     public class HandlerVersionRepository : IHandlerVersionRepository
     {
         private string dbFolder = "JsonDB";
+
+        private readonly Object _fileLock = new Object();
+
 
         public async Task<long> GetLastProcessedVersion(IEventHandler reactiveEventHandler, string name)
         {
@@ -24,17 +28,20 @@ namespace Adapters.Framework.EventStores
 
         public void IncrementProcessedVersion(IEventHandler reactiveEventHandler, DomainEvent domainEvent)
         {
+            lock (_fileLock)
+            {
+                if (!Directory.Exists(dbFolder)) Directory.CreateDirectory(dbFolder);
+                var path = $"{dbFolder}/{reactiveEventHandler.GetType().Name}-{domainEvent.GetType().Name}";
 
-            if (!Directory.Exists(dbFolder)) Directory.CreateDirectory(dbFolder);
-            var path = $"{dbFolder}/{reactiveEventHandler.GetType().Name}-{domainEvent.GetType().Name}";
+                if (!File.Exists(path)) File.Create(path);
 
-            if (!File.Exists(path)) File.Create(path);
+                var content = File.ReadAllLines(path);
+                var wasLong = long.TryParse(content.FirstOrDefault(), out var version);
+                if (!wasLong) version = 0;
 
-            var content = File.ReadAllLines(path);
-            var wasLong = long.TryParse(content.FirstOrDefault(), out var version);
-            if (!wasLong) version = 0;
+                File.WriteAllText(path, (version + 1).ToString());
+            }
 
-            File.WriteAllText(path, (version + 1).ToString());
         }
     }
 }
