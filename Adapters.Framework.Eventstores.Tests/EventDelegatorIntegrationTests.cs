@@ -20,6 +20,7 @@ namespace Adapters.Framework.Eventstores.Tests
             await _eventStoreConnection.ConnectAsync();
             await _eventStoreConnection.DeleteStreamAsync($"{new TestEventStoreConfig().ReadStream}-TestEvent1", ExpectedVersion.Any, new UserCredentials("admin", "changeit"));
             await _eventStoreConnection.DeleteStreamAsync($"{new TestEventStoreConfig().ReadStream}-TestEvent2", ExpectedVersion.Any, new UserCredentials("admin", "changeit"));
+            await Task.Delay(1000);
         }
 
         public Task DisposeAsync()
@@ -46,7 +47,7 @@ namespace Adapters.Framework.Eventstores.Tests
                 {
                     testQueryHandler1,
                     testQueryHandler2
-                }, eventStoreFacade);
+                }, eventStoreFacade, new HandlerVersionRepository());
 
             queryEventDelegator.SubscribeToStreams();
 
@@ -86,7 +87,7 @@ namespace Adapters.Framework.Eventstores.Tests
                 {
                     testQueryHandler1,
                     testQueryHandler2
-                }, eventStoreFacade);
+                }, eventStoreFacade, new HandlerVersionRepository());
 
             queryEventDelegator.SubscribeToStreams();
 

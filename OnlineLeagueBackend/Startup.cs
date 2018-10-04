@@ -25,6 +25,7 @@ namespace OnlineLeagueBackend
             services.AddTransient<IEventSourcingStrategy, EventSourcingApplyStrategy>();
             services.AddTransient<EventStoreConfig, RealEventStoreConfig>();
             services.AddTransient<IEventStoreFacade, EventStoreFacade>();
+            services.AddTransient<IHandlerVersionRepository, HandlerVersionRepository>();
             var connection = EventStoreConnection.Create(new Uri("tcp://admin:changeit@localhost:1113"), "MyTestCon");
             connection.ConnectAsync().Wait();
             services.AddSingleton(connection);

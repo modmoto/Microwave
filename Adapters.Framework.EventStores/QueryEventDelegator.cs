@@ -1,19 +1,19 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Application.Framework;
 using Domain.Framework;
-using EventStore.ClientAPI;
 
 namespace Adapters.Framework.EventStores
 {
     public class QueryEventDelegator
     {
-        private readonly IEventStoreFacade _facade;
         private readonly IEnumerable<IEventHandler> _eventHandlers;
+        private readonly IEventStoreFacade _facade;
         private readonly IEnumerable<IEventHandler> _queryHandlers;
+        private readonly IHandlerVersionRepository _versionRepository;
 
-        public QueryEventDelegator(IEnumerable<IEventHandler> handlerList, IEventStoreFacade facade)
+        public QueryEventDelegator(IEnumerable<IEventHandler> handlerList, IEventStoreFacade facade,
+            IHandlerVersionRepository versionRepository)
         {
             var enumerable = handlerList.ToList();
             _queryHandlers = enumerable.Where(handler =>
@@ -24,38 +24,38 @@ namespace Adapters.Framework.EventStores
                 typeof(ReactiveEventHandler<>));
 
             _facade = facade;
+            _versionRepository = versionRepository;
         }
 
         public void SubscribeToStreams()
         {
-            foreach (var queryHandler in _queryHandlers) {
-                foreach (var subscribedType in queryHandler.SubscribedDomainEventTypes)
-                {
-                    _facade.SubscribeFrom(subscribedType, 0, HandleQuerySubscription);
-                }
-            }
+            foreach (var queryHandler in _queryHandlers)
+            foreach (var subscribedType in queryHandler.SubscribedDomainEventTypes)
+                _facade.SubscribeFrom(subscribedType, 0, HandleQuerySubscription);
 
             foreach (var eventHandler in _eventHandlers)
+            foreach (var subscribedType in eventHandler.SubscribedDomainEventTypes)
             {
-                foreach (var subscribedType in eventHandler.SubscribedDomainEventTypes)
-                {
-                    var lastProcessedEvent = _facade.GetLastProcessedVersion(eventHandler, subscribedType.Name).Result;
-                    _facade.SubscribeFrom(subscribedType, lastProcessedEvent, HandleEventSubscription);
-                }
+                var lastProcessedEvent =
+                    _versionRepository.GetLastProcessedVersion(eventHandler, subscribedType.Name).Result;
+                _facade.SubscribeFrom(subscribedType, lastProcessedEvent,
+                    domainEvent => HandleEventSubscription(domainEvent));
             }
         }
 
         private void HandleEventSubscription(DomainEvent domainEvent)
         {
             var eventType = domainEvent.GetType();
-            var handlers = _eventHandlers.Where(handler => handler.SubscribedDomainEventTypes.Any(type => type == eventType));
+            var handlers =
+                _eventHandlers.Where(handler => handler.SubscribedDomainEventTypes.Any(type => type == eventType));
             foreach (var handler in handlers) handler.Handle(domainEvent);
         }
 
         private void HandleQuerySubscription(DomainEvent domainEvent)
         {
             var eventType = domainEvent.GetType();
-            var handlers = _queryHandlers.Where(handler => handler.SubscribedDomainEventTypes.Any(type => type == eventType));
+            var handlers =
+                _queryHandlers.Where(handler => handler.SubscribedDomainEventTypes.Any(type => type == eventType));
             foreach (var handler in handlers) handler.Handle(domainEvent);
         }
     }

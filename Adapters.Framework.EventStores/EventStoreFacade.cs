@@ -90,31 +90,6 @@ namespace Adapters.Framework.EventStores
             Console.WriteLine("Dropped");
         }
 
-        public async Task<long> GetLastProcessedVersion(IEventHandler eventHandler, string eventName)
-        {
-            var streamName = $"{_eventStoreConfig.ProcessedEventCounterStream}-{eventHandler.GetType().Name}-{eventName}";
-            var streamEventsSlice = await _eventStoreConnection.ReadStreamEventsBackwardAsync(
-                streamName, StreamPosition.End, 1, true);
-            if (streamEventsSlice.Events.Length == 0) return 0;
-            var resolvedEvent = streamEventsSlice.Events.First();
-            var eventData = Encoding.UTF8.GetString(resolvedEvent.Event.Data);
-            var eventMarker = JsonConvert.DeserializeObject<LastProcessedEventMarker>(eventData);
-            return eventMarker.LastProcessedVersion;
-        }
-
-        public async Task SaveLastProcessedVersion(IEventHandler eventHandler, DomainEvent prozessedEvent, long lastProcessedVersion)
-        {
-            var handlerName = eventHandler.GetType().Name;
-            var lastProcessedEventMarker = new LastProcessedEventMarker(lastProcessedVersion);
-            var serializedEvent = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(lastProcessedEventMarker));
-            var processedEvent = new EventData(Guid.NewGuid(),
-                $"{_eventStoreConfig.ProcessedEventCounterStream}-{eventHandler.GetType().Name}-{prozessedEvent.GetType().Name}", true, serializedEvent,
-                new byte[] { });
-            await _eventStoreConnection.AppendToStreamAsync(
-                $"{_eventStoreConfig.WriteStream}-{handlerName}", ExpectedVersion.Any,
-                processedEvent);
-        }
-
         private async Task<StreamEventsSlice> GetStreamEventsSlice(Guid entityId, int from, int to)
         {
             StreamEventsSlice streamEventsSlice;

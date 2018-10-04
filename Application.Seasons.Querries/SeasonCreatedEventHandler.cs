@@ -6,7 +6,8 @@ namespace Application.Seasons.Querries
 {
     public class SeasonCreatedEventHandler : ReactiveEventHandler<SeasonCreatedEventHandler>
     {
-        public SeasonCreatedEventHandler(SubscribedEventTypes<SeasonCreatedEventHandler> subscribedEventTypes) : base(subscribedEventTypes)
+        public SeasonCreatedEventHandler(SubscribedEventTypes<SeasonCreatedEventHandler> subscribedEventTypes,
+            IHandlerVersionRepository versionRepository) : base(subscribedEventTypes, versionRepository)
         {
         }
 

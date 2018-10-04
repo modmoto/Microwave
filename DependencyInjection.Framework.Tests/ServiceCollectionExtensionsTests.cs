@@ -72,7 +72,7 @@ namespace DependencyInjection.Framework.Tests
     public class TestReactiveEventHandler : ReactiveEventHandler<TestReactiveEventHandler>
     {
         public TestReactiveEventHandler(SubscribedEventTypes<TestReactiveEventHandler> subscribedEventTypes) : base(
-            subscribedEventTypes)
+            subscribedEventTypes, null)
         {
         }
 
