@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Application.Framework;
 using Domain.Seasons.Events;
 
@@ -11,9 +12,14 @@ namespace Application.Seasons.Querries
         {
         }
 
-        public void Handle(SeasonCreatedEvent domainEvent)
+        public async Task Handle(SeasonCreatedEvent domainEvent)
         {
             Console.WriteLine("THingy called");
+        }
+
+        public async Task Handle(SeasonNameChangedEvent domainEvent)
+        {
+            Console.WriteLine($"New Name: {domainEvent.Name}");
         }
     }
 }

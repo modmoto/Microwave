@@ -28,20 +28,16 @@ namespace Adapters.Framework.EventStores
 
         public void IncrementProcessedVersion(IEventHandler reactiveEventHandler, DomainEvent domainEvent)
         {
-            lock (_fileLock)
-            {
-                if (!Directory.Exists(dbFolder)) Directory.CreateDirectory(dbFolder);
-                var path = $"{dbFolder}/{reactiveEventHandler.GetType().Name}-{domainEvent.GetType().Name}";
+            if (!Directory.Exists(dbFolder)) Directory.CreateDirectory(dbFolder);
+            var path = $"{dbFolder}/{reactiveEventHandler.GetType().Name}-{domainEvent.GetType().Name}";
 
-                if (!File.Exists(path)) File.Create(path);
+            if (!File.Exists(path)) File.Create(path);
 
-                var content = File.ReadAllLines(path);
-                var wasLong = long.TryParse(content.FirstOrDefault(), out var version);
-                if (!wasLong) version = 0;
+            var content = File.ReadAllLines(path);
+            var wasLong = long.TryParse(content.FirstOrDefault(), out var version);
+            if (!wasLong) version = 0;
 
-                File.WriteAllText(path, (version + 1).ToString());
-            }
-
+            File.WriteAllText(path, (version + 1).ToString());
         }
     }
 }

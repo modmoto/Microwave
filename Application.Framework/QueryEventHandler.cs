@@ -7,6 +7,7 @@ namespace Application.Framework
 {
     public class QueryEventHandler<T> : IEventHandler where T : Query
     {
+        private readonly object _lockObject = new Object();
         public T QueryObject { get; }
         public IEnumerable<Type> SubscribedDomainEventTypes { get; }
 
@@ -16,9 +17,12 @@ namespace Application.Framework
             SubscribedDomainEventTypes = subscribedEventTypes;
         }
 
-        public void Handle(DomainEvent domainEvent)
+        public async Task Handle(DomainEvent domainEvent)
         {
-            QueryObject.Apply(domainEvent);
+            lock (_lockObject)
+            {
+                QueryObject.Apply(domainEvent);
+            }
         }
     }
 }

@@ -7,7 +7,7 @@ namespace Application.Framework
 {
     public interface IEventHandler
     {
-        void Handle(DomainEvent domainEvent);
+        Task Handle(DomainEvent domainEvent);
         IEnumerable<Type> SubscribedDomainEventTypes { get; }
     }
 }

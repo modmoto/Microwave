@@ -38,8 +38,7 @@ namespace Adapters.Framework.EventStores
             {
                 var lastProcessedEvent =
                     _versionRepository.GetLastProcessedVersion(eventHandler, subscribedType.Name).Result;
-                _facade.SubscribeFrom(subscribedType, lastProcessedEvent,
-                    domainEvent => HandleEventSubscription(domainEvent));
+                _facade.SubscribeFrom(subscribedType, lastProcessedEvent, HandleEventSubscription);
             }
         }
 

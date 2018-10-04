@@ -16,7 +16,7 @@ namespace Application.Framework
             SubscribedDomainEventTypes = subscribedEventTypes;
         }
 
-        public void Handle(DomainEvent domainEvent)
+        public async Task Handle(DomainEvent domainEvent)
         {
             var type = domainEvent.GetType();
             var currentEntityType = GetType();
