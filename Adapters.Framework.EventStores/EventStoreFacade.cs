@@ -8,7 +8,6 @@ using Application.Framework;
 using Application.Framework.Results;
 using Domain.Framework;
 using EventStore.ClientAPI;
-using Newtonsoft.Json;
 
 namespace Adapters.Framework.EventStores
 {

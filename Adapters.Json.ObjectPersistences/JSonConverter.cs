@@ -7,7 +7,12 @@ namespace Adapters.Json.ObjectPersistences
 {
     public class JSonConverter<T> : IJSonConverter<T>
     {
-        private readonly JsonSerializerSettings _settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All, ContractResolver = new PrivateSetterContractResolver() };
+        private readonly JsonSerializerSettings _settings = new JsonSerializerSettings
+        {
+            TypeNameHandling = TypeNameHandling.All,
+            ContractResolver = new PrivateSetterContractResolver(),
+            ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor
+        };
 
         public string Serialize(T eve)
         {
