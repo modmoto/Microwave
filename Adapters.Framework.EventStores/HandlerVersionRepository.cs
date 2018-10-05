@@ -52,7 +52,7 @@ namespace Adapters.Framework.EventStores
                     streamVersion = streamEventsSlice.LastEventNumber;
                 }
 
-                var lastProcessedEventMarker = new LastProcessedEventMarker(lastProcessedVersion + 1, prozessedEvent.EntityId, prozessedEvent.DomainEventId);
+                var lastProcessedEventMarker = new LastProcessedEventMarker(lastProcessedVersion + 1, prozessedEvent.DomainEventId);
                 var serializedEvent = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(lastProcessedEventMarker));
                 var processedEvent = new EventData(Guid.NewGuid(),
                     streamName, true, serializedEvent,
