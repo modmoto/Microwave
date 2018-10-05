@@ -39,7 +39,7 @@ namespace Adapters.Framework.EventStores
                 if (eventList.Any(ev => ev.EntityId != firstEvent.EntityId))
                     throw new ArgumentException(
                         "Entity Ids have to be the same, can not write to two or more streams with optimistic concurrency");
-                var convertedElements = eventList.Select(eve => new EventData(Guid.NewGuid(), eve.GetType().Name, true,
+                var convertedElements = eventList.Select(eve => new EventData(eve.DomainEventId, eve.GetType().Name, true,
                     Encoding.UTF8.GetBytes(_eventConverter.Serialize(eve)), null));
                 await _eventStoreConnection.AppendToStreamAsync(
                     $"{_eventStoreConfig.WriteStream}-{firstEvent.EntityId}", entityVersion,
@@ -69,7 +69,7 @@ namespace Adapters.Framework.EventStores
                 domainEvents.AddRange(streamEventsSlice.Events);
             }
 
-            var eventEventNumber = streamEventsSlice.Events.Last().Event.EventNumber;
+             var eventEventNumber = streamEventsSlice.Events.Last().Event.EventNumber;
             return EventStoreResult<IEnumerable<DomainEvent>>.Ok(ToDomainEventList(domainEvents), eventEventNumber);
         }
 
@@ -107,16 +107,6 @@ namespace Adapters.Framework.EventStores
         private IEnumerable<DomainEvent> ToDomainEventList(List<ResolvedEvent> events)
         {
             foreach (var resolvedEvent in events) yield return _eventConverter.Deserialize(resolvedEvent);
-        }
-
-        public class LastProcessedEventMarker
-        {
-            public LastProcessedEventMarker(long lastProcessedVersion)
-            {
-                LastProcessedVersion = lastProcessedVersion;
-            }
-
-            public long LastProcessedVersion { get; }
         }
     }
 }

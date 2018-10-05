@@ -47,7 +47,7 @@ namespace Adapters.Framework.Eventstores.Tests
                 {
                     testQueryHandler1,
                     testQueryHandler2
-                }, eventStoreFacade, new HandlerVersionRepository());
+                }, eventStoreFacade, new HandlerVersionRepository(_eventStoreConnection, new TestEventStoreConfig()));
 
             queryEventDelegator.SubscribeToStreams();
 
@@ -87,7 +87,7 @@ namespace Adapters.Framework.Eventstores.Tests
                 {
                     testQueryHandler1,
                     testQueryHandler2
-                }, eventStoreFacade, new HandlerVersionRepository());
+                }, eventStoreFacade, new HandlerVersionRepository(_eventStoreConnection, new TestEventStoreConfig()));
 
             queryEventDelegator.SubscribeToStreams();
 

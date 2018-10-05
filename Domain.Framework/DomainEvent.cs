@@ -7,9 +7,11 @@ namespace Domain.Framework
         protected DomainEvent(Guid entityId)
         {
             EntityId = entityId;
+            DomainEventId = Guid.NewGuid();
         }
 
         [ActualPropertyName(nameof(Entity.Id))]
-        public Guid EntityId { get; private set;  }
+        public Guid EntityId { get; set; }
+        public Guid DomainEventId { get; set; }
     }
 }
