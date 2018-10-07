@@ -15,7 +15,7 @@ namespace Domain.Framework
         }
 
         [ActualPropertyName(nameof(Entity.Id))]
-        public Guid EntityId { get; set; }
-        public Guid DomainEventId { get; set; }
+        public Guid EntityId { get; }
+        public Guid DomainEventId { get; }
     }
 }
