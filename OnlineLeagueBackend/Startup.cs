@@ -22,18 +22,12 @@ namespace OnlineLeagueBackend
         {
             services.AddMvc();
             services.AddTransient<SeasonController>();
-            services.AddTransient<IEventSourcingStrategy, EventSourcingApplyStrategy>();
-            services.AddTransient<EventStoreConfig, RealEventStoreConfig>();
-            services.AddTransient<IEventStoreFacade, EventStoreFacade>();
             services.AddTransient<IHandlerVersionRepository, HandlerVersionRepository>();
             var connection = EventStoreConnection.Create(new Uri("tcp://admin:changeit@localhost:1113"), "MyTestCon");
-            connection.ConnectAsync().Wait();
-            services.AddSingleton(connection);
-            services.AddTransient<DomainEventConverter>();
-
+            services.AddTransient<EventStoreConfig, RealEventStoreConfig>();
             services.AddTransient<SeasonCommandHandler>();
 
-            services.AddQuerryAndEventHandler(typeof(AllSeasonsQuery).Assembly);
+            services.AddEventStoreFacadeDependencies(typeof(AllSeasonsQuery).Assembly, connection);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

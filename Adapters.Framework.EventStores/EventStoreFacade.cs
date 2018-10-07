@@ -72,23 +72,6 @@ namespace Adapters.Framework.EventStores
             return EventStoreResult<IEnumerable<DomainEvent>>.Ok(ToDomainEventList(domainEvents), eventEventNumber);
         }
 
-        public void SubscribeFrom(Type domainEventType, long version, Action<DomainEvent> subscribeMethod)
-        {
-            _eventStoreConnection.SubscribeToStreamFrom($"{_eventStoreConfig.ReadStream}-{domainEventType.Name}",
-                version,
-                new CatchUpSubscriptionSettings(int.MaxValue, 100, true, true),
-                (arg1, arg2) =>
-                {
-                    var domainEvent = _eventConverter.Deserialize(arg2);
-                    subscribeMethod.Invoke(domainEvent);
-                }, subscriptionDropped: dropped);
-        }
-
-        private void dropped(EventStoreCatchUpSubscription sub, SubscriptionDropReason reas, Exception exc)
-        {
-            Console.WriteLine("Dropped");
-        }
-
         private async Task<StreamEventsSlice> GetStreamEventsSlice(Guid entityId, int from, int to)
         {
             StreamEventsSlice streamEventsSlice;

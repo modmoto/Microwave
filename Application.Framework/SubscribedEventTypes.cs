@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Domain.Framework;
 
 namespace Application.Framework
 {
-    public class SubscribedEventTypes<T> : List<Type>
+    public class SubscribedEventTypes<T> : List<string>
     {
         public SubscribedEventTypes()
         {
@@ -14,7 +13,7 @@ namespace Application.Framework
             {
                 var parameterInfo = method.GetParameters()[0];
                 if (parameterInfo.ParameterType.BaseType == typeof(DomainEvent))
-                    Add(parameterInfo.ParameterType);
+                    Add(parameterInfo.ParameterType.Name);
             }
         }
     }

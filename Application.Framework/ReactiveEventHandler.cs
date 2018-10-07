@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Domain.Framework;
@@ -27,6 +26,6 @@ namespace Application.Framework
             _versionRepository.IncrementProcessedVersion(this, domainEvent);
         }
 
-        public IEnumerable<Type> SubscribedDomainEventTypes { get; }
+        public IEnumerable<string> SubscribedDomainEventTypes { get; }
     }
 }

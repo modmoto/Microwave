@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using Application.Framework;
 using Domain.Framework;
+using EventStore.ClientAPI;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
@@ -13,7 +14,9 @@ namespace DependencyInjection.Framework.Tests
         public void AddAllEmptyQuerries()
         {
             var serviceCollection = (IServiceCollection) new ServiceCollection();
-            serviceCollection.AddQuerryAndEventHandler(typeof(TestQuery).Assembly);
+            var connection = EventStoreConnection.Create(new Uri("tcp://admin:changeit@localhost:1113"), "MyTestCon");
+
+            serviceCollection.AddEventStoreFacadeDependencies(typeof(TestQuery).Assembly, connection);
             var buildServiceProvider = serviceCollection.BuildServiceProvider();
             var querryInDi = (TestQuery) buildServiceProvider.GetService(typeof(TestQuery));
             var allowedEventsOfQuerry =
@@ -22,8 +25,8 @@ namespace DependencyInjection.Framework.Tests
             var querryHandler = buildServiceProvider.GetService<TestQuerryHandler>();
             var querryHandlers = buildServiceProvider.GetServices<IEventHandler>().ToList();
 
-            Assert.Equal(nameof(TestQuerryCreatedEvent), allowedEventsOfQuerry[0].Name);
-            Assert.Equal(nameof(TestQuerryNameChangedEvent), allowedEventsOfQuerry[1].Name);
+            Assert.Equal(nameof(TestQuerryCreatedEvent), allowedEventsOfQuerry[0]);
+            Assert.Equal(nameof(TestQuerryNameChangedEvent), allowedEventsOfQuerry[1]);
             Assert.Equal(querryInDi, querryHandler.QueryObject);
             Assert.Equal(2, querryHandlers.Count);
         }
@@ -32,7 +35,9 @@ namespace DependencyInjection.Framework.Tests
         public void AddAllEventHandlers()
         {
             var serviceCollection = (IServiceCollection) new ServiceCollection();
-            serviceCollection.AddQuerryAndEventHandler(typeof(TestReactiveEventHandler).Assembly);
+            var connection = EventStoreConnection.Create(new Uri("tcp://admin:changeit@localhost:1113"), "MyTestCon");
+
+            serviceCollection.AddEventStoreFacadeDependencies(typeof(TestReactiveEventHandler).Assembly, connection);
             var buildServiceProvider = serviceCollection.BuildServiceProvider();
             var allowedEventsOfQuerry =
                 (SubscribedEventTypes<TestReactiveEventHandler>) buildServiceProvider.GetService(
@@ -40,7 +45,7 @@ namespace DependencyInjection.Framework.Tests
             var eventHandler = buildServiceProvider.GetService<TestQuerryHandler>();
             var eventHandlers = buildServiceProvider.GetServices<IEventHandler>().ToList();
 
-            Assert.Equal(nameof(TestQuerryNameChangedEvent), allowedEventsOfQuerry[0].Name);
+            Assert.Equal(nameof(TestQuerryNameChangedEvent), allowedEventsOfQuerry[0]);
             Assert.NotNull(eventHandler);
             Assert.Equal(2, eventHandlers.Count);
         }

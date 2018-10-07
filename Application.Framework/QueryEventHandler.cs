@@ -9,7 +9,7 @@ namespace Application.Framework
     {
         private readonly object _lockObject = new Object();
         public T QueryObject { get; }
-        public IEnumerable<Type> SubscribedDomainEventTypes { get; }
+        public IEnumerable<string> SubscribedDomainEventTypes { get; }
 
         public QueryEventHandler(T queryObject, SubscribedEventTypes<T> subscribedEventTypes)
         {

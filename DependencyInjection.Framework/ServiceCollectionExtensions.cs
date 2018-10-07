@@ -2,7 +2,9 @@
 using System.Linq;
 using System.Reflection;
 using Adapters.Framework.EventStores;
+using Adapters.Json.ObjectPersistences;
 using Application.Framework;
+using EventStore.ClientAPI;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -10,9 +12,19 @@ namespace DependencyInjection.Framework
 {
     public static class ServiceCollectionExtensions
     {
-        public static IServiceCollection AddQuerryAndEventHandler(this IServiceCollection collection, Assembly assembly)
+        public static IServiceCollection AddEventStoreFacadeDependencies(this IServiceCollection services,
+            Assembly assembly, IEventStoreConnection connection)
         {
-            collection.AddSingleton<QueryEventDelegator>();
+            connection.ConnectAsync().Wait();
+            services.AddSingleton(connection);
+
+            services.AddSingleton<QueryEventDelegator>();
+            services.AddTransient<DomainEventConverter>();
+
+            services.AddTransient<IEventSourcingStrategy, EventSourcingApplyStrategy>();
+
+            services.AddTransient<IEventStoreFacade, EventStoreFacade>();
+            services.AddTransient<IEventStoreSubscribtion, EventStoreSubscribtion>();
 
             var querries = assembly.GetTypes().Where(t => t.BaseType == typeof(Query));
 
@@ -29,10 +41,10 @@ namespace DependencyInjection.Framework
                 var subscribeEventTypeForQuerry = Activator.CreateInstance(genericType);
 
                 var addSingletonForQuerry = addSingletonFunctionConcrete.MakeGenericMethod(querryType);
-                addSingletonForQuerry.Invoke(collection, new[] {collection, (object) querry});
+                addSingletonForQuerry.Invoke(services, new[] {services, (object) querry});
                 var addSingletonForSubscridedEvents =
                     addSingletonFunctionConcrete.MakeGenericMethod(subscribeEventTypeForQuerry.GetType());
-                addSingletonForSubscridedEvents.Invoke(collection, new[] {collection, subscribeEventTypeForQuerry});
+                addSingletonForSubscridedEvents.Invoke(services, new[] {services, subscribeEventTypeForQuerry});
             }
 
             var eventHandlers = assembly.GetTypes().Where(type => type.BaseType.IsGenericType
@@ -46,8 +58,8 @@ namespace DependencyInjection.Framework
 
                 var addSingleton =
                     addSingletonFunctionConcrete.MakeGenericMethod(subscribedEvents.GetType());
-                addSingleton.Invoke(collection,
-                    new[] {collection, subscribedEvents});
+                addSingleton.Invoke(services,
+                    new[] {services, subscribedEvents});
             }
 
             var addTransientWithInterfaceAndImplementation = typeof(ServiceCollectionServiceExtensions).GetMethods()
@@ -64,13 +76,13 @@ namespace DependencyInjection.Framework
             {
                 var addSingleton =
                     addTransientWithInterfaceAndImplementation.MakeGenericMethod(typeof(IEventHandler), handlerType);
-                addSingleton.Invoke(collection, new object[] {collection});
+                addSingleton.Invoke(services, new object[] {services});
 
                 var addSingleton2 = addTransientWithClass.MakeGenericMethod(handlerType);
-                addSingleton2.Invoke(collection, new object[] {collection});
+                addSingleton2.Invoke(services, new object[] {services});
             }
 
-            return collection;
+            return services;
         }
 
         public static void UseEventStoreSubscriptions(this IApplicationBuilder builder)

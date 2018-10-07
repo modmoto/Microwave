@@ -39,6 +39,7 @@ namespace Adapters.Framework.Eventstores.Tests
                 new TestEvent1(entityGuid) {Name = "Name3"}
             };
             var eventStoreFacade = new EventStoreFacade(new EventSourcingApplyStrategy(), _eventStoreConnection, new TestEventStoreConfig(), new DomainEventConverter());
+            var eventStoreSub = new EventStoreSubscribtion(_eventStoreConnection, new TestEventStoreConfig(), new DomainEventConverter());
 
             var testQueryHandler1 = new TestQueryEventHandler1(new TestQ1(), new SubscribedEventTypes<TestQ1>());
             var testQueryHandler2 = new TestQueryEventHandler2(new TestQ2(), new SubscribedEventTypes<TestQ2>());
@@ -47,7 +48,7 @@ namespace Adapters.Framework.Eventstores.Tests
                 {
                     testQueryHandler1,
                     testQueryHandler2
-                }, eventStoreFacade, new HandlerVersionRepository(_eventStoreConnection, new TestEventStoreConfig()));
+                }, eventStoreFacade, new HandlerVersionRepository(_eventStoreConnection, new TestEventStoreConfig()), eventStoreSub);
 
             queryEventDelegator.SubscribeToStreams();
 
@@ -74,6 +75,7 @@ namespace Adapters.Framework.Eventstores.Tests
                 new TestEvent1(entityGuid) {Name = "Name3"}
             };
             var eventStoreFacade = new EventStoreFacade(new EventSourcingApplyStrategy(), _eventStoreConnection, new TestEventStoreConfig(), new DomainEventConverter());
+            var eventStoreSub = new EventStoreSubscribtion(_eventStoreConnection, new TestEventStoreConfig(), new DomainEventConverter());
 
             var testQueryHandler1 = new TestQueryEventHandler1(new TestQ1(), new SubscribedEventTypes<TestQ1>());
             var testQueryHandler2 = new TestQueryEventHandler2(new TestQ2(), new SubscribedEventTypes<TestQ2>());
@@ -87,7 +89,7 @@ namespace Adapters.Framework.Eventstores.Tests
                 {
                     testQueryHandler1,
                     testQueryHandler2
-                }, eventStoreFacade, new HandlerVersionRepository(_eventStoreConnection, new TestEventStoreConfig()));
+                }, eventStoreFacade, new HandlerVersionRepository(_eventStoreConnection, new TestEventStoreConfig()), eventStoreSub);
 
             queryEventDelegator.SubscribeToStreams();
 

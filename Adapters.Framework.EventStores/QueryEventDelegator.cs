@@ -11,9 +11,10 @@ namespace Adapters.Framework.EventStores
         private readonly IEventStoreFacade _facade;
         private readonly IEnumerable<IEventHandler> _queryHandlers;
         private readonly IHandlerVersionRepository _versionRepository;
+        private readonly IEventStoreSubscribtion _storeSubscribtion;
 
         public QueryEventDelegator(IEnumerable<IEventHandler> handlerList, IEventStoreFacade facade,
-            IHandlerVersionRepository versionRepository)
+            IHandlerVersionRepository versionRepository, IEventStoreSubscribtion storeSubscribtion)
         {
             var enumerable = handlerList.ToList();
             _queryHandlers = enumerable.Where(handler =>
@@ -25,26 +26,27 @@ namespace Adapters.Framework.EventStores
 
             _facade = facade;
             _versionRepository = versionRepository;
+            _storeSubscribtion = storeSubscribtion;
         }
 
         public void SubscribeToStreams()
         {
             foreach (var queryHandler in _queryHandlers)
             foreach (var subscribedType in queryHandler.SubscribedDomainEventTypes)
-                _facade.SubscribeFrom(subscribedType, 0, HandleQuerySubscription);
+                _storeSubscribtion.SubscribeFrom(subscribedType, 0, HandleQuerySubscription);
 
             foreach (var eventHandler in _eventHandlers)
             foreach (var subscribedType in eventHandler.SubscribedDomainEventTypes)
             {
                 var lastProcessedEvent =
-                    _versionRepository.GetLastProcessedVersion(eventHandler, subscribedType.Name).Result;
-                _facade.SubscribeFrom(subscribedType, lastProcessedEvent, HandleEventSubscription);
+                    _versionRepository.GetLastProcessedVersion(eventHandler, subscribedType).Result;
+                _storeSubscribtion.SubscribeFrom(subscribedType, lastProcessedEvent, HandleEventSubscription);
             }
         }
 
         private void HandleEventSubscription(DomainEvent domainEvent)
         {
-            var eventType = domainEvent.GetType();
+            var eventType = domainEvent.GetType().Name;
             var handlers =
                 _eventHandlers.Where(handler => handler.SubscribedDomainEventTypes.Any(type => type == eventType));
             foreach (var handler in handlers) handler.Handle(domainEvent);
@@ -52,7 +54,7 @@ namespace Adapters.Framework.EventStores
 
         private void HandleQuerySubscription(DomainEvent domainEvent)
         {
-            var eventType = domainEvent.GetType();
+            var eventType = domainEvent.GetType().Name;
             var handlers =
                 _queryHandlers.Where(handler => handler.SubscribedDomainEventTypes.Any(type => type == eventType));
             foreach (var handler in handlers) handler.Handle(domainEvent);
