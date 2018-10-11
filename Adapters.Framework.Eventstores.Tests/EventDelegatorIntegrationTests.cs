@@ -43,6 +43,7 @@ namespace Adapters.Framework.Eventstores.Tests
 
             var testQueryHandler1 = new TestQueryEventHandler1(new TestQ1(), new SubscribedEventTypes<TestQ1>());
             var testQueryHandler2 = new TestQueryEventHandler2(new TestQ2(), new SubscribedEventTypes<TestQ2>());
+
             var queryEventDelegator = new QueryEventDelegator(
                 new List<IEventHandler>
                 {
@@ -51,6 +52,8 @@ namespace Adapters.Framework.Eventstores.Tests
                 }, eventStoreFacade, new HandlerVersionRepository(_eventStoreConnection, new TestEventStoreConfig()), eventStoreSub);
 
             queryEventDelegator.SubscribeToStreams();
+
+            await Task.Delay(5000);
 
             await eventStoreFacade.AppendAsync(domainEvents, -1);
 
