@@ -20,9 +20,7 @@ namespace Adapters.Framework.EventStores
             _eventStoreConfig = eventStoreConfig;
         }
 
-        private readonly Object _fileLock = new Object();
-
-        public async Task<long> GetLastProcessedVersion(IEventHandler eventHandler, string eventName)
+        public async Task<long> GetLastProcessedVersion(IReactiveEventHandler eventHandler, string eventName)
         {
             var streamName = $"{_eventStoreConfig.ProcessedEventCounterStream}-{eventHandler.GetType().Name}-{eventName}";
             var streamEventsSlice = await _eventStoreConnection.ReadStreamEventsBackwardAsync(
@@ -34,31 +32,16 @@ namespace Adapters.Framework.EventStores
             return eventMarker.LastProcessedVersion;
         }
 
-        public void IncrementProcessedVersion(IEventHandler eventHandler, DomainEvent prozessedEvent)
+        public void IncrementProcessedVersion(IReactiveEventHandler eventHandler, DomainEvent prozessedEvent,
+            StreamVersion streamVersion)
         {
-            lock (_fileLock)
-            {
-                var streamName = $"{_eventStoreConfig.ProcessedEventCounterStream}-{eventHandler.GetType().Name}-{prozessedEvent.GetType().Name}";
-                var streamEventsSlice = _eventStoreConnection.ReadStreamEventsBackwardAsync(
-                    streamName, StreamPosition.End, 1, true).Result;
-                var lastProcessedVersion = 0L;
-                var streamVersion = -1L;
-                if (streamEventsSlice.Events.Length != 0)
-                {
-                    var resolvedEvent = streamEventsSlice.Events.First();
-                    var eventData = Encoding.UTF8.GetString(resolvedEvent.Event.Data);
-                    var eventMarker = JsonConvert.DeserializeObject<LastProcessedEventMarker>(eventData);
-                    lastProcessedVersion = eventMarker.LastProcessedVersion;
-                    streamVersion = streamEventsSlice.LastEventNumber;
-                }
-
-                var lastProcessedEventMarker = new LastProcessedEventMarker(lastProcessedVersion + 1, prozessedEvent.DomainEventId);
-                var serializedEvent = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(lastProcessedEventMarker));
-                var processedEvent = new EventData(Guid.NewGuid(),
-                    streamName, true, serializedEvent,
-                    new byte[] { });
-                _eventStoreConnection.AppendToStreamAsync(streamName, streamVersion, processedEvent).Wait();
-            }
+            var streamName = $"{_eventStoreConfig.ProcessedEventCounterStream}-{eventHandler.GetType().Name}-{prozessedEvent.GetType().Name}";
+            var lastProcessedEventMarker = new LastProcessedEventMarker(streamVersion.EventNumber, prozessedEvent.DomainEventId);
+            var serializedEvent = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(lastProcessedEventMarker));
+            var processedEvent = new EventData(Guid.NewGuid(),
+                nameof(LastProcessedEventMarker), true, serializedEvent,
+                new byte[] { });
+            _eventStoreConnection.AppendToStreamAsync(streamName, ExpectedVersion.Any, processedEvent).Wait();
         }
 
     }

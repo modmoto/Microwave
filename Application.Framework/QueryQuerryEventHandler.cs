@@ -5,13 +5,13 @@ using Domain.Framework;
 
 namespace Application.Framework
 {
-    public class QueryEventHandler<T> : IEventHandler where T : Query
+    public class QueryQuerryEventHandler<T> : IQuerryEventHandler where T : Query
     {
         private readonly object _lockObject = new Object();
         public T QueryObject { get; }
         public IEnumerable<string> SubscribedDomainEventTypes { get; }
 
-        public QueryEventHandler(T queryObject, SubscribedEventTypes<T> subscribedEventTypes)
+        public QueryQuerryEventHandler(T queryObject, SubscribedEventTypes<T> subscribedEventTypes)
         {
             QueryObject = queryObject;
             SubscribedDomainEventTypes = subscribedEventTypes;

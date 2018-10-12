@@ -5,7 +5,8 @@ namespace Application.Framework
 {
     public interface IHandlerVersionRepository
     {
-        Task<long> GetLastProcessedVersion(IEventHandler eventHandler, string eventName);
-        void IncrementProcessedVersion(IEventHandler eventHandler, DomainEvent prozessedEvent);
+        Task<long> GetLastProcessedVersion(IReactiveEventHandler eventHandler, string eventName);
+        void IncrementProcessedVersion(IReactiveEventHandler eventHandler, DomainEvent prozessedEvent,
+            StreamVersion streamVersion);
     }
 }

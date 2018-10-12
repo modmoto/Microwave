@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Adapters.Json.ObjectPersistences;
 using Application.Framework;
 using Domain.Framework;
@@ -21,15 +22,17 @@ namespace Adapters.Framework.EventStores
             _eventStoreConfig = eventStoreConfig;
         }
 
-        public void SubscribeFrom(string domainEventType, long version, Action<DomainEvent> subscribeMethod)
+        public void SubscribeFrom(string domainEventType, long version, Func<DomainEvent, StreamVersion, Task> subscribeMethod)
         {
             _eventStoreConnection.SubscribeToStreamFrom($"{_eventStoreConfig.ReadStream}-{domainEventType}",
                 version,
                 new CatchUpSubscriptionSettings(int.MaxValue, 100, true, true),
-                (arg1, arg2) =>
+                (subscription, resolvedEvent) =>
                 {
-                    var domainEvent = _eventConverter.Deserialize(arg2);
-                    subscribeMethod.Invoke(domainEvent);
+                    if (resolvedEvent.Event == null) return;
+                    var streamVersion = new StreamVersion(resolvedEvent.OriginalEventNumber);
+                    var domainEvent = _eventConverter.Deserialize(resolvedEvent);
+                    subscribeMethod.Invoke(domainEvent, streamVersion);
                 });
         }
     }

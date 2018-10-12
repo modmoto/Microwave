@@ -71,11 +71,22 @@ namespace DependencyInjection.Framework
                 method.Name == "AddTransient" && method.IsGenericMethod &&
                 method.GetGenericArguments().Length == 1 && method.GetParameters().Length == 1);
 
-            var handlerTypes = assembly.GetTypes().Where(t => t.GetInterfaces().Contains(typeof(IEventHandler)));
+            var handlerTypes = assembly.GetTypes().Where(t => t.GetInterfaces().Contains(typeof(IQuerryEventHandler)));
             foreach (var handlerType in handlerTypes)
             {
                 var addSingleton =
-                    addTransientWithInterfaceAndImplementation.MakeGenericMethod(typeof(IEventHandler), handlerType);
+                    addTransientWithInterfaceAndImplementation.MakeGenericMethod(typeof(IQuerryEventHandler), handlerType);
+                addSingleton.Invoke(services, new object[] {services});
+
+                var addSingleton2 = addTransientWithClass.MakeGenericMethod(handlerType);
+                addSingleton2.Invoke(services, new object[] {services});
+            }
+
+            var reactivehandlerTypes = assembly.GetTypes().Where(t => t.GetInterfaces().Contains(typeof(IReactiveEventHandler)));
+            foreach (var handlerType in reactivehandlerTypes)
+            {
+                var addSingleton =
+                    addTransientWithInterfaceAndImplementation.MakeGenericMethod(typeof(IReactiveEventHandler), handlerType);
                 addSingleton.Invoke(services, new object[] {services});
 
                 var addSingleton2 = addTransientWithClass.MakeGenericMethod(handlerType);
