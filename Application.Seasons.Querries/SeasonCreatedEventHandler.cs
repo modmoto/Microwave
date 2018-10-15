@@ -16,6 +16,14 @@ namespace Application.Seasons.Querries
         {
             Console.WriteLine("THingy called");
         }
+    }
+
+    public class SeasonChangedNamEventHandler : ReactiveEventHandler<SeasonChangedNamEventHandler>
+    {
+        public SeasonChangedNamEventHandler(SubscribedEventTypes<SeasonChangedNamEventHandler> subscribedEventTypes,
+            IHandlerVersionRepository versionRepository) : base(subscribedEventTypes, versionRepository)
+        {
+        }
 
         public async Task Handle(SeasonNameChangedEvent domainEvent)
         {
