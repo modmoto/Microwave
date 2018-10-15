@@ -26,13 +26,13 @@ namespace Adapters.Framework.EventStores
         {
             _eventStoreConnection.SubscribeToStreamFrom($"{_eventStoreConfig.ReadStream}-{domainEventType}",
                 version,
-                new CatchUpSubscriptionSettings(int.MaxValue, 100, true, true),
+                new CatchUpSubscriptionSettings(int.MaxValue, 1000, true, true),
                 (subscription, resolvedEvent) =>
                 {
-                    if (resolvedEvent.Event == null) return;
+                    if (resolvedEvent.Event == null) return Task.CompletedTask;
                     var streamVersion = new StreamVersion(resolvedEvent.OriginalEventNumber);
                     var domainEvent = _eventConverter.Deserialize(resolvedEvent);
-                    subscribeMethod.Invoke(domainEvent, streamVersion);
+                    return Task.FromResult(subscribeMethod.Invoke(domainEvent, streamVersion));
                 });
         }
     }

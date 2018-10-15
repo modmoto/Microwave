@@ -11,25 +11,25 @@ namespace Adapters.WebApi.Seasons
     public class SeasonController : Controller
     {
         private readonly SeasonCommandHandler _commandHandler;
-        private readonly AllSeasonsQueryQuerryEventHandler _querryEventHandler;
+        private readonly AllSeasonsQueryEventHandler _eventHandler;
 
-        public SeasonController(SeasonCommandHandler commandHandler, AllSeasonsQueryQuerryEventHandler querryEventHandler)
+        public SeasonController(SeasonCommandHandler commandHandler, AllSeasonsQueryEventHandler eventHandler)
         {
             _commandHandler = commandHandler;
-            _querryEventHandler = querryEventHandler;
+            _eventHandler = eventHandler;
         }
 
         [HttpGet]
         public ActionResult GetSeasons()
         {
-            var seasons = _querryEventHandler.GetAllSeasons();
+            var seasons = _eventHandler.GetAllSeasons();
             return Ok(seasons);
         }
 
         [HttpGet("{entityId}")]
         public ActionResult GetSeason(Guid entityId)
         {
-            var seasons = _querryEventHandler.GetSeason(entityId);
+            var seasons = _eventHandler.GetSeason(entityId);
             return Ok(seasons);
         }
 

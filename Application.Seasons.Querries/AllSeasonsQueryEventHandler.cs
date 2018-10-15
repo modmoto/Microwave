@@ -5,9 +5,9 @@ using Application.Framework;
 
 namespace Application.Seasons.Querries
 {
-    public class AllSeasonsQueryQuerryEventHandler : QueryQuerryEventHandler<AllSeasonsQuery>
+    public class AllSeasonsQueryEventHandler : QueryEventHandler<AllSeasonsQuery>
     {
-        public AllSeasonsQueryQuerryEventHandler(AllSeasonsQuery queryObject,
+        public AllSeasonsQueryEventHandler(AllSeasonsQuery queryObject,
             SubscribedEventTypes<AllSeasonsQuery> eventTypes) : base(queryObject, eventTypes)
         {
         }

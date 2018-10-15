@@ -20,7 +20,7 @@ namespace Adapters.Framework.EventStores
             var enumerable = handlerList.ToList();
             _queryHandlers = enumerable.Where(handler =>
                 handler.GetType().BaseType.IsGenericType && handler.GetType().BaseType.GetGenericTypeDefinition() ==
-                typeof(QueryQuerryEventHandler<>));
+                typeof(QueryEventHandler<>));
             _eventHandlers = reactiveEventHandlers;
 
             _facade = facade;
