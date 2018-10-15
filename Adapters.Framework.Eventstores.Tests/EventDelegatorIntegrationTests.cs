@@ -20,9 +20,9 @@ namespace Adapters.Framework.Eventstores.Tests
             _eventStoreConnection =
                 EventStoreConnection.Create(new Uri("tcp://admin:changeit@localhost:1113"), "MyTestCon");
             await _eventStoreConnection.ConnectAsync();
-            await _eventStoreConnection.DeleteStreamAsync($"{new TestEventStoreConfig().ReadStream}-TestEvent1",
+            await _eventStoreConnection.DeleteStreamAsync($"{new TestEventStoreConfig().ReadStream}-TestEv1",
                 ExpectedVersion.Any, new UserCredentials("admin", "changeit"));
-            await _eventStoreConnection.DeleteStreamAsync($"{new TestEventStoreConfig().ReadStream}-TestEvent2",
+            await _eventStoreConnection.DeleteStreamAsync($"{new TestEventStoreConfig().ReadStream}-TestEv2",
                 ExpectedVersion.Any, new UserCredentials("admin", "changeit"));
             await Task.Delay(1000);
         }
@@ -38,26 +38,26 @@ namespace Adapters.Framework.Eventstores.Tests
             var entityGuid = Guid.NewGuid();
             var domainEvents = new List<DomainEvent>
             {
-                new TestEvent1(entityGuid) {Name = "Name1"},
-                new TestEvent2(entityGuid) {Name = "Name2", LastName = "LastName2"},
-                new TestEvent1(entityGuid) {Name = "Name3"}
+                new TestEv1(entityGuid) {Name = "Name1"},
+                new TestEv2(entityGuid) {Name = "Name2", LastName = "LastName2"},
+                new TestEv1(entityGuid) {Name = "Name3"}
             };
             var eventStoreFacade = new EventStoreFacade(new EventSourcingApplyStrategy(), _eventStoreConnection,
                 new TestEventStoreConfig(), new DomainEventConverter());
             var eventStoreSub = new EventStoreSubscribtion(_eventStoreConnection, new TestEventStoreConfig(),
                 new DomainEventConverter());
 
-            var queryObject1 = new TestQ1();
-            var queryObject2 = new TestQ2();
-            var testQueryHandler1 = new TestQueryEventHandler1(new TestQ1(), new SubscribedEventTypes<TestQ1>());
-            var testQueryHandler2 = new TestQueryEventHandler2(new TestQ2(), new SubscribedEventTypes<TestQ2>());
+            var queryObject1 = new TestQuery1();
+            var queryObject2 = new TestQuery2();
+            var testQueryHandler1 = new TestQueryEventHandler1(new TestQuery1(), new SubscribedEventTypes<TestQuery1>());
+            var testQueryHandler2 = new TestQueryEventHandler2(new TestQuery2(), new SubscribedEventTypes<TestQuery2>());
 
             var queryEventDelegator = new QueryEventDelegator(
                 new List<IQuerryEventHandler>
                 {
                     testQueryHandler1,
                     testQueryHandler2
-                }, eventStoreFacade, new HandlerVersionRepository(_eventStoreConnection, new TestEventStoreConfig()),
+                }, new HandlerVersionRepository(_eventStoreConnection, new TestEventStoreConfig()),
                 eventStoreSub, new List<IReactiveEventHandler>());
 
             queryEventDelegator.SubscribeToStreams();
@@ -79,19 +79,19 @@ namespace Adapters.Framework.Eventstores.Tests
             var entityGuid = Guid.NewGuid();
             var domainEvents = new List<DomainEvent>
             {
-                new TestEvent1(entityGuid) {Name = "Name1"},
-                new TestEvent2(entityGuid) {Name = "Name2", LastName = "LastName2"},
-                new TestEvent1(entityGuid) {Name = "Name3"}
+                new TestEv1(entityGuid) {Name = "Name1"},
+                new TestEv2(entityGuid) {Name = "Name2", LastName = "LastName2"},
+                new TestEv1(entityGuid) {Name = "Name3"}
             };
             var eventStoreFacade = new EventStoreFacade(new EventSourcingApplyStrategy(), _eventStoreConnection,
                 new TestEventStoreConfig(), new DomainEventConverter());
             var eventStoreSub = new EventStoreSubscribtion(_eventStoreConnection, new TestEventStoreConfig(),
                 new DomainEventConverter());
 
-            var queryObject1 = new TestQ1();
-            var queryObject2 = new TestQ2();
-            var testQueryHandler1 = new TestQueryEventHandler1(queryObject1, new SubscribedEventTypes<TestQ1>());
-            var testQueryHandler2 = new TestQueryEventHandler2(queryObject2, new SubscribedEventTypes<TestQ2>());
+            var queryObject1 = new TestQuery1();
+            var queryObject2 = new TestQuery2();
+            var testQueryHandler1 = new TestQueryEventHandler1(queryObject1, new SubscribedEventTypes<TestQuery1>());
+            var testQueryHandler2 = new TestQueryEventHandler2(queryObject2, new SubscribedEventTypes<TestQuery2>());
 
             await eventStoreFacade.AppendAsync(domainEvents, -1);
 
@@ -102,7 +102,7 @@ namespace Adapters.Framework.Eventstores.Tests
                 {
                     testQueryHandler1,
                     testQueryHandler2
-                }, eventStoreFacade, new HandlerVersionRepository(_eventStoreConnection, new TestEventStoreConfig()),
+                }, new HandlerVersionRepository(_eventStoreConnection, new TestEventStoreConfig()),
                 eventStoreSub, new List<IReactiveEventHandler>());
 
             queryEventDelegator.SubscribeToStreams();
@@ -116,23 +116,23 @@ namespace Adapters.Framework.Eventstores.Tests
         }
     }
 
-    internal class TestQueryEventHandler1 : QueryEventHandler<TestQ1>
+    internal class TestQueryEventHandler1 : QueryEventHandler<TestQuery1>
     {
-        public TestQueryEventHandler1(TestQ1 queryObject, SubscribedEventTypes<TestQ1> subscribedEventTypes) : base(
+        public TestQueryEventHandler1(TestQuery1 queryObject, SubscribedEventTypes<TestQuery1> subscribedEventTypes) : base(
             queryObject, subscribedEventTypes)
         {
         }
     }
 
-    internal class TestQueryEventHandler2 : QueryEventHandler<TestQ2>
+    internal class TestQueryEventHandler2 : QueryEventHandler<TestQuery2>
     {
-        public TestQueryEventHandler2(TestQ2 queryObject, SubscribedEventTypes<TestQ2> subscribedEventTypes) : base(
+        public TestQueryEventHandler2(TestQuery2 queryObject, SubscribedEventTypes<TestQuery2> subscribedEventTypes) : base(
             queryObject, subscribedEventTypes)
         {
         }
     }
 
-    internal class TestQ1 : Query
+    internal class TestQuery1 : Query
     {
         public string Name { get; set; }
 
@@ -140,21 +140,21 @@ namespace Adapters.Framework.Eventstores.Tests
 
         public int Count { get; set; }
 
-        public void Apply(TestEvent1 testEvent1)
+        public void Apply(TestEv1 testEv1)
         {
-            Name = testEvent1.Name;
+            Name = testEv1.Name;
             Count++;
         }
 
-        public void Apply(TestEvent2 testEvent1)
+        public void Apply(TestEv2 testEvent1)
         {
             LastName = testEvent1.LastName;
         }
     }
 
-    internal class TestEvent2 : DomainEvent
+    internal class TestEv2 : DomainEvent
     {
-        public TestEvent2(Guid entityId) : base(entityId)
+        public TestEv2(Guid entityId) : base(entityId)
         {
         }
 
@@ -162,20 +162,20 @@ namespace Adapters.Framework.Eventstores.Tests
         public string Name { get; set; }
     }
 
-    internal class TestEvent1 : DomainEvent
+    internal class TestEv1 : DomainEvent
     {
-        public TestEvent1(Guid entityId) : base(entityId)
+        public TestEv1(Guid entityId) : base(entityId)
         {
         }
 
         public string Name { get; set; }
     }
 
-    internal class TestQ2 : Query
+    internal class TestQuery2 : Query
     {
         public string Name { get; set; }
 
-        public void Apply(TestEvent2 testEvent1)
+        public void Apply(TestEv2 testEvent1)
         {
             Name = testEvent1.Name;
         }

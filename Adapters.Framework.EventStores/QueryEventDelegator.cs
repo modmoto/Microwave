@@ -9,13 +9,13 @@ namespace Adapters.Framework.EventStores
     public class QueryEventDelegator
     {
         private readonly IEnumerable<IReactiveEventHandler> _eventHandlers;
-        private readonly IEventStoreFacade _facade;
         private readonly IEnumerable<IQuerryEventHandler> _queryHandlers;
+        private readonly IEventStoreSubscribtion _storeSubscription;
         private readonly IHandlerVersionRepository _versionRepository;
-        private readonly IEventStoreSubscribtion _storeSubscribtion;
 
-        public QueryEventDelegator(IEnumerable<IQuerryEventHandler> handlerList, IEventStoreFacade facade,
-            IHandlerVersionRepository versionRepository, IEventStoreSubscribtion storeSubscribtion, IEnumerable<IReactiveEventHandler> reactiveEventHandlers)
+        public QueryEventDelegator(IEnumerable<IQuerryEventHandler> handlerList,
+            IHandlerVersionRepository versionRepository, IEventStoreSubscribtion storeSubscription,
+            IEnumerable<IReactiveEventHandler> reactiveEventHandlers)
         {
             var enumerable = handlerList.ToList();
             _queryHandlers = enumerable.Where(handler =>
@@ -23,23 +23,22 @@ namespace Adapters.Framework.EventStores
                 typeof(QueryEventHandler<>));
             _eventHandlers = reactiveEventHandlers;
 
-            _facade = facade;
             _versionRepository = versionRepository;
-            _storeSubscribtion = storeSubscribtion;
+            _storeSubscription = storeSubscription;
         }
 
         public void SubscribeToStreams()
         {
             foreach (var queryHandler in _queryHandlers)
             foreach (var subscribedType in queryHandler.SubscribedDomainEventTypes)
-                _storeSubscribtion.SubscribeFrom(subscribedType, 0, HandleQuerySubscription);
+                _storeSubscription.SubscribeFrom(subscribedType, 0, HandleQuerySubscription);
 
             foreach (var eventHandler in _eventHandlers)
             foreach (var subscribedType in eventHandler.SubscribedDomainEventTypes)
             {
                 var lastProcessedEvent =
                     _versionRepository.GetLastProcessedVersion(eventHandler, subscribedType).Result;
-                _storeSubscribtion.SubscribeFrom(subscribedType, lastProcessedEvent, HandleEventSubscription);
+                _storeSubscription.SubscribeFrom(subscribedType, lastProcessedEvent, HandleEventSubscription);
             }
         }
 
