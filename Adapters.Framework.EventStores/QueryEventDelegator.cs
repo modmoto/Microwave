@@ -10,11 +10,11 @@ namespace Adapters.Framework.EventStores
     {
         private readonly IEnumerable<IReactiveEventHandler> _eventHandlers;
         private readonly IEnumerable<IQuerryEventHandler> _queryHandlers;
-        private readonly IEventStoreSubscribtion _storeSubscription;
+        private readonly IEventStoreSubscription _storeSubscription;
         private readonly IHandlerVersionRepository _versionRepository;
 
         public QueryEventDelegator(IEnumerable<IQuerryEventHandler> handlerList,
-            IHandlerVersionRepository versionRepository, IEventStoreSubscribtion storeSubscription,
+            IHandlerVersionRepository versionRepository, IEventStoreSubscription storeSubscription,
             IEnumerable<IReactiveEventHandler> reactiveEventHandlers)
         {
             var enumerable = handlerList.ToList();

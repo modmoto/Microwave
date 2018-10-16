@@ -4,7 +4,7 @@ using Domain.Framework;
 
 namespace Application.Framework
 {
-    public interface IEventStoreSubscribtion
+    public interface IEventStoreSubscription
     {
         void SubscribeFrom(string domainEventType, long version, Func<DomainEvent, StreamVersion, Task> subscribeMethod);
     }

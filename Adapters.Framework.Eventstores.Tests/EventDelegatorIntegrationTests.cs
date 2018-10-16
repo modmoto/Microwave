@@ -8,6 +8,7 @@ using Domain.Framework;
 using EventStore.ClientAPI;
 using EventStore.ClientAPI.SystemData;
 using Xunit;
+using EventStoreSubscription = Adapters.Framework.EventStores.EventStoreSubscription;
 
 namespace Adapters.Framework.Eventstores.Tests
 {
@@ -44,7 +45,7 @@ namespace Adapters.Framework.Eventstores.Tests
             };
             var eventStoreFacade = new EventStoreFacade(new EventSourcingApplyStrategy(), _eventStoreConnection,
                 new TestEventStoreConfig(), new DomainEventConverter());
-            var eventStoreSub = new EventStoreSubscribtion(_eventStoreConnection, new TestEventStoreConfig(),
+            var eventStoreSub = new EventStoreSubscription(_eventStoreConnection, new TestEventStoreConfig(),
                 new DomainEventConverter());
 
             var queryObject1 = new TestQuery1();
@@ -85,7 +86,7 @@ namespace Adapters.Framework.Eventstores.Tests
             };
             var eventStoreFacade = new EventStoreFacade(new EventSourcingApplyStrategy(), _eventStoreConnection,
                 new TestEventStoreConfig(), new DomainEventConverter());
-            var eventStoreSub = new EventStoreSubscribtion(_eventStoreConnection, new TestEventStoreConfig(),
+            var eventStoreSub = new EventStoreSubscription(_eventStoreConnection, new TestEventStoreConfig(),
                 new DomainEventConverter());
 
             var queryObject1 = new TestQuery1();
