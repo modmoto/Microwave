@@ -22,4 +22,17 @@ namespace Application.Seasons.Querries
             return QueryObject.Seasons.SingleOrDefault(season => season.Id == id);
         }
     }
+
+    public class AllSeasonsCounterQueryHandler : QueryEventHandler<AllSeasonsCounterQuery>
+    {
+        public AllSeasonsCounterQueryHandler(AllSeasonsCounterQuery queryObject,
+            SubscribedEventTypes<AllSeasonsCounterQuery> eventTypes) : base(queryObject, eventTypes)
+        {
+        }
+
+        public long GetSeasonCount()
+        {
+            return QueryObject.Counter;
+        }
+    }
 }

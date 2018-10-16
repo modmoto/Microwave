@@ -23,4 +23,14 @@ namespace Application.Seasons.Querries
             }
         }
     }
+
+    public class AllSeasonsCounterQuery : Query
+    {
+        public long Counter;
+
+        public void Apply(SeasonCreatedEvent createdEvent)
+        {
+            Counter++;
+        }
+    }
 }

@@ -27,7 +27,7 @@ namespace OnlineLeagueBackend
             services.AddTransient<EventStoreConfig, RealEventStoreConfig>();
             services.AddTransient<SeasonCommandHandler>();
 
-            services.AddEventStoreFacadeDependencies(typeof(AllSeasonsQuery).Assembly, connection);
+            services.AddEventStoreFacadeDependencies(typeof(AllSeasonsCounterQuery).Assembly, connection);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
