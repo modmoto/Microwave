@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-rm -f Host/Eventstore.db
+rm -f OnlineLeagueBackend/Eventstore.db
 cd Adapters.Framework.EventStores/
 
 dotnet ef migrations remove -s ../OnlineLeagueBackend/ --context EventStoreContext

@@ -18,6 +18,7 @@ namespace Adapters.Framework.EventStores
     {
         public Guid Id { get; set; }
         public Guid EntityId { get; set; }
+        public string DomainEventType { get; set; }
         public string Payload { get; set; }
     }
 }

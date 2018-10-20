@@ -34,7 +34,8 @@ namespace Adapters.Framework.EventStores
                 new DomainEventDbo
                 {
                     EntityId = domainEvent.EntityId,
-                    Payload = _eventConverter.Serialize(domainEvent)
+                    Payload = _eventConverter.Serialize(domainEvent),
+                    DomainEventType = domainEvent.GetType().Name
                 });
             _eventStoreContext.DomainEvents.AddRange(seializedEvents);
             await _eventStoreContext.SaveChangesAsync();
