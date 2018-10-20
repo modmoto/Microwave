@@ -19,7 +19,6 @@ namespace DependencyInjection.Framework
             connection.ConnectAsync().Wait();
             services.AddSingleton(connection);
 
-            services.AddSingleton<QueryEventDelegator>();
             services.AddTransient<DomainEventConverter>();
 
             services.AddTransient<IEventSourcingStrategy, EventSourcingApplyStrategy>();
@@ -46,21 +45,6 @@ namespace DependencyInjection.Framework
                 var addSingletonForSubscridedEvents =
                     addSingletonFunctionConcrete.MakeGenericMethod(subscribeEventTypeForQuerry.GetType());
                 addSingletonForSubscridedEvents.Invoke(services, new[] {services, subscribeEventTypeForQuerry});
-            }
-
-            var eventHandlers = assembly.GetTypes().Where(type => type.BaseType.IsGenericType
-                                                                  && type.BaseType.GetGenericTypeDefinition() ==
-                                                                  typeof(ReactiveEventHandler<>)).ToList();
-            foreach (var eventHandlerType in eventHandlers)
-            {
-                var subscribedEventsType = typeof(SubscribedEventTypes<>);
-                var genericTypeForEvents = subscribedEventsType.MakeGenericType(eventHandlerType);
-                var subscribedEvents = Activator.CreateInstance(genericTypeForEvents);
-
-                var addSingleton =
-                    addSingletonFunctionConcrete.MakeGenericMethod(subscribedEvents.GetType());
-                addSingleton.Invoke(services,
-                    new[] {services, subscribedEvents});
             }
 
             var addTransientWithInterfaceAndImplementation = typeof(ServiceCollectionServiceExtensions).GetMethods()
@@ -97,12 +81,13 @@ namespace DependencyInjection.Framework
             return services;
         }
 
-        public static void UseEventStoreSubscriptions(this IApplicationBuilder builder)
+        public static IServiceCollection AddMyEventStoreDependencies(this IServiceCollection services,
+            Assembly assembly)
         {
-            var builderApplicationServices = builder.ApplicationServices;
-            var recallReferenceHolder =
-                (QueryEventDelegator) builderApplicationServices.GetService(typeof(QueryEventDelegator));
-            recallReferenceHolder.SubscribeToStreams();
+            services.AddTransient<IEventStoreFacade, MyEventStore>();
+            services.AddTransient<IEventRepository, EventRepository>();
+
+            return services;
         }
     }
 }

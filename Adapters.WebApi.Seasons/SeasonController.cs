@@ -46,8 +46,8 @@ namespace Adapters.WebApi.Seasons
         [HttpPost("Create")]
         public async Task<IActionResult> CreateSeason([FromBody] CreateSesonCommand command)
         {
-            await _commandHandler.CreateSeason(command);
-            return Ok();
+            var guid = await _commandHandler.CreateSeason(command);
+            return Ok(guid);
         }
 
         [HttpPut("{entityId}/ChangeName")]

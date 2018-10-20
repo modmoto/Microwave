@@ -46,13 +46,15 @@ namespace Adapters.Framework.EventStores
             }
         }
 
-        public async Task<EventStoreResult<T>> LoadAsync<T>(Guid commandEntityId) where T : new()
+        public async Task<T> LoadAsync<T>(Guid entityId) where T : Entity, new()
         {
-            var events = await GetEvents(commandEntityId);
+            var events = await GetEvents(entityId);
             var entity = new T();
             foreach (var domainEvent in events.Result) entity = _eventSourcingStrategy.Apply(entity, domainEvent);
 
-            return EventStoreResult<T>.Ok(entity, events.EntityVersion);
+            entity.Version = events.EntityVersion;
+
+            return entity;
         }
 
         public async Task<EventStoreResult<IEnumerable<DomainEvent>>> GetEvents(Guid entityId = default(Guid),

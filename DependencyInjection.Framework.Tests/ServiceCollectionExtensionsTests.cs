@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Application.Framework;
 using Domain.Framework;
 using EventStore.ClientAPI;
@@ -74,15 +75,11 @@ namespace DependencyInjection.Framework.Tests
         }
     }
 
-    public class TestReactiveEventHandler : ReactiveEventHandler<TestReactiveEventHandler>
+    public class TestReactiveEventHandler : IHandleAsync<TestQuerryNameChangedEvent>
     {
-        public TestReactiveEventHandler(SubscribedEventTypes<TestReactiveEventHandler> subscribedEventTypes) : base(
-            subscribedEventTypes, null)
+        public Task Handle(TestQuerryNameChangedEvent domainEvent)
         {
-        }
-
-        public void Apply(TestQuerryNameChangedEvent domainEvent)
-        {
+            return Task.CompletedTask;
         }
     }
 
