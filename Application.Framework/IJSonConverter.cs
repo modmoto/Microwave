@@ -6,5 +6,6 @@ namespace Application.Framework
     {
         string Serialize(T eve);
         T Deserialize(ResolvedEvent domainEvent);
+        T Deserialize(string payLoad);
     }
 }

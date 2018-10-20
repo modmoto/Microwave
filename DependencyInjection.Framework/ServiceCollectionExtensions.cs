@@ -6,6 +6,7 @@ using Adapters.Json.ObjectPersistences;
 using Application.Framework;
 using EventStore.ClientAPI;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using EventStoreSubscription = Adapters.Framework.EventStores.EventStoreSubscription;
 
@@ -86,7 +87,8 @@ namespace DependencyInjection.Framework
         {
             services.AddTransient<IEventStoreFacade, MyEventStore>();
             services.AddTransient<IEventRepository, EventRepository>();
-
+            services.AddTransient<DomainEventConverter>();
+            services.AddDbContext<EventStoreContext>(option => option.UseSqlite("Data Source=Eventstore.db"));
             return services;
         }
     }

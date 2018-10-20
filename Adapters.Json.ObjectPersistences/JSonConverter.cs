@@ -25,5 +25,11 @@ namespace Adapters.Json.ObjectPersistences
             var deserializeObject = JsonConvert.DeserializeObject<T>(eventData, _settings);
             return deserializeObject;
         }
+
+        public T Deserialize(string payLoad)
+        {
+            var deserializeObject = JsonConvert.DeserializeObject<T>(payLoad, _settings);
+            return deserializeObject;
+        }
     }
 }

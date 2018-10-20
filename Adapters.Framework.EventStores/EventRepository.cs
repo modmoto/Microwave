@@ -2,26 +2,42 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Adapters.Json.ObjectPersistences;
 using Application.Framework;
 using Domain.Framework;
+using Microsoft.EntityFrameworkCore;
 
 namespace Adapters.Framework.EventStores
 {
     public class EventRepository : IEventRepository
     {
-        IEnumerable<DomainEvent> _domainEvents = new List<DomainEvent>();
+        private readonly DomainEventConverter _eventConverter;
+        private readonly EventStoreContext _eventStoreContext;
+
+        public EventRepository(DomainEventConverter eventConverter, EventStoreContext eventStoreContext)
+        {
+            _eventConverter = eventConverter;
+            _eventStoreContext = eventStoreContext;
+        }
 
         public async Task<IEnumerable<DomainEvent>> LoadEvents(Guid entityId)
         {
-            return _domainEvents.Where(domaintEvent => domaintEvent.EntityId == entityId);
+            var domainEventDbos = await _eventStoreContext.DomainEvents.Where(domainEvent => domainEvent.EntityId == entityId)
+                .ToListAsync();
+            var domainEvents = domainEventDbos.Select(dbo => _eventConverter.Deserialize(dbo.Payload));
+            return domainEvents;
         }
 
         public async Task AppendAsync(IEnumerable<DomainEvent> domainEvents, long entityVersion)
         {
-            foreach (var domainEvent in domainEvents)
-            {
-                _domainEvents.Append(domainEvent);
-            }
+            var seializedEvents = domainEvents.Select(domainEvent =>
+                new DomainEventDbo
+                {
+                    EntityId = domainEvent.EntityId,
+                    Payload = _eventConverter.Serialize(domainEvent)
+                });
+            _eventStoreContext.DomainEvents.AddRange(seializedEvents);
+            await _eventStoreContext.SaveChangesAsync();
         }
     }
 }
