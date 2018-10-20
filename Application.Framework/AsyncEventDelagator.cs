@@ -5,7 +5,7 @@ using Domain.Framework;
 
 namespace Application.Framework
 {
-    public class AsyncEventDelagator<T> : IHandleAsync<T> where T : DomainEvent
+    public class AsyncEventDelagator<T> where T : DomainEvent
     {
         private readonly IEnumerable<IHandleAsync<T>>  _handleAsync;
 
@@ -21,7 +21,7 @@ namespace Application.Framework
         }
     }
 
-    public class EventDelagator<T> : IHandle<T> where T : DomainEvent
+    public class EventDelagator<T> where T : DomainEvent
     {
         private readonly IEnumerable<IHandle<T>>  _handleAsync;
 
