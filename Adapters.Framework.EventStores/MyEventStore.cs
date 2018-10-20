@@ -23,7 +23,7 @@ namespace Adapters.Framework.EventStores
         public async Task<T> LoadAsync<T>(Guid entityId) where T : Entity, new()
         {
             var entity = new T();
-            var domainEvents = await _eventRepository.LoadEvents(entityId);
+            var domainEvents = await _eventRepository.LoadEventsByEntity(entityId);
             return domainEvents.Aggregate(entity, (current, domainEvent) => Apply(current, domainEvent));
         }
 
