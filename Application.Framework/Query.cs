@@ -5,11 +5,11 @@ namespace Application.Framework
 {
     public class Query
     {
-        public void Apply(DomainEvent domainEvent)
+        public void Handle(DomainEvent domainEvent)
         {
             var type = domainEvent.GetType();
             var currentEntityType = GetType();
-            var methodInfos = currentEntityType.GetMethods().Where(method => method.Name == nameof(Apply));
+            var methodInfos = currentEntityType.GetMethods().Where(method => method.Name == nameof(Handle));
             var methodToExecute = methodInfos.FirstOrDefault(method => method.GetParameters().FirstOrDefault()?.ParameterType == type);
             if (methodToExecute == null || methodToExecute.GetParameters().Length != 1) return;
             methodToExecute.Invoke(this, new object[] {domainEvent});

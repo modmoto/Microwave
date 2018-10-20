@@ -8,7 +8,7 @@ namespace Application.Framework
     {
         public SubscribedEventTypes()
         {
-            var methodInfos = typeof(T).GetMethods().Where(method => (method.Name == nameof(Query.Apply) || method.Name == "Handle") && method.GetParameters().Length == 1);
+            var methodInfos = typeof(T).GetMethods().Where(method => (method.Name == nameof(Query.Handle) || method.Name == "Handle") && method.GetParameters().Length == 1);
             foreach (var method in methodInfos)
             {
                 var parameterInfo = method.GetParameters()[0];

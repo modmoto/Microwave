@@ -5,7 +5,7 @@ using Domain.Seasons.Events;
 
 namespace Application.Seasons.Querries
 {
-    public class SeasonCreatedEventHandler : ReactiveEventHandler<SeasonCreatedEventHandler>
+    public class SeasonCreatedEventHandler : ReactiveEventHandler<SeasonCreatedEventHandler>, IHandleAsync<SeasonCreatedEvent>
     {
         public SeasonCreatedEventHandler(SubscribedEventTypes<SeasonCreatedEventHandler> subscribedEventTypes,
             IHandlerVersionRepository versionRepository) : base(subscribedEventTypes, versionRepository)
@@ -18,7 +18,7 @@ namespace Application.Seasons.Querries
         }
     }
 
-    public class SeasonChangedNamEventHandler : ReactiveEventHandler<SeasonChangedNamEventHandler>
+    public class SeasonChangedNamEventHandler : ReactiveEventHandler<SeasonChangedNamEventHandler>, IHandleAsync<SeasonNameChangedEvent>
     {
         public SeasonChangedNamEventHandler(SubscribedEventTypes<SeasonChangedNamEventHandler> subscribedEventTypes,
             IHandlerVersionRepository versionRepository) : base(subscribedEventTypes, versionRepository)

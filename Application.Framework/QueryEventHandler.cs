@@ -21,7 +21,7 @@ namespace Application.Framework
         {
             lock (_lockObject)
             {
-                QueryObject.Apply(domainEvent);
+                QueryObject.Handle(domainEvent);
             }
         }
     }
