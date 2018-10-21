@@ -1,10 +1,10 @@
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
-using Adapters.Framework.Subscriptions;
+using Application.Framework;
 using Microsoft.EntityFrameworkCore;
 
-namespace Application.Framework
+namespace Adapters.Framework.Subscriptions
 {
     public class VersionRepository : IVersionRepository
     {
@@ -17,22 +17,30 @@ namespace Application.Framework
 
         public async Task<long> GetVersionAsync(string domainEventType)
         {
-            var lastProcessedVersion = await _subscriptionContext.ProcessedVersions.FirstOrDefaultAsync(version => version.EventType == domainEventType);
+            var lastProcessedVersion =
+                await _subscriptionContext.ProcessedVersions.FirstOrDefaultAsync(version =>
+                    version.EventType == domainEventType);
             if (lastProcessedVersion == null) return -1L;
             return lastProcessedVersion.LastVersion;
         }
 
         public async Task SaveVersion(LastProcessedVersion version)
         {
-            var lastProcessedVersionDbo = _subscriptionContext.ProcessedVersions.FirstOrDefault(ev => ev.EventType == version.EventType);
+            var lastProcessedVersionDbo =
+                _subscriptionContext.ProcessedVersions.FirstOrDefault(ev => ev.EventType == version.EventType);
             if (lastProcessedVersionDbo == null)
             {
-                _subscriptionContext.ProcessedVersions.Add(new LastProcessedVersionDbo(version.EventType, version.LastVersion));
+                _subscriptionContext.ProcessedVersions.Add(new LastProcessedVersionDbo(version.EventType,
+                    version.LastVersion));
             }
             else
             {
-                _subscriptionContext.Update(lastProcessedVersionDbo);
+                var processedVersionDbo =
+                    _subscriptionContext.ProcessedVersions.Single(e => e.EventType == version.EventType);
+                processedVersionDbo.LastVersion = version.LastVersion;
+                _subscriptionContext.Update(processedVersionDbo);
             }
+
             await _subscriptionContext.SaveChangesAsync();
         }
     }
@@ -45,8 +53,8 @@ namespace Application.Framework
             LastVersion = lastVersion;
         }
 
-        [Key]
-        public string EventType { get; set; }
+        [Key] public string EventType { get; set; }
+
         public long LastVersion { get; set; }
     }
 }
