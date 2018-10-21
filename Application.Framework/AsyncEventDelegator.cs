@@ -49,8 +49,9 @@ namespace Application.Framework
                 var latestEvents = await _eventRepository.LoadEventsByTypeAsync<T>(typeof(T).Name, lastVersion);
                 foreach (var latestEvent in latestEvents)
                 {
+                    lastVersion = lastVersion + 1;
                     await handle.HandleAsync(latestEvent);
-                    await _versionRepository.SaveVersion(new LastProcessedVersion(domainEventType, lastVersion + 1));
+                    await _versionRepository.SaveVersion(new LastProcessedVersion(domainEventType, lastVersion));
                 }
             }
         }
