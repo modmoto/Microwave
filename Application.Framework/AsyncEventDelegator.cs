@@ -6,9 +6,9 @@ namespace Application.Framework
 {
     public class AsyncEventDelegator
     {
-        private readonly IEnumerable<IRealHandler> _handler;
+        private readonly IEnumerable<IHandlerDelgator> _handler;
 
-        public AsyncEventDelegator(IEnumerable<IRealHandler> handler)
+        public AsyncEventDelegator(IEnumerable<IHandlerDelgator> handler)
         {
             _handler = handler;
         }
@@ -19,18 +19,18 @@ namespace Application.Framework
         }
     }
 
-    public interface IRealHandler
+    public interface IHandlerDelgator
     {
         Task Update();
     }
 
-    public class RealHandler<T> : IRealHandler where T : DomainEvent
+    public class HandlerDelegator<T> : IHandlerDelgator where T : DomainEvent
     {
         private readonly IEventRepository _eventRepository;
         private readonly IEnumerable<IHandleAsync<T>> _handles;
         private readonly IVersionRepository _versionRepository;
 
-        public RealHandler(
+        public HandlerDelegator(
             IVersionRepository versionRepository,
             IEventRepository eventRepository,
             IEnumerable<IHandleAsync<T>> handles)

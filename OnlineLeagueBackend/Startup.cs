@@ -28,13 +28,6 @@ namespace OnlineLeagueBackend
             services.AddTransient<SubscribedEventTypes<AllSeasonsCounterQuery>>();
             services.AddTransient<AllSeasonsCounterQueryHandler>();
 
-            services.AddTransient<IRealHandler, RealHandler<SeasonCreatedEvent>>();
-            services.AddTransient<IRealHandler, RealHandler<SeasonNameChangedEvent>>();
-
-            services.AddTransient<IHandleAsync<SeasonCreatedEvent>, SeasonCreatedEventHandler>();
-            services.AddTransient<IHandleAsync<SeasonNameChangedEvent>, SeasonChangedNamEventHandler>();
-            services.AddTransient<IHandleAsync<SeasonNameChangedEvent>, SeasonCreatedEventHandler>();
-
             services.AddMyEventStoreDependencies(typeof(AllSeasonsCounterQuery).Assembly);
         }
 
