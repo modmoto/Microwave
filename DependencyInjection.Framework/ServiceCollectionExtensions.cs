@@ -7,7 +7,6 @@ using Application.Framework;
 using EventStore.ClientAPI;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using EventStoreSubscription = Adapters.Framework.EventStores.EventStoreSubscription;
 
 namespace DependencyInjection.Framework
 {
@@ -20,10 +19,6 @@ namespace DependencyInjection.Framework
             services.AddSingleton(connection);
 
             services.AddTransient<DomainEventConverter>();
-
-            services.AddTransient<IEventSourcingStrategy, EventSourcingApplyStrategy>();
-
-            services.AddTransient<IEventStoreSubscription, EventStoreSubscription>();
 
             var querries = assembly.GetTypes().Where(t => t.BaseType == typeof(Query));
 

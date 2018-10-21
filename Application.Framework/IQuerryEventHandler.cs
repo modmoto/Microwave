@@ -12,7 +12,7 @@ namespace Application.Framework
 
     public interface IReactiveEventHandler
     {
-        Task Handle(DomainEvent domainEvent, StreamVersion streamVersion);
+        Task Handle(DomainEvent domainEvent);
         IEnumerable<string> SubscribedDomainEventTypes { get; }
     }
 }
