@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Application.Framework;
 using Application.Seasons;
 using Application.Seasons.Commands;
 using Application.Seasons.Querries;
+using Domain.Framework;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Adapters.WebApi.Seasons
@@ -19,17 +21,14 @@ namespace Adapters.WebApi.Seasons
         }
 
         [HttpGet]
-        public async Task<ActionResult> GetDomainEventsByType(string eventType, long from = -1)
+        public async Task<ActionResult> GetDomainEventsByType([FromQuery] string eventType, [FromQuery] Guid entityId, [FromQuery] long fromVersion = -1)
         {
-            var events = await _eventRepository.LoadEventsByType(eventType, from);
-            return Ok(events);
-        }
+            if (!string.IsNullOrEmpty(eventType))
+            {
+                return Ok(await _eventRepository.LoadEventsByType(eventType, fromVersion));
+            }
 
-        [HttpGet]
-        public async Task<ActionResult> GetDomainEventsByEntity(Guid entityId, long from = -1)
-        {
-            var events = await _eventRepository.LoadEventsByEntity(entityId, from);
-            return Ok(events);
+            return Ok(await _eventRepository.LoadEventsByEntity(entityId, fromVersion));
         }
     }
 }

@@ -10,10 +10,24 @@ namespace Adapters.Framework.EventStores
         public DbSet<EntityStream> EntityStreams { get; set; }
         public DbSet<TypeStream> TypeStreams { get; set; }
 
-
         public EventStoreContext(DbContextOptions<EventStoreContext> options) :
             base(options)
         {
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<EntityStream>()
+                .Property(b => b.Version)
+                .ValueGeneratedOnAddOrUpdate()
+                .IsConcurrencyToken()
+                .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+            modelBuilder.Entity<TypeStream>()
+                .Property(b => b.Version)
+                .ValueGeneratedOnAddOrUpdate()
+                .IsConcurrencyToken()
+                .HasDefaultValueSql("CURRENT_TIMESTAMP");
         }
     }
 

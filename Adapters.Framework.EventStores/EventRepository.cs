@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Threading.Tasks;
 using Adapters.Json.ObjectPersistences;
 using Application.Framework;
@@ -55,7 +56,6 @@ namespace Adapters.Framework.EventStores
                 AddToEntityStream(entityStream, domainEventDbo, domainEvent);
             }
 
-            var typeStreams = _eventStoreContext.TypeStreams.ToList();
             await _eventStoreContext.SaveChangesAsync();
         }
 
@@ -66,7 +66,8 @@ namespace Adapters.Framework.EventStores
                 var stream = new TypeStream
                 {
                     DomainEvents = new List<DomainEventDbo> {domainEventDbo},
-                    DomainEventType = domainEvent.GetType().Name
+                    DomainEventType = domainEvent.GetType().Name,
+                    Version = BitConverter.GetBytes(0L)
                 };
                 _eventStoreContext.TypeStreams.Add(stream);
             }
@@ -83,7 +84,8 @@ namespace Adapters.Framework.EventStores
                 var stream = new EntityStream
                 {
                     DomainEvents = new List<DomainEventDbo> {domainEventDbo},
-                    EntityId = domainEvent.EntityId
+                    EntityId = domainEvent.EntityId,
+                    Version = BitConverter.GetBytes(0L)
                 };
                 _eventStoreContext.EntityStreams.Add(stream);
             }
