@@ -54,6 +54,7 @@ namespace Adapters.Framework.EventStores
 
         public async Task AppendAsync(IEnumerable<DomainEvent> domainEvents, long entityVersion)
         {
+            // TODO do this way better
             var entityVersionTemp = entityVersion;
             foreach (var domainEvent in domainEvents)
             {
