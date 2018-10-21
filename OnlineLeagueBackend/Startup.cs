@@ -1,12 +1,8 @@
-﻿using System;
-using Adapters.Framework.EventStores;
-using Adapters.Json.ObjectPersistences;
-using Adapters.WebApi.Seasons;
+﻿using Adapters.WebApi.Seasons;
 using Application.Framework;
 using Application.Seasons;
 using Application.Seasons.Querries;
 using DependencyInjection.Framework;
-using EventStore.ClientAPI;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;

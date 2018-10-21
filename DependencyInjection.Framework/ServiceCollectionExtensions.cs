@@ -5,7 +5,6 @@ using Adapters.Framework.EventStores;
 using Adapters.Json.ObjectPersistences;
 using Application.Framework;
 using EventStore.ClientAPI;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using EventStoreSubscription = Adapters.Framework.EventStores.EventStoreSubscription;
