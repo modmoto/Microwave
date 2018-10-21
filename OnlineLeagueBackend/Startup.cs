@@ -33,6 +33,7 @@ namespace OnlineLeagueBackend
 
             services.AddTransient<IHandleAsync<SeasonCreatedEvent>, SeasonCreatedEventHandler>();
             services.AddTransient<IHandleAsync<SeasonNameChangedEvent>, SeasonChangedNamEventHandler>();
+            services.AddTransient<IHandleAsync<SeasonNameChangedEvent>, SeasonCreatedEventHandler>();
 
             services.AddMyEventStoreDependencies(typeof(AllSeasonsCounterQuery).Assembly);
         }
