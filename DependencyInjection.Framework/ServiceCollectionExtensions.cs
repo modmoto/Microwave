@@ -24,7 +24,6 @@ namespace DependencyInjection.Framework
 
             services.AddTransient<IEventSourcingStrategy, EventSourcingApplyStrategy>();
 
-            services.AddTransient<IEventStoreFacade, EventStoreFacade>();
             services.AddTransient<IEventStoreSubscription, EventStoreSubscription>();
 
             var querries = assembly.GetTypes().Where(t => t.BaseType == typeof(Query));

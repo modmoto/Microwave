@@ -4,7 +4,7 @@ namespace Domain.Framework
 {
     public class Entity
     {
-        public Guid Id { get; protected set; }
+        public Guid Id { get; set; }
         public long Version { get; set; }
     }
 }

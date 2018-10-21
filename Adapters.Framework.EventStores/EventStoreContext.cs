@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
 namespace Adapters.Framework.EventStores
@@ -20,6 +21,14 @@ namespace Adapters.Framework.EventStores
     {
         public Guid Id { get; set; }
         public string Payload { get; set; }
+        public long Version { get; set; }
+    }
+
+    public class DomainEventTypeDbo
+    {
+        public Guid Id { get; set; }
+        public string Payload { get; set; }
+        public long Version { get; set; }
     }
 
     public class EntityStream
@@ -27,14 +36,12 @@ namespace Adapters.Framework.EventStores
         [Key]
         public Guid EntityId { get; set; }
         public ICollection<DomainEventDbo> DomainEvents { get; set; }
-        public long Version { get; set; }
     }
 
     public class TypeStream
     {
         [Key]
         public string DomainEventType { get; set; }
-        public ICollection<DomainEventDbo> DomainEvents { get; set; }
-        public long Version { get; set; }
+        public ICollection<DomainEventTypeDbo> DomainEvents { get; set; }
     }
 }

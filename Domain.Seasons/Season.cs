@@ -11,6 +11,8 @@ namespace Domain.Seasons
         public static DomainResult Create(string seasonName)
         {
             var seasonCreatedEvent = new SeasonCreatedEvent(Guid.NewGuid(), seasonName);
+            var season = new Season();
+            season.Apply(seasonCreatedEvent);
             return DomainResult.OkResult(seasonCreatedEvent);
         }
 
@@ -27,7 +29,9 @@ namespace Domain.Seasons
 
         public DomainResult ChangeName(string commandName)
         {
-            return DomainResult.OkResult(new SeasonNameChangedEvent(Id, commandName));
+            var seasonNameChangedEvent = new SeasonNameChangedEvent(Id, commandName);
+            Apply(seasonNameChangedEvent);
+            return DomainResult.OkResult(seasonNameChangedEvent);
         }
     }
 }

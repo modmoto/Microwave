@@ -22,7 +22,6 @@ namespace OnlineLeagueBackend
         {
             services.AddMvc();
             services.AddTransient<SeasonController>();
-            services.AddTransient<IHandlerVersionRepository, HandlerVersionRepository>();
 
             services.AddTransient<SeasonCommandHandler>();
             services.AddTransient<AllSeasonsQuery>();

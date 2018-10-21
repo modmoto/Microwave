@@ -21,14 +21,14 @@ namespace Adapters.WebApi.Seasons
         }
 
         [HttpGet]
-        public async Task<ActionResult> GetDomainEventsByType([FromQuery] string eventType, [FromQuery] Guid entityId, [FromQuery] long fromVersion = -1)
+        public async Task<ActionResult> GetDomainEventsByType([FromQuery] string eventType, [FromQuery] Guid entityId, [FromQuery] long myLastVersion = -1)
         {
             if (!string.IsNullOrEmpty(eventType))
             {
-                return Ok(await _eventRepository.LoadEventsByType(eventType, fromVersion));
+                return Ok(await _eventRepository.LoadEventsByType(eventType, myLastVersion));
             }
 
-            return Ok(await _eventRepository.LoadEventsByEntity(entityId, fromVersion));
+            return Ok(await _eventRepository.LoadEventsByEntity(entityId, myLastVersion));
         }
     }
 }

@@ -15,6 +15,7 @@ namespace Adapters.Framework.EventStores
         {
             _eventRepository = eventRepository;
         }
+
         public async Task AppendAsync(IEnumerable<DomainEvent> domainEvents, long entityVersion)
         {
             await _eventRepository.AppendAsync(domainEvents, entityVersion);
@@ -23,11 +24,12 @@ namespace Adapters.Framework.EventStores
         public async Task<T> LoadAsync<T>(Guid entityId) where T : Entity, new()
         {
             var entity = new T();
+            entity.Id = entityId;
             var domainEvents = await _eventRepository.LoadEventsByEntity(entityId);
             return domainEvents.Aggregate(entity, (current, domainEvent) => Apply(current, domainEvent));
         }
 
-        private T Apply<T>(T entity, DomainEvent domainEvent)
+        private T Apply<T>(T entity, DomainEvent domainEvent) where T : Entity
         {
             var type = domainEvent.GetType();
             var currentEntityType = entity.GetType();
@@ -35,6 +37,7 @@ namespace Adapters.Framework.EventStores
             var methodToExecute = methodInfos.FirstOrDefault(method => method.GetParameters().FirstOrDefault()?.ParameterType == type);
             if (methodToExecute == null || methodToExecute.GetParameters().Length != 1) return entity;
             methodToExecute.Invoke(entity, new object[] {domainEvent});
+            entity.Version = domainEvent.Version;
             return entity;
         }
     }
