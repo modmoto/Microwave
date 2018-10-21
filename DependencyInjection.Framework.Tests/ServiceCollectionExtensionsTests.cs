@@ -50,27 +50,6 @@ namespace DependencyInjection.Framework.Tests
             Assert.NotNull(eventHandler);
             Assert.Equal(2, eventHandlers.Count);
         }
-
-        [Fact]
-        public void AddAllReactiveEventHandlers()
-        {
-            var serviceCollection = (IServiceCollection) new ServiceCollection();
-            var connection = EventStoreConnection.Create(new Uri("tcp://admin:changeit@localhost:1113"), "MyTestCon");
-
-            serviceCollection.AddEventStoreFacadeDependencies(typeof(TestReactiveEventHandler).Assembly, connection);
-            var buildServiceProvider = serviceCollection.BuildServiceProvider();
-
-            var nameChangedHandler = buildServiceProvider.GetServices(typeof(IHandleAsync<TestQuerryNameChangedEvent>));
-            var createdHandler = buildServiceProvider.GetServices(typeof(IHandleAsync<TestQuerryCreatedEvent>));
-
-            var eventHandlerName = buildServiceProvider.GetService<HandlerDelegator<TestQuerryNameChangedEvent>>();
-            var eventHandlerCreated = buildServiceProvider.GetService<HandlerDelegator<TestQuerryNameChangedEvent>>();
-
-            Assert.Equal(2, nameChangedHandler.Count());
-            Assert.Equal(1, createdHandler.Count());
-            Assert.NotNull(eventHandlerName);
-            Assert.NotNull(eventHandlerCreated);
-        }
     }
 
     public class TestQuery : Query
@@ -99,19 +78,6 @@ namespace DependencyInjection.Framework.Tests
     public class TestReactiveEventHandler : IHandleAsync<TestQuerryNameChangedEvent>
     {
         public Task HandleAsync(TestQuerryNameChangedEvent domainEvent)
-        {
-            return Task.CompletedTask;
-        }
-    }
-
-    public class TestReactiveEventHandler2 : IHandleAsync<TestQuerryNameChangedEvent>, IHandleAsync<TestQuerryCreatedEvent>
-    {
-        public Task HandleAsync(TestQuerryNameChangedEvent domainEvent)
-        {
-            return Task.CompletedTask;
-        }
-
-        public Task HandleAsync(TestQuerryCreatedEvent domainEvent)
         {
             return Task.CompletedTask;
         }

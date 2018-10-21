@@ -88,22 +88,6 @@ namespace DependencyInjection.Framework
             services.AddTransient<IVersionRepository, VersionRepository>();
             services.AddTransient<AsyncEventDelegator>();
 
-            var addTransientWithInterfaceAndImplementation = typeof(ServiceCollectionServiceExtensions).GetMethods()
-                .First(method =>
-                    method.Name == "AddTransient" && method.IsGenericMethod &&
-                    method.GetGenericArguments().Length == 2 && method.GetParameters().Length == 0);
-
-            var handlerTypes = assembly.GetTypes().Where(t => t.GetInterfaces().Contains(typeof(IHandleAsync<>)));
-            foreach (var handlerType in handlerTypes)
-            {
-                var subscribeEventTypeForQuerryType = typeof(IHandleAsync<>);
-                var ifType = subscribeEventTypeForQuerryType.MakeGenericType(handlerType);
-
-                var addSingleton =
-                    addTransientWithInterfaceAndImplementation.MakeGenericMethod(typeof(IHandleAsync<>), ifType, handlerType);
-                addSingleton.Invoke(services, new object[] {services});
-            }
-
             return services;
         }
     }
