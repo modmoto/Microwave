@@ -9,6 +9,7 @@ namespace Application.Framework
     {
         Task<IEnumerable<DomainEvent>> LoadEventsByEntity(Guid entityId, long from = 0);
         Task AppendAsync(IEnumerable<DomainEvent> domainEvents, long entityVersion);
-        Task<IEnumerable<DomainEvent>> LoadEventsByType(string domainEventTypeName, long from = 0);
+        Task<IEnumerable<T>> LoadEventsByTypeAsync<T>(string domainEventTypeName, long from = 0) where T : DomainEvent;
+        Task<IEnumerable<DomainEvent>> LoadEventsByTypeAsync(string domainEventTypeName, long from = 0);
     }
 }

@@ -77,7 +77,7 @@ namespace DependencyInjection.Framework.Tests
 
     public class TestReactiveEventHandler : IHandleAsync<TestQuerryNameChangedEvent>
     {
-        public Task Handle(TestQuerryNameChangedEvent domainEvent)
+        public Task HandleAsync(TestQuerryNameChangedEvent domainEvent)
         {
             return Task.CompletedTask;
         }

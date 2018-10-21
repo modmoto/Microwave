@@ -20,7 +20,7 @@ namespace Adapters.WebApi.Seasons
         {
             if (!string.IsNullOrEmpty(eventType))
             {
-                return Ok(await _eventRepository.LoadEventsByType(eventType, myLastVersion));
+                return Ok(await _eventRepository.LoadEventsByTypeAsync(eventType, myLastVersion));
             }
 
             return Ok(await _eventRepository.LoadEventsByEntity(entityId, myLastVersion));

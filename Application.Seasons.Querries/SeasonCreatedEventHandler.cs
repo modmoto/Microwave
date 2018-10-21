@@ -7,7 +7,7 @@ namespace Application.Seasons.Querries
 {
     public class SeasonCreatedEventHandler : IHandleAsync<SeasonCreatedEvent>
     {
-        public async Task Handle(SeasonCreatedEvent domainEvent)
+        public async Task HandleAsync(SeasonCreatedEvent domainEvent)
         {
             Console.WriteLine("THingy called");
         }
@@ -15,7 +15,7 @@ namespace Application.Seasons.Querries
 
     public class SeasonChangedNamEventHandler : IHandleAsync<SeasonNameChangedEvent>
     {
-        public async Task Handle(SeasonNameChangedEvent domainEvent)
+        public async Task HandleAsync(SeasonNameChangedEvent domainEvent)
         {
             Console.WriteLine($"New Name: {domainEvent.Name}");
         }

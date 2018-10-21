@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Reflection;
 using Adapters.Framework.EventStores;
+using Adapters.Framework.Subscriptions;
 using Adapters.Json.ObjectPersistences;
 using Application.Framework;
 using EventStore.ClientAPI;
@@ -82,6 +83,11 @@ namespace DependencyInjection.Framework
             services.AddTransient<IEventRepository, EventRepository>();
             services.AddTransient<DomainEventConverter>();
             services.AddDbContext<EventStoreContext>(option => option.UseSqlite("Data Source=Eventstore.db"));
+            services.AddDbContext<SubscriptionContext>(option => option.UseSqlite("Data Source=SubscriptionContext.db"));
+            services.AddTransient<IEventRepository, EventRepository>();
+            services.AddTransient<IVersionRepository, VersionRepository>();
+            services.AddTransient<AsyncEventDelegator>();
+
             return services;
         }
     }

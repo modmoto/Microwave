@@ -36,7 +36,24 @@ namespace Adapters.Framework.EventStores
             return domainEvents;
         }
 
-        public async Task<IEnumerable<DomainEvent>> LoadEventsByType(string domainEventTypeName, long from = 0)
+        public async Task<IEnumerable<T>> LoadEventsByTypeAsync<T>(string domainEventTypeName, long from = 0)
+            where T : DomainEvent
+        {
+            var stream =
+                await _eventStoreContext.TypeStreams.Include(ev => ev.DomainEvents).FirstOrDefaultAsync(str =>
+                    str.DomainEventType == domainEventTypeName);
+            if (stream == null) return new List<T>();
+            var domainEvents = stream.DomainEvents.Where(ev => ev.Version > from)
+                .Select(dbo =>
+                {
+                    var domainEvent = _eventConverter.Deserialize(dbo.Payload);
+                    domainEvent.Version = dbo.Version;
+                    return (T) domainEvent;
+                });
+            return domainEvents;
+        }
+
+        public async Task<IEnumerable<DomainEvent>> LoadEventsByTypeAsync(string domainEventTypeName, long from = 0)
         {
             var stream =
                 await _eventStoreContext.TypeStreams.Include(ev => ev.DomainEvents).FirstOrDefaultAsync(str =>

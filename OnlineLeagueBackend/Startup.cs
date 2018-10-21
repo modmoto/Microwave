@@ -3,6 +3,7 @@ using Application.Framework;
 using Application.Seasons;
 using Application.Seasons.Querries;
 using DependencyInjection.Framework;
+using Domain.Seasons.Events;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
@@ -26,6 +27,12 @@ namespace OnlineLeagueBackend
             services.AddTransient<AllSeasonsCounterQuery>();
             services.AddTransient<SubscribedEventTypes<AllSeasonsCounterQuery>>();
             services.AddTransient<AllSeasonsCounterQueryHandler>();
+
+            services.AddTransient<IRealHandler, RealHandler<SeasonCreatedEvent>>();
+            services.AddTransient<IRealHandler, RealHandler<SeasonNameChangedEvent>>();
+
+            services.AddTransient<IHandleAsync<SeasonCreatedEvent>, SeasonCreatedEventHandler>();
+            services.AddTransient<IHandleAsync<SeasonNameChangedEvent>, SeasonChangedNamEventHandler>();
 
             services.AddMyEventStoreDependencies(typeof(AllSeasonsCounterQuery).Assembly);
         }

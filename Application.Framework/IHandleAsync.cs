@@ -5,7 +5,7 @@ namespace Application.Framework
 {
     public interface IHandleAsync<in T> where T : DomainEvent
     {
-        Task Handle(T domainEvent);
+        Task HandleAsync(T domainEvent);
     }
 
     public interface IHandle<in T> where T : DomainEvent
