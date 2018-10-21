@@ -25,7 +25,7 @@ namespace Adapters.Framework.EventStores
         {
             var stream =
                 await _eventStoreContext.EntityStreams.Include(ev => ev.DomainEvents).FirstOrDefaultAsync(str =>
-                    str.EntityId == entityId && BitConverter.ToInt64(str.Version) > from);
+                    str.EntityId == entityId && str.Version > from);
             if (stream == null) return new List<DomainEvent>();
             var domainEvents = stream.DomainEvents.Select(dbo => _eventConverter.Deserialize(dbo.Payload));
             return domainEvents;
@@ -34,7 +34,7 @@ namespace Adapters.Framework.EventStores
         public async Task<IEnumerable<DomainEvent>> LoadEventsByType(string domainEventTypeName, long from = 0)
         {
             var stream = await _eventStoreContext.TypeStreams.Include(ev => ev.DomainEvents).FirstOrDefaultAsync(str =>
-                str.DomainEventType == domainEventTypeName && BitConverter.ToInt64(str.Version) > from);
+                str.DomainEventType == domainEventTypeName && str.Version > from);
             if (stream == null) return new List<DomainEvent>();
             var domainEvents = stream.DomainEvents.Select(dbo => _eventConverter.Deserialize(dbo.Payload));
             return domainEvents;
@@ -46,7 +46,7 @@ namespace Adapters.Framework.EventStores
             {
                 var domainEventDbo = new DomainEventDbo
                 {
-                    Payload = _eventConverter.Serialize(domainEvent),
+                    Payload = _eventConverter.Serialize(domainEvent)
                 };
 
                 var typeStream = _eventStoreContext.TypeStreams.Include(st => st.DomainEvents).FirstOrDefault(str => str.DomainEventType == domainEvent.GetType().Name);
@@ -67,13 +67,15 @@ namespace Adapters.Framework.EventStores
                 {
                     DomainEvents = new List<DomainEventDbo> {domainEventDbo},
                     DomainEventType = domainEvent.GetType().Name,
-                    Version = BitConverter.GetBytes(0L)
+                    Version = 0
                 };
                 _eventStoreContext.TypeStreams.Add(stream);
             }
             else
             {
                 typeStream.DomainEvents.Add(domainEventDbo);
+                typeStream.DomainEventType = typeStream.DomainEventType;
+                typeStream.Version += 1;
             }
         }
 
@@ -85,13 +87,15 @@ namespace Adapters.Framework.EventStores
                 {
                     DomainEvents = new List<DomainEventDbo> {domainEventDbo},
                     EntityId = domainEvent.EntityId,
-                    Version = BitConverter.GetBytes(0L)
+                    Version = 0
                 };
                 _eventStoreContext.EntityStreams.Add(stream);
             }
             else
             {
                 entityStream.DomainEvents.Add(domainEventDbo);
+                entityStream.EntityId = entityStream.EntityId;
+                entityStream.Version += 1;
             }
         }
     }

@@ -14,21 +14,6 @@ namespace Adapters.Framework.EventStores
             base(options)
         {
         }
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<EntityStream>()
-                .Property(b => b.Version)
-                .ValueGeneratedOnAddOrUpdate()
-                .IsConcurrencyToken()
-                .HasDefaultValueSql("CURRENT_TIMESTAMP");
-
-            modelBuilder.Entity<TypeStream>()
-                .Property(b => b.Version)
-                .ValueGeneratedOnAddOrUpdate()
-                .IsConcurrencyToken()
-                .HasDefaultValueSql("CURRENT_TIMESTAMP");
-        }
     }
 
     public class DomainEventDbo
@@ -41,17 +26,15 @@ namespace Adapters.Framework.EventStores
     {
         [Key]
         public Guid EntityId { get; set; }
-        [Timestamp]
-        public byte[] Version { get; set; }
         public ICollection<DomainEventDbo> DomainEvents { get; set; }
+        public long Version { get; set; }
     }
 
     public class TypeStream
     {
         [Key]
         public string DomainEventType { get; set; }
-        [Timestamp]
-        public byte[] Version { get; set; }
         public ICollection<DomainEventDbo> DomainEvents { get; set; }
+        public long Version { get; set; }
     }
 }
