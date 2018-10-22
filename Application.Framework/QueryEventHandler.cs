@@ -1,28 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Domain.Framework;
 
 namespace Application.Framework
 {
-    public class QueryEventHandler<T> : IQuerryEventHandler where T : Query
+    public class QueryEventHandler<T> where T : Query
     {
-        private readonly object _lockObject = new Object();
-        public T QueryObject { get; }
-        public IEnumerable<string> SubscribedDomainEventTypes { get; }
+        private readonly IQeryRepository _qeryRepository;
 
-        public QueryEventHandler(T queryObject, SubscribedEventTypes<T> subscribedEventTypes)
+        public QueryEventHandler(IQeryRepository qeryRepository)
         {
-            QueryObject = queryObject;
-            SubscribedDomainEventTypes = subscribedEventTypes;
+            _qeryRepository = qeryRepository;
         }
 
         public async Task Handle(DomainEvent domainEvent)
         {
-            lock (_lockObject)
-            {
-                QueryObject.Handle(domainEvent);
-            }
+            var query = await _qeryRepository.Load<T>();
+            query.Handle(domainEvent);
+            _qeryRepository.Save(query);
         }
+    }
+
+    public interface IQeryRepository
+    {
+        Task<T> Load<T>() where T : Query;
+        void Save<T>(T query) where T : Query;
     }
 }

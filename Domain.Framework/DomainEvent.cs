@@ -9,7 +9,6 @@ namespace Domain.Framework
             EntityId = entityId;
         }
 
-        [ActualPropertyName(nameof(Entity.Id))]
         public Guid EntityId { get; }
         public long Version { get; set; }
         public string DomainEventType => GetType().Name;
