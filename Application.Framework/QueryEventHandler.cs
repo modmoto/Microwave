@@ -16,13 +16,7 @@ namespace Application.Framework
         {
             var query = await _qeryRepository.Load<T>();
             query.Handle(domainEvent);
-            _qeryRepository.Save(query);
+            await _qeryRepository.Save(query);
         }
-    }
-
-    public interface IQeryRepository
-    {
-        Task<T> Load<T>() where T : Query;
-        void Save<T>(T query) where T : Query;
     }
 }
