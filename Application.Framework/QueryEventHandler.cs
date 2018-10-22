@@ -3,7 +3,7 @@ using Domain.Framework;
 
 namespace Application.Framework
 {
-    public class QueryEventHandler<T> where T : Query
+    public class QueryEventHandler<T, TEvent> where T : Query where TEvent : DomainEvent
     {
         private readonly IQeryRepository _qeryRepository;
 
@@ -12,9 +12,28 @@ namespace Application.Framework
             _qeryRepository = qeryRepository;
         }
 
-        public async Task Handle(DomainEvent domainEvent)
+        public async Task HandleAsync(TEvent domainEvent)
         {
+            // Todo mache threadsafe
             var query = await _qeryRepository.Load<T>();
+            query.Handle(domainEvent);
+            await _qeryRepository.Save(query);
+        }
+    }
+
+    public class IdentifiableQueryEventHandler<T, TEvent> where T : IdentifiableQuery where TEvent : DomainEvent
+    {
+        private readonly IQeryRepository _qeryRepository;
+
+        public IdentifiableQueryEventHandler(IQeryRepository qeryRepository)
+        {
+            _qeryRepository = qeryRepository;
+        }
+
+        public async Task HandleAsync(TEvent domainEvent)
+        {
+            // Todo mache threadsafe
+            var query = await _qeryRepository.Load<T>(domainEvent.EntityId);
             query.Handle(domainEvent);
             await _qeryRepository.Save(query);
         }

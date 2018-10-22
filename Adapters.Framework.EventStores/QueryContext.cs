@@ -10,7 +10,7 @@ namespace Adapters.Framework.EventStores
         public DbSet<QueryDbo> Querries { get; set; }
         public DbSet<IdentifiableQueryDbo> IdentifiableQuerries { get; set; }
 
-        public QueryContext(DbContextOptions<EventStoreContext> options) :
+        public QueryContext(DbContextOptions<QueryContext> options) :
             base(options)
         {
         }
