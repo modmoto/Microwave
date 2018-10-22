@@ -11,7 +11,7 @@ namespace Application.Framework
     {
         public Uri GetLocationFor(string domainEvent)
         {
-            return new Uri("http://localhost:5000/Api/DomainEventTypeStreams/");
+            return new Uri($"http://localhost:5000/Api/DomainEventTypeStreams/{domainEvent}");
         }
     }
 }

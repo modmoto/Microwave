@@ -24,7 +24,7 @@ namespace Adapters.Framework.WebApi
             {
                 var clientBaseAddress = _config.GetLocationFor(typeof(T).Name);
                 client.BaseAddress = clientBaseAddress;
-                var response = await client.GetAsync($"{typeof(T).Name}?myLastVersion={lastVersion}");
+                var response = await client.GetAsync($"?myLastVersion={lastVersion}");
                 if (response.StatusCode != HttpStatusCode.OK) return new List<T>();
                 var content = await response.Content.ReadAsStringAsync();
                 return _domainEventConverter.DeserializeList<T>(content);
