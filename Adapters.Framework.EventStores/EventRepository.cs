@@ -36,9 +36,10 @@ namespace Adapters.Framework.EventStores
             return domainEvents;
         }
 
-        public async Task<IEnumerable<T>> LoadEventsByTypeAsync<T>(string domainEventTypeName, long from = 0)
+        public async Task<IEnumerable<T>> LoadEventsByTypeAsync<T>(long from = 0)
             where T : DomainEvent
         {
+            string domainEventTypeName = typeof(T).Name;
             var stream =
                 await _eventStoreContext.TypeStreams.Include(ev => ev.DomainEvents).FirstOrDefaultAsync(str =>
                     str.DomainEventType == domainEventTypeName);

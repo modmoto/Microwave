@@ -1,11 +1,13 @@
 ﻿using System;
+using System.Reflection;
+using System.Reflection.Emit;
 using System.Threading.Tasks;
 using Application.Framework;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Adapters.WebApi.Seasons
 {
-    [Route("Api/DomainEvents")]
+    [Route("Api")]
     public class DomainEventController : Controller
     {
         private readonly IEventRepository _eventRepository;
@@ -15,14 +17,15 @@ namespace Adapters.WebApi.Seasons
             _eventRepository = eventRepository;
         }
 
-        [HttpGet]
-        public async Task<ActionResult> GetDomainEventsByType([FromQuery] string eventType, [FromQuery] Guid entityId, [FromQuery] long myLastVersion = -1)
+        [HttpGet("DomainEventTypeStreams")]
+        public async Task<ActionResult> GetDomainEventsByType([FromQuery] string eventType, [FromQuery] long myLastVersion = -1)
         {
-            if (!string.IsNullOrEmpty(eventType))
-            {
-                return Ok(await _eventRepository.LoadEventsByTypeAsync(eventType, myLastVersion));
-            }
+            return Ok(await _eventRepository.LoadEventsByTypeAsync(eventType, myLastVersion));
+        }
 
+        [HttpGet("EntityStreams/{entityId}")]
+        public async Task<ActionResult> GetDomainEventsByEntityIdType(Guid entityId, [FromQuery] long myLastVersion = -1)
+        {
             return Ok(await _eventRepository.LoadEventsByEntity(entityId, myLastVersion));
         }
     }

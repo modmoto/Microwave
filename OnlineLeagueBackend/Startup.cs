@@ -28,8 +28,8 @@ namespace OnlineLeagueBackend
             services.AddTransient<SubscribedEventTypes<AllSeasonsCounterQuery>>();
             services.AddTransient<AllSeasonsCounterQueryHandler>();
 
-            services.AddTransient<IRealHandler, RealHandler<SeasonCreatedEvent>>();
-            services.AddTransient<IRealHandler, RealHandler<SeasonNameChangedEvent>>();
+            services.AddTransient<IEventDelegateHandler, EventDelegateHandler<SeasonCreatedEvent>>();
+            services.AddTransient<IEventDelegateHandler, EventDelegateHandler<SeasonNameChangedEvent>>();
 
             services.AddTransient<IHandleAsync<SeasonCreatedEvent>, SeasonCreatedEventHandler>();
             services.AddTransient<IHandleAsync<SeasonNameChangedEvent>, SeasonChangedNamEventHandler>();
