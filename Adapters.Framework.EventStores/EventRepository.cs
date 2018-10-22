@@ -36,6 +36,7 @@ namespace Adapters.Framework.EventStores
             return domainEvents;
         }
 
+        //TODO make thread safe
         public async Task<IEnumerable<T>> LoadEventsByTypeAsync<T>(long from = 0)
             where T : DomainEvent
         {
@@ -72,7 +73,7 @@ namespace Adapters.Framework.EventStores
 
         public async Task AppendAsync(IEnumerable<DomainEvent> domainEvents, long entityVersion)
         {
-            // TODO do this way better
+            // TODO do this asynchronosly with eventhandler
             var entityVersionTemp = entityVersion;
             foreach (var domainEvent in domainEvents)
             {
