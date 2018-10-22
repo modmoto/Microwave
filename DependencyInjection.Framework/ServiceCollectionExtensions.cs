@@ -88,8 +88,6 @@ namespace DependencyInjection.Framework
             services.AddTransient<IEventRepository, EventRepository>();
             services.AddTransient<IVersionRepository, VersionRepository>();
             services.AddTransient<AsyncEventDelegator>();
-            services.AddTransient<IPublishedEventStream, PublishedEventStream>();
-            services.AddTransient<IPublishedEventStream, PublishedEventStream>();
             services.AddTransient<IEventLocationConfig, EventLocationConfig>();
 
             return services;

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Adapters.Json.ObjectPersistences;
 using Application.Framework;
 using Domain.Framework;
 using Microsoft.EntityFrameworkCore;

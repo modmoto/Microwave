@@ -4,8 +4,8 @@ using Domain.Framework;
 
 namespace Application.Framework
 {
-    public interface IPublishedEventStream
+    public interface IPublishedEventStream<T> where T : DomainEvent
     {
-        Task<IEnumerable<T>> GetEventsByTypeAsync<T>(long lastVersion) where T : DomainEvent;
+        Task<IEnumerable<T>> GetEventsByTypeAsync(long lastVersion);
     }
 }

@@ -3,11 +3,10 @@
     <PropertyGroup>
         <TargetFramework>netcoreapp2.1</TargetFramework>
     </PropertyGroup>
-
-    <ItemGroup>
-      <ProjectReference Include="..\Application.Framework\Application.Framework.csproj" />
-    </ItemGroup>
     <ItemGroup>
         <PackageReference Include="Microsoft.AspNetCore.Mvc.ViewFeatures" />
+    </ItemGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\Application.Framework\Application.Framework.csproj" />
     </ItemGroup>
 </Project>

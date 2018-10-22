@@ -6,13 +6,13 @@ namespace Application.Framework
 {
     public class EventDelegateHandler<T> : IEventDelegateHandler where T : DomainEvent
     {
-        private readonly IPublishedEventStream _eventRepository;
+        private readonly IPublishedEventStream<T> _eventRepository;
         private readonly IEnumerable<IHandleAsync<T>> _handles;
         private readonly IVersionRepository _versionRepository;
 
         public EventDelegateHandler(
             IVersionRepository versionRepository,
-            IPublishedEventStream eventRepository,
+            IPublishedEventStream<T> eventRepository,
             IEnumerable<IHandleAsync<T>> handles)
         {
             _versionRepository = versionRepository;
@@ -26,7 +26,7 @@ namespace Application.Framework
             {
                 var domainEventType = $"{handle.GetType().Name}-{typeof(T).Name}";
                 var lastVersion = await _versionRepository.GetVersionAsync(domainEventType);
-                var latestEvents = await _eventRepository.GetEventsByTypeAsync<T>(lastVersion);
+                var latestEvents = await _eventRepository.GetEventsByTypeAsync(lastVersion);
                 foreach (var latestEvent in latestEvents)
                 {
                     lastVersion = lastVersion + 1;
