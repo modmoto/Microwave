@@ -30,6 +30,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DependencyInjection.Framewo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Adapters.Framework.Subscriptions", "Adapters.Framework.Subscriptions\Adapters.Framework.Subscriptions.csproj", "{725D9920-548A-43A9-9976-5E96F8E2B53E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Adapters.Framework.WebApi", "Adapters.Framework.WebApi\Adapters.Framework.WebApi.csproj", "{B2D98342-A15D-415C-8AEB-277F8D1CE93B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -96,5 +98,9 @@ Global
 		{725D9920-548A-43A9-9976-5E96F8E2B53E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{725D9920-548A-43A9-9976-5E96F8E2B53E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{725D9920-548A-43A9-9976-5E96F8E2B53E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B2D98342-A15D-415C-8AEB-277F8D1CE93B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B2D98342-A15D-415C-8AEB-277F8D1CE93B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B2D98342-A15D-415C-8AEB-277F8D1CE93B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B2D98342-A15D-415C-8AEB-277F8D1CE93B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

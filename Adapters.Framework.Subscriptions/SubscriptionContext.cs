@@ -1,5 +1,4 @@
-﻿using Application.Framework;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace Adapters.Framework.Subscriptions
 {

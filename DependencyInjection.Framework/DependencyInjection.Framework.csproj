@@ -13,6 +13,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Adapters.Framework.EventStores\Adapters.Framework.EventStores.csproj" />
     <ProjectReference Include="..\Adapters.Framework.Subscriptions\Adapters.Framework.Subscriptions.csproj" />
+    <ProjectReference Include="..\Adapters.Framework.WebApi\Adapters.Framework.WebApi.csproj" />
     <ProjectReference Include="..\Adapters.Json.ObjectPersistences\Adapters.Json.ObjectPersistences.csproj" />
     <ProjectReference Include="..\Application.Framework\Application.Framework.csproj" />
   </ItemGroup>

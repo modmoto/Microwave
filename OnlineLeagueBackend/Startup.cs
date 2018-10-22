@@ -1,4 +1,5 @@
-﻿using Adapters.WebApi.Seasons;
+﻿using Adapters.Framework.WebApi;
+using Adapters.WebApi.Seasons;
 using Application.Framework;
 using Application.Seasons;
 using Application.Seasons.Querries;
@@ -19,6 +20,8 @@ namespace OnlineLeagueBackend
         {
             services.AddMvc();
             services.AddTransient<SeasonController>();
+            services.AddTransient<StartEventUpdateController>();
+            services.AddTransient<DomainEventController>();
 
             services.AddTransient<SeasonCommandHandler>();
             services.AddTransient<AllSeasonsQuery>();

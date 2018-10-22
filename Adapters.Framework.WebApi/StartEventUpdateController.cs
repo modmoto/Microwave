@@ -2,7 +2,7 @@
 using Application.Framework;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Adapters.WebApi.Seasons
+namespace Adapters.Framework.WebApi
 {
     [Route("Api/StartHandler")]
     public class StartEventUpdateController : Controller

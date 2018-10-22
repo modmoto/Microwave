@@ -11,10 +11,10 @@ namespace Adapters.Framework.EventStores
 {
     public class EventRepository : IEventRepository
     {
-        private readonly DomainEventConverter _eventConverter;
+        private readonly IDomainEventConverter _eventConverter;
         private readonly EventStoreContext _eventStoreContext;
 
-        public EventRepository(DomainEventConverter eventConverter, EventStoreContext eventStoreContext)
+        public EventRepository(IDomainEventConverter eventConverter, EventStoreContext eventStoreContext)
         {
             _eventConverter = eventConverter;
             _eventStoreContext = eventStoreContext;
@@ -29,28 +29,9 @@ namespace Adapters.Framework.EventStores
             var domainEvents = stream.DomainEvents.Where(ev => ev.Version > from)
                 .Select(dbo =>
                 {
-                    var domainEvent = _eventConverter.Deserialize(dbo.Payload);
+                    var domainEvent = _eventConverter.Deserialize<DomainEvent>(dbo.Payload);
                     domainEvent.Version = dbo.Version;
                     return domainEvent;
-                });
-            return domainEvents;
-        }
-
-        //TODO make thread safe
-        public async Task<IEnumerable<T>> LoadEventsByTypeAsync<T>(long from = 0)
-            where T : DomainEvent
-        {
-            string domainEventTypeName = typeof(T).Name;
-            var stream =
-                await _eventStoreContext.TypeStreams.Include(ev => ev.DomainEvents).FirstOrDefaultAsync(str =>
-                    str.DomainEventType == domainEventTypeName);
-            if (stream == null) return new List<T>();
-            var domainEvents = stream.DomainEvents.Where(ev => ev.Version > from)
-                .Select(dbo =>
-                {
-                    var domainEvent = _eventConverter.Deserialize(dbo.Payload);
-                    domainEvent.Version = dbo.Version;
-                    return (T) domainEvent;
                 });
             return domainEvents;
         }
@@ -64,7 +45,7 @@ namespace Adapters.Framework.EventStores
             var domainEvents = stream.DomainEvents.Where(ev => ev.Version > from)
                 .Select(dbo =>
                 {
-                    var domainEvent = _eventConverter.Deserialize(dbo.Payload);
+                    var domainEvent = _eventConverter.Deserialize<DomainEvent>(dbo.Payload);
                     domainEvent.Version = dbo.Version;
                     return domainEvent;
                 });
