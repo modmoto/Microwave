@@ -8,6 +8,7 @@ using Adapters.Json.ObjectPersistences;
 using Application.Framework;
 using EventStore.ClientAPI;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace DependencyInjection.Framework
@@ -78,7 +79,7 @@ namespace DependencyInjection.Framework
         }
 
         public static IServiceCollection AddMyEventStoreDependencies(this IServiceCollection services,
-            Assembly assembly)
+            Assembly assembly, IConfiguration configuration)
         {
             services.AddTransient<IEventStoreFacade, MyEventStore>();
             services.AddTransient<IEventRepository, EventRepository>();
@@ -88,7 +89,7 @@ namespace DependencyInjection.Framework
             services.AddTransient<IEventRepository, EventRepository>();
             services.AddTransient<IVersionRepository, VersionRepository>();
             services.AddTransient<AsyncEventDelegator>();
-            services.AddTransient<IEventLocationConfig, EventLocationConfig>();
+            services.AddSingleton(new EventLocationConfig(configuration));
 
             return services;
         }
