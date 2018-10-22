@@ -7,11 +7,11 @@ using Domain.Framework;
 
 namespace Adapters.Framework.EventStores
 {
-    public class MyEventStore : IEventStoreFacade
+    public class EventStore : IEventStoreFacade
     {
         private readonly IEventRepository _eventRepository;
 
-        public MyEventStore(IEventRepository eventRepository )
+        public EventStore(IEventRepository eventRepository )
         {
             _eventRepository = eventRepository;
         }

@@ -14,11 +14,12 @@ namespace DependencyInjection.Framework
         public static IServiceCollection AddMyEventStoreDependencies(this IServiceCollection services,
             Assembly assembly, IConfiguration configuration)
         {
-            services.AddTransient<IEventStoreFacade, MyEventStore>();
+            services.AddTransient<IEventStoreFacade, Adapters.Framework.EventStores.EventStore>();
             services.AddTransient<IEventRepository, EventRepository>();
             services.AddTransient<IDomainEventConverter, DomainEventConverter>();
             services.AddDbContext<EventStoreContext>(option => option.UseSqlite("Data Source=Eventstore.db"));
             services.AddDbContext<SubscriptionContext>(option => option.UseSqlite("Data Source=SubscriptionContext.db"));
+            services.AddDbContext<QueryContext>(option => option.UseSqlite("Data Source=QueryContext.db"));
             services.AddTransient<IEventRepository, EventRepository>();
             services.AddTransient<IVersionRepository, VersionRepository>();
             services.AddTransient<AsyncEventDelegator>();
