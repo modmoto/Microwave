@@ -6,6 +6,7 @@ namespace Application.Framework
     public class QueryEventHandler<T, TEvent> where T : Query where TEvent : DomainEvent
     {
         private readonly IQeryRepository _qeryRepository;
+        private readonly object _lock = new object();
 
         public QueryEventHandler(IQeryRepository qeryRepository)
         {
@@ -14,16 +15,19 @@ namespace Application.Framework
 
         public async Task HandleAsync(TEvent domainEvent)
         {
-            // Todo mache threadsafe
-            var query = await _qeryRepository.Load<T>();
-            query.Handle(domainEvent);
-            await _qeryRepository.Save(query);
+            lock (_lock)
+            {
+                var query = _qeryRepository.Load<T>().Result;
+                query.Handle(domainEvent);
+                _qeryRepository.Save(query).Wait();
+            }
         }
     }
 
     public class IdentifiableQueryEventHandler<T, TEvent> where T : IdentifiableQuery where TEvent : DomainEvent
     {
         private readonly IQeryRepository _qeryRepository;
+        private readonly object _lock = new object();
 
         public IdentifiableQueryEventHandler(IQeryRepository qeryRepository)
         {
@@ -32,10 +36,12 @@ namespace Application.Framework
 
         public async Task HandleAsync(TEvent domainEvent)
         {
-            // Todo mache threadsafe
-            var query = await _qeryRepository.Load<T>(domainEvent.EntityId);
-            query.Handle(domainEvent);
-            await _qeryRepository.Save(query);
+            lock (_lock)
+            {
+                var query = _qeryRepository.Load<T>(domainEvent.EntityId).Result;
+                query.Handle(domainEvent);
+                _qeryRepository.Save(query).Wait();
+            }
         }
     }
 }
