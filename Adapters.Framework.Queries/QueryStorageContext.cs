@@ -1,16 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore;
 
-namespace Adapters.Framework.EventStores
+namespace Adapters.Framework.Queries
 {
-    public sealed class QueryContext : DbContext
+    public sealed class QueryStorageContext : DbContext
     {
         public DbSet<QueryDbo> Querries { get; set; }
         public DbSet<IdentifiableQueryDbo> IdentifiableQuerries { get; set; }
 
-        public QueryContext(DbContextOptions<QueryContext> options) :
+        public QueryStorageContext(DbContextOptions<QueryStorageContext> options) :
             base(options)
         {
         }

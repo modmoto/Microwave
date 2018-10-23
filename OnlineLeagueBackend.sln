@@ -32,6 +32,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Adapters.Framework.Subscrip
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Adapters.Framework.WebApi", "Adapters.Framework.WebApi\Adapters.Framework.WebApi.csproj", "{B2D98342-A15D-415C-8AEB-277F8D1CE93B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Adapters.Framework.Queries", "Adapters.Framework.Queries\Adapters.Framework.Queries.csproj", "{041E1443-21E4-4340-8389-2C8336C3209D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -102,5 +104,9 @@ Global
 		{B2D98342-A15D-415C-8AEB-277F8D1CE93B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B2D98342-A15D-415C-8AEB-277F8D1CE93B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B2D98342-A15D-415C-8AEB-277F8D1CE93B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{041E1443-21E4-4340-8389-2C8336C3209D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{041E1443-21E4-4340-8389-2C8336C3209D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{041E1443-21E4-4340-8389-2C8336C3209D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{041E1443-21E4-4340-8389-2C8336C3209D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

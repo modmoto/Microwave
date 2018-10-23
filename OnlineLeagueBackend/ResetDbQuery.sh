@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-rm -f OnlineLeagueBackend/QueryContext.db
-cd Adapters.Framework.EventStores/
+rm -f OnlineLeagueBackend/QueryStorageContext.db
+cd Adapters.Framework.Queries/
 
-dotnet ef migrations remove -s ../OnlineLeagueBackend/ --context QueryContext
-dotnet ef migrations add InitialMigrationQuery -s ../OnlineLeagueBackend/ --context QueryContext
-dotnet ef database update -s ../OnlineLeagueBackend/ --context QueryContext
+dotnet ef migrations remove -s ../OnlineLeagueBackend/ --context QueryStorageContext
+dotnet ef migrations add InitialMigrationQuery -s ../OnlineLeagueBackend/ --context QueryStorageContext
+dotnet ef database update -s ../OnlineLeagueBackend/ --context QueryStorageContext
 
 cd ..
