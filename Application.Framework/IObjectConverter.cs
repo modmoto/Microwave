@@ -3,9 +3,9 @@ using Domain.Framework;
 
 namespace Application.Framework
 {
-    public interface IDomainEventConverter
+    public interface IObjectConverter
     {
-        string Serialize<T>(T eve) where T : DomainEvent;
+        string Serialize<T>(T eve);
         T Deserialize<T>(string payLoad);
         IEnumerable<T> DeserializeList<T>(string payLoad);
     }

@@ -10,10 +10,10 @@ namespace Adapters.Framework.EventStores
 {
     public class EventRepository : IEventRepository
     {
-        private readonly IDomainEventConverter _eventConverter;
+        private readonly IObjectConverter _eventConverter;
         private readonly EventStoreContext _eventStoreContext;
 
-        public EventRepository(IDomainEventConverter eventConverter, EventStoreContext eventStoreContext)
+        public EventRepository(IObjectConverter eventConverter, EventStoreContext eventStoreContext)
         {
             _eventConverter = eventConverter;
             _eventStoreContext = eventStoreContext;

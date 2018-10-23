@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 
 namespace Adapters.Json.ObjectPersistences
 {
-    public class DomainEventConverter : IDomainEventConverter
+    public class ObjectConverter : IObjectConverter
     {
         private readonly JsonSerializerSettings _settings = new JsonSerializerSettings
         {
@@ -14,7 +14,7 @@ namespace Adapters.Json.ObjectPersistences
             ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor
         };
 
-        public string Serialize<T>(T eve) where T : DomainEvent
+        public string Serialize<T>(T eve)
         {
             return JsonConvert.SerializeObject(eve, _settings);
         }
