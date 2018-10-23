@@ -23,7 +23,10 @@ namespace DependencyInjection.Framework
             services.AddDbContext<QueryStorageContext>(option => option.UseSqlite("Data Source=QueryContext.db"));
             services.AddTransient<IEventRepository, EventRepository>();
             services.AddTransient<IVersionRepository, VersionRepository>();
+            services.AddTransient<IQeryRepository, QueryRepository>();
+
             services.AddTransient<AsyncEventDelegator>();
+
             services.AddSingleton(new EventLocationConfig(configuration));
 
             return services;
