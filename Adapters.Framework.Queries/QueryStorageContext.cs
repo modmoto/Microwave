@@ -20,7 +20,8 @@ namespace Adapters.Framework.Queries
             modelBuilder.Entity<QueryDbo>()
                 .Property(b => b.RowVersion)
                 .ValueGeneratedOnAddOrUpdate()
-                .IsConcurrencyToken();
+                .IsConcurrencyToken()
+                .ForSqliteHasDefaultValueSql();
         }
     }
 

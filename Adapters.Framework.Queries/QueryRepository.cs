@@ -21,8 +21,8 @@ namespace Adapters.Framework.Queries
         public async Task<T> Load<T>() where T : Query
         {
             var name = typeof(T).Name;
-            var querry = await _context.Querries.FirstOrDefaultAsync(query => query.Type == name);
-            return _converter.Deserialize<T>(querry.Payload);
+§            var query = await _context.Querries.FirstOrDefaultAsync(queryDbo => queryDbo.Type == name);
+            return _converter.Deserialize<T>(query.Payload);
         }
 
         public async Task<T> Load<T>(Guid id) where T : IdentifiableQuery
@@ -36,11 +36,10 @@ namespace Adapters.Framework.Queries
             var queryDbo = new QueryDbo
             {
                 Type = query.Type,
-                RowVersion = BitConverter.GetBytes(query.Version),
                 Payload = _converter.Serialize(query)
             };
 
-            _context.Querries.Upsert(queryDbo).Run();
+            _context.Querries.Add(queryDbo);
             await _context.SaveChangesAsync();
         }
 
@@ -53,7 +52,7 @@ namespace Adapters.Framework.Queries
                 Payload = _converter.Serialize(query)
             };
 
-            _context.IdentifiableQuerries.Upsert(identifiableQueryDbo).Run();
+            _context.IdentifiableQuerries.Add(identifiableQueryDbo);
             await _context.SaveChangesAsync();
         }
     }
