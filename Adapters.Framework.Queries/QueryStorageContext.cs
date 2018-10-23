@@ -13,12 +13,23 @@ namespace Adapters.Framework.Queries
             base(options)
         {
         }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<QueryDbo>()
+                .Property(b => b.RowVersion)
+                .ValueGeneratedOnAddOrUpdate()
+                .IsConcurrencyToken();
+        }
     }
 
     public class IdentifiableQueryDbo
     {
         public Guid Id { get; set; }
         public string Payload { get; set; }
+        [Timestamp]
+        public byte[] RowVersion { get; set; }
     }
 
     public class QueryDbo
@@ -26,5 +37,7 @@ namespace Adapters.Framework.Queries
         [Key]
         public string Type { get; set; }
         public string Payload { get; set; }
+        [Timestamp]
+        public byte[] RowVersion { get; set; }
     }
 }

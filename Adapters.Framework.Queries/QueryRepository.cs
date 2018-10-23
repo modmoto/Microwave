@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Application.Framework;
@@ -19,7 +20,8 @@ namespace Adapters.Framework.Queries
 
         public async Task<T> Load<T>() where T : Query
         {
-            var querry = await _context.Querries.FirstOrDefaultAsync(query => query.Type == typeof(T).Name);
+            var name = typeof(T).Name;
+            var querry = await _context.Querries.FirstOrDefaultAsync(query => query.Type == name);
             return _converter.Deserialize<T>(querry.Payload);
         }
 
@@ -31,36 +33,28 @@ namespace Adapters.Framework.Queries
 
         public async Task Save(Query query)
         {
-            var queryDbo = await _context.Querries.FirstOrDefaultAsync(q => q.Type == query.GetType().Name);
-            if (queryDbo == null)
+            var queryDbo = new QueryDbo
             {
-                _context.Querries.Add(new QueryDbo
-                {
-                    Payload = _converter.Serialize(query)
-                });
-            }
-            else
-            {
-                queryDbo.Payload = _converter.Serialize(query);
-                _context.Querries.Update(queryDbo);
-            }
+                Type = query.Type,
+                RowVersion = BitConverter.GetBytes(query.Version),
+                Payload = _converter.Serialize(query)
+            };
+
+            _context.Querries.Upsert(queryDbo).Run();
+            await _context.SaveChangesAsync();
         }
 
         public async Task Save(IdentifiableQuery query)
         {
-            var queryDbo = await _context.IdentifiableQuerries.FirstOrDefaultAsync(q => q.Id == query.Id);
-            if (queryDbo == null)
+            var identifiableQueryDbo = new IdentifiableQueryDbo
             {
-                _context.IdentifiableQuerries.Add(new IdentifiableQueryDbo
-                {
-                    Payload = _converter.Serialize(query)
-                });
-            }
-            else
-            {
-                queryDbo.Payload = _converter.Serialize(query);
-                _context.IdentifiableQuerries.Update(queryDbo);
-            }
+                Id = query.Id,
+                RowVersion = BitConverter.GetBytes(query.Version),
+                Payload = _converter.Serialize(query)
+            };
+
+            _context.IdentifiableQuerries.Upsert(identifiableQueryDbo).Run();
+            await _context.SaveChangesAsync();
         }
     }
 }

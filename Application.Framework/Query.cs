@@ -6,7 +6,7 @@ namespace Application.Framework
 {
     public class CustomQuery
     {
-        public long Version { get; private set;  }
+        public long Version { get; set;  }
 
         public void Handle(DomainEvent domainEvent)
         {
@@ -16,12 +16,12 @@ namespace Application.Framework
             var methodToExecute = methodInfos.FirstOrDefault(method => method.GetParameters().FirstOrDefault()?.ParameterType == type);
             if (methodToExecute == null || methodToExecute.GetParameters().Length != 1) return;
             methodToExecute.Invoke(this, new object[] {domainEvent});
-            Version = Version + 1;
         }
     }
 
     public class Query : CustomQuery
     {
+        public string Type => GetType().Name;
     }
 
     public class IdentifiableQuery : Query
