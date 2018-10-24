@@ -22,7 +22,9 @@ namespace Adapters.Framework.Queries
         {
             var name = typeof(T).Name;
             var query = await _context.Querries.FirstOrDefaultAsync(queryDbo => queryDbo.Type == name);
-            return _converter.Deserialize<T>(query.Payload);
+            var data = _converter.Deserialize<T>(query.Payload);
+            data.Version = query.RowVersion;
+            return data;
         }
 
         public async Task<T> Load<T>(Guid id) where T : IdentifiableQuery
@@ -36,10 +38,14 @@ namespace Adapters.Framework.Queries
             var queryDbo = new QueryDbo
             {
                 Type = query.Type,
+                RowVersion = query.Version,
                 Payload = _converter.Serialize(query)
             };
 
-            await _context.Querries.Upsert(queryDbo).RunAsync();
+            var firstOrDefault = _context.Querries.FirstOrDefault(q => q.Type == query.Type);
+            if (firstOrDefault != null) firstOrDefault.Payload = _converter.Serialize(query);
+            else await _context.Querries.AddAsync(queryDbo);
+
             await _context.SaveChangesAsync();
         }
 

@@ -8,5 +8,6 @@
     </ItemGroup>
     <ItemGroup>
       <ProjectReference Include="..\Application.Framework\Application.Framework.csproj" />
+      <ProjectReference Include="..\Application.Seasons.Querries\Application.Seasons.Querries.csproj" />
     </ItemGroup>
 </Project>

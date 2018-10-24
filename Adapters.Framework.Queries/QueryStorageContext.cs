@@ -21,7 +21,6 @@ namespace Adapters.Framework.Queries
                 .Property(b => b.RowVersion)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
                 .ValueGeneratedOnAddOrUpdate();
-
         }
     }
 
