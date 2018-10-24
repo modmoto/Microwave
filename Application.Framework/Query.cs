@@ -6,7 +6,7 @@ namespace Application.Framework
 {
     public class CustomQuery
     {
-        public long Version { get; set;  }
+        public byte[] Version { get; set;  }
 
         public void Handle(DomainEvent domainEvent)
         {

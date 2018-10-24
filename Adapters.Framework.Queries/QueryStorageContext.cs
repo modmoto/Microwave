@@ -19,9 +19,9 @@ namespace Adapters.Framework.Queries
             base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<QueryDbo>()
                 .Property(b => b.RowVersion)
-                .ValueGeneratedOnAddOrUpdate()
-                .IsConcurrencyToken();
-            // .ForSqliteHasDefaultValueSql();
+                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .ValueGeneratedOnAddOrUpdate();
+
         }
     }
 

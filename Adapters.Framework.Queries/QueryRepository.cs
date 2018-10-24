@@ -36,11 +36,10 @@ namespace Adapters.Framework.Queries
             var queryDbo = new QueryDbo
             {
                 Type = query.Type,
-                RowVersion = BitConverter.GetBytes(query.Version),
                 Payload = _converter.Serialize(query)
             };
 
-            _context.Querries.Upsert(queryDbo).Run();
+            await _context.Querries.Upsert(queryDbo).RunAsync();
             await _context.SaveChangesAsync();
         }
 
@@ -49,7 +48,6 @@ namespace Adapters.Framework.Queries
             var identifiableQueryDbo = new IdentifiableQueryDbo
             {
                 Id = query.Id,
-                RowVersion = BitConverter.GetBytes(query.Version),
                 Payload = _converter.Serialize(query)
             };
 

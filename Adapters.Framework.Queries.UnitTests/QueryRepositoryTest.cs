@@ -36,7 +36,7 @@ namespace Adapters.Framework.Queries.UnitTests
                 .Options;
 
             var queryRepository = new QueryRepository(new QueryStorageContext(options), new ObjectConverter());
-            var testQuery = new TestQuerry { UserName = "Test", Version = 10};
+            var testQuery = new TestQuerry { UserName = "Test"};
             await queryRepository.Save(testQuery);
             var query = await queryRepository.Load<TestQuerry>();
 
@@ -67,8 +67,8 @@ namespace Adapters.Framework.Queries.UnitTests
                 .Options;
 
             var queryRepository = new QueryRepository(new QueryStorageContext(options), new ObjectConverter());
-            await queryRepository.Save(new TestQuerry { UserName = "Test", Version = 10});
-            await queryRepository.Save(new TestQuerry { UserName = "NewName", Version = 11});
+            await queryRepository.Save(new TestQuerry { UserName = "Test"});
+            await queryRepository.Save(new TestQuerry { UserName = "NewName"});
             var query = await queryRepository.Load<TestQuerry>();
 
             Assert.AreEqual("NewName", query.UserName);
