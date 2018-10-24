@@ -21,6 +21,7 @@ namespace Adapters.Framework.Queries
                 .Property(b => b.RowVersion)
                 .ValueGeneratedOnAddOrUpdate()
                 .IsConcurrencyToken();
+§            // .ForSqliteHasDefaultValueSql();
         }
     }
 
