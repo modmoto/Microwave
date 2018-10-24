@@ -22,6 +22,7 @@ namespace Adapters.Framework.Queries
         {
             var name = typeof(T).Name;
             var query = await _context.Querries.FirstOrDefaultAsync(queryDbo => queryDbo.Type == name);
+            if (query == null) return null;
             var data = _converter.Deserialize<T>(query.Payload);
             data.Version = query.RowVersion;
             return data;
@@ -30,7 +31,9 @@ namespace Adapters.Framework.Queries
         public async Task<T> Load<T>(Guid id) where T : IdentifiableQuery
         {
             var querry = await _context.IdentifiableQuerries.FirstOrDefaultAsync(query => query.Id == id);
-            return _converter.Deserialize<T>(querry.Payload);
+            var deserialize = _converter.Deserialize<T>(querry.Payload);
+            deserialize.Version = querry.RowVersion;
+            return deserialize;
         }
 
         public async Task Save(Query query)
@@ -43,7 +46,10 @@ namespace Adapters.Framework.Queries
             };
 
             var firstOrDefault = _context.Querries.FirstOrDefault(q => q.Type == query.Type);
-            if (firstOrDefault != null) firstOrDefault.Payload = _converter.Serialize(query);
+            if (firstOrDefault != null)
+            {
+                firstOrDefault.Payload = _converter.Serialize(query);
+            }
             else await _context.Querries.AddAsync(queryDbo);
 
             await _context.SaveChangesAsync();
@@ -57,7 +63,10 @@ namespace Adapters.Framework.Queries
                 Payload = _converter.Serialize(query)
             };
 
-            _context.IdentifiableQuerries.Upsert(identifiableQueryDbo).Run();
+            var firstOrDefault = _context.IdentifiableQuerries.FirstOrDefault(q => q.Id == query.Id);
+            if (firstOrDefault != null) firstOrDefault.Payload = _converter.Serialize(query);
+            else await _context.IdentifiableQuerries.AddAsync(identifiableQueryDbo);
+
             await _context.SaveChangesAsync();
         }
     }

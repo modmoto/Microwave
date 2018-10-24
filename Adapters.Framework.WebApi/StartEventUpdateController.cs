@@ -27,8 +27,15 @@ namespace Adapters.Framework.WebApi
         public async Task DoSaveQUerru()
         {
             var allSeasonsQuery = await _qeryRepository.Load<AllSeasonsQuery>();
-            allSeasonsQuery.Seasons.Add(new SeasonDto());
-            await _qeryRepository.Save(allSeasonsQuery);
+            if (allSeasonsQuery != null)
+            {
+                allSeasonsQuery.Seasons.Add(new SeasonDto());
+                await _qeryRepository.Save(allSeasonsQuery);
+            }
+            else
+            {
+                await _qeryRepository.Save(new AllSeasonsQuery());
+            }
         }
     }
 }

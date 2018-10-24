@@ -19,8 +19,9 @@ namespace Adapters.Framework.Queries
             base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<QueryDbo>()
                 .Property(b => b.RowVersion)
-                .HasDefaultValueSql("CURRENT_TIMESTAMP")
-                .ValueGeneratedOnAddOrUpdate();
+                .IsRowVersion()
+                .ValueGeneratedOnAddOrUpdate()
+                .HasDefaultValueSql("CURRENT_TIMESTAMP");
         }
     }
 
