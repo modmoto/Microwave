@@ -40,6 +40,7 @@ namespace Adapters.Framework.Queries.UnitTests
             await queryRepository.Save(testQuery);
             var query = await queryRepository.Load<TestQuerry>();
 
+
             Assert.AreEqual("Test", query.UserName);
             Assert.AreEqual(11, query.Version);
         }
