@@ -261,3 +261,7 @@ __pycache__/
 *.pyc
 /Adapters.Framework.Queries/Migrations
 /OnlineLeagueBackend/QueryContext.db
+/Adapters.Framework.EventStores/Migrations/
+/OnlineLeagueBackend/SubscriptionContext.db
+/OnlineLeagueBackend/Eventstore.db
+/Adapters.Framework.Subscriptions/Migrations/
