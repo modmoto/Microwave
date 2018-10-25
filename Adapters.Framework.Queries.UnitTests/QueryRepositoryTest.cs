@@ -20,7 +20,7 @@ namespace Adapters.Framework.Queries.UnitTests
                 .UseInMemoryDatabase("UpdateQueryOptimisticConcurrency")
                 .Options;
 
-            var queryRepository = new QueryRepository(options, new ObjectConverter());
+            var queryRepository = new QueryRepository(new QueryStorageContext(options), new ObjectConverter());
             var testQuerry = new TestQuerry { UserName = "Test"};
             await queryRepository.Save(testQuerry);
 
@@ -84,7 +84,7 @@ namespace Adapters.Framework.Queries.UnitTests
                 .UseInMemoryDatabase("InsertRowVersionWorking")
                 .Options;
 
-            var queryRepository = new QueryRepository(options, new ObjectConverter());
+            var queryRepository = new QueryRepository(new QueryStorageContext(options), new ObjectConverter());
             var testQuery = new TestQuerry { UserName = "Test"};
             await queryRepository.Save(testQuery);
             var query = await queryRepository.Load<TestQuerry>();
@@ -100,7 +100,7 @@ namespace Adapters.Framework.Queries.UnitTests
                 .UseInMemoryDatabase("InsertQuery")
                 .Options;
 
-            var queryRepository = new QueryRepository(options, new ObjectConverter());
+            var queryRepository = new QueryRepository(new QueryStorageContext(options), new ObjectConverter());
             var testQuery = new TestQuerry { UserName = "Test"};
             await queryRepository.Save(testQuery);
             var query = await queryRepository.Load<TestQuerry>();
@@ -115,7 +115,7 @@ namespace Adapters.Framework.Queries.UnitTests
                 .UseInMemoryDatabase("UpdateQuery")
                 .Options;
 
-            var queryRepository = new QueryRepository(options, new ObjectConverter());
+            var queryRepository = new QueryRepository(new QueryStorageContext(options), new ObjectConverter());
             await queryRepository.Save(new TestQuerry { UserName = "Test", Version = -1});
             await queryRepository.Save(new TestQuerry { UserName = "NewName", Version = 0});
             var query = await queryRepository.Load<TestQuerry>();

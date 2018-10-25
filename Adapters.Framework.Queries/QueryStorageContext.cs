@@ -13,23 +13,13 @@ namespace Adapters.Framework.Queries
             base(options)
         {
         }
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<QueryDbo>()
-                .Property(p => p.Version)
-                .IsConcurrencyToken();
-
-            modelBuilder.Entity<IdentifiableQueryDbo>()
-                .Property(p => p.Version)
-                .IsConcurrencyToken();
-        }
     }
 
     public class IdentifiableQueryDbo
     {
         public Guid Id { get; set; }
         public string Payload { get; set; }
+        [ConcurrencyCheck]
         public long Version { get; set; }
     }
 
@@ -38,6 +28,7 @@ namespace Adapters.Framework.Queries
         [Key]
         public string Type { get; set; }
         public string Payload { get; set; }
+        [ConcurrencyCheck]
         public long Version { get; set; }
     }
 }
