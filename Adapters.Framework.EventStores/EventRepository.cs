@@ -20,7 +20,7 @@ namespace Adapters.Framework.EventStores
             _eventStoreContext = eventStoreContext;
         }
 
-        public async Task<Result<IEnumerable<DomainEvent>>> LoadEventsByEntity(Guid entityId, long from = 0)
+        public async Task<Result<IEnumerable<DomainEvent>>> LoadEventsByEntity(Guid entityId, long from = -1)
         {
             var stream =
                 await _eventStoreContext.EntityStreams.Include(ev => ev.DomainEvents).FirstOrDefaultAsync(str =>
@@ -36,7 +36,8 @@ namespace Adapters.Framework.EventStores
             return Result<IEnumerable<DomainEvent>>.Ok(domainEvents);
         }
 
-        public async Task<Result<IEnumerable<DomainEvent>>> LoadEventsByTypeAsync(string domainEventTypeName, long from = 0)
+        public async Task<Result<IEnumerable<DomainEvent>>> LoadEventsByTypeAsync(string domainEventTypeName,
+            long from = -1)
         {
             var stream =
                 await _eventStoreContext.TypeStreams.Include(ev => ev.DomainEvents).FirstOrDefaultAsync(str =>
@@ -54,8 +55,26 @@ namespace Adapters.Framework.EventStores
 
         public async Task<Result> AppendAsync(IEnumerable<DomainEvent> domainEvents, long entityVersion)
         {
+            var events = domainEvents.ToList();
+            var entityId = events.First().EntityId;
+            var entityStream = await _eventStoreContext.EntityStreams.FindAsync(entityId);
+
+            if (entityStream == null)
+            {
+                entityStream = new EntityStream
+                {
+                    EntityId = entityId,
+                    DomainEvents = new List<DomainEventWrapper>(),
+                    Version = -1L
+                };
+                _eventStoreContext.EntityStreams.Add(entityStream);
+            }
+
+            if (entityStream.Version != entityVersion)
+                return Result.ConcurrencyResult(entityStream.Version, entityVersion);
+
             var entityVersionTemp = entityVersion;
-            foreach (var domainEvent in domainEvents)
+            foreach (var domainEvent in events)
             {
                 entityVersionTemp++;
                 var domainEventWrapper = new DomainEventWrapper
@@ -67,8 +86,10 @@ namespace Adapters.Framework.EventStores
                     Version = entityVersionTemp
                 };
 
-                await _eventStoreContext.DomainEvents.AddAsync(domainEventWrapper);
+                entityStream.DomainEvents.Add(domainEventWrapper);
             }
+
+            entityStream.Version += events.Count;
 
             await _eventStoreContext.SaveChangesAsync();
             return Result.Ok();

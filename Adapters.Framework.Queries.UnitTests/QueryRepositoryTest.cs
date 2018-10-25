@@ -30,10 +30,20 @@ namespace Adapters.Framework.Queries.UnitTests
             querry1.UserName = "OverwriteName";
             querry2.UserName = "NewName";
 
-            var result1 = await queryRepository.Save(querry1);
-            Assert.IsTrue(result1.Is<Ok>());
-            var result = await queryRepository.Save(querry2);
-            Assert.Throws<ConcurrencyException>(() => result.Check());
+            var result1 = queryRepository.Save(querry1);
+            var result = queryRepository.Save(querry2);
+
+            var allResults = await Task.WhenAll(result, result1);
+
+            Assert.Throws<ConcurrencyException>(() => CheckAllResults(allResults));
+        }
+
+        private static void CheckAllResults(Result[] whenAll)
+        {
+            foreach (var result in whenAll)
+            {
+                result.Check();
+            }
         }
 
         [Test]

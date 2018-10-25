@@ -37,6 +37,7 @@ namespace Adapters.Framework.EventStores
         [Key]
         public Guid EntityId { get; set; }
         public ICollection<DomainEventWrapper> DomainEvents { get; set; }
+        public long Version { get; set; }
     }
 
     public class TypeStream
