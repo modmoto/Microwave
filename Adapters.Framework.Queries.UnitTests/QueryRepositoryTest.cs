@@ -1,3 +1,5 @@
+using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Adapters.Json.ObjectPersistences;
 using Application.Framework;
@@ -13,45 +15,89 @@ namespace Adapters.Framework.Queries.UnitTests
         public async Task UpdateQueryOptimisticConcurrency()
         {
             var options = new DbContextOptionsBuilder<QueryStorageContext>()
-                .UseInMemoryDatabase("Add_writes_to_database")
+                .UseInMemoryDatabase("UpdateQueryOptimisticConcurrency")
                 .Options;
 
-            var queryRepository = new QueryRepository(new QueryStorageContext(options), new ObjectConverter());
+            var queryRepository = new QueryRepository(options, new ObjectConverter());
             var testQuerry = new TestQuerry { UserName = "Test"};
             await queryRepository.Save(testQuerry);
+
             var querry1 = await queryRepository.Load<TestQuerry>();
             var querry2 = await queryRepository.Load<TestQuerry>();
 
-            querry2.UserName = "NewName";
             querry1.UserName = "OverwriteName";
-            await queryRepository.Save(querry2);
-            Assert.ThrowsAsync<IgnoreException>(async () => await queryRepository.Save(querry1));
+            querry2.UserName = "NewName";
+
+            var task1 = queryRepository.Save(querry1);
+            var task2 = queryRepository.Save(querry2);
+            Assert.Throws<DbUpdateConcurrencyException>(() => Task.WaitAll(task1, task2));
+        }
+
+        [Test]
+        public async Task ContextTest()
+        {
+            var options = new DbContextOptionsBuilder<QueryStorageContext>()
+                .UseInMemoryDatabase("contextTest")
+                .Options;
+
+            using (var db =  new QueryStorageContext(options))
+            {
+                db.Database.EnsureDeleted();
+                db.Database.EnsureCreated();
+                db.Querries.Add(new QueryDbo { Version = 0, Type = "Test", Payload = "LoadOld"});
+                db.SaveChanges();
+            }
+
+            var t1 = Task.Run(() =>
+            {
+                using (var db = new QueryStorageContext(options))
+                {
+                    var existing = db.Querries.Find("Test");
+                    existing.Payload = "yyy";
+                    existing.Version = 1;
+                    db.SaveChanges();
+                }
+            });
+
+            var t2 = Task.Run(() =>
+            {
+                using (var db = new QueryStorageContext(options))
+                {
+                    var existing = db.Querries.Find("Test");
+                    existing.Payload = "zzz";
+                    existing.Version = 1;
+                    db.SaveChanges();
+                }
+            });
+
+            var aggregateException = Assert.Throws<AggregateException>(() => Task.WaitAll(t1, t2));
+            Assert.AreEqual(typeof(DbUpdateConcurrencyException), aggregateException.InnerExceptions.ToList()[0].GetType());
         }
 
         [Test]
         public async Task InsertRowVersionWorking()
         {
             var options = new DbContextOptionsBuilder<QueryStorageContext>()
-                .UseInMemoryDatabase("Add_writes_to_database")
+                .UseInMemoryDatabase("InsertRowVersionWorking")
                 .Options;
 
-            var queryRepository = new QueryRepository(new QueryStorageContext(options), new ObjectConverter());
+            var queryRepository = new QueryRepository(options, new ObjectConverter());
             var testQuery = new TestQuerry { UserName = "Test"};
             await queryRepository.Save(testQuery);
             var query = await queryRepository.Load<TestQuerry>();
 
             Assert.AreEqual("Test", query.UserName);
-            Assert.AreEqual(11, query.Version);
+            Assert.AreEqual(0, query.Version);
         }
 
         [Test]
         public async Task InsertQuery()
         {
             var options = new DbContextOptionsBuilder<QueryStorageContext>()
-                .UseInMemoryDatabase("Add_writes_to_database")
+                .UseInMemoryDatabase("InsertQuery")
                 .Options;
 
-            var queryRepository = new QueryRepository(new QueryStorageContext(options), new ObjectConverter());
+            var queryRepository = new QueryRepository(options, new ObjectConverter());
             var testQuery = new TestQuerry { UserName = "Test"};
             await queryRepository.Save(testQuery);
             var query = await queryRepository.Load<TestQuerry>();
@@ -63,15 +109,16 @@ namespace Adapters.Framework.Queries.UnitTests
         public async Task UpdateQuery()
         {
             var options = new DbContextOptionsBuilder<QueryStorageContext>()
-                .UseInMemoryDatabase("Add_writes_to_database")
+                .UseInMemoryDatabase("UpdateQuery")
                 .Options;
 
-            var queryRepository = new QueryRepository(new QueryStorageContext(options), new ObjectConverter());
-            await queryRepository.Save(new TestQuerry { UserName = "Test"});
-            await queryRepository.Save(new TestQuerry { UserName = "NewName"});
+            var queryRepository = new QueryRepository(options, new ObjectConverter());
+            await queryRepository.Save(new TestQuerry { UserName = "Test", Version = 10});
+            await queryRepository.Save(new TestQuerry { UserName = "NewName", Version = 11});
             var query = await queryRepository.Load<TestQuerry>();
 
             Assert.AreEqual("NewName", query.UserName);
+            Assert.AreEqual(1, query.Version);
         }
     }
 

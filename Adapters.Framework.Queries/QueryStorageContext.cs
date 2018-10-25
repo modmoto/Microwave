@@ -16,12 +16,13 @@ namespace Adapters.Framework.Queries
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<QueryDbo>()
-                .Property(b => b.RowVersion)
-                .IsRowVersion()
-                .ValueGeneratedOnAddOrUpdate()
-                .HasDefaultValueSql("CURRENT_TIMESTAMP");
+                .Property(p => p.Version)
+                .IsConcurrencyToken();
+
+            modelBuilder.Entity<IdentifiableQueryDbo>()
+                .Property(p => p.Version)
+                .IsConcurrencyToken();
         }
     }
 
@@ -29,8 +30,7 @@ namespace Adapters.Framework.Queries
     {
         public Guid Id { get; set; }
         public string Payload { get; set; }
-        [Timestamp]
-        public byte[] RowVersion { get; set; }
+        public long Version { get; set; }
     }
 
     public class QueryDbo
@@ -38,7 +38,6 @@ namespace Adapters.Framework.Queries
         [Key]
         public string Type { get; set; }
         public string Payload { get; set; }
-        [Timestamp]
-        public byte[] RowVersion { get; set; }
+        public long Version { get; set; }
     }
 }

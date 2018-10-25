@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using Application.Framework;
-using Domain.Framework;
 using Newtonsoft.Json;
 
 namespace Adapters.Json.ObjectPersistences
