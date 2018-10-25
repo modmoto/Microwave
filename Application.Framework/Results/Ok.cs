@@ -6,4 +6,14 @@
         {
         }
     }
+
+    public class Ok<T> : Result<T>
+    {
+        public Ok(T value)
+        {
+            Value = value;
+        }
+
+        public sealed override T Value { get; protected set; }
+    }
 }

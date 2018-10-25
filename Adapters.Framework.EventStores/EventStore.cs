@@ -25,7 +25,7 @@ namespace Adapters.Framework.EventStores
         {
             var entity = new T();
             entity.Id = entityId;
-            var domainEvents = await _eventRepository.LoadEventsByEntity(entityId);
+            var domainEvents = (await _eventRepository.LoadEventsByEntity(entityId)).Value;
             return domainEvents.Aggregate(entity, (current, domainEvent) => Apply(current, domainEvent));
         }
 

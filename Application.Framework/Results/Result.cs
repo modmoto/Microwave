@@ -14,9 +14,29 @@
             return new Ok();
         }
 
-        public bool Is<T>()
+        public bool Is<T>() where T : Result
         {
             return typeof(T) == GetType();
+        }
+    }
+
+    public abstract class Result<T>
+    {
+        public abstract T Value { get; protected set; }
+
+        public static Result ConcurrencyResult(long expectedVersion, long actualVersion)
+        {
+            return new ConcurrencyError(expectedVersion, actualVersion);
+        }
+
+        public static Result<T> Ok(T value)
+        {
+            return new Ok<T>(value);
+        }
+
+        public bool Is<TCheck>() where TCheck : Result
+        {
+            return typeof(TCheck) == GetType();
         }
     }
 }
