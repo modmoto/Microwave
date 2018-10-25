@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Application.Framework;
+using Application.Framework.Results;
 using Microsoft.EntityFrameworkCore;
 
 namespace Adapters.Framework.Queries
@@ -41,13 +42,15 @@ namespace Adapters.Framework.Queries
             }
         }
 
-        public async Task Save(Query query)
+        public async Task<Result> Save(Query query)
         {
             using (var context = new QueryStorageContext(_contextOptions))
             {
                 var firstOrDefault = await context.Querries.FindAsync(query.Type);
                 if (firstOrDefault != null)
                 {
+                    if (firstOrDefault.Version != query.Version)
+                        return Result.ConcurrencyResult(firstOrDefault.Version, query.Version);
                     firstOrDefault.Payload = _converter.Serialize(query);
                     firstOrDefault.Version++;
                     context.Update(firstOrDefault);
@@ -65,6 +68,7 @@ namespace Adapters.Framework.Queries
 
                 await context.SaveChangesAsync();
             }
+            return Result.Ok();
         }
 
         public async Task Save(IdentifiableQuery query)

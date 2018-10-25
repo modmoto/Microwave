@@ -3,6 +3,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Adapters.Json.ObjectPersistences;
 using Application.Framework;
+using Application.Framework.Exceptions;
+using Application.Framework.Results;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
 
@@ -28,9 +30,10 @@ namespace Adapters.Framework.Queries.UnitTests
             querry1.UserName = "OverwriteName";
             querry2.UserName = "NewName";
 
-            var task1 = queryRepository.Save(querry1);
-            var task2 = queryRepository.Save(querry2);
-            Assert.Throws<DbUpdateConcurrencyException>(() => Task.WaitAll(task1, task2));
+            var result1 = await queryRepository.Save(querry1);
+            Assert.IsTrue(result1.Is<Ok>());
+            var result = await queryRepository.Save(querry2);
+            Assert.Throws<ConcurrencyException>(() => result.Check());
         }
 
         [Test]
@@ -113,8 +116,8 @@ namespace Adapters.Framework.Queries.UnitTests
                 .Options;
 
             var queryRepository = new QueryRepository(options, new ObjectConverter());
-            await queryRepository.Save(new TestQuerry { UserName = "Test", Version = 10});
-            await queryRepository.Save(new TestQuerry { UserName = "NewName", Version = 11});
+            await queryRepository.Save(new TestQuerry { UserName = "Test", Version = -1});
+            await queryRepository.Save(new TestQuerry { UserName = "NewName", Version = 0});
             var query = await queryRepository.Load<TestQuerry>();
 
             Assert.AreEqual("NewName", query.UserName);

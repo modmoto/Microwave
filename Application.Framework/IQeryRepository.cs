@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Application.Framework.Results;
 
 namespace Application.Framework
 {
@@ -7,7 +8,7 @@ namespace Application.Framework
     {
         Task<T> Load<T>() where T : Query;
         Task<T> Load<T>(Guid id) where T : IdentifiableQuery;
-        Task Save(Query query);
+        Task<Result> Save(Query query);
         Task Save(IdentifiableQuery query);
     }
 }
