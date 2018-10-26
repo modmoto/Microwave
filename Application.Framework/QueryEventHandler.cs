@@ -14,10 +14,9 @@ namespace Application.Framework
 
         public async Task HandleAsync(TEvent domainEvent)
         {
-            // TODO Threadsafe or occ
-            var query = _qeryRepository.Load<T>().Result;
-            query.Handle(domainEvent);
-            _qeryRepository.Save(query).Wait();
+            var query = await _qeryRepository.Load<T>();
+            query.Value.Handle(domainEvent);
+            await _qeryRepository.Save(query.Value);
         }
     }
 
@@ -32,9 +31,9 @@ namespace Application.Framework
 
         public async Task HandleAsync(TEvent domainEvent)
         {
-            var query = _qeryRepository.Load<T>(domainEvent.EntityId).Result;
-            query.Handle(domainEvent);
-            _qeryRepository.Save(query).Wait();
+            var query = await _qeryRepository.Load<T>(domainEvent.EntityId);
+            query.Value.Handle(domainEvent);
+            await _qeryRepository.Save(query.Value);
         }
     }
 }

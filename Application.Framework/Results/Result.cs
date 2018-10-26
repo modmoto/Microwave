@@ -1,4 +1,6 @@
-﻿namespace Application.Framework.Results
+﻿using System;
+
+namespace Application.Framework.Results
 {
     public abstract class Result
     {
@@ -22,7 +24,7 @@
 
     public abstract class Result<T>
     {
-        public abstract T Value { get; protected set; }
+        public abstract T Value { get; }
 
         public static Result ConcurrencyResult(long expectedVersion, long actualVersion)
         {
@@ -37,6 +39,30 @@
         public bool Is<TCheck>() where TCheck : Result
         {
             return typeof(TCheck) == GetType();
+        }
+
+        public static Result<T> NotFound(string notFoundId)
+        {
+            return new NotFoundResult<T>(notFoundId);
+        }
+    }
+
+    public class NotFoundResult<T> : Result<T>
+    {
+        public NotFoundResult(string notFoundId)
+        {
+            NotFoundId = notFoundId;
+        }
+
+        public override T Value => throw new NotFoundException(typeof(T), NotFoundId);
+
+        public string NotFoundId { get; }
+    }
+
+    public class NotFoundException : Exception
+    {
+        public NotFoundException(Type type, string id) : base ($"Could not find entity {type.Name} with ID {id}")
+        {
         }
     }
 }

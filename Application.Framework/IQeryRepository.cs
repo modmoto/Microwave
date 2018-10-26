@@ -6,9 +6,9 @@ namespace Application.Framework
 {
     public interface IQeryRepository
     {
-        Task<T> Load<T>() where T : Query;
-        Task<T> Load<T>(Guid id) where T : IdentifiableQuery;
+        Task<Result<T>> Load<T>() where T : Query;
+        Task<Result<T>> Load<T>(Guid id) where T : IdentifiableQuery;
         Task<Result> Save(Query query);
-        Task Save(IdentifiableQuery query);
+        Task<Result> Save(IdentifiableQuery query);
     }
 }

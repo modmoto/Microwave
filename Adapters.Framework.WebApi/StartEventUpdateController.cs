@@ -29,8 +29,8 @@ namespace Adapters.Framework.WebApi
             var allSeasonsQuery = await _qeryRepository.Load<AllSeasonsQuery>();
             if (allSeasonsQuery != null)
             {
-                allSeasonsQuery.Seasons.Add(new SeasonDto());
-                await _qeryRepository.Save(allSeasonsQuery);
+                allSeasonsQuery.Value.Seasons.Add(new SeasonDto());
+                await _qeryRepository.Save(allSeasonsQuery.Value);
             }
             else
             {

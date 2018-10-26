@@ -24,8 +24,8 @@ namespace Adapters.Framework.Queries.UnitTests
             var testQuerry = new TestQuerry { UserName = "Test"};
             await queryRepository.Save(testQuerry);
 
-            var querry1 = await queryRepository.Load<TestQuerry>();
-            var querry2 = await queryRepository.Load<TestQuerry>();
+            var querry1 = (await queryRepository.Load<TestQuerry>()).Value;
+            var querry2 = (await queryRepository.Load<TestQuerry>()).Value;
 
             querry1.UserName = "OverwriteName";
             querry2.UserName = "NewName";
@@ -97,7 +97,7 @@ namespace Adapters.Framework.Queries.UnitTests
             var queryRepository = new QueryRepository(new QueryStorageContext(options), new ObjectConverter());
             var testQuery = new TestQuerry { UserName = "Test"};
             await queryRepository.Save(testQuery);
-            var query = await queryRepository.Load<TestQuerry>();
+            var query = (await queryRepository.Load<TestQuerry>()).Value;
 
             Assert.AreEqual("Test", query.UserName);
             Assert.AreEqual(0, query.Version);
@@ -113,7 +113,7 @@ namespace Adapters.Framework.Queries.UnitTests
             var queryRepository = new QueryRepository(new QueryStorageContext(options), new ObjectConverter());
             var testQuery = new TestQuerry { UserName = "Test"};
             await queryRepository.Save(testQuery);
-            var query = await queryRepository.Load<TestQuerry>();
+            var query = (await queryRepository.Load<TestQuerry>()).Value;
 
             Assert.AreEqual("Test", query.UserName);
         }
@@ -128,7 +128,7 @@ namespace Adapters.Framework.Queries.UnitTests
             var queryRepository = new QueryRepository(new QueryStorageContext(options), new ObjectConverter());
             await queryRepository.Save(new TestQuerry { UserName = "Test", Version = -1});
             await queryRepository.Save(new TestQuerry { UserName = "NewName", Version = 0});
-            var query = await queryRepository.Load<TestQuerry>();
+            var query = (await queryRepository.Load<TestQuerry>()).Value;
 
             Assert.AreEqual("NewName", query.UserName);
             Assert.AreEqual(1, query.Version);

@@ -14,6 +14,6 @@
             Value = value;
         }
 
-        public sealed override T Value { get; protected set; }
+        public sealed override T Value { get; }
     }
 }
