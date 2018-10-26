@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Application.Framework.Exceptions
+namespace Domain.Framework
 {
     public class DomainValidationException : Exception
     {

@@ -13,7 +13,7 @@ namespace Domain.Seasons
             var seasonCreatedEvent = new SeasonCreatedEvent(Guid.NewGuid(), seasonName);
             var season = new Season();
             season.Apply(seasonCreatedEvent);
-            return DomainResult.OkResult(seasonCreatedEvent);
+            return DomainResult.Ok(seasonCreatedEvent);
         }
 
         public void Apply(SeasonCreatedEvent domainEvent)
@@ -31,7 +31,7 @@ namespace Domain.Seasons
         {
             var seasonNameChangedEvent = new SeasonNameChangedEvent(Id, commandName);
             Apply(seasonNameChangedEvent);
-            return DomainResult.OkResult(seasonNameChangedEvent);
+            return DomainResult.Ok(seasonNameChangedEvent);
         }
     }
 }
