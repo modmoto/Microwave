@@ -30,6 +30,8 @@ namespace Adapters.Framework.EventStores
     {
         public Guid Id { get; set; }
         public string Payload { get; set; }
+        [ConcurrencyCheck]
+        public long Created { get; set; }
     }
 
     public class EntityStream
@@ -45,5 +47,6 @@ namespace Adapters.Framework.EventStores
         [Key]
         public string DomainEventType { get; set; }
         public ICollection<DomainEventWrapper> DomainEvents { get; set; }
+        public long Version { get; set; }
     }
 }

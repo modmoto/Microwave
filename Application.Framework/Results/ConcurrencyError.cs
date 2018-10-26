@@ -2,7 +2,7 @@
 
 namespace Application.Framework.Results
 {
-    public class ConcurrencyError : Result
+    internal class ConcurrencyError : Result
     {
         public long ExpectedVersion { get; }
         public long ActualVersion { get; }

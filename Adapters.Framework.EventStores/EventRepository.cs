@@ -81,9 +81,10 @@ namespace Adapters.Framework.EventStores
                 {
                     DomainEvent = new DomainEventDbo
                     {
-                        Payload = _eventConverter.Serialize(domainEvent)
+                        Payload = _eventConverter.Serialize(domainEvent),
+                        Created = DateTimeOffset.UtcNow.Ticks
                     },
-                    Version = entityVersionTemp
+                    Version = entityVersionTemp,
                 };
 
                 entityStream.DomainEvents.Add(domainEventWrapper);
