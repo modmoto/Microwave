@@ -1,5 +1,8 @@
-﻿using Microsoft.AspNetCore;
+﻿using System.Threading.Tasks;
+using Application.Framework;
+using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace OnlineLeagueBackend
 {
@@ -8,6 +11,8 @@ namespace OnlineLeagueBackend
         public static void Main(string[] args)
         {
             var webHost = CreateWebHostBuilder(args).Build();
+//            var eventDelegator = webHost.Services.GetService<AsyncEventDelegator>();
+//            Task.Run(() => eventDelegator.Update());
             webHost.Run();
         }
 

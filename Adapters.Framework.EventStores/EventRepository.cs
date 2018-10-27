@@ -23,7 +23,7 @@ namespace Adapters.Framework.EventStores
         public async Task<Result<IEnumerable<DomainEvent>>> LoadEventsByEntity(Guid entityId, long from = -1)
         {
             var stream =
-                await _eventStoreContext.EntityStreams.Include(ev => ev.DomainEvents).FirstOrDefaultAsync(str =>
+                await _eventStoreContext.EntityStreams.Include(ev => ev.DomainEvents).ThenInclude(ev => ev.DomainEvent).FirstOrDefaultAsync(str =>
                     str.EntityId == entityId);
             if (stream == null) return Result<IEnumerable<DomainEvent>>.Ok(new List<DomainEvent>());
             var domainEvents = stream.DomainEvents.Where(ev => ev.Version > from)
@@ -40,7 +40,7 @@ namespace Adapters.Framework.EventStores
             long from = -1)
         {
             var stream =
-                await _eventStoreContext.TypeStreams.Include(ev => ev.DomainEvents).FirstOrDefaultAsync(str =>
+                await _eventStoreContext.TypeStreams.Include(ev => ev.DomainEvents).ThenInclude(ev => ev.DomainEvent).FirstOrDefaultAsync(str =>
                     str.DomainEventType == domainEventTypeName);
             if (stream == null) return Result<IEnumerable<DomainEvent>>.Ok(new List<DomainEvent>());
             var domainEvents = stream.DomainEvents.Where(ev => ev.Version > from)
