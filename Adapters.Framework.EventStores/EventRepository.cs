@@ -128,8 +128,11 @@ namespace Adapters.Framework.EventStores
 
         public async Task<Result> AppendToTypeStream(DomainEvent domainEvent)
         {
-            var typeStream = _eventStoreContext.TypeStreams.Include(e => e.DomainEvents)
-                .ThenInclude(e => e.DomainEvent).FirstOrDefault(d => d.DomainEventType == "AllDomainEventsStream");
+            var typeStream =
+                await _eventStoreContext.TypeStreams
+                    .Include(ev => ev.DomainEvents)
+                    .ThenInclude(ev => ev.DomainEvent)
+                    .FirstOrDefaultAsync(str => str.DomainEventType == domainEvent.GetType().Name);
 
             if (typeStream == null)
             {

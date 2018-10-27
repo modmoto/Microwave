@@ -21,6 +21,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Adapters.Framework.EventStores\Adapters.Framework.EventStores.csproj" />
+      <ProjectReference Include="..\Adapters.Framework.Subscriptions\Adapters.Framework.Subscriptions.csproj" />
     </ItemGroup>
 
 </Project>

@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Adapters.Framework.EventStores;
+using Adapters.Framework.Subscriptions;
 using Adapters.Json.ObjectPersistences;
+using Application.Framework;
 using Application.Framework.Exceptions;
 using Application.Framework.Results;
 using Domain.Framework;
@@ -99,6 +101,40 @@ namespace Adapters.Framework.Eventstores.UnitTests
 
             var result = await eventRepository.LoadEventsByTypeAsync(typeof(TestEvent1).Name);
             Assert.AreEqual(1, result.Value.Count());
+            Assert.AreEqual(0, result.Value.ToList()[0].Version);
+            Assert.AreEqual(newGuid, result.Value.ToList()[0].EntityId);
+            Assert.AreEqual(typeof(TestEvent1), result.Value.ToList()[0].GetType());
+        }
+
+        [Test]
+        public async Task AddEvents_RunTypeProjection()
+        {
+            var options = new DbContextOptionsBuilder<EventStoreContext>()
+                .UseInMemoryDatabase("AddEvents_RunTypeProjection")
+                .Options;
+
+            var options2 = new DbContextOptionsBuilder<SubscriptionContext>()
+                .UseInMemoryDatabase("AddEvents_RunTypeProjection")
+                .Options;
+
+            var eventStoreContext = new EventStoreContext(options);
+
+            var eventRepository = new EventRepository(new ObjectConverter(), eventStoreContext);
+
+            var newGuid = Guid.NewGuid();
+            var events = new List<DomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid), new TestEvent1(newGuid), new TestEvent2(newGuid)};
+
+            await eventRepository.AppendAsync(events, -1);
+            var versionRepo = new VersionRepository(new SubscriptionContext(options2));
+            var typeProjectionHandler = new TypeProjectionHandler(eventRepository, versionRepo);
+            var projectionHandler = new ProjectionHandler(eventRepository, versionRepo);
+
+            await projectionHandler.Update();
+            await typeProjectionHandler.Update();
+
+            var result = await eventRepository.LoadEventsByTypeAsync(typeof(TestEvent1).Name);
+            var resultAllEvents = await eventRepository.LoadEventsSince();
+            Assert.AreEqual(2, result.Value.Count());
             Assert.AreEqual(0, result.Value.ToList()[0].Version);
             Assert.AreEqual(newGuid, result.Value.ToList()[0].EntityId);
             Assert.AreEqual(typeof(TestEvent1), result.Value.ToList()[0].GetType());
