@@ -1,4 +1,3 @@
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using Application.Framework;
@@ -43,18 +42,5 @@ namespace Adapters.Framework.Subscriptions
 
             await _subscriptionContext.SaveChangesAsync();
         }
-    }
-
-    public class LastProcessedVersionDbo
-    {
-        public LastProcessedVersionDbo(string eventType, long lastVersion)
-        {
-            EventType = eventType;
-            LastVersion = lastVersion;
-        }
-
-        [Key] public string EventType { get; set; }
-
-        public long LastVersion { get; set; }
     }
 }
