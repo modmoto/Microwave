@@ -133,7 +133,7 @@ namespace Adapters.Framework.Eventstores.UnitTests
             await typeProjectionHandler.Update();
 
             var result = await eventRepository.LoadEventsByTypeAsync(typeof(TestEvent1).Name);
-            var resultAllEvents = await eventRepository.LoadEventsSince();
+
             Assert.AreEqual(2, result.Value.Count());
             Assert.AreEqual(0, result.Value.ToList()[0].Version);
             Assert.AreEqual(newGuid, result.Value.ToList()[0].EntityId);
