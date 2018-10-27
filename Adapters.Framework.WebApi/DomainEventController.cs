@@ -18,13 +18,15 @@ namespace Adapters.Framework.WebApi
         [HttpGet("DomainEventTypeStreams/{eventType}")]
         public async Task<ActionResult> GetDomainEventsByType(string eventType, [FromQuery] long myLastVersion = -1)
         {
-            return Ok(await _eventRepository.LoadEventsByTypeAsync(eventType, myLastVersion));
+            var result = await _eventRepository.LoadEventsByTypeAsync(eventType, myLastVersion);
+            return Ok(result.Value);
         }
 
         [HttpGet("EntityStreams/{entityId}")]
         public async Task<ActionResult> GetDomainEventsByEntityIdType(Guid entityId, [FromQuery] long myLastVersion = -1)
         {
-            return Ok(await _eventRepository.LoadEventsByEntity(entityId, myLastVersion));
+            var result = await _eventRepository.LoadEventsByEntity(entityId, myLastVersion);
+            return Ok(result.Value);
         }
     }
 }

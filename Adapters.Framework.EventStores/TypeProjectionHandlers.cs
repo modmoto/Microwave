@@ -17,20 +17,15 @@ namespace Adapters.Framework.EventStores
 
         public async Task Update()
         {
-            while (true)
+            var version = await _versionRepository.GetVersionAsync("TypeProjectionHandler");
+            var result = await _eventRepository.LoadEventsSince(version);
+            foreach (var domainEvent in result.Value)
             {
-                await Task.Delay(1000);
-
-                var version = await _versionRepository.GetVersionAsync("TypeProjectionHandler");
-                var result = await _eventRepository.LoadEventsSince(version);
-                foreach (var domainEvent in result.Value)
-                {
-                    await _eventRepository.AppendToTypeStream(domainEvent);
-                }
-
-                var lastVersion = result.Value.Any() ? result.Value.Last().Created : -1L;
-                await _versionRepository.SaveVersion(new LastProcessedVersion("TypeProjectionHandler", lastVersion));
+                await _eventRepository.AppendToTypeStream(domainEvent);
             }
+
+            var lastVersion = result.Value.Any() ? result.Value.Last().Created : version;
+            await _versionRepository.SaveVersion(new LastProcessedVersion("TypeProjectionHandler", lastVersion));
         }
     }
 }

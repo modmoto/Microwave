@@ -29,7 +29,7 @@ namespace Application.Framework
                 await _typeProjectionHandler.Update();
 
                 Console.WriteLine("GetNewEvents");
-                //foreach (var handler in _handler) await handler.Update();
+                foreach (var handler in _handler) await handler.Update();
             }
         }
     }

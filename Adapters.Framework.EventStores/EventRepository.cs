@@ -23,8 +23,10 @@ namespace Adapters.Framework.EventStores
         public async Task<Result<IEnumerable<DomainEvent>>> LoadEventsByEntity(Guid entityId, long from = -1)
         {
             var stream =
-                await _eventStoreContext.EntityStreams.Include(ev => ev.DomainEvents).ThenInclude(ev => ev.DomainEvent).FirstOrDefaultAsync(str =>
-                    str.EntityId == entityId);
+                await _eventStoreContext.EntityStreams
+                    .Include(ev => ev.DomainEvents)
+                    .ThenInclude(ev => ev.DomainEvent)
+                    .FirstOrDefaultAsync(str => str.EntityId == entityId);
             if (stream == null) return Result<IEnumerable<DomainEvent>>.Ok(new List<DomainEvent>());
             var domainEvents = stream.DomainEvents.Where(ev => ev.Version > from)
                 .Select(dbo =>
@@ -41,8 +43,10 @@ namespace Adapters.Framework.EventStores
             long from = -1)
         {
             var stream =
-                await _eventStoreContext.TypeStreams.Include(ev => ev.DomainEvents).ThenInclude(ev => ev.DomainEvent).FirstOrDefaultAsync(str =>
-                    str.DomainEventType == domainEventTypeName);
+                await _eventStoreContext.TypeStreams
+                    .Include(ev => ev.DomainEvents)
+                    .ThenInclude(ev => ev.DomainEvent)
+                    .FirstOrDefaultAsync(str => str.DomainEventType == domainEventTypeName);
             if (stream == null) return Result<IEnumerable<DomainEvent>>.Ok(new List<DomainEvent>());
             var domainEvents = stream.DomainEvents.Where(ev => ev.Version > from)
                 .Select(dbo =>
@@ -60,9 +64,12 @@ namespace Adapters.Framework.EventStores
             var domainEventWrappers = await _eventStoreContext.EntityStreams
                 .Include(s => s.DomainEvents)
                 .ThenInclude(e => e.DomainEvent)
-                .SelectMany(stream => stream.DomainEvents.Where(ev => ev.DomainEvent.Created > tickSince))
                 .ToListAsync();
-            var loadEventsSince = domainEventWrappers
+            var eventWrappers = domainEventWrappers
+                .SelectMany(stream => stream.DomainEvents
+                    .Where(ev => ev.DomainEvent.Created > tickSince));
+
+            var loadEventsSince = eventWrappers
                 .Select(dbo =>
                 {
                     var domainEvent = _eventConverter.Deserialize<DomainEvent>(dbo.DomainEvent.Payload);
@@ -76,7 +83,8 @@ namespace Adapters.Framework.EventStores
 
         public async Task<Result> AppendToOverallStream(IEnumerable<DomainEvent> events)
         {
-            var allStream = await _eventStoreContext.TypeStreams.FindAsync("AllDomainEventsStream");
+            var allStream = _eventStoreContext.TypeStreams.Include(e => e.DomainEvents)
+                .ThenInclude(e => e.DomainEvent).FirstOrDefault(d => d.DomainEventType == "AllDomainEventsStream");
 
             if (allStream == null)
             {
@@ -120,7 +128,8 @@ namespace Adapters.Framework.EventStores
 
         public async Task<Result> AppendToTypeStream(DomainEvent domainEvent)
         {
-            var typeStream = await _eventStoreContext.TypeStreams.FindAsync(domainEvent.GetType().Name);
+            var typeStream = _eventStoreContext.TypeStreams.Include(e => e.DomainEvents)
+                .ThenInclude(e => e.DomainEvent).FirstOrDefault(d => d.DomainEventType == "AllDomainEventsStream");
 
             if (typeStream == null)
             {
