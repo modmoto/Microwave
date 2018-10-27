@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -17,7 +18,8 @@ namespace Application.Framework
             while (true)
             {
                 await Task.Delay(1000);
-                foreach (var handler in _handler) await handler.Update();
+                Console.WriteLine("GetNewEvents");
+                //foreach (var handler in _handler) await handler.Update();
             }
         }
     }
