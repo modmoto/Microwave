@@ -59,6 +59,51 @@ namespace Adapters.Framework.Eventstores.UnitTests
             Assert.Throws<ConcurrencyException>(() => CheckAllResults(allResults));
         }
 
+        [Test]
+        public async Task AddAndLoadEventsByTimeStapmp()
+        {
+            var options = new DbContextOptionsBuilder<EventStoreContext>()
+                .UseInMemoryDatabase("AddAndLoadEventsByTimeStapmp")
+                .Options;
+
+            var eventStoreContext = new EventStoreContext(options);
+
+            var eventRepository = new EventRepository(new ObjectConverter(), eventStoreContext);
+
+            var newGuid = Guid.NewGuid();
+            var events = new List<DomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid), new TestEvent1(newGuid), new TestEvent2(newGuid)};
+
+            await eventRepository.AppendAsync(events, -1);
+
+            var result = await eventRepository.LoadEventsSince();
+            Assert.AreEqual(4, result.Value.Count());
+            Assert.AreEqual(0, result.Value.ToList()[0].Version);
+            Assert.AreEqual(newGuid, result.Value.ToList()[0].EntityId);
+        }
+
+        [Test]
+        public async Task AddAndLoadEventsByTimeStapmp_SavedAsType()
+        {
+            var options = new DbContextOptionsBuilder<EventStoreContext>()
+                .UseInMemoryDatabase("AddAndLoadEventsByTimeStapmp_SavedAsType")
+                .Options;
+
+            var eventStoreContext = new EventStoreContext(options);
+
+            var eventRepository = new EventRepository(new ObjectConverter(), eventStoreContext);
+
+            var newGuid = Guid.NewGuid();
+            var domainEvent = new TestEvent1(newGuid);
+
+            await eventRepository.AppendToTypeStream(domainEvent);
+
+            var result = await eventRepository.LoadEventsByTypeAsync(typeof(TestEvent1).Name);
+            Assert.AreEqual(1, result.Value.Count());
+            Assert.AreEqual(0, result.Value.ToList()[0].Version);
+            Assert.AreEqual(newGuid, result.Value.ToList()[0].EntityId);
+            Assert.AreEqual(typeof(TestEvent1), result.Value.ToList()[0].GetType());
+        }
+
         private static void CheckAllResults(Result[] whenAll)
         {
             foreach (var result in whenAll)

@@ -31,6 +31,7 @@ namespace Adapters.Framework.EventStores
                 {
                     var domainEvent = _eventConverter.Deserialize<DomainEvent>(dbo.DomainEvent.Payload);
                     domainEvent.Version = dbo.Version;
+                    domainEvent.Created = dbo.DomainEvent.Created;
                     return domainEvent;
                 });
             return Result<IEnumerable<DomainEvent>>.Ok(domainEvents);
@@ -48,9 +49,110 @@ namespace Adapters.Framework.EventStores
                 {
                     var domainEvent = _eventConverter.Deserialize<DomainEvent>(dbo.DomainEvent.Payload);
                     domainEvent.Version = dbo.Version;
+                    domainEvent.Created = dbo.DomainEvent.Created;
                     return domainEvent;
                 });
             return Result<IEnumerable<DomainEvent>>.Ok(domainEvents);
+        }
+
+        public async Task<Result<IEnumerable<DomainEvent>>> LoadEventsSince(long tickSince = -1)
+        {
+            var domainEventWrappers = await _eventStoreContext.EntityStreams
+                .Include(s => s.DomainEvents)
+                .ThenInclude(e => e.DomainEvent)
+                .SelectMany(stream => stream.DomainEvents.Where(ev => ev.DomainEvent.Created > tickSince))
+                .ToListAsync();
+            var loadEventsSince = domainEventWrappers
+                .Select(dbo =>
+                {
+                    var domainEvent = _eventConverter.Deserialize<DomainEvent>(dbo.DomainEvent.Payload);
+                    domainEvent.Version = dbo.Version;
+                    domainEvent.Created = dbo.DomainEvent.Created;
+                    return domainEvent;
+                });
+
+            return Result<IEnumerable<DomainEvent>>.Ok(loadEventsSince);
+        }
+
+        public async Task<Result> AppendToOverallStream(IEnumerable<DomainEvent> events)
+        {
+            var allStream = await _eventStoreContext.TypeStreams.FindAsync("AllDomainEventsStream");
+
+            if (allStream == null)
+            {
+                allStream = new TypeStream
+                {
+                    DomainEvents = new List<DomainEventWrapper>(),
+                    DomainEventType = "AllDomainEventsStream",
+                    Version = -1
+                };
+
+                _eventStoreContext.TypeStreams.Add(allStream);
+            }
+
+            var entityVersionTemp = allStream.Version;
+            foreach (var domainEvent in events)
+            {
+                entityVersionTemp++;
+                var domainEventWrapper = new DomainEventWrapper
+                {
+                    // Todo link with other domain events
+                    DomainEvent = new DomainEventDbo
+                    {
+                        Payload = _eventConverter.Serialize(domainEvent),
+                        Created = DateTimeOffset.UtcNow.Ticks
+                    },
+                    Version = entityVersionTemp
+                };
+
+                allStream.DomainEvents.Add(domainEventWrapper);
+            }
+
+            allStream.Version = entityVersionTemp;
+            await _eventStoreContext.SaveChangesAsync();
+            return Result.Ok();
+        }
+
+        public Task<Result<IEnumerable<DomainEvent>>> LoadOverallStream(long from = -1)
+        {
+            return LoadEventsByTypeAsync("AllDomainEventsStream", from);
+        }
+
+        public async Task<Result> AppendToTypeStream(DomainEvent domainEvent)
+        {
+            var typeStream = await _eventStoreContext.TypeStreams.FindAsync(domainEvent.GetType().Name);
+
+            if (typeStream == null)
+            {
+                typeStream = new TypeStream
+                {
+                    DomainEvents = new List<DomainEventWrapper>(),
+                    DomainEventType = domainEvent.GetType().Name,
+                    Version = -1
+                };
+
+                _eventStoreContext.TypeStreams.Add(typeStream);
+            }
+
+            var entityVersionTemp = typeStream.Version + 1;
+
+            var domainEventWrapper = new DomainEventWrapper
+            {
+                // Todo link with other domain events
+                DomainEvent = new DomainEventDbo
+                {
+                    Payload = _eventConverter.Serialize(domainEvent),
+                    Created = DateTimeOffset.UtcNow.Ticks
+                },
+                Version = entityVersionTemp
+            };
+
+
+            typeStream.Version = entityVersionTemp;
+            typeStream.DomainEvents.Add(domainEventWrapper);
+
+            await _eventStoreContext.SaveChangesAsync();
+            return Result.Ok();
         }
 
         public async Task<Result> AppendAsync(IEnumerable<DomainEvent> domainEvents, long entityVersion)
@@ -84,7 +186,7 @@ namespace Adapters.Framework.EventStores
                         Payload = _eventConverter.Serialize(domainEvent),
                         Created = DateTimeOffset.UtcNow.Ticks
                     },
-                    Version = entityVersionTemp,
+                    Version = entityVersionTemp
                 };
 
                 entityStream.DomainEvents.Add(domainEventWrapper);

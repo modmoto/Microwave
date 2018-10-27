@@ -7,7 +7,6 @@ namespace Adapters.Framework.EventStores
 {
     public sealed class EventStoreContext : DbContext
     {
-        public DbSet<DomainEventWrapper> DomainEvents { get; set; }
         public DbSet<EntityStream> EntityStreams { get; set; }
         public DbSet<TypeStream> TypeStreams { get; set; }
 
