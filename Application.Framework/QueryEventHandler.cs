@@ -14,9 +14,10 @@ namespace Application.Framework
 
         public async Task HandleAsync(TEvent domainEvent)
         {
-            var query = await _qeryRepository.Load<T>();
-            query.Value.Handle(domainEvent);
-            await _qeryRepository.Save(query.Value);
+            var result = await _qeryRepository.Load<T>();
+            var query = result.Value;
+            query.Handle(domainEvent);
+            await _qeryRepository.Save(query);
         }
     }
 
@@ -31,9 +32,10 @@ namespace Application.Framework
 
         public async Task HandleAsync(TEvent domainEvent)
         {
-            var query = await _qeryRepository.Load<T>(domainEvent.EntityId);
-            query.Value.Handle(domainEvent);
-            await _qeryRepository.Save(query.Value);
+            var result = await _qeryRepository.Load<T>(domainEvent.EntityId);
+            var identifiableQuery = result.Value;
+            identifiableQuery.Handle(domainEvent);
+            await _qeryRepository.Save(identifiableQuery);
         }
     }
 }
