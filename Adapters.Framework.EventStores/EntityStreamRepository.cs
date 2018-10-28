@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Application.Framework;
 using Application.Framework.Results;
 using Domain.Framework;
-using Microsoft.EntityFrameworkCore;
 
 namespace Adapters.Framework.EventStores
 {
@@ -22,82 +21,62 @@ namespace Adapters.Framework.EventStores
 
         public async Task<Result<IEnumerable<DomainEvent>>> LoadEventsByEntity(Guid entityId, long from = -1)
         {
-            var stream =
-                await _eventStoreWriteContext.EntityStreams
-                    .Include(ev => ev.DomainEvents)
-                    .FirstOrDefaultAsync(str => str.EntityId == entityId.ToString());
-            if (stream == null) return Result<IEnumerable<DomainEvent>>.NotFound(entityId.ToString());
-            var domainEvents = stream.DomainEvents.Where(ev => ev.Version > from)
-                .Select(dbo =>
+            var stream = _eventStoreWriteContext.EntityStreams
+                .Where(str => str.EntityId == entityId.ToString() && str.Version > from).ToList();
+            if (!stream.Any()) return Result<IEnumerable<DomainEvent>>.NotFound(entityId.ToString());
+
+            var domainEvents = stream.Select(dbo =>
                 {
                     var domainEvent = _eventConverter.Deserialize<DomainEvent>(dbo.Payload);
                     domainEvent.Version = dbo.Version;
                     domainEvent.Created = dbo.Created;
-                    domainEvent.DomainEventId = new Guid(dbo.Id);
                     return domainEvent;
                 });
+
             return Result<IEnumerable<DomainEvent>>.Ok(domainEvents);
         }
 
         public async Task<Result<IEnumerable<DomainEvent>>> LoadEventsSince(long tickSince = -1)
         {
-            var domainEventWrappers = await _eventStoreWriteContext.EntityStreams
-                .Include(s => s.DomainEvents)
-                .ToListAsync();
-            var eventWrappers = domainEventWrappers
-                .SelectMany(stream => stream.DomainEvents
-                    .Where(ev => ev.Created > tickSince));
+            var stream = _eventStoreWriteContext.EntityStreams
+                .Where(str => str.Created > tickSince).ToList();
+            if (!stream.Any()) return Result<IEnumerable<DomainEvent>>.Ok(new List<DomainEvent>());
 
-            var loadEventsSince = eventWrappers
-                .Select(dbo =>
-                {
-                    var domainEvent = _eventConverter.Deserialize<DomainEvent>(dbo.Payload);
-                    domainEvent.Version = dbo.Version;
-                    domainEvent.Created = dbo.Created;
-                    domainEvent.DomainEventId = new Guid(dbo.Id);
-                    return domainEvent;
-                });
+            var domainEvents = stream.Select(dbo =>
+            {
+                var domainEvent = _eventConverter.Deserialize<DomainEvent>(dbo.Payload);
+                domainEvent.Version = dbo.Version;
+                domainEvent.Created = dbo.Created;
+                return domainEvent;
+            });
 
-            return Result<IEnumerable<DomainEvent>>.Ok(loadEventsSince);
+            return Result<IEnumerable<DomainEvent>>.Ok(domainEvents);
         }
 
         public async Task<Result> AppendAsync(IEnumerable<DomainEvent> domainEvents, long entityVersion)
         {
             var events = domainEvents.ToList();
             var entityId = events.First().EntityId;
-            var entityStream = await _eventStoreWriteContext.EntityStreams.FindAsync(entityId.ToString());
+            var stream = _eventStoreWriteContext.EntityStreams
+                .Where(str => str.EntityId == entityId.ToString()).ToList();
 
-            if (entityStream == null)
-            {
-                entityStream = new EntityStream
-                {
-                    EntityId = entityId.ToString(),
-                    DomainEvents = new List<DomainEventDbo>(),
-                    Version = -1L
-                };
-                _eventStoreWriteContext.EntityStreams.Add(entityStream);
-            }
+            var entityVersionTemp = stream.Count - 1;
+            if (entityVersionTemp != entityVersion) return Result.ConcurrencyResult(entityVersionTemp, entityVersion);
 
-            if (entityStream.Version != entityVersion)
-                return Result.ConcurrencyResult(entityStream.Version, entityVersion);
-
-            var entityVersionTemp = entityVersion;
             foreach (var domainEvent in events)
             {
-                entityVersionTemp++;
+                entityVersionTemp = entityVersionTemp + 1;
                 var serialize = _eventConverter.Serialize(domainEvent);
                 var domainEventDbo = new DomainEventDbo
                 {
-                    Id = domainEvent.DomainEventId.ToString(),
                     Payload = serialize,
                     Created = DateTimeOffset.UtcNow.Ticks,
-                    Version = entityVersionTemp
+                    Version = entityVersionTemp,
+                    EntityId = domainEvent.EntityId.ToString()
                 };
 
-                entityStream.DomainEvents.Add(domainEventDbo);
+                _eventStoreWriteContext.EntityStreams.Add(domainEventDbo);
             }
-
-            entityStream.Version += events.Count;
 
             await _eventStoreWriteContext.SaveChangesAsync();
             return Result.Ok();

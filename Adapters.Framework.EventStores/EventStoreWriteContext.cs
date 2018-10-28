@@ -1,35 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore;
 
 namespace Adapters.Framework.EventStores
 {
     public sealed class EventStoreWriteContext : DbContext
     {
-        public DbSet<EntityStream> EntityStreams { get; set; }
+        public DbSet<DomainEventDbo> EntityStreams { get; set; }
 
         public EventStoreWriteContext(DbContextOptions<EventStoreWriteContext> options) :
             base(options)
         {
         }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<DomainEventDbo>()
+                .HasKey(p => new {p.EntityId , p.Version});
+        }
     }
 
     public class DomainEventDbo
     {
-        public string Id { get; set; }
+        public string EntityId { get; set; }
         public string Payload { get; set; }
         [ConcurrencyCheck]
         public long Created { get; set; }
         [ConcurrencyCheck]
-        public long Version { get; set; }
-    }
-
-    public class EntityStream
-    {
-        [Key]
-        public string EntityId { get; set; }
-        public ICollection<DomainEventDbo> DomainEvents { get; set; }
         public long Version { get; set; }
     }
 }

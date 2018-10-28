@@ -91,7 +91,33 @@ namespace Adapters.Framework.Eventstores.UnitTests
         }
 
         [Test]
-        public async Task AddAndLoadEventsByTimeStapmp()
+        public async Task Context_DoubleKeyException()
+        {
+            var options = new DbContextOptionsBuilder<EventStoreWriteContext>()
+                .UseInMemoryDatabase("Context_DoubleKeyException")
+                .Options;
+
+            var eventStoreContext = new EventStoreWriteContext(options);
+
+            var entityId = Guid.NewGuid().ToString();
+            var domainEventDbo = new DomainEventDbo
+            {
+                EntityId = entityId,
+                Version = 1
+            };
+
+            var domainEventDbo2 = new DomainEventDbo
+            {
+                EntityId = entityId,
+                Version = 1
+            };
+
+            await eventStoreContext.EntityStreams.AddAsync(domainEventDbo);
+            Assert.ThrowsAsync<InvalidOperationException>(async () => await eventStoreContext.EntityStreams.AddAsync(domainEventDbo2));
+        }
+
+        [Test]
+        public async Task AddAndLoadEventsByTimeStamp()
         {
             var options = new DbContextOptionsBuilder<EventStoreWriteContext>()
                 .UseInMemoryDatabase("AddAndLoadEventsByTimeStapmp")
