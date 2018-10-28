@@ -31,10 +31,13 @@ namespace Application.Framework
             var domainEventType = $"QuerryHandler-{typeof(TQuerry).Name}-{typeof(TEvent).Name}";
             var lastVersion = await _versionRepository.GetVersionAsync(domainEventType);
             var latestEvents = await _eventRepository.GetEventsByTypeAsync(lastVersion);
+            var domainEvents = latestEvents.ToList();
+            if (!domainEvents.Any()) return;
+
             var querry = await _qeryRepository.Load<TQuerry>();
             if (querry.Is<NotFound<TQuerry>>()) querry = Result<TQuerry>.Ok(new TQuerry());
             var querryValue = querry.Value;
-            foreach (var latestEvent in latestEvents)
+            foreach (var latestEvent in domainEvents)
             {
                 lastVersion = lastVersion + 1;
                 querryValue.Handle(latestEvent);
