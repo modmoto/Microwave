@@ -34,6 +34,7 @@ namespace Adapters.Framework.EventStores
                     var domainEvent = _eventConverter.Deserialize<DomainEvent>(dbo.DomainEvent.Payload);
                     domainEvent.Version = dbo.Version;
                     domainEvent.Created = dbo.DomainEvent.Created;
+                    domainEvent.DomainEventId = dbo.DomainEvent.Id;
                     return domainEvent;
                 });
             return Result<IEnumerable<DomainEvent>>.Ok(domainEvents);
@@ -54,6 +55,7 @@ namespace Adapters.Framework.EventStores
                     var domainEvent = _eventConverter.Deserialize<DomainEvent>(dbo.DomainEvent.Payload);
                     domainEvent.Version = dbo.Version;
                     domainEvent.Created = dbo.DomainEvent.Created;
+                    domainEvent.DomainEventId = dbo.DomainEvent.Id;
                     return domainEvent;
                 });
             return Result<IEnumerable<DomainEvent>>.Ok(domainEvents);
@@ -75,6 +77,7 @@ namespace Adapters.Framework.EventStores
                     var domainEvent = _eventConverter.Deserialize<DomainEvent>(dbo.DomainEvent.Payload);
                     domainEvent.Version = dbo.Version;
                     domainEvent.Created = dbo.DomainEvent.Created;
+                    domainEvent.DomainEventId = dbo.DomainEvent.Id;
                     return domainEvent;
                 });
 
@@ -101,15 +104,11 @@ namespace Adapters.Framework.EventStores
             var entityVersionTemp = allStream.Version;
             foreach (var domainEvent in events)
             {
+                var domainEventDbo = await GetDomainEvent(domainEvent.DomainEventId);
                 entityVersionTemp++;
                 var domainEventWrapper = new DomainEventWrapper
                 {
-                    // Todo link with other domain events
-                    DomainEvent = new DomainEventDbo
-                    {
-                        Payload = _eventConverter.Serialize(domainEvent),
-                        Created = DateTimeOffset.UtcNow.Ticks
-                    },
+                    DomainEvent = domainEventDbo,
                     Version = entityVersionTemp
                 };
 
@@ -119,6 +118,21 @@ namespace Adapters.Framework.EventStores
             allStream.Version = entityVersionTemp;
             await _eventStoreContext.SaveChangesAsync();
             return Result.Ok();
+        }
+
+        private async Task<DomainEventDbo> GetDomainEvent(Guid domainEventDomainEventId)
+        {
+            var events = await _eventStoreContext.EntityStreams
+                .Include(s => s.DomainEvents)
+                .ThenInclude(e => e.DomainEvent)
+                .ToListAsync();
+
+            var domainEventWrapper = events
+                .SelectMany(ev => ev.DomainEvents
+                .Where(e => e.DomainEvent.Id == domainEventDomainEventId))
+                .FirstOrDefault();
+
+            return domainEventWrapper?.DomainEvent;
         }
 
         public Task<Result<IEnumerable<DomainEvent>>> LoadOverallStream(long from = -1)
@@ -148,14 +162,11 @@ namespace Adapters.Framework.EventStores
 
             var entityVersionTemp = typeStream.Version + 1;
 
+            var domainEventDbo = await GetDomainEvent(domainEvent.DomainEventId);
+
             var domainEventWrapper = new DomainEventWrapper
             {
-                // Todo link with other domain events
-                DomainEvent = new DomainEventDbo
-                {
-                    Payload = _eventConverter.Serialize(domainEvent),
-                    Created = DateTimeOffset.UtcNow.Ticks
-                },
+                DomainEvent = domainEventDbo,
                 Version = entityVersionTemp
             };
 
@@ -191,14 +202,16 @@ namespace Adapters.Framework.EventStores
             foreach (var domainEvent in events)
             {
                 entityVersionTemp++;
+                var serialize = _eventConverter.Serialize(domainEvent);
                 var domainEventWrapper = new DomainEventWrapper
                 {
                     DomainEvent = new DomainEventDbo
                     {
-                        Payload = _eventConverter.Serialize(domainEvent),
+                        Id = domainEvent.DomainEventId,
+                        Payload = serialize,
                         Created = DateTimeOffset.UtcNow.Ticks
                     },
-                    Version = entityVersionTemp
+                    Version = entityVersionTemp,
                 };
 
                 entityStream.DomainEvents.Add(domainEventWrapper);

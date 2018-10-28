@@ -40,6 +40,35 @@ namespace Adapters.Framework.Eventstores.UnitTests
         }
 
         [Test]
+        public async Task LoadDomainEvents_IdAndStuffIsSetCorreclty()
+        {
+            var options = new DbContextOptionsBuilder<EventStoreContext>()
+                .UseInMemoryDatabase("LoadDomainEvents_IdAndStuffIsSetCorreclty")
+                .Options;
+
+            var eventStoreContext = new EventStoreContext(options);
+
+            var eventRepository = new EventRepository(new ObjectConverter(), eventStoreContext);
+
+            var newGuid = Guid.NewGuid();
+            var testEvent1 = new TestEvent1(newGuid);
+            var testEvent2 = new TestEvent2(newGuid);
+            var events = new List<DomainEvent> { testEvent1, testEvent2};
+
+            var res = await eventRepository.AppendAsync(events, -1);
+            res.Check();
+
+            var loadEventsByEntity = await eventRepository.LoadEventsByEntity(newGuid);
+            Assert.AreEqual(2, loadEventsByEntity.Value.Count());
+            Assert.AreEqual(0, loadEventsByEntity.Value.ToList()[0].Version);
+            Assert.AreEqual(1, loadEventsByEntity.Value.ToList()[1].Version);
+            Assert.AreEqual(newGuid, loadEventsByEntity.Value.ToList()[0].EntityId);
+            Assert.AreEqual(testEvent1.DomainEventId, loadEventsByEntity.Value.ToList()[0].DomainEventId);
+            Assert.AreEqual(testEvent2.DomainEventId, loadEventsByEntity.Value.ToList()[1].DomainEventId);
+            Assert.AreEqual(1, loadEventsByEntity.Value.ToList()[1].Version);
+        }
+
+        [Test]
         public async Task AddAndLoadEventsConcurrent()
         {
             var options = new DbContextOptionsBuilder<EventStoreContext>()

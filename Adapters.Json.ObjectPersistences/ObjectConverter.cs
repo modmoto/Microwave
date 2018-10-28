@@ -9,8 +9,7 @@ namespace Adapters.Json.ObjectPersistences
         private readonly JsonSerializerSettings _settings = new JsonSerializerSettings
         {
             TypeNameHandling = TypeNameHandling.All,
-            ContractResolver = new PrivateSetterContractResolver(),
-            ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor
+            ContractResolver = new PrivateSetterContractResolver()
         };
 
         public string Serialize<T>(T eve)
