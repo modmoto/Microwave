@@ -26,7 +26,7 @@ namespace Adapters.Framework.EventStores
             var stream = _eventStoreReadContext.TypeStreams
                 .Where(str => str.DomainEventType == domainEventTypeName && str.Version > from).ToList();
 
-            if (!stream.Any()) return Result<IEnumerable<DomainEvent>>.NotFound(domainEventTypeName);
+            if (!stream.Any()) return Result<IEnumerable<DomainEvent>>.Ok(new List<DomainEvent>());
 
             var domainEvents = stream.Select(dbo =>
                 {
