@@ -61,7 +61,7 @@ namespace Adapters.Framework.EventStores
                 .Where(str => str.EntityId == entityId.ToString()).ToList();
 
             var entityVersionTemp = stream.Count - 1;
-            if (entityVersionTemp != entityVersion) return Result.ConcurrencyResult(entityVersionTemp, entityVersion);
+            if (entityVersionTemp != entityVersion) return Result.ConcurrencyResult(entityVersion, entityVersionTemp);
 
             foreach (var domainEvent in events)
             {
