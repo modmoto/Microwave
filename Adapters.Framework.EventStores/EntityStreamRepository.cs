@@ -26,7 +26,7 @@ namespace Adapters.Framework.EventStores
                 await _eventStoreWriteContext.EntityStreams
                     .Include(ev => ev.DomainEvents)
                     .FirstOrDefaultAsync(str => str.EntityId == entityId);
-            if (stream == null) return Result<IEnumerable<DomainEvent>>.Ok(new List<DomainEvent>());
+            if (stream == null) return Result<IEnumerable<DomainEvent>>.NotFound(entityId.ToString());
             var domainEvents = stream.DomainEvents.Where(ev => ev.Version > from)
                 .Select(dbo =>
                 {
