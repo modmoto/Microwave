@@ -18,12 +18,14 @@ namespace DependencyInjection.Framework
             services.AddTransient<IEventStoreFacade, EventStore>();
             services.AddTransient<IEntityStreamRepository, EntityStreamRepository>();
             services.AddTransient<IObjectConverter, ObjectConverter>();
-            services.AddDbContext<EventStoreWriteContext>(option => option.UseSqlite("Data Source=Eventstore.db"));
+            services.AddDbContext<EventStoreWriteContext>(option => option.UseSqlite("Data Source=EventStoreReadContext.db"));
+            services.AddDbContext<EventStoreReadContext>(option => option.UseSqlite("Data Source=EventStoreWriteContext.db"));
             services.AddDbContext<SubscriptionContext>(option => option.UseSqlite("Data Source=SubscriptionContext.db"));
             services.AddDbContext<QueryStorageContext>(option => option.UseSqlite("Data Source=QueryStorageContext.db"));
             services.AddTransient<IEntityStreamRepository, EntityStreamRepository>();
             services.AddTransient<IVersionRepository, VersionRepository>();
-            services.AddTransient<IQeryRepository, QueryRepository>();
+            services.AddTransient<IOverallProjectionRepository, OverallProjectionRepository>();
+            services.AddTransient<ITypeProjectionRepository, TypeProjectionRepository>();
 
             services.AddTransient<AsyncEventDelegator>();
             services.AddTransient<IProjectionHandler, ProjectionHandler>();

@@ -265,3 +265,5 @@ __pycache__/
 /OnlineLeagueBackend/Eventstore.db
 /Adapters.Framework.Subscriptions/Migrations/
 /OnlineLeagueBackend/QueryStorageContext.db
+/OnlineLeagueBackend/EventStoreReadContext.db
+/OnlineLeagueBackend/EventStoreWriteContext.db
