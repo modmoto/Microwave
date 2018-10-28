@@ -24,6 +24,7 @@ namespace DependencyInjection.Framework
             services.AddDbContext<QueryStorageContext>(option => option.UseSqlite("Data Source=QueryStorageContext.db"));
             services.AddTransient<IEntityStreamRepository, EntityStreamRepository>();
             services.AddTransient<IVersionRepository, VersionRepository>();
+            services.AddTransient<IQeryRepository, QueryRepository>();
             services.AddTransient<IOverallProjectionRepository, OverallProjectionRepository>();
             services.AddTransient<ITypeProjectionRepository, TypeProjectionRepository>();
 

@@ -34,7 +34,7 @@
             return new Ok<T>(value);
         }
 
-        public bool Is<TCheck>() where TCheck : Result
+        public bool Is<TCheck>() where TCheck : Result<T>
         {
             return typeof(TCheck) == GetType();
         }

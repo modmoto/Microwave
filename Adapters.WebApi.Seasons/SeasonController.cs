@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Application.Framework;
 using Application.Seasons;
 using Application.Seasons.Commands;
+using Application.Seasons.Querries;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Adapters.WebApi.Seasons
@@ -10,32 +12,34 @@ namespace Adapters.WebApi.Seasons
     public class SeasonController : Controller
     {
         private readonly SeasonCommandHandler _commandHandler;
+        private readonly IQeryRepository _qeryRepository;
 
-        public SeasonController(SeasonCommandHandler commandHandler)
+        public SeasonController(SeasonCommandHandler commandHandler, IQeryRepository qeryRepository)
         {
             _commandHandler = commandHandler;
+            _qeryRepository = qeryRepository;
         }
 
-//        [HttpGet]
-//        public ActionResult GetSeasons()
-//        {
-//            var seasons = _eventHandler.GetAllSeasons();
-//            return Ok(seasons);
-//        }
-//
+        [HttpGet]
+        public async Task<ActionResult> GetSeasons()
+        {
+            var seasons = await _qeryRepository.Load<AllSeasonsQuery>();
+            return Ok(seasons.Value);
+        }
+
 //        [HttpGet("{entityId}")]
 //        public ActionResult GetSeason(Guid entityId)
 //        {
 //            var seasons = _eventHandler.GetSeason(entityId);
 //            return Ok(seasons);
 //        }
-//
-//        [HttpGet("Counter")]
-//        public ActionResult GetSeasonsCount()
-//        {
-//            var counter = _counterQueryHandler.GetSeasonCount();
-//            return Ok(counter);
-//        }
+
+        [HttpGet("Counter")]
+        public async Task<ActionResult> GetSeasonsCount()
+        {
+            var counter = await _qeryRepository.Load<AllSeasonsCounterQuery>();
+            return Ok(counter.Value);
+        }
 
         [HttpPost("Create")]
         public async Task<IActionResult> CreateSeason([FromBody] CreateSesonCommand command)
