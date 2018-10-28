@@ -113,7 +113,7 @@ namespace Adapters.Framework.Eventstores.UnitTests
         }
 
         [Test]
-        public async Task AddAndLoadEventsByTimeStapmp_SavedAsType()
+        public async Task AddAndLoadEventsByTimeStamp_SavedAsType()
         {
             var options = new DbContextOptionsBuilder<EventStoreContext>()
                 .UseInMemoryDatabase("AddAndLoadEventsByTimeStapmp_SavedAsType")
@@ -126,6 +126,7 @@ namespace Adapters.Framework.Eventstores.UnitTests
             var newGuid = Guid.NewGuid();
             var domainEvent = new TestEvent1(newGuid);
 
+            await eventRepository.AppendAsync(new List<DomainEvent> { domainEvent }, -1);
             await eventRepository.AppendToTypeStream(domainEvent);
 
             var result = await eventRepository.LoadEventsByTypeAsync(typeof(TestEvent1).Name);
