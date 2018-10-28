@@ -6,20 +6,26 @@ namespace Adapters.Framework.EventStores
 {
     public class ProjectionHandler : IProjectionHandler
     {
-        private readonly IEventRepository _eventRepository;
+        private readonly IOverallProjectionRepository _overallProjectionRepository;
+        private readonly IEntityStreamRepository _streamRepository;
         private readonly IVersionRepository _versionRepository;
 
-        public ProjectionHandler(IEventRepository eventRepository, IVersionRepository versionRepository)
+        public ProjectionHandler(
+            IOverallProjectionRepository overallProjectionRepository,
+            IEntityStreamRepository streamRepository,
+            IVersionRepository versionRepository)
         {
-            _eventRepository = eventRepository;
+            _overallProjectionRepository = overallProjectionRepository;
+            _streamRepository = streamRepository;
             _versionRepository = versionRepository;
         }
 
         public async Task Update()
         {
             var version = await _versionRepository.GetVersionAsync("AllDomainEventProjections");
-            var result = await _eventRepository.LoadEventsSince(version);
-            await _eventRepository.AppendToOverallStream(result.Value);
+            //TODO [ber api machen
+            var result = await _streamRepository.LoadEventsSince(version);
+            await _overallProjectionRepository.AppendToOverallStream(result.Value);
             var lastVersion = result.Value.Any() ? result.Value.Last().Created : version;
             await _versionRepository.SaveVersion(new LastProcessedVersion("AllDomainEventProjections", lastVersion));
         }

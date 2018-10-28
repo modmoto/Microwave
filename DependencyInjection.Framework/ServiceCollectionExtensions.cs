@@ -16,12 +16,12 @@ namespace DependencyInjection.Framework
             Assembly assembly, IConfiguration configuration)
         {
             services.AddTransient<IEventStoreFacade, EventStore>();
-            services.AddTransient<IEventRepository, EventRepository>();
+            services.AddTransient<IEntityStreamRepository, EntityStreamRepository>();
             services.AddTransient<IObjectConverter, ObjectConverter>();
             services.AddDbContext<EventStoreWriteContext>(option => option.UseSqlite("Data Source=Eventstore.db"));
             services.AddDbContext<SubscriptionContext>(option => option.UseSqlite("Data Source=SubscriptionContext.db"));
             services.AddDbContext<QueryStorageContext>(option => option.UseSqlite("Data Source=QueryStorageContext.db"));
-            services.AddTransient<IEventRepository, EventRepository>();
+            services.AddTransient<IEntityStreamRepository, EntityStreamRepository>();
             services.AddTransient<IVersionRepository, VersionRepository>();
             services.AddTransient<IQeryRepository, QueryRepository>();
 

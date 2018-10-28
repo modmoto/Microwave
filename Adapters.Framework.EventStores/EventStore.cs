@@ -9,23 +9,23 @@ namespace Adapters.Framework.EventStores
 {
     public class EventStore : IEventStoreFacade
     {
-        private readonly IEventRepository _eventRepository;
+        private readonly IEntityStreamRepository _entityStreamRepository;
 
-        public EventStore(IEventRepository eventRepository )
+        public EventStore(IEntityStreamRepository entityStreamRepository )
         {
-            _eventRepository = eventRepository;
+            _entityStreamRepository = entityStreamRepository;
         }
 
         public async Task AppendAsync(IEnumerable<DomainEvent> domainEvents, long entityVersion)
         {
-            await _eventRepository.AppendAsync(domainEvents, entityVersion);
+            await _entityStreamRepository.AppendAsync(domainEvents, entityVersion);
         }
 
         public async Task<T> LoadAsync<T>(Guid entityId) where T : Entity, new()
         {
             var entity = new T();
             entity.Id = entityId;
-            var domainEvents = (await _eventRepository.LoadEventsByEntity(entityId)).Value;
+            var domainEvents = (await _entityStreamRepository.LoadEventsByEntity(entityId)).Value;
             return domainEvents.Aggregate(entity, (current, domainEvent) => Apply(current, domainEvent));
         }
 

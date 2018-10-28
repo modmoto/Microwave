@@ -25,13 +25,7 @@ namespace Adapters.Framework.Eventstores.UnitTests
 
             var eventStoreContext = new EventStoreWriteContext(options);
 
-            var optionsRead = new DbContextOptionsBuilder<EventStoreReadContext>()
-                .UseInMemoryDatabase("AddEventsRead")
-                .Options;
-
-            var eventStoreReadContext = new EventStoreReadContext(optionsRead);
-
-            var eventRepository = new EventRepository(new ObjectConverter(), eventStoreContext, eventStoreReadContext);
+            var eventRepository = new EntityStreamRepository(new ObjectConverter(), eventStoreContext);
 
             var newGuid = Guid.NewGuid();
             var events = new List<DomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid)};
@@ -54,13 +48,7 @@ namespace Adapters.Framework.Eventstores.UnitTests
 
             var eventStoreContext = new EventStoreWriteContext(options);
 
-            var optionsRead = new DbContextOptionsBuilder<EventStoreReadContext>()
-                .UseInMemoryDatabase("LoadDomainEvents_IdAndStuffIsSetCorrecltyRead")
-                .Options;
-
-            var eventStoreReadContext = new EventStoreReadContext(optionsRead);
-
-            var eventRepository = new EventRepository(new ObjectConverter(), eventStoreContext, eventStoreReadContext);
+            var eventRepository = new EntityStreamRepository(new ObjectConverter(), eventStoreContext);
 
             var newGuid = Guid.NewGuid();
             var testEvent1 = new TestEvent1(newGuid);
@@ -89,13 +77,7 @@ namespace Adapters.Framework.Eventstores.UnitTests
 
             var eventStoreContext = new EventStoreWriteContext(options);
 
-            var optionsRead = new DbContextOptionsBuilder<EventStoreReadContext>()
-                .UseInMemoryDatabase("AddAndLoadEventsConcurrentRead")
-                .Options;
-
-            var eventStoreReadContext = new EventStoreReadContext(optionsRead);
-
-            var eventRepository = new EventRepository(new ObjectConverter(), eventStoreContext, eventStoreReadContext);
+            var eventRepository = new EntityStreamRepository(new ObjectConverter(), eventStoreContext);
 
             var newGuid = Guid.NewGuid();
             var events = new List<DomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid)};
@@ -117,13 +99,7 @@ namespace Adapters.Framework.Eventstores.UnitTests
 
             var eventStoreContext = new EventStoreWriteContext(options);
 
-            var optionsRead = new DbContextOptionsBuilder<EventStoreReadContext>()
-                .UseInMemoryDatabase("AddAndLoadEventsByTimeStapmpRead")
-                .Options;
-
-            var eventStoreReadContext = new EventStoreReadContext(optionsRead);
-
-            var eventRepository = new EventRepository(new ObjectConverter(), eventStoreContext, eventStoreReadContext);
+            var eventRepository = new EntityStreamRepository(new ObjectConverter(), eventStoreContext);
 
             var newGuid = Guid.NewGuid();
             var events = new List<DomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid), new TestEvent1(newGuid), new TestEvent2(newGuid)};
@@ -151,15 +127,16 @@ namespace Adapters.Framework.Eventstores.UnitTests
 
             var eventStoreReadContext = new EventStoreReadContext(optionsRead);
 
-            var eventRepository = new EventRepository(new ObjectConverter(), eventStoreContext, eventStoreReadContext);
+            var eventRepository = new EntityStreamRepository(new ObjectConverter(), eventStoreContext);
+            var typeProjectionRepository = new TypeProjectionRepository(new ObjectConverter(), eventStoreReadContext);
 
             var newGuid = Guid.NewGuid();
             var domainEvent = new TestEvent1(newGuid);
 
             await eventRepository.AppendAsync(new List<DomainEvent> { domainEvent }, -1);
-            await eventRepository.AppendToTypeStream(domainEvent);
+            await typeProjectionRepository.AppendToTypeStream(domainEvent);
 
-            var result = await eventRepository.LoadEventsByTypeAsync(typeof(TestEvent1).Name);
+            var result = await typeProjectionRepository.LoadEventsByTypeAsync(typeof(TestEvent1).Name);
             Assert.AreEqual(1, result.Value.Count());
             Assert.AreEqual(0, result.Value.ToList()[0].Version);
             Assert.AreEqual(newGuid, result.Value.ToList()[0].EntityId);
@@ -185,20 +162,22 @@ namespace Adapters.Framework.Eventstores.UnitTests
 
             var eventStoreReadContext = new EventStoreReadContext(optionsRead);
 
-            var eventRepository = new EventRepository(new ObjectConverter(), eventStoreContext, eventStoreReadContext);
+            var eventRepository = new EntityStreamRepository(new ObjectConverter(), eventStoreContext);
+            var typeProjectionRepository = new TypeProjectionRepository(new ObjectConverter(), eventStoreReadContext);
+            var overallProjectionRepository = new OverallProjectionRepository(new ObjectConverter(), eventStoreReadContext);
 
             var newGuid = Guid.NewGuid();
             var events = new List<DomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid), new TestEvent1(newGuid), new TestEvent2(newGuid)};
 
             await eventRepository.AppendAsync(events, -1);
             var versionRepo = new VersionRepository(new SubscriptionContext(options2));
-            var typeProjectionHandler = new TypeProjectionHandler(eventRepository, versionRepo);
-            var projectionHandler = new ProjectionHandler(eventRepository, versionRepo);
+            var typeProjectionHandler = new TypeProjectionHandler(typeProjectionRepository, eventRepository, versionRepo);
+            var projectionHandler = new ProjectionHandler(overallProjectionRepository, eventRepository, versionRepo);
 
             await projectionHandler.Update();
             await typeProjectionHandler.Update();
 
-            var result = await eventRepository.LoadEventsByTypeAsync(typeof(TestEvent1).Name);
+            var result = await typeProjectionRepository.LoadEventsByTypeAsync(typeof(TestEvent1).Name);
 
             Assert.AreEqual(2, result.Value.Count());
             Assert.AreEqual(0, result.Value.ToList()[0].Version);
