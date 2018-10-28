@@ -12,29 +12,30 @@ namespace Adapters.Framework.EventStores
     public class EventRepository : IEventRepository
     {
         private readonly IObjectConverter _eventConverter;
-        private readonly EventStoreContext _eventStoreContext;
+        private readonly EventStoreWriteContext _eventStoreWriteContext;
+        private readonly EventStoreReadContext _readContext;
 
-        public EventRepository(IObjectConverter eventConverter, EventStoreContext eventStoreContext)
+        public EventRepository(IObjectConverter eventConverter, EventStoreWriteContext eventStoreWriteContext, EventStoreReadContext readContext)
         {
             _eventConverter = eventConverter;
-            _eventStoreContext = eventStoreContext;
+            _eventStoreWriteContext = eventStoreWriteContext;
+            _readContext = readContext;
         }
 
         public async Task<Result<IEnumerable<DomainEvent>>> LoadEventsByEntity(Guid entityId, long from = -1)
         {
             var stream =
-                await _eventStoreContext.EntityStreams
+                await _eventStoreWriteContext.EntityStreams
                     .Include(ev => ev.DomainEvents)
-                    .ThenInclude(ev => ev.DomainEvent)
                     .FirstOrDefaultAsync(str => str.EntityId == entityId);
             if (stream == null) return Result<IEnumerable<DomainEvent>>.Ok(new List<DomainEvent>());
             var domainEvents = stream.DomainEvents.Where(ev => ev.Version > from)
                 .Select(dbo =>
                 {
-                    var domainEvent = _eventConverter.Deserialize<DomainEvent>(dbo.DomainEvent.Payload);
+                    var domainEvent = _eventConverter.Deserialize<DomainEvent>(dbo.Payload);
                     domainEvent.Version = dbo.Version;
-                    domainEvent.Created = dbo.DomainEvent.Created;
-                    domainEvent.DomainEventId = dbo.DomainEvent.Id;
+                    domainEvent.Created = dbo.Created;
+                    domainEvent.DomainEventId = dbo.Id;
                     return domainEvent;
                 });
             return Result<IEnumerable<DomainEvent>>.Ok(domainEvents);
@@ -44,18 +45,17 @@ namespace Adapters.Framework.EventStores
             long from = -1)
         {
             var stream =
-                await _eventStoreContext.TypeStreams
+                await _readContext.TypeStreams
                     .Include(ev => ev.DomainEvents)
-                    .ThenInclude(ev => ev.DomainEvent)
                     .FirstOrDefaultAsync(str => str.DomainEventType == domainEventTypeName);
             if (stream == null) return Result<IEnumerable<DomainEvent>>.Ok(new List<DomainEvent>());
             var domainEvents = stream.DomainEvents.Where(ev => ev.Version > from)
                 .Select(dbo =>
                 {
-                    var domainEvent = _eventConverter.Deserialize<DomainEvent>(dbo.DomainEvent.Payload);
+                    var domainEvent = _eventConverter.Deserialize<DomainEvent>(dbo.Payload);
                     domainEvent.Version = dbo.Version;
-                    domainEvent.Created = dbo.DomainEvent.Created;
-                    domainEvent.DomainEventId = dbo.DomainEvent.Id;
+                    domainEvent.Created = dbo.Created;
+                    domainEvent.DomainEventId = dbo.Id;
                     return domainEvent;
                 });
             return Result<IEnumerable<DomainEvent>>.Ok(domainEvents);
@@ -63,21 +63,20 @@ namespace Adapters.Framework.EventStores
 
         public async Task<Result<IEnumerable<DomainEvent>>> LoadEventsSince(long tickSince = -1)
         {
-            var domainEventWrappers = await _eventStoreContext.EntityStreams
+            var domainEventWrappers = await _eventStoreWriteContext.EntityStreams
                 .Include(s => s.DomainEvents)
-                .ThenInclude(e => e.DomainEvent)
                 .ToListAsync();
             var eventWrappers = domainEventWrappers
                 .SelectMany(stream => stream.DomainEvents
-                    .Where(ev => ev.DomainEvent.Created > tickSince));
+                    .Where(ev => ev.Created > tickSince));
 
             var loadEventsSince = eventWrappers
                 .Select(dbo =>
                 {
-                    var domainEvent = _eventConverter.Deserialize<DomainEvent>(dbo.DomainEvent.Payload);
+                    var domainEvent = _eventConverter.Deserialize<DomainEvent>(dbo.Payload);
                     domainEvent.Version = dbo.Version;
-                    domainEvent.Created = dbo.DomainEvent.Created;
-                    domainEvent.DomainEventId = dbo.DomainEvent.Id;
+                    domainEvent.Created = dbo.Created;
+                    domainEvent.DomainEventId = dbo.Id;
                     return domainEvent;
                 });
 
@@ -86,53 +85,44 @@ namespace Adapters.Framework.EventStores
 
         public async Task<Result> AppendToOverallStream(IEnumerable<DomainEvent> events)
         {
-            var allStream = _eventStoreContext.TypeStreams.Include(e => e.DomainEvents)
-                .ThenInclude(e => e.DomainEvent).FirstOrDefault(d => d.DomainEventType == "AllDomainEventsStream");
+            var allStream = _readContext.OverallStream;
 
-            if (allStream == null)
-            {
-                allStream = new TypeStream
-                {
-                    DomainEvents = new List<DomainEventWrapper>(),
-                    DomainEventType = "AllDomainEventsStream",
-                    Version = -1
-                };
-
-                _eventStoreContext.TypeStreams.Add(allStream);
-            }
-
-            var entityVersionTemp = allStream.Version;
+            var entityVersionTemp = allStream.Count();
             foreach (var domainEvent in events)
             {
-                var domainEventDbo = await GetDomainEvent(domainEvent.DomainEventId);
+                var domainEventDbo = await CreateDomainEventCopyOverall(domainEvent);
                 entityVersionTemp++;
-                var domainEventWrapper = new DomainEventWrapper
-                {
-                    DomainEvent = domainEventDbo,
-                    Version = entityVersionTemp
-                };
+                domainEventDbo.Version = entityVersionTemp;
 
-                allStream.DomainEvents.Add(domainEventWrapper);
+                allStream.Add(domainEventDbo);
             }
 
-            allStream.Version = entityVersionTemp;
-            await _eventStoreContext.SaveChangesAsync();
+            await _readContext.SaveChangesAsync();
             return Result.Ok();
         }
 
-        private async Task<DomainEventDbo> GetDomainEvent(Guid domainEventDomainEventId)
+        private async Task<DomainEventDboCopy> CreateDomainEventCopy(DomainEvent domainEventWrapper)
         {
-            var events = await _eventStoreContext.EntityStreams
-                .Include(s => s.DomainEvents)
-                .ThenInclude(e => e.DomainEvent)
-                .ToListAsync();
+            var payLoad = _eventConverter.Serialize(domainEventWrapper);
+            return new DomainEventDboCopy
+            {
+                Payload = payLoad,
+                Created = domainEventWrapper.Created,
+                Id = domainEventWrapper.DomainEventId,
+                Version = domainEventWrapper.Version
+            };
+        }
 
-            var domainEventWrapper = events
-                .SelectMany(ev => ev.DomainEvents
-                .Where(e => e.DomainEvent.Id == domainEventDomainEventId))
-                .FirstOrDefault();
-
-            return domainEventWrapper?.DomainEvent;
+        private async Task<DomainEventDboCopyOverallStream> CreateDomainEventCopyOverall(DomainEvent domainEventWrapper)
+        {
+            var payLoad = _eventConverter.Serialize(domainEventWrapper);
+            return new DomainEventDboCopyOverallStream
+            {
+                Payload = payLoad,
+                Created = domainEventWrapper.Created,
+                Id = domainEventWrapper.DomainEventId,
+                Version = domainEventWrapper.Version
+            };
         }
 
         public Task<Result<IEnumerable<DomainEvent>>> LoadOverallStream(long from = -1)
@@ -143,38 +133,32 @@ namespace Adapters.Framework.EventStores
         public async Task<Result> AppendToTypeStream(DomainEvent domainEvent)
         {
             var typeStream =
-                await _eventStoreContext.TypeStreams
+                await _readContext.TypeStreams
                     .Include(ev => ev.DomainEvents)
-                    .ThenInclude(ev => ev.DomainEvent)
                     .FirstOrDefaultAsync(str => str.DomainEventType == domainEvent.GetType().Name);
 
             if (typeStream == null)
             {
                 typeStream = new TypeStream
                 {
-                    DomainEvents = new List<DomainEventWrapper>(),
+                    DomainEvents = new List<DomainEventDboCopy>(),
                     DomainEventType = domainEvent.GetType().Name,
                     Version = -1
                 };
 
-                _eventStoreContext.TypeStreams.Add(typeStream);
+                _readContext.TypeStreams.Add(typeStream);
             }
 
             var entityVersionTemp = typeStream.Version + 1;
 
-            var domainEventDbo = await GetDomainEvent(domainEvent.DomainEventId);
+            var domainEventDbo = await CreateDomainEventCopy(domainEvent);
 
-            var domainEventWrapper = new DomainEventWrapper
-            {
-                DomainEvent = domainEventDbo,
-                Version = entityVersionTemp
-            };
-
+            domainEventDbo.Version = entityVersionTemp;
 
             typeStream.Version = entityVersionTemp;
-            typeStream.DomainEvents.Add(domainEventWrapper);
+            typeStream.DomainEvents.Add(domainEventDbo);
 
-            await _eventStoreContext.SaveChangesAsync();
+            await _readContext.SaveChangesAsync();
             return Result.Ok();
         }
 
@@ -182,17 +166,17 @@ namespace Adapters.Framework.EventStores
         {
             var events = domainEvents.ToList();
             var entityId = events.First().EntityId;
-            var entityStream = await _eventStoreContext.EntityStreams.FindAsync(entityId);
+            var entityStream = await _eventStoreWriteContext.EntityStreams.FindAsync(entityId);
 
             if (entityStream == null)
             {
                 entityStream = new EntityStream
                 {
                     EntityId = entityId,
-                    DomainEvents = new List<DomainEventWrapper>(),
+                    DomainEvents = new List<DomainEventDbo>(),
                     Version = -1L
                 };
-                _eventStoreContext.EntityStreams.Add(entityStream);
+                _eventStoreWriteContext.EntityStreams.Add(entityStream);
             }
 
             if (entityStream.Version != entityVersion)
@@ -203,23 +187,20 @@ namespace Adapters.Framework.EventStores
             {
                 entityVersionTemp++;
                 var serialize = _eventConverter.Serialize(domainEvent);
-                var domainEventWrapper = new DomainEventWrapper
+                var domainEventDbo = new DomainEventDbo
                 {
-                    DomainEvent = new DomainEventDbo
-                    {
-                        Id = domainEvent.DomainEventId,
-                        Payload = serialize,
-                        Created = DateTimeOffset.UtcNow.Ticks
-                    },
-                    Version = entityVersionTemp,
+                    Id = domainEvent.DomainEventId,
+                    Payload = serialize,
+                    Created = DateTimeOffset.UtcNow.Ticks,
+                    Version = entityVersionTemp
                 };
 
-                entityStream.DomainEvents.Add(domainEventWrapper);
+                entityStream.DomainEvents.Add(domainEventDbo);
             }
 
             entityStream.Version += events.Count;
 
-            await _eventStoreContext.SaveChangesAsync();
+            await _eventStoreWriteContext.SaveChangesAsync();
             return Result.Ok();
         }
     }

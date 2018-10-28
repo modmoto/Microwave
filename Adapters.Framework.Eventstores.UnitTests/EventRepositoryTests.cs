@@ -19,13 +19,19 @@ namespace Adapters.Framework.Eventstores.UnitTests
         [Test]
         public async Task AddAndLoadEvents()
         {
-            var options = new DbContextOptionsBuilder<EventStoreContext>()
+            var options = new DbContextOptionsBuilder<EventStoreWriteContext>()
                 .UseInMemoryDatabase("AddEvents")
                 .Options;
 
-            var eventStoreContext = new EventStoreContext(options);
+            var eventStoreContext = new EventStoreWriteContext(options);
 
-            var eventRepository = new EventRepository(new ObjectConverter(), eventStoreContext);
+            var optionsRead = new DbContextOptionsBuilder<EventStoreReadContext>()
+                .UseInMemoryDatabase("AddEventsRead")
+                .Options;
+
+            var eventStoreReadContext = new EventStoreReadContext(optionsRead);
+
+            var eventRepository = new EventRepository(new ObjectConverter(), eventStoreContext, eventStoreReadContext);
 
             var newGuid = Guid.NewGuid();
             var events = new List<DomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid)};
@@ -42,13 +48,19 @@ namespace Adapters.Framework.Eventstores.UnitTests
         [Test]
         public async Task LoadDomainEvents_IdAndStuffIsSetCorreclty()
         {
-            var options = new DbContextOptionsBuilder<EventStoreContext>()
+            var options = new DbContextOptionsBuilder<EventStoreWriteContext>()
                 .UseInMemoryDatabase("LoadDomainEvents_IdAndStuffIsSetCorreclty")
                 .Options;
 
-            var eventStoreContext = new EventStoreContext(options);
+            var eventStoreContext = new EventStoreWriteContext(options);
 
-            var eventRepository = new EventRepository(new ObjectConverter(), eventStoreContext);
+            var optionsRead = new DbContextOptionsBuilder<EventStoreReadContext>()
+                .UseInMemoryDatabase("LoadDomainEvents_IdAndStuffIsSetCorrecltyRead")
+                .Options;
+
+            var eventStoreReadContext = new EventStoreReadContext(optionsRead);
+
+            var eventRepository = new EventRepository(new ObjectConverter(), eventStoreContext, eventStoreReadContext);
 
             var newGuid = Guid.NewGuid();
             var testEvent1 = new TestEvent1(newGuid);
@@ -71,13 +83,19 @@ namespace Adapters.Framework.Eventstores.UnitTests
         [Test]
         public async Task AddAndLoadEventsConcurrent()
         {
-            var options = new DbContextOptionsBuilder<EventStoreContext>()
+            var options = new DbContextOptionsBuilder<EventStoreWriteContext>()
                 .UseInMemoryDatabase("AddAndLoadEventsConcurrent")
                 .Options;
 
-            var eventStoreContext = new EventStoreContext(options);
+            var eventStoreContext = new EventStoreWriteContext(options);
 
-            var eventRepository = new EventRepository(new ObjectConverter(), eventStoreContext);
+            var optionsRead = new DbContextOptionsBuilder<EventStoreReadContext>()
+                .UseInMemoryDatabase("AddAndLoadEventsConcurrentRead")
+                .Options;
+
+            var eventStoreReadContext = new EventStoreReadContext(optionsRead);
+
+            var eventRepository = new EventRepository(new ObjectConverter(), eventStoreContext, eventStoreReadContext);
 
             var newGuid = Guid.NewGuid();
             var events = new List<DomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid)};
@@ -93,13 +111,19 @@ namespace Adapters.Framework.Eventstores.UnitTests
         [Test]
         public async Task AddAndLoadEventsByTimeStapmp()
         {
-            var options = new DbContextOptionsBuilder<EventStoreContext>()
+            var options = new DbContextOptionsBuilder<EventStoreWriteContext>()
                 .UseInMemoryDatabase("AddAndLoadEventsByTimeStapmp")
                 .Options;
 
-            var eventStoreContext = new EventStoreContext(options);
+            var eventStoreContext = new EventStoreWriteContext(options);
 
-            var eventRepository = new EventRepository(new ObjectConverter(), eventStoreContext);
+            var optionsRead = new DbContextOptionsBuilder<EventStoreReadContext>()
+                .UseInMemoryDatabase("AddAndLoadEventsByTimeStapmpRead")
+                .Options;
+
+            var eventStoreReadContext = new EventStoreReadContext(optionsRead);
+
+            var eventRepository = new EventRepository(new ObjectConverter(), eventStoreContext, eventStoreReadContext);
 
             var newGuid = Guid.NewGuid();
             var events = new List<DomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid), new TestEvent1(newGuid), new TestEvent2(newGuid)};
@@ -115,13 +139,19 @@ namespace Adapters.Framework.Eventstores.UnitTests
         [Test]
         public async Task AddAndLoadEventsByTimeStamp_SavedAsType()
         {
-            var options = new DbContextOptionsBuilder<EventStoreContext>()
+            var options = new DbContextOptionsBuilder<EventStoreWriteContext>()
                 .UseInMemoryDatabase("AddAndLoadEventsByTimeStapmp_SavedAsType")
                 .Options;
 
-            var eventStoreContext = new EventStoreContext(options);
+            var eventStoreContext = new EventStoreWriteContext(options);
 
-            var eventRepository = new EventRepository(new ObjectConverter(), eventStoreContext);
+            var optionsRead = new DbContextOptionsBuilder<EventStoreReadContext>()
+                .UseInMemoryDatabase("AddAndLoadEventsByTimeStapmp_SavedAsTypeRead")
+                .Options;
+
+            var eventStoreReadContext = new EventStoreReadContext(optionsRead);
+
+            var eventRepository = new EventRepository(new ObjectConverter(), eventStoreContext, eventStoreReadContext);
 
             var newGuid = Guid.NewGuid();
             var domainEvent = new TestEvent1(newGuid);
@@ -139,17 +169,23 @@ namespace Adapters.Framework.Eventstores.UnitTests
         [Test]
         public async Task AddEvents_RunTypeProjection()
         {
-            var options = new DbContextOptionsBuilder<EventStoreContext>()
+            var options = new DbContextOptionsBuilder<EventStoreWriteContext>()
                 .UseInMemoryDatabase("AddEvents_RunTypeProjection")
                 .Options;
 
             var options2 = new DbContextOptionsBuilder<SubscriptionContext>()
-                .UseInMemoryDatabase("AddEvents_RunTypeProjection")
+                .UseInMemoryDatabase("AddEvents_RunTypeProjectionSubs")
                 .Options;
 
-            var eventStoreContext = new EventStoreContext(options);
+            var eventStoreContext = new EventStoreWriteContext(options);
 
-            var eventRepository = new EventRepository(new ObjectConverter(), eventStoreContext);
+            var optionsRead = new DbContextOptionsBuilder<EventStoreReadContext>()
+                .UseInMemoryDatabase("AddEvents_RunTypeProjectionReadRead")
+                .Options;
+
+            var eventStoreReadContext = new EventStoreReadContext(optionsRead);
+
+            var eventRepository = new EventRepository(new ObjectConverter(), eventStoreContext, eventStoreReadContext);
 
             var newGuid = Guid.NewGuid();
             var events = new List<DomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid), new TestEvent1(newGuid), new TestEvent2(newGuid)};
