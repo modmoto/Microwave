@@ -29,14 +29,4 @@ namespace Application.Seasons.Querries
     {
         void Handle(T domainEvent);
     }
-
-    public class AllSeasonsCounterQuery : Query, IHandle<SeasonCreatedEvent>
-    {
-        public long SeasonCounter;
-
-        public void Handle(SeasonCreatedEvent createdEvent)
-        {
-            SeasonCounter++;
-        }
-    }
 }

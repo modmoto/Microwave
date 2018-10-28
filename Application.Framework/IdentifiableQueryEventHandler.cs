@@ -5,21 +5,24 @@ using Domain.Framework;
 
 namespace Application.Framework
 {
-    public interface IQueryEventHandler
+    public interface IIdentifiableQueryEventHandler
     {
         Task Update();
     }
 
-    public class QueryEventHandler<TQuerry, TEvent> : IQueryEventHandler where TQuerry : Query, new() where TEvent : DomainEvent
+    public class IdentifiableQueryEventHandler<TQuerry, TEvent> :
+        IIdentifiableQueryEventHandler
+        where TQuerry : IdentifiableQuery, new()
+        where TEvent : DomainEvent
     {
         private readonly IQeryRepository _qeryRepository;
-        private readonly IPublishedEventStream<TEvent> _eventRepository;
+        private readonly ITypeProjectionRepository _eventRepository;
         private readonly IVersionRepository _versionRepository;
 
-        public QueryEventHandler(
+        public IdentifiableQueryEventHandler(
             IQeryRepository qeryRepository,
             IVersionRepository versionRepository,
-            IPublishedEventStream<TEvent> eventRepository)
+            ITypeProjectionRepository eventRepository)
         {
             _qeryRepository = qeryRepository;
             _versionRepository = versionRepository;
@@ -28,23 +31,22 @@ namespace Application.Framework
 
         public async Task Update()
         {
-            var domainEventType = $"QuerryHandler-{typeof(TQuerry).Name}-{typeof(TEvent).Name}";
+            var domainEventType = $"IdentifiableQuerryHandler-{typeof(TQuerry).Name}-{typeof(TEvent).Name}";
             var lastVersion = await _versionRepository.GetVersionAsync(domainEventType);
-            var latestEvents = await _eventRepository.GetEventsByTypeAsync(lastVersion);
-            var domainEvents = latestEvents.ToList();
+            var latestEvents = await _eventRepository.LoadEventsByTypeAsync(typeof(TEvent).Name, lastVersion);
+            var domainEvents = latestEvents.Value.ToList();
             if (!domainEvents.Any()) return;
 
-            var querry = await _qeryRepository.Load<TQuerry>();
-            if (querry.Is<NotFound<TQuerry>>()) querry = Result<TQuerry>.Ok(new TQuerry());
-            var querryValue = querry.Value;
             foreach (var latestEvent in domainEvents)
             {
+                var result = await _qeryRepository.Load<TQuerry>(latestEvent.EntityId);
+                if (result.Is<NotFound<TQuerry>>()) result = Result<TQuerry>.Ok(new TQuerry());
+                result.Value.Handle(latestEvent);
+
+                await _qeryRepository.Save(result.Value);
                 lastVersion = lastVersion + 1;
-                querryValue.Handle(latestEvent);
                 await _versionRepository.SaveVersion(new LastProcessedVersion(domainEventType, lastVersion));
             }
-
-            await _qeryRepository.Save(querryValue);
         }
     }
 }

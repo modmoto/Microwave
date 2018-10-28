@@ -54,6 +54,9 @@ namespace OnlineLeagueBackend
 
             services.AddTransient<IQueryEventHandler, QueryEventHandler<AllSeasonsCounterQuery, SeasonCreatedEvent>>();
 
+            services.AddTransient<IIdentifiableQueryEventHandler, IdentifiableQueryEventHandler<SingleSeasonsQuery, SeasonCreatedEvent>>();
+            services.AddTransient<IIdentifiableQueryEventHandler, IdentifiableQueryEventHandler<SingleSeasonsQuery, SeasonNameChangedEvent>>();
+
             services.AddDbContext<SubscriptionContext>(option => option.UseSqlite("Data Source=SubscriptionContext.db"));
 
             services.AddMyEventStoreDependencies(typeof(AllSeasonsCounterQuery).Assembly, Configuration);

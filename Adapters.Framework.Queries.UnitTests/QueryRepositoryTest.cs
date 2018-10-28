@@ -38,6 +38,24 @@ namespace Adapters.Framework.Queries.UnitTests
             Assert.Throws<ConcurrencyException>(() => CheckAllResults(allResults));
         }
 
+        [Test]
+        public async Task IdentifiableQuerySaveAndLoad()
+        {
+            var options = new DbContextOptionsBuilder<QueryStorageContext>()
+                .UseInMemoryDatabase("IdentifiableQuerySaveAndLoad")
+                .Options;
+
+            var queryRepository = new QueryRepository(new QueryStorageContext(options), new ObjectConverter());
+            var guid = Guid.NewGuid();
+            var testQuerry = new TestIdQuerry { UserName = "Test", Id = guid};
+            await queryRepository.Save(testQuerry);
+
+            var querry1 = (await queryRepository.Load<TestIdQuerry>(guid)).Value;
+
+            Assert.AreEqual(guid, querry1.Id);
+            Assert.AreEqual("Test", querry1.UserName);
+        }
+
         private static void CheckAllResults(Result[] whenAll)
         {
             foreach (var result in whenAll)
@@ -136,6 +154,11 @@ namespace Adapters.Framework.Queries.UnitTests
     }
 
     public class TestQuerry : Query
+    {
+        public string UserName { get; set; }
+    }
+
+    public class TestIdQuerry : IdentifiableQuery
     {
         public string UserName { get; set; }
     }

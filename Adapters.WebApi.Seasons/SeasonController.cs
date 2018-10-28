@@ -27,12 +27,12 @@ namespace Adapters.WebApi.Seasons
             return Ok(seasons.Value);
         }
 
-//        [HttpGet("{entityId}")]
-//        public ActionResult GetSeason(Guid entityId)
-//        {
-//            var seasons = _eventHandler.GetSeason(entityId);
-//            return Ok(seasons);
-//        }
+        [HttpGet("{entityId}")]
+        public async Task<ActionResult> GetSeason(Guid entityId)
+        {
+            var seasons = await _qeryRepository.Load<SingleSeasonsQuery>(entityId);
+            return Ok(seasons.Value);
+        }
 
         [HttpGet("Counter")]
         public async Task<ActionResult> GetSeasonsCount()

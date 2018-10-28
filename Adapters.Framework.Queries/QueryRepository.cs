@@ -28,7 +28,7 @@ namespace Adapters.Framework.Queries
 
         public async Task<Result<T>> Load<T>(Guid id) where T : IdentifiableQuery
         {
-            var querry = await _context.IdentifiableQuerries.FindAsync(id);
+            var querry = await _context.IdentifiableQuerries.FindAsync(id.ToString());
             if (querry == null) return Result<T>.NotFound(id.ToString());
             var deserialize = _converter.Deserialize<T>(querry.Payload);
             deserialize.Version = querry.Version;
@@ -63,12 +63,13 @@ namespace Adapters.Framework.Queries
 
         public async Task<Result> Save(IdentifiableQuery query)
         {
-            var firstOrDefault = await _context.IdentifiableQuerries.FindAsync(query.Id);
+            var firstOrDefault = await _context.IdentifiableQuerries.FindAsync(query.Id.ToString());
             if (firstOrDefault != null)
             {
                 if (firstOrDefault.Version != query.Version)
                     return Result.ConcurrencyResult(firstOrDefault.Version, query.Version);
                 firstOrDefault.Payload = _converter.Serialize(query);
+                firstOrDefault.Id = query.Id.ToString();
                 firstOrDefault.Version++;
                 _context.Update(firstOrDefault);
             }
@@ -76,7 +77,7 @@ namespace Adapters.Framework.Queries
             {
                 var identifiableQueryDbo = new IdentifiableQueryDbo
                 {
-                    Id = query.Id,
+                    Id = query.Id.ToString(),
                     Version = 0L,
                     Payload = _converter.Serialize(query)
                 };

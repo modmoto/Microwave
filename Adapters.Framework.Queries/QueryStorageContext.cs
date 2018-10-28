@@ -17,7 +17,7 @@ namespace Adapters.Framework.Queries
 
     public class IdentifiableQueryDbo
     {
-        public Guid Id { get; set; }
+        public string Id { get; set; }
         public string Payload { get; set; }
         [ConcurrencyCheck]
         public long Version { get; set; }
