@@ -34,7 +34,7 @@ namespace Adapters.Framework.EventStores
                     var domainEvent = _objectConverter.Deserialize<DomainEvent>(dbo.Payload);
                     domainEvent.Version = dbo.Version;
                     domainEvent.Created = dbo.Created;
-                    domainEvent.DomainEventId = dbo.Id;
+                    domainEvent.DomainEventId = new Guid(dbo.Id);
                     return domainEvent;
                 });
             return Result<IEnumerable<DomainEvent>>.Ok(domainEvents);
@@ -79,7 +79,7 @@ namespace Adapters.Framework.EventStores
             {
                 Payload = payLoad,
                 Created = domainEventWrapper.Created,
-                Id = domainEventWrapper.DomainEventId,
+                Id = domainEventWrapper.DomainEventId.ToString(),
                 Version = domainEventWrapper.Version
             };
         }

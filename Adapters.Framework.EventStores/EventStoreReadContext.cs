@@ -25,7 +25,7 @@ namespace Adapters.Framework.EventStores
 
     public class DomainEventDboCopy
     {
-        public Guid Id { get; set; }
+        public string Id { get; set; }
         public string Payload { get; set; }
         [ConcurrencyCheck] public long Created { get; set; }
         [ConcurrencyCheck] public long Version { get; set; }
@@ -33,7 +33,7 @@ namespace Adapters.Framework.EventStores
 
     public class DomainEventDboCopyOverallStream
     {
-        public Guid Id { get; set; }
+        public string Id { get; set; }
         public string Payload { get; set; }
         [ConcurrencyCheck] public long Created { get; set; }
         [ConcurrencyCheck] public long Version { get; set; }

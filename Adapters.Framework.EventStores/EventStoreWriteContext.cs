@@ -17,7 +17,7 @@ namespace Adapters.Framework.EventStores
 
     public class DomainEventDbo
     {
-        public Guid Id { get; set; }
+        public string Id { get; set; }
         public string Payload { get; set; }
         [ConcurrencyCheck]
         public long Created { get; set; }
@@ -28,7 +28,7 @@ namespace Adapters.Framework.EventStores
     public class EntityStream
     {
         [Key]
-        public Guid EntityId { get; set; }
+        public string EntityId { get; set; }
         public ICollection<DomainEventDbo> DomainEvents { get; set; }
         public long Version { get; set; }
     }
