@@ -41,12 +41,17 @@ namespace Adapters.Framework.EventStores
 
         public async Task<Result> AppendToTypeStream(DomainEvent domainEvent)
         {
+            return await AppendToStreamWithName(domainEvent.GetType().Name, domainEvent);
+        }
+
+        public async Task<Result> AppendToStreamWithName(string streamName, DomainEvent domainEvent)
+        {
             var typeStream = _eventStoreReadContext.TypeStreams
-                .Where(str => str.DomainEventType == domainEvent.GetType().Name).ToList();
+                .Where(str => str.DomainEventType == streamName).ToList();
 
             var entityVersionTemp = typeStream.Count;
 
-            var domainEventDbo = CreateDomainEventCopy(domainEvent);
+            var domainEventDbo = CreateDomainEventCopy(streamName, domainEvent);
 
             domainEventDbo.Version = entityVersionTemp;
             _eventStoreReadContext.TypeStreams.Add(domainEventDbo);
@@ -55,13 +60,13 @@ namespace Adapters.Framework.EventStores
             return Result.Ok();
         }
 
-        private DomainEventTypeDbo CreateDomainEventCopy(DomainEvent domainEventWrapper)
+        private DomainEventTypeDbo CreateDomainEventCopy(string streamName, DomainEvent domainEventWrapper)
         {
             var payLoad = _objectConverter.Serialize(domainEventWrapper);
             return new DomainEventTypeDbo
             {
                 Payload = payLoad,
-                DomainEventType = domainEventWrapper.GetType().Name,
+                DomainEventType = streamName,
                 Created = domainEventWrapper.Created,
                 Id = domainEventWrapper.DomainEventId.ToString(),
                 Version = domainEventWrapper.Version

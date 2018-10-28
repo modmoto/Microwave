@@ -6,7 +6,6 @@ namespace Adapters.Framework.EventStores
     public sealed class EventStoreReadContext : DbContext
     {
         public DbSet<DomainEventTypeDbo> TypeStreams { get; set; }
-        public DbSet<DomainEventDboCopyOverallStream> OverallStream { get; set; }
 
         public EventStoreReadContext(DbContextOptions<EventStoreReadContext> options) :
             base(options)
@@ -24,14 +23,6 @@ namespace Adapters.Framework.EventStores
     {
         public string Id { get; set; }
         public string DomainEventType { get; set; }
-        public string Payload { get; set; }
-        [ConcurrencyCheck] public long Created { get; set; }
-        [ConcurrencyCheck] public long Version { get; set; }
-    }
-
-    public class DomainEventDboCopyOverallStream
-    {
-        public string Id { get; set; }
         public string Payload { get; set; }
         [ConcurrencyCheck] public long Created { get; set; }
         [ConcurrencyCheck] public long Version { get; set; }

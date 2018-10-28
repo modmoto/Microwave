@@ -192,7 +192,7 @@ namespace Adapters.Framework.Eventstores.UnitTests
 
             var eventRepository = new EntityStreamRepository(new ObjectConverter(), eventStoreContext);
             var typeProjectionRepository = new TypeProjectionRepository(new ObjectConverter(), eventStoreReadContext);
-            var overallProjectionRepository = new OverallProjectionRepository(new ObjectConverter(), eventStoreReadContext);
+            var overallProjectionRepository = new OverallProjectionRepository(typeProjectionRepository);
 
             var newGuid = Guid.NewGuid();
             var events = new List<DomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid), new TestEvent1(newGuid), new TestEvent2(newGuid)};

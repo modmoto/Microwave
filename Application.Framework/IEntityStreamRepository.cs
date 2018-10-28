@@ -23,5 +23,6 @@ namespace Application.Framework
     {
         Task<Result<IEnumerable<DomainEvent>>> LoadEventsByTypeAsync(string domainEventTypeName, long from = -1);
         Task<Result> AppendToTypeStream(DomainEvent domainEvent);
+        Task<Result> AppendToStreamWithName(string streamName, DomainEvent domainEvent);
     }
 }
