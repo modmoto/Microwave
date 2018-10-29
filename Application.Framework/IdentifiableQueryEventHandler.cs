@@ -16,13 +16,13 @@ namespace Application.Framework
         where TEvent : DomainEvent
     {
         private readonly IQeryRepository _qeryRepository;
-        private readonly ITypeProjectionRepository _eventRepository;
+        private readonly IEventFeed<TEvent> _eventRepository;
         private readonly IVersionRepository _versionRepository;
 
         public IdentifiableQueryEventHandler(
             IQeryRepository qeryRepository,
             IVersionRepository versionRepository,
-            ITypeProjectionRepository eventRepository)
+            IEventFeed<TEvent> eventRepository)
         {
             _qeryRepository = qeryRepository;
             _versionRepository = versionRepository;
@@ -33,8 +33,8 @@ namespace Application.Framework
         {
             var domainEventType = $"IdentifiableQuerryHandler-{typeof(TQuerry).Name}-{typeof(TEvent).Name}";
             var lastVersion = await _versionRepository.GetVersionAsync(domainEventType);
-            var latestEvents = await _eventRepository.LoadEventsByTypeAsync(typeof(TEvent).Name, lastVersion);
-            var domainEvents = latestEvents.Value.ToList();
+            var latestEvents = await _eventRepository.GetEventsByTypeAsync(lastVersion);
+            var domainEvents = latestEvents.ToList();
             if (!domainEvents.Any()) return;
 
             foreach (var latestEvent in domainEvents)

@@ -6,12 +6,12 @@ using Domain.Framework;
 
 namespace Adapters.Framework.WebApi
 {
-    public class PublishedEventStream<T> : IPublishedEventStream<T> where T : DomainEvent
+    public class EventFeed<T> : IEventFeed<T> where T : DomainEvent
     {
         private readonly IObjectConverter _objectConverter;
         private readonly DomainEventClient<T> _domainEventClient;
 
-        public PublishedEventStream(IObjectConverter objectConverter, DomainEventClient<T>
+        public EventFeed(IObjectConverter objectConverter, DomainEventClient<T>
             domainEventClient)
         {
             _objectConverter = objectConverter;

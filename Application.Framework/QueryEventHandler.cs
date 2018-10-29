@@ -13,13 +13,13 @@ namespace Application.Framework
     public class QueryEventHandler<TQuerry, TEvent> : IQueryEventHandler where TQuerry : Query, new() where TEvent : DomainEvent
     {
         private readonly IQeryRepository _qeryRepository;
-        private readonly IPublishedEventStream<TEvent> _eventRepository;
+        private readonly IEventFeed<TEvent> _eventRepository;
         private readonly IVersionRepository _versionRepository;
 
         public QueryEventHandler(
             IQeryRepository qeryRepository,
             IVersionRepository versionRepository,
-            IPublishedEventStream<TEvent> eventRepository)
+            IEventFeed<TEvent> eventRepository)
         {
             _qeryRepository = qeryRepository;
             _versionRepository = versionRepository;

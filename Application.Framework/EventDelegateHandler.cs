@@ -6,13 +6,13 @@ namespace Application.Framework
 {
     public class EventDelegateHandler<T> : IEventDelegateHandler where T : DomainEvent
     {
-        private readonly IPublishedEventStream<T> _eventRepository;
+        private readonly IEventFeed<T> _eventRepository;
         private readonly IEnumerable<IHandleAsync<T>> _handles;
         private readonly IVersionRepository _versionRepository;
 
         public EventDelegateHandler(
             IVersionRepository versionRepository,
-            IPublishedEventStream<T> eventRepository,
+            IEventFeed<T> eventRepository,
             IEnumerable<IHandleAsync<T>> handles)
         {
             _versionRepository = versionRepository;
