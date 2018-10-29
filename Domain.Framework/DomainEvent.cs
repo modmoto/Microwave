@@ -14,5 +14,6 @@ namespace Domain.Framework
         public Guid DomainEventId { get; set; }
         public long Version { get; set; }
         public long Created { get; set; }
+        public string Type => GetType().Name;
     }
 }
