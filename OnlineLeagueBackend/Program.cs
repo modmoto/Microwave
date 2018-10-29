@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using Adapters.Framework.EventStores;
 using Application.Framework;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;

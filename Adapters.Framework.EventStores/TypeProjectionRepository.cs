@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Application.Framework;
 using Application.Framework.Results;
 using Domain.Framework;
-using Microsoft.EntityFrameworkCore;
 
 namespace Adapters.Framework.EventStores
 {

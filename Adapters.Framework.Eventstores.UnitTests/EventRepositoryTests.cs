@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Adapters.Framework.EventStores;
 using Adapters.Framework.Subscriptions;
 using Adapters.Json.ObjectPersistences;
-using Application.Framework;
 using Application.Framework.Exceptions;
 using Application.Framework.Results;
 using Domain.Framework;

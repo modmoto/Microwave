@@ -1,5 +1,4 @@
-﻿using System;
-using Application.Framework;
+﻿using Application.Framework;
 using Domain.Seasons.Events;
 
 namespace Application.Seasons.Querries
