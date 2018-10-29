@@ -41,6 +41,13 @@ namespace Adapters.WebApi.Seasons
             return Ok(counter.Value);
         }
 
+        [HttpGet("Top10NameChangers")]
+        public async Task<ActionResult> GetTop10NameChangers()
+        {
+            var counter = await _qeryRepository.Load<Top10NameChangers>();
+            return Ok(counter.Value);
+        }
+
         [HttpPost("Create")]
         public async Task<IActionResult> CreateSeason([FromBody] CreateSesonCommand command)
         {
