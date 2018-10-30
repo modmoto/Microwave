@@ -32,22 +32,6 @@ namespace OnlineLeagueBackend
 
             services.AddTransient<SeasonCommandHandler>();
 
-            services.AddTransient<IEventDelegateHandler, EventDelegateHandler<SeasonCreatedEvent>>();
-            services.AddTransient<IEventDelegateHandler, EventDelegateHandler<SeasonNameChangedEvent>>();
-
-            services.AddTransient<IHandleAsync<SeasonCreatedEvent>, SeasonCreatedEventHandler>();
-            services.AddTransient<IHandleAsync<SeasonNameChangedEvent>, SeasonChangedNamEventHandler>();
-            services.AddTransient<IHandleAsync<SeasonNameChangedEvent>, SeasonCreatedEventHandler>();
-
-            services.AddTransient<IHandleAsync<SeasonCreatedEvent>, Top10NameChangesEventHandler>();
-            services.AddTransient<IHandleAsync<SeasonNameChangedEvent>, Top10NameChangesEventHandler>();
-
-            services.AddTransient<IEventFeed<SeasonCreatedEvent>, EventFeed<SeasonCreatedEvent>>();
-            services.AddTransient<IEventFeed<SeasonNameChangedEvent>, EventFeed<SeasonNameChangedEvent>>();
-
-            services.AddTransient<DomainEventClient<SeasonCreatedEvent>>();
-            services.AddTransient<DomainEventClient<SeasonNameChangedEvent>>();
-
             services.AddTransient<IQueryEventHandler, QueryEventHandler<AllSeasonsQuery, SeasonCreatedEvent>>();
             services.AddTransient<IQueryEventHandler, QueryEventHandler<AllSeasonsQuery, SeasonNameChangedEvent>>();
 
