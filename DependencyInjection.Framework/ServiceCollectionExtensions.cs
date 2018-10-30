@@ -21,6 +21,8 @@ namespace DependencyInjection.Framework
         public static IServiceCollection AddMyEventStoreDependencies(this IServiceCollection services,
             Assembly assembly, IConfiguration configuration)
         {
+            services.AddTransient<DomainEventController>();
+
             services.AddTransient<IEventStoreFacade, EventStore>();
             services.AddTransient<IObjectConverter, ObjectConverter>();
             services.AddDbContext<EventStoreReadContext>(option =>
