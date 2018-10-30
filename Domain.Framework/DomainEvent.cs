@@ -7,11 +7,10 @@ namespace Domain.Framework
         public DomainEvent(Guid entityId)
         {
             EntityId = entityId;
-            DomainEventId = Guid.NewGuid();
         }
 
         public Guid EntityId { get; }
-        public Guid DomainEventId { get; set; }
+        public Guid DomainEventId { get; }
         public long Version { get; set; }
         public long Created { get; set; }
         public string Type => GetType().Name;

@@ -62,9 +62,37 @@ namespace Adapters.Framework.Eventstores.UnitTests
             Assert.AreEqual(0, loadEventsByEntity.Value.ToList()[0].Version);
             Assert.AreEqual(1, loadEventsByEntity.Value.ToList()[1].Version);
             Assert.AreEqual(newGuid, loadEventsByEntity.Value.ToList()[0].EntityId);
-            Assert.AreEqual(testEvent1.DomainEventId, loadEventsByEntity.Value.ToList()[0].DomainEventId);
-            Assert.AreEqual(testEvent2.DomainEventId, loadEventsByEntity.Value.ToList()[1].DomainEventId);
             Assert.AreEqual(1, loadEventsByEntity.Value.ToList()[1].Version);
+        }
+
+        [Test]
+        public async Task LoadDomainEvents_IdIsNotRenewed()
+        {
+            var options = new DbContextOptionsBuilder<EventStoreWriteContext>()
+                .UseInMemoryDatabase("LoadDomainEvents_IdIsNotRenewed")
+                .Options;
+
+            var eventStoreContext = new EventStoreWriteContext(options);
+
+            var eventRepository = new EntityStreamRepository(new ObjectConverter(), eventStoreContext);
+
+            var newGuid = Guid.NewGuid();
+            var testEvent1 = new TestEvent1(newGuid);
+            var testEvent2 = new TestEvent2(newGuid);
+            var events = new List<DomainEvent> { testEvent1, testEvent2};
+
+            var res = await eventRepository.AppendAsync(events, -1);
+            res.Check();
+
+            var loadEventsByEntity = await eventRepository.LoadEventsByEntity(newGuid);
+
+            var domainEventId = loadEventsByEntity.Value.ToList()[0].DomainEventId;
+            var domainEventId2 = loadEventsByEntity.Value.ToList()[1].DomainEventId;
+
+            var loadEventsByEntityAgain = await eventRepository.LoadEventsByEntity(newGuid);
+
+            Assert.AreEqual(domainEventId, loadEventsByEntityAgain.Value.ToList()[0].DomainEventId);
+            Assert.AreEqual(domainEventId2, loadEventsByEntityAgain.Value.ToList()[1].DomainEventId);
         }
 
         [Test]
