@@ -10,8 +10,14 @@ namespace Domain.Framework
         }
 
         public Guid EntityId { get; }
-        public long Version { get; set; }
-        public long Created { get; set; }
+        public long Version { get; private set; }
+        public long Created { get; private set; }
         public string Type => GetType().Name;
+
+        public void MarkNow(int version)
+        {
+            Version = version;
+            Created = DateTime.UtcNow.Ticks;
+        }
     }
 }

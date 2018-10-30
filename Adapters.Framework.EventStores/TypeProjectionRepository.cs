@@ -27,13 +27,7 @@ namespace Adapters.Framework.EventStores
 
             if (!stream.Any()) return Result<IEnumerable<DomainEvent>>.Ok(new List<DomainEvent>());
 
-            var domainEvents = stream.Select(dbo =>
-                {
-                    var domainEvent = _objectConverter.Deserialize<DomainEvent>(dbo.Payload);
-                    domainEvent.Version = dbo.Version;
-                    domainEvent.Created = dbo.Created;
-                    return domainEvent;
-                });
+            var domainEvents = stream.Select(dbo => _objectConverter.Deserialize<DomainEvent>(dbo.Payload));
             return Result<IEnumerable<DomainEvent>>.Ok(domainEvents);
         }
 

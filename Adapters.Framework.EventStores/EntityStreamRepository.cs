@@ -25,13 +25,7 @@ namespace Adapters.Framework.EventStores
                 .Where(str => str.EntityId == entityId.ToString() && str.Version > from).ToList();
             if (!stream.Any()) return Result<IEnumerable<DomainEvent>>.NotFound(entityId.ToString());
 
-            var domainEvents = stream.Select(dbo =>
-                {
-                    var domainEvent = _eventConverter.Deserialize<DomainEvent>(dbo.Payload);
-                    domainEvent.Version = dbo.Version;
-                    domainEvent.Created = dbo.Created;
-                    return domainEvent;
-                });
+            var domainEvents = stream.Select(dbo => _eventConverter.Deserialize<DomainEvent>(dbo.Payload));
 
             return Result<IEnumerable<DomainEvent>>.Ok(domainEvents);
         }
@@ -42,13 +36,7 @@ namespace Adapters.Framework.EventStores
                 .Where(str => str.Created > tickSince).ToList();
             if (!stream.Any()) return Result<IEnumerable<DomainEvent>>.Ok(new List<DomainEvent>());
 
-            var domainEvents = stream.Select(dbo =>
-            {
-                var domainEvent = _eventConverter.Deserialize<DomainEvent>(dbo.Payload);
-                domainEvent.Version = dbo.Version;
-                domainEvent.Created = dbo.Created;
-                return domainEvent;
-            });
+            var domainEvents = stream.Select(dbo => _eventConverter.Deserialize<DomainEvent>(dbo.Payload));
 
             return Result<IEnumerable<DomainEvent>>.Ok(domainEvents);
         }
@@ -66,12 +54,13 @@ namespace Adapters.Framework.EventStores
             foreach (var domainEvent in events)
             {
                 entityVersionTemp = entityVersionTemp + 1;
+                domainEvent.MarkNow(entityVersionTemp);
                 var serialize = _eventConverter.Serialize(domainEvent);
                 var domainEventDbo = new DomainEventDbo
                 {
                     Payload = serialize,
-                    Created = DateTimeOffset.UtcNow.Ticks,
-                    Version = entityVersionTemp,
+                    Created = domainEvent.Created,
+                    Version = domainEvent.Version,
                     EntityId = domainEvent.EntityId.ToString()
                 };
 
