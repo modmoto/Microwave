@@ -22,13 +22,16 @@ namespace DependencyInjection.Framework.UnitTests
             var storeDependencies = collection.AddMyEventStoreDependencies(typeof(TestEventHandler).Assembly, config);
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
-            var testEventHandler = buildServiceProvider.GetServices<IEventDelegateHandler>();
             var delegateHandler1 = buildServiceProvider.GetServices<IHandleAsync<TestDomainEvent>>();
             var delegateHandler2 = buildServiceProvider.GetServices<IHandleAsync<TestDomainEvent2>>();
 
-            Assert.AreEqual(2, testEventHandler.Count());
-            Assert.AreEqual(2, delegateHandler1.Count());
-            Assert.AreEqual(1, delegateHandler2.Count());
+            var handlers1 = delegateHandler1.ToList();
+            var handlers2 = delegateHandler2.ToList();
+            Assert.AreEqual(2, handlers1.Count);
+            Assert.IsNotNull(handlers1[0] as TestEventHandler);
+            Assert.IsNotNull(handlers1[1] as TestEventHandler2);
+            Assert.AreEqual(1, handlers2.Count);
+            Assert.IsNotNull(handlers2[0] as TestEventHandler);
         }
     }
 
