@@ -7,12 +7,12 @@ using Domain.Seasons.Events;
 
 namespace Application.Seasons.Querries
 {
-    public class Top10NameChangesEventHandlerHandler : IHandleAsync<SeasonCreatedEvent>, IHandleAsync<SeasonNameChangedEvent>
+    public class Top10NameChangesEventHandler : IHandleAsync<SeasonCreatedEvent>, IHandleAsync<SeasonNameChangedEvent>
     {
         private readonly IQeryRepository _qeryRepository;
         private readonly IEntityStreamRepository _streamRepository;
 
-        public Top10NameChangesEventHandlerHandler(IQeryRepository qeryRepository, IEntityStreamRepository streamRepository)
+        public Top10NameChangesEventHandler(IQeryRepository qeryRepository, IEntityStreamRepository streamRepository)
         {
             _qeryRepository = qeryRepository;
             _streamRepository = streamRepository;
@@ -32,7 +32,10 @@ namespace Application.Seasons.Querries
 
         private IEnumerable<SeasonNameChangCounterDto> SortIn(IEnumerable<SeasonNameChangCounterDto> valueSeasonCounter, SeasonNameChangCounterDto seasonNameChangCounterDto)
         {
-            var seasonNameChangCounterDtos = valueSeasonCounter.Append(seasonNameChangCounterDto);
+            var nameChangCounterDtos = valueSeasonCounter.ToList();
+            var nameChangCounterDto = nameChangCounterDtos.FirstOrDefault(e => e.SeasonId == seasonNameChangCounterDto.SeasonId);
+            if (nameChangCounterDto != null) nameChangCounterDtos.Remove(nameChangCounterDto);
+            var seasonNameChangCounterDtos = nameChangCounterDtos.Append(seasonNameChangCounterDto);
             var orderedList = seasonNameChangCounterDtos.OrderByDescending(dto => dto.NameChangesAmount);
             var top10NameChangers = orderedList.Take(10);
             return top10NameChangers.ToList();
