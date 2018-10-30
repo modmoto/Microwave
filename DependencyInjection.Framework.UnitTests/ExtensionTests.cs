@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Adapters.Framework.WebApi;
 using Application.Framework;
 using Domain.Framework;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,6 +20,15 @@ namespace DependencyInjection.Framework.UnitTests
             var config = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.test.json")
                 .Build();
+
+
+            // remove, as soon as test can do this
+            collection.AddTransient<IEventFeed<TestDomainEvent2>, EventFeed<TestDomainEvent2>>();
+            collection.AddTransient<IEventFeed<TestDomainEvent>, EventFeed<TestDomainEvent>>();
+            collection.AddTransient<DomainEventClient<TestDomainEvent2>>();
+            collection.AddTransient<DomainEventClient<TestDomainEvent>>();
+
+
             var storeDependencies = collection.AddMyEventStoreDependencies(typeof(TestEventHandler).Assembly, config);
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
@@ -32,6 +42,11 @@ namespace DependencyInjection.Framework.UnitTests
             Assert.IsNotNull(handlers1[1] as TestEventHandler2);
             Assert.AreEqual(1, handlers2.Count);
             Assert.IsNotNull(handlers2[0] as TestEventHandler);
+
+            var delegateHandlers = buildServiceProvider.GetServices<IEventDelegateHandler>().ToList();
+            Assert.AreEqual(2, delegateHandlers.Count);
+            Assert.NotNull(delegateHandlers[0] as EventDelegateHandler<TestDomainEvent>);
+            Assert.NotNull(delegateHandlers[1] as EventDelegateHandler<TestDomainEvent2>);
         }
     }
 

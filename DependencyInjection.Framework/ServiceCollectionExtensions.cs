@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using Adapters.Framework.EventStores;
 using Adapters.Framework.Queries;
 using Adapters.Framework.Subscriptions;
 using Adapters.Json.ObjectPersistences;
 using Application.Framework;
+using Domain.Framework;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -40,7 +42,7 @@ namespace DependencyInjection.Framework
             services.AddTransient<ITypeProjectionHandler, TypeProjectionHandler>();
 
             //services.AddTransient<IEventDelegateHandler, EventDelegateHandler<SeasonCreatedEvent>>();
-            //services.AddIEventDelegateHander(assembly);
+            services.AddIEventDelegateHandler(assembly);
 
             //services.AddTransient<IHandleAsync<SeasonCreatedEvent>, SeasonCreatedEventHandler>();
             services.AddIHandleAsync(assembly);
@@ -75,24 +77,23 @@ namespace DependencyInjection.Framework
             return services;
         }
 
-        public static IServiceCollection AddIEventDelegateHander(this IServiceCollection services, Assembly assembly)
+        public static IServiceCollection AddIEventDelegateHandler(this IServiceCollection services, Assembly assembly)
         {
-            var methodInfos = typeof(ServiceCollectionServiceExtensions).GetMethods().ToList();
-            var methodInfo = methodInfos.Single(m =>
+            var addTransient = typeof(ServiceCollectionServiceExtensions).GetMethods().Single(m =>
                 m.Name == "AddTransient" && m.GetGenericArguments().Length == 2 &&
                 m.GetParameters().Length == 1);
 
-            var handleAsyndTypes = assembly.GetTypes().Where(t => ImplementsIEventDelegateHandlerInterface(t)).ToList();
-            var genericTypeOfHandler = typeof(EventDelegateHandler<>);
+            var handlerInterfaces = assembly.GetTypes().Where(t => ImplementsIhandleAsyncInterface(t));
+            var genericTypeOfDelegateHandler = typeof(EventDelegateHandler<>);
 
-            var domainEventTypes = handleAsyndTypes.Select(ha => ha.GenericTypeArguments.Single());
-            foreach (var ihandleInterfaces in domainEventTypes)
+            var interfacesWithDomainEventImplementation = handlerInterfaces.SelectMany(i => i.GetInterfaces().Where(i2 => i2.GenericTypeArguments.Length == 1 && i2.GenericTypeArguments[0].BaseType == typeof(DomainEvent))).ToList();
+            var domainEventTypes = interfacesWithDomainEventImplementation.Select(e => e.GenericTypeArguments.Single()).Distinct();
+
+            foreach (var domainEventType in domainEventTypes)
             {
-                var ihandleInterfacesGenericTypeArguments = ihandleInterfaces.GenericTypeArguments.Single();
-                Type[] typeArgs = {ihandleInterfacesGenericTypeArguments};
-                var makeGenericType = genericTypeOfHandler.MakeGenericType(typeArgs);
-                var makeGenericMethod = methodInfo.MakeGenericMethod(typeof(IEventDelegateHandler), makeGenericType);
-                makeGenericMethod.Invoke(services, new object[] { });
+                var delegateHandler = genericTypeOfDelegateHandler.MakeGenericType(domainEventType);
+                var addTransientCall = addTransient.MakeGenericMethod(typeof(IEventDelegateHandler), delegateHandler);
+                addTransientCall.Invoke(null, new object[] { services });
             }
 
             return services;
