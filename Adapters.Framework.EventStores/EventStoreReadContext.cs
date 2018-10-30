@@ -23,7 +23,9 @@ namespace Adapters.Framework.EventStores
     {
         public string DomainEventType { get; set; }
         public string Payload { get; set; }
-        [ConcurrencyCheck] public long Created { get; set; }
-        [ConcurrencyCheck] public long Version { get; set; }
+        [ConcurrencyCheck]
+        public long Created { get; set; }
+        [ConcurrencyCheck]
+        public long Version { get; set; }
     }
 }
