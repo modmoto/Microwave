@@ -21,11 +21,6 @@ namespace DependencyInjection.Framework.UnitTests
                 .AddJsonFile("appsettings.test.json")
                 .Build();
 
-
-            // remove, as soon as test can do this
-            collection.AddTransient<IEventFeed<TestDomainEvent2>, EventFeed<TestDomainEvent2>>();
-            collection.AddTransient<IEventFeed<TestDomainEvent>, EventFeed<TestDomainEvent>>();
-
             var storeDependencies = collection.AddMyEventStoreDependencies(typeof(TestEventHandler).Assembly, config);
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
@@ -44,6 +39,11 @@ namespace DependencyInjection.Framework.UnitTests
             Assert.AreEqual(2, delegateHandlers.Count);
             Assert.NotNull(delegateHandlers[0] as EventDelegateHandler<TestDomainEvent>);
             Assert.NotNull(delegateHandlers[1] as EventDelegateHandler<TestDomainEvent2>);
+
+            var eventFeed1 = buildServiceProvider.GetServices<IEventFeed<TestDomainEvent>>().Single();
+            var eventFeed2 = buildServiceProvider.GetServices<IEventFeed<TestDomainEvent2>>().Single();
+            Assert.NotNull(eventFeed1 as EventFeed<TestDomainEvent>);
+            Assert.NotNull(eventFeed2 as EventFeed<TestDomainEvent2>);
         }
     }
 
