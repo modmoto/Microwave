@@ -27,11 +27,7 @@ namespace OnlineLeagueBackend
         {
             services.AddMvc();
             services.AddTransient<SeasonController>();
-
             services.AddTransient<SeasonCommandHandler>();
-
-            services.AddTransient<IIdentifiableQueryEventHandler, IdentifiableQueryEventHandler<SingleSeasonsQuery, SeasonCreatedEvent>>();
-            services.AddTransient<IIdentifiableQueryEventHandler, IdentifiableQueryEventHandler<SingleSeasonsQuery, SeasonNameChangedEvent>>();
 
             services.AddMyEventStoreDependencies(typeof(AllSeasonsCounterQuery).Assembly, Configuration);
         }

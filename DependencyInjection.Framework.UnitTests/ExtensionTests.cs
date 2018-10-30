@@ -49,6 +49,47 @@ namespace DependencyInjection.Framework.UnitTests
             Assert.NotNull(qHandler1[0] as QueryEventHandler<TestQuery, TestDomainEvent>);
             Assert.NotNull(qHandler1[1] as QueryEventHandler<TestQuery, TestDomainEvent2>);
             Assert.NotNull(qHandler1[2] as QueryEventHandler<TestQuery2, TestDomainEvent>);
+
+            var identHandler = buildServiceProvider.GetServices<IIdentifiableQueryEventHandler>().ToList();
+            Assert.NotNull(identHandler[0] as IdentifiableQueryEventHandler<TestIdQuery, TestDomainEvent>);
+            Assert.NotNull(identHandler[1] as IdentifiableQueryEventHandler<TestIdQuery, TestDomainEvent2>);
+            Assert.NotNull(identHandler[2] as IdentifiableQueryEventHandler<TestIdQuery2, TestDomainEvent>);
+        }
+    }
+
+    public class TestIdQuery : IdentifiableQuery, IHandle<TestDomainEvent>, IHandle<TestDomainEvent2>
+    {
+        public Task HandleAsync(TestDomainEvent domainEvent)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task HandleAsync(TestDomainEvent2 domainEvent)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Handle(TestDomainEvent domainEvent)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Handle(TestDomainEvent2 domainEvent)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class TestIdQuery2 : IdentifiableQuery, IHandle<TestDomainEvent>
+    {
+        public Task HandleAsync(TestDomainEvent domainEvent)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Handle(TestDomainEvent domainEvent)
+        {
+            throw new NotImplementedException();
         }
     }
 

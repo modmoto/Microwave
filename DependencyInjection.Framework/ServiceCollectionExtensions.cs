@@ -56,6 +56,7 @@ namespace DependencyInjection.Framework
 
             //QueryHandlers
             services.AddQueryHandler(assembly);
+            services.AddIdentifiableQueryHandler(assembly);
 
 
             services.AddSingleton(new EventLocationConfig(configuration));
@@ -167,6 +168,33 @@ namespace DependencyInjection.Framework
             var genericTypeOfHandler = typeof(QueryEventHandler<,>);
 
             var allQuerries = assembly.GetTypes().Where(t => t.BaseType == typeof(Query));
+
+            foreach (var querry in allQuerries)
+            {
+                var interfacesWithDomainEventImplementation = querry.GetInterfaces().Where(i2 => i2.GenericTypeArguments.Length == 1 && i2.GenericTypeArguments[0].BaseType == typeof(DomainEvent)).ToList();
+                var domainEventTypes = interfacesWithDomainEventImplementation.Select(e => e.GenericTypeArguments.Single()).Distinct();
+
+                foreach (var domainEventType in domainEventTypes)
+                {
+                    var handler = genericTypeOfHandler.MakeGenericType(querry, domainEventType);
+                    var addTransientCall = addTransient.MakeGenericMethod(handlerInterface, handler);
+                    addTransientCall.Invoke(null, new object[] { services });
+                }
+            }
+
+            return services;
+        }
+
+        public static IServiceCollection AddIdentifiableQueryHandler(this IServiceCollection services, Assembly assembly)
+        {
+            var addTransient = typeof(ServiceCollectionServiceExtensions).GetMethods().Single(m =>
+                m.Name == "AddTransient" && m.GetGenericArguments().Length == 2 &&
+                m.GetParameters().Length == 1);
+
+            var handlerInterface = typeof(IIdentifiableQueryEventHandler);
+            var genericTypeOfHandler = typeof(IdentifiableQueryEventHandler<,>);
+
+            var allQuerries = assembly.GetTypes().Where(t => t.BaseType == typeof(IdentifiableQuery));
 
             foreach (var querry in allQuerries)
             {
