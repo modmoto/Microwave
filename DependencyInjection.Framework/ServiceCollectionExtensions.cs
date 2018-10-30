@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Adapters.Framework.EventStores;
 using Adapters.Framework.Queries;
 using Adapters.Framework.Subscriptions;
+using Adapters.Framework.WebApi;
 using Adapters.Json.ObjectPersistences;
 using Application.Framework;
 using Domain.Framework;
@@ -46,6 +47,9 @@ namespace DependencyInjection.Framework
 
             //services.AddTransient<IHandleAsync<SeasonCreatedEvent>, SeasonCreatedEventHandler>();
             services.AddIHandleAsync(assembly);
+
+            //Client
+            services.AddEventClient(assembly);
 
             services.AddSingleton(new EventLocationConfig(configuration));
 
@@ -93,6 +97,29 @@ namespace DependencyInjection.Framework
             {
                 var delegateHandler = genericTypeOfDelegateHandler.MakeGenericType(domainEventType);
                 var addTransientCall = addTransient.MakeGenericMethod(typeof(IEventDelegateHandler), delegateHandler);
+                addTransientCall.Invoke(null, new object[] { services });
+            }
+
+            return services;
+        }
+
+
+        public static IServiceCollection AddEventClient(this IServiceCollection services, Assembly assembly)
+        {
+            var addTransient = typeof(ServiceCollectionServiceExtensions).GetMethods().Single(m =>
+                m.Name == "AddTransient" && m.GetGenericArguments().Length == 1 &&
+                m.GetParameters().Length == 1);
+
+            var handlerInterfaces = assembly.GetTypes().Where(t => ImplementsIhandleAsyncInterface(t));
+            var genericTypeOfClient = typeof(DomainEventClient<>);
+
+            var interfacesWithDomainEventImplementation = handlerInterfaces.SelectMany(i => i.GetInterfaces().Where(i2 => i2.GenericTypeArguments.Length == 1 && i2.GenericTypeArguments[0].BaseType == typeof(DomainEvent))).ToList();
+            var domainEventTypes = interfacesWithDomainEventImplementation.Select(e => e.GenericTypeArguments.Single()).Distinct();
+
+            foreach (var domainEventType in domainEventTypes)
+            {
+                var delegateHandler = genericTypeOfClient.MakeGenericType(domainEventType);
+                var addTransientCall = addTransient.MakeGenericMethod(delegateHandler);
                 addTransientCall.Invoke(null, new object[] { services });
             }
 

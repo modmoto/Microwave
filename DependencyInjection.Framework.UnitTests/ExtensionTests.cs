@@ -25,9 +25,6 @@ namespace DependencyInjection.Framework.UnitTests
             // remove, as soon as test can do this
             collection.AddTransient<IEventFeed<TestDomainEvent2>, EventFeed<TestDomainEvent2>>();
             collection.AddTransient<IEventFeed<TestDomainEvent>, EventFeed<TestDomainEvent>>();
-            collection.AddTransient<DomainEventClient<TestDomainEvent2>>();
-            collection.AddTransient<DomainEventClient<TestDomainEvent>>();
-
 
             var storeDependencies = collection.AddMyEventStoreDependencies(typeof(TestEventHandler).Assembly, config);
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
