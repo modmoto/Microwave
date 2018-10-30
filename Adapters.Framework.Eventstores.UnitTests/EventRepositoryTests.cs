@@ -59,6 +59,8 @@ namespace Adapters.Framework.Eventstores.UnitTests
 
             var loadEventsByEntity = await eventRepository.LoadEventsByEntity(newGuid);
             Assert.AreEqual(2, loadEventsByEntity.Value.Count());
+            Assert.AreNotEqual(0, loadEventsByEntity.Value.ToList()[0].Created);
+            Assert.AreNotEqual(0, loadEventsByEntity.Value.ToList()[1].Created);
             Assert.AreEqual(0, loadEventsByEntity.Value.ToList()[0].Version);
             Assert.AreEqual(1, loadEventsByEntity.Value.ToList()[1].Version);
             Assert.AreEqual(newGuid, loadEventsByEntity.Value.ToList()[0].EntityId);
