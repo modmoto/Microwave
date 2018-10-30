@@ -30,10 +30,6 @@ namespace OnlineLeagueBackend
 
             services.AddTransient<SeasonCommandHandler>();
 
-            services.AddTransient<IQueryEventHandler, QueryEventHandler<AllSeasonsQuery, SeasonCreatedEvent>>();
-            services.AddTransient<IQueryEventHandler, QueryEventHandler<AllSeasonsQuery, SeasonNameChangedEvent>>();
-            services.AddTransient<IQueryEventHandler, QueryEventHandler<AllSeasonsCounterQuery, SeasonCreatedEvent>>();
-
             services.AddTransient<IIdentifiableQueryEventHandler, IdentifiableQueryEventHandler<SingleSeasonsQuery, SeasonCreatedEvent>>();
             services.AddTransient<IIdentifiableQueryEventHandler, IdentifiableQueryEventHandler<SingleSeasonsQuery, SeasonNameChangedEvent>>();
 

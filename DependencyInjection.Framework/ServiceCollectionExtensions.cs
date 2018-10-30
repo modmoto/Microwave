@@ -54,6 +54,10 @@ namespace DependencyInjection.Framework
             services.AddEventClient(assembly);
             services.AddEventFeed(assembly);
 
+            //QueryHandlers
+            services.AddQueryHandler(assembly);
+
+
             services.AddSingleton(new EventLocationConfig(configuration));
 
             return services;
@@ -153,15 +157,43 @@ namespace DependencyInjection.Framework
             return services;
         }
 
-        private static bool ImplementsIEventDelegateHandlerInterface(Type type)
+        public static IServiceCollection AddQueryHandler(this IServiceCollection services, Assembly assembly)
         {
-            return type.GetInterfaces().Contains(typeof(IEventDelegateHandler));
+            var addTransient = typeof(ServiceCollectionServiceExtensions).GetMethods().Single(m =>
+                m.Name == "AddTransient" && m.GetGenericArguments().Length == 2 &&
+                m.GetParameters().Length == 1);
+
+            var handlerInterface = typeof(IQueryEventHandler);
+            var genericTypeOfHandler = typeof(QueryEventHandler<,>);
+
+            var allQuerries = assembly.GetTypes().Where(t => t.BaseType == typeof(Query));
+
+            foreach (var querry in allQuerries)
+            {
+                var interfacesWithDomainEventImplementation = querry.GetInterfaces().Where(i2 => i2.GenericTypeArguments.Length == 1 && i2.GenericTypeArguments[0].BaseType == typeof(DomainEvent)).ToList();
+                var domainEventTypes = interfacesWithDomainEventImplementation.Select(e => e.GenericTypeArguments.Single()).Distinct();
+
+                foreach (var domainEventType in domainEventTypes)
+                {
+                    var handler = genericTypeOfHandler.MakeGenericType(querry, domainEventType);
+                    var addTransientCall = addTransient.MakeGenericMethod(handlerInterface, handler);
+                    addTransientCall.Invoke(null, new object[] { services });
+                }
+            }
+
+            return services;
         }
 
         private static bool ImplementsIhandleAsyncInterface(Type myType)
         {
             return myType.GetInterfaces()
                 .Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IHandleAsync<>));
+        }
+
+        private static bool ImplementsIhandleInterface(Type myType)
+        {
+            return myType.GetInterfaces()
+                .Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IHandle<>));
         }
     }
 }
