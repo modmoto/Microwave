@@ -21,7 +21,6 @@ namespace Adapters.Framework.EventStores
 
     public class DomainEventTypeDbo
     {
-        public string Id { get; set; }
         public string DomainEventType { get; set; }
         public string Payload { get; set; }
         [ConcurrencyCheck] public long Created { get; set; }

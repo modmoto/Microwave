@@ -66,7 +66,6 @@ namespace Adapters.Framework.EventStores
                 Payload = payLoad,
                 DomainEventType = streamName,
                 Created = domainEventWrapper.Created,
-                Id = domainEventWrapper.DomainEventId.ToString(),
                 Version = domainEventWrapper.Version
             };
         }
