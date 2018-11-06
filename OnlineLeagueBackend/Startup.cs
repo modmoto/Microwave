@@ -1,10 +1,7 @@
-﻿using Adapters.Framework.WebApi;
-using Adapters.WebApi.Seasons;
-using Application.Framework;
+﻿using Adapters.WebApi.Seasons;
 using Application.Seasons;
 using Application.Seasons.Querries;
 using DependencyInjection.Framework;
-using Domain.Seasons.Events;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
