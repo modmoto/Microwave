@@ -18,7 +18,8 @@ namespace Adapters.Framework.EventStores
 
         public async Task AppendAsync(IEnumerable<DomainEvent> domainEvents, long entityVersion)
         {
-            await _entityStreamRepository.AppendAsync(domainEvents, entityVersion);
+            var result = await _entityStreamRepository.AppendAsync(domainEvents, entityVersion);
+            result.Check();
         }
 
         public async Task<EventstoreResult<T>> LoadAsync<T>(Guid entityId) where T : new()
@@ -27,7 +28,8 @@ namespace Adapters.Framework.EventStores
             var domainEvents = (await _entityStreamRepository.LoadEventsByEntity(entityId)).Value;
             var eventList = domainEvents.ToList();
             entity = eventList.Aggregate(entity, (current, domainEvent) => Apply(current, domainEvent));
-            return new EventstoreResult<T>(eventList.Count, entity);
+            // TODO get this from stream/events
+            return new EventstoreResult<T>(eventList.Count - 1, entity);
         }
 
         private T Apply<T>(T entity, DomainEvent domainEvent)
