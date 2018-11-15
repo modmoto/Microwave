@@ -1,7 +1,16 @@
-﻿namespace Domain.PlayerAquisitions
+﻿using System;
+
+namespace Domain.PlayerAquisitions
 {
     public class Skill
     {
-        public string Description { get; set; }
+        public Skill(Guid id, string description)
+        {
+            Id = id;
+            Description = description;
+        }
+        
+        public Guid Id { get; }
+        public string Description { get; }
     }
 }

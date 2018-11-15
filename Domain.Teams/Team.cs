@@ -8,9 +8,10 @@ namespace Domain.Teams
 {
     public class Team
     {
-        public Guid Id { get; }
-        public Race Race { get; }
-        public GoldCoins TeamMoney { get; private set; }
+        public Guid Id { get; private set; }
+        public Race Race { get; private set; }
+
+        public GoldCoins TeamMoney { get; private set; } = new GoldCoins(1000000);
         public IEnumerable<PlayerPosition> Players { get; } = new List<PlayerPosition>();
 
         public static DomainResult Create(Race race, string teamName, string trainerName)
@@ -22,18 +23,32 @@ namespace Domain.Teams
         {
             var domainErrors = new List<string>();
             var currentAmount = Players.Count(p => p.TypeId == player.TypeId);
-            var canUsePlayer = Race.CanUsePlayer(player.PlayerId, currentAmount);
+            var canUsePlayer = Race.CanUsePlayer(player.TypeId, currentAmount);
             if (canUsePlayer.Failed) domainErrors.AddRange(canUsePlayer.DomainErrors);
 
             if (player.Cost.LessThan(TeamMoney))
             {
                 Players.Append(player);
                 TeamMoney = TeamMoney.Minus(player.Cost);
-                return DomainResult.Ok(new PlayerBought(Id, player.PlayerId, player.TypeId, player.Cost.Value));
+                var playerId = Guid.NewGuid();
+                return DomainResult.Ok(new PlayerBought(Id, playerId, player.TypeId, player.Cost.Value));
             }
 
             domainErrors.Add($"Can not buy Player. Player costs {player.Cost}, your chest only contains {TeamMoney.Value}" );
             return DomainResult.Error(domainErrors);
         }
+
+        public void Apply(TeamCreated teamCreated)
+        {
+            Id = teamCreated.EntityId;
+            Race = Race.Create(teamCreated.RaceId);
+        }
+
+        public void Apply(PlayerBought playerBought)
+        {
+            TeamMoney = new GoldCoins(TeamMoney.Value - playerBought.PlayerCost);
+
+        }
+
     }
 }
