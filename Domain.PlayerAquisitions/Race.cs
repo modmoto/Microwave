@@ -1,6 +1,4 @@
-﻿using Domain.Framework;
-
-namespace Domain.PlayerAquisitions
+﻿namespace Domain.PlayerAquisitions
 {
     public class Race
     {

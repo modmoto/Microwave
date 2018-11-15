@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Domain.Players
+﻿namespace Domain.Players
 {
     public class Player
     {
