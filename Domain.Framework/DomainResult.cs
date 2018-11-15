@@ -41,5 +41,10 @@ namespace Domain.Framework
         {
             return new DomainResult(new List<DomainEvent>(), domainErrors);
         }
+
+        public void EnsureSucces()
+        {
+            if (Failed) throw new DomainValidationException(DomainErrors);
+        }
     }
 }

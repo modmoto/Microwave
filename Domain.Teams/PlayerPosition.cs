@@ -10,6 +10,10 @@ namespace Domain.Teams
             TypeId = typeId;
         }
 
+        public PlayerPosition()
+        {
+        }
+
         public GoldCoins Cost { get; }
         public Guid TypeId { get; }
     }

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using Domain.Framework;
 
@@ -32,6 +31,10 @@ namespace Domain.Teams
             Id = raceGuid;
             Name = name;
             AllowedPlayers = allowedPlayers;
+        }
+
+        public Race()
+        {
         }
 
         public string Name { get; }
