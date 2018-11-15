@@ -7,13 +7,13 @@ namespace Domain.Team.DomainEvents
     {
         public Guid PlayerId { get; }
         public int PlayerCost { get; }
-        public int PlayerTypeKey { get; }
+        public Guid PlayerTypeId { get; }
 
-        public PlayerBought(Guid teamId, Guid playerId, int playerCost, int playerTypeKey) : base(teamId)
+        public PlayerBought(Guid teamId, Guid playerId, Guid playerTypeId, int playerCost) : base(teamId)
         {
             PlayerId = playerId;
             PlayerCost = playerCost;
-            PlayerTypeKey = playerTypeKey;
+            PlayerTypeId = playerTypeId;
         }
     }
 }
