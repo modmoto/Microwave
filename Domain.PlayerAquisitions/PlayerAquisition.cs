@@ -5,8 +5,14 @@ namespace Domain.PlayerAquisitions
 {
     public class PlayerAquisition
     {
-        public PlayerAquisition(int strength, int agility, int armor, int movement, int goldCosts,
-            IEnumerable<Race> allowedRaces, IEnumerable<Skill> skills)
+        public PlayerAquisition(
+            int strength,
+            int agility,
+            int armor,
+            int movement,
+            int goldCosts,
+            IEnumerable<Race> allowedRaces,
+            IEnumerable<Skill> skills)
         {
             Strength = strength;
             Agility = agility;
