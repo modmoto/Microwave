@@ -3,7 +3,7 @@ using Domain.Framework;
 
 namespace Domain.PlayerAquisitions
 {
-    public class PlayerAquisition : Entity
+    public class PlayerAquisition
     {
         public PlayerAquisition(int strength, int agility, int armor, int movement, int goldCosts,
             IEnumerable<Race> allowedRaces, IEnumerable<Skill> skills)

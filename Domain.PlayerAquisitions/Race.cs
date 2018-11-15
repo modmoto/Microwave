@@ -2,7 +2,7 @@
 
 namespace Domain.PlayerAquisitions
 {
-    public class Race : Entity
+    public class Race
     {
         public Race(string name)
         {

@@ -6,8 +6,9 @@ using Domain.Team.DomainEvents;
 
 namespace Domain.Teams
 {
-    public class Team : Entity
+    public class Team
     {
+        public Guid Id { get; }
         public Race Race { get; }
         public GoldCoins TeamMoney { get; private set; }
         public IEnumerable<PlayerPosition> Players { get; } = new List<PlayerPosition>();

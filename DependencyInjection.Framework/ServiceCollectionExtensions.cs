@@ -21,7 +21,7 @@ namespace DependencyInjection.Framework
         {
             services.AddTransient<DomainEventController>();
 
-            services.AddTransient<IEventStoreFacade, EventStore>();
+            services.AddTransient<IEventStore, EventStore>();
             services.AddTransient<IObjectConverter, ObjectConverter>();
             services.AddDbContext<EventStoreReadContext>(option =>
                 option.UseSqlite("Data Source=EventStoreReadContext.db"));

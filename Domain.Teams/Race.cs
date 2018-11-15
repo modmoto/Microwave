@@ -5,7 +5,7 @@ using Domain.Framework;
 
 namespace Domain.Teams
 {
-    public class Race : Entity
+    public class Race
     {
         public Race(string name, IEnumerable<AllowedPlayer> allowedPlayers)
         {
@@ -15,6 +15,7 @@ namespace Domain.Teams
 
         public string Name { get; }
         public IEnumerable<AllowedPlayer> AllowedPlayers { get; }
+        public Guid Id { get; }
 
         public DomainResult CanUsePlayer(Guid playerTypeId, int ammount)
         {

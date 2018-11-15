@@ -4,8 +4,9 @@ using Domain.Seasons.Events;
 
 namespace Domain.Seasons
 {
-    public class Season : Entity
+    public class Season
     {
+        public Guid Id { get; set; }
         public string SeasonName { get; private set; }
 
         public static DomainResult Create(string seasonName)

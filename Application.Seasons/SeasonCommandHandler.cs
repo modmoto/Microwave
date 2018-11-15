@@ -9,26 +9,26 @@ namespace Application.Seasons
 {
     public class SeasonCommandHandler
     {
-        private readonly IEventStoreFacade _eventStoreFacade;
+        private readonly IEventStore _eventStore;
 
-        public SeasonCommandHandler(IEventStoreFacade eventStoreFacade)
+        public SeasonCommandHandler(IEventStore eventStore)
         {
-            _eventStoreFacade = eventStoreFacade;
+            _eventStore = eventStore;
         }
 
         public async Task<Guid> CreateSeason(CreateSesonCommand command)
         {
             var domainResult = Season.Create(command.SeasonName);
-            await _eventStoreFacade.AppendAsync(domainResult.DomainEvents, -1);
+            await _eventStore.AppendAsync(domainResult.DomainEvents, -1);
             return domainResult.DomainEvents.First().EntityId;
         }
 
         public async Task ChangeName(ChangeNameCommand command)
         {
-            var seasonResult = await _eventStoreFacade.LoadAsync<Season>(command.EntityId);
+            var seasonResult = await _eventStore.LoadAsync<Season>(command.EntityId);
             var season = seasonResult;
-            var domainResult = season.ChangeName(command.Name);
-            await _eventStoreFacade.AppendAsync(domainResult.DomainEvents, season.Version);
+            var domainResult = season.Value.ChangeName(command.Name);
+            await _eventStore.AppendAsync(domainResult.DomainEvents, seasonResult.Version);
         }
     }
 }
