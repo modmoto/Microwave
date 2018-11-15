@@ -2,6 +2,7 @@
 
 namespace Domain.Framework
 {
+    //TODO as interface
     public abstract class DomainEvent
     {
         public DomainEvent(Guid entityId)
@@ -10,6 +11,7 @@ namespace Domain.Framework
         }
 
         public Guid EntityId { get; }
+        // TODO as wrapper
         public long Version { get; private set; }
         public long Created { get; private set; }
         public string Type => GetType().Name;
