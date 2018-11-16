@@ -46,6 +46,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain.PlayerAquisitions", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application.Teams", "Application.Teams\Application.Teams.csproj", "{75E1D4EB-5F06-4CB9-B992-96F956E67208}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain.Races", "Domain.Races\Domain.Races.csproj", "{B24C73DA-721C-40D9-869C-44A7961C57DB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -144,5 +146,9 @@ Global
 		{75E1D4EB-5F06-4CB9-B992-96F956E67208}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{75E1D4EB-5F06-4CB9-B992-96F956E67208}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{75E1D4EB-5F06-4CB9-B992-96F956E67208}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B24C73DA-721C-40D9-869C-44A7961C57DB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B24C73DA-721C-40D9-869C-44A7961C57DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B24C73DA-721C-40D9-869C-44A7961C57DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B24C73DA-721C-40D9-869C-44A7961C57DB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

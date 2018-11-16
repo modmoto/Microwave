@@ -16,7 +16,7 @@ namespace Application.Teams
 
         public async Task CreateTeam(CreateTeamComand createTeamComand)
         {
-            var eventStoreResult = await _eventStore.LoadAsync<Race>(createTeamComand.RaceId);
+            var eventStoreResult = await _eventStore.LoadAsync<RaceDto>(createTeamComand.RaceId);
             var race = eventStoreResult.Value;
             var domainResult = Team.Create(race.Id, createTeamComand.TeamName, createTeamComand.PlayerName);
             await _eventStore.AppendAsync(domainResult.DomainEvents, -1);
