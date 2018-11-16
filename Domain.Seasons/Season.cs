@@ -28,6 +28,7 @@ namespace Domain.Seasons
 
         public DomainResult ChangeName(string commandName)
         {
+            if (commandName.Contains("Sex")) return DomainResult.Error(new []{ "Name can not contain Sex" });
             var seasonNameChangedEvent = new SeasonNameChangedEvent(Id, commandName);
             Apply(seasonNameChangedEvent);
             return DomainResult.Ok(seasonNameChangedEvent);

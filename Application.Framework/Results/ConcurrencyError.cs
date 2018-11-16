@@ -15,7 +15,7 @@ namespace Application.Framework.Results
 
         public override void Check()
         {
-            throw new ConcurrencyException(ExpectedVersion, ActualVersion);
+            throw new ConcurrencyViolatedException(ExpectedVersion, ActualVersion);
         }
     }
 }

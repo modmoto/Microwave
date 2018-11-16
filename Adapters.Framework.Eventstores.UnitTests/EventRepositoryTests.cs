@@ -86,7 +86,7 @@ namespace Adapters.Framework.Eventstores.UnitTests
             var t2 = eventRepository.AppendAsync(events2, -1);
 
             var allResults = await Task.WhenAll(t1, t2);
-            var concurrencyException = Assert.Throws<ConcurrencyException>(() => CheckAllResults(allResults));
+            var concurrencyException = Assert.Throws<ConcurrencyViolatedException>(() => CheckAllResults(allResults));
             var concurrencyExceptionMessage = concurrencyException.Message;
             Assert.AreEqual("Concurrency fraud detected, could not update database. ExpectedVersion: -1, ActualVersion: 1", concurrencyExceptionMessage);
         }

@@ -42,6 +42,15 @@ namespace DependencyInjection.Framework
             services.AddTransient<IProjectionHandler, ProjectionHandler>();
             services.AddTransient<ITypeProjectionHandler, TypeProjectionHandler>();
 
+
+            //WebApi
+            services.AddMvcCore(config =>
+            {
+                config.Filters.Add(new DomainValidationFilter());
+                config.Filters.Add(new NotFoundFilter());
+                config.Filters.Add(new ConcurrencyViolatedFilter());
+            });
+
             //services.AddTransient<IEventDelegateHandler, EventDelegateHandler<SeasonCreatedEvent>>();
             services.AddIEventDelegateHandler(assembly);
 
@@ -55,7 +64,6 @@ namespace DependencyInjection.Framework
             //QueryHandlers
             services.AddQueryHandler(assembly);
             services.AddIdentifiableQueryHandler(assembly);
-
 
             services.AddSingleton(new EventLocationConfig(configuration));
 

@@ -35,7 +35,7 @@ namespace Adapters.Framework.Queries.UnitTests
 
             var allResults = await Task.WhenAll(result, result1);
 
-            Assert.Throws<ConcurrencyException>(() => CheckAllResults(allResults));
+            Assert.Throws<ConcurrencyViolatedException>(() => CheckAllResults(allResults));
         }
 
         [Test]
