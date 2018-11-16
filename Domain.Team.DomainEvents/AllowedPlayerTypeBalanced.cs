@@ -11,7 +11,6 @@ namespace Domain.Team.DomainEvents
         }
 
         public Guid PlayerTypeId { get; }
-        public int MinimumPlayers { get; set; }
         public int MaxmimumPlayers { get; set; }
     }
 }
