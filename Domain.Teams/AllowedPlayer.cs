@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using Domain.Framework;
+using Domain.Team.DomainEvents;
 
 namespace Domain.Teams
 {
     public class AllowedPlayer
     {
-    public AllowedPlayer(Guid playerTypeId, string type, int minimumPlayers, int maxmimumPlayers, GoldCoins cost)
+    public AllowedPlayer(Guid playerTypeId, Guid type, int minimumPlayers, int maxmimumPlayers, GoldCoins cost)
         {
             PlayerTypeId = playerTypeId;
             MinimumPlayers = minimumPlayers;
@@ -27,9 +28,15 @@ namespace Domain.Teams
         }
 
         public Guid PlayerTypeId { get; }
-        public string Type { get; }
-        public int MinimumPlayers { get; }
-        public int MaxmimumPlayers { get; }
+        public Guid Type { get; }
+        public int MinimumPlayers { get; private set; }
+        public int MaxmimumPlayers { get; private set; }
         public GoldCoins Cost { get; }
+
+        public void Apply(AllowedPlayerTypeBalanced playerTypeBalanced)
+        {
+            MaxmimumPlayers = playerTypeBalanced.MaxmimumPlayers;
+            MinimumPlayers = playerTypeBalanced.MinimumPlayers;
+        }
     }
 }

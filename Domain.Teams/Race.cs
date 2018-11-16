@@ -1,25 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Domain.Framework;
+using Domain.Team.DomainEvents;
 
 namespace Domain.Teams
 {
     public class Race
     {
-        private Race(Guid raceGuid, string name, IEnumerable<AllowedPlayer> allowedPlayers)
-        {
-            Id = raceGuid;
-            Name = name;
-            AllowedPlayers = allowedPlayers;
-        }
-
         public Race()
         {
         }
 
-        public string Name { get; }
-        public IEnumerable<AllowedPlayer> AllowedPlayers { get; }
+        public IEnumerable<AllowedPlayer> AllowedPlayers { get; } = new List<AllowedPlayer>();
         public Guid Id { get; }
+
+        public void Apply(AllowedPlayerTypeBalanced playerTypeBalanced)
+        {
+            var player = AllowedPlayers.First(type => type.Type == playerTypeBalanced.PlayerTypeId);
+            player.Apply(playerTypeBalanced);
+        }
+
+        public void Apply(RaceCreated raceCreated)
+        {
+
+        }
     }
 }
