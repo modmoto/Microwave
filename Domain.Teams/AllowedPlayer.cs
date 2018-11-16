@@ -6,11 +6,12 @@ namespace Domain.Teams
 {
     public class AllowedPlayer
     {
-        public AllowedPlayer(Guid playerTypeId, string type, int minimumPlayers, int maxmimumPlayers)
+    public AllowedPlayer(Guid playerTypeId, string type, int minimumPlayers, int maxmimumPlayers, GoldCoins cost)
         {
             PlayerTypeId = playerTypeId;
             MinimumPlayers = minimumPlayers;
             MaxmimumPlayers = maxmimumPlayers;
+            Cost = cost;
             Type = type;
         }
 
@@ -29,5 +30,6 @@ namespace Domain.Teams
         public string Type { get; }
         public int MinimumPlayers { get; }
         public int MaxmimumPlayers { get; }
+        public GoldCoins Cost { get; }
     }
 }
