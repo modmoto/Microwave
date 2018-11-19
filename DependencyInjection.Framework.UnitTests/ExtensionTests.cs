@@ -35,13 +35,12 @@ namespace DependencyInjection.Framework.UnitTests
             Assert.AreEqual(1, handlers2.Count);
             Assert.IsNotNull(handlers2[0] as TestEventHandler);
 
-            var delegateHandlers = buildServiceProvider.GetServices<IEventDelegateHandler>().ToList();
-            Assert.AreEqual(2, delegateHandlers.Count);
-            Assert.NotNull(delegateHandlers[0] as EventDelegateHandler<TestDomainEvent>);
-            Assert.NotNull(delegateHandlers[1] as EventDelegateHandler<TestDomainEvent2>);
+            var eventDelegateHandler = buildServiceProvider.GetServices<IEventDelegateHandler>().ToList();
+            Assert.NotNull(eventDelegateHandler[0] as EventDelegateHandler<TestDomainEvent>);
+            Assert.NotNull(eventDelegateHandler[1] as EventDelegateHandler<TestDomainEvent2>);
 
-            var eventFeed1 = buildServiceProvider.GetServices<IEventFeed<TestDomainEvent>>().Single();
-            var eventFeed2 = buildServiceProvider.GetServices<IEventFeed<TestDomainEvent2>>().Single();
+            var eventFeed1 = buildServiceProvider.GetServices<IEventFeed<TestDomainEvent>>().SingleOrDefault();
+            var eventFeed2 = buildServiceProvider.GetServices<IEventFeed<TestDomainEvent2>>().SingleOrDefault();
             Assert.NotNull(eventFeed1 as EventFeed<TestDomainEvent>);
             Assert.NotNull(eventFeed2 as EventFeed<TestDomainEvent2>);
 
@@ -135,17 +134,23 @@ namespace DependencyInjection.Framework.UnitTests
         }
     }
 
-    public class TestDomainEvent2 : DomainEvent
+    public class TestDomainEvent2 : IDomainEvent
     {
-        public TestDomainEvent2(Guid entityId) : base(entityId)
+        public TestDomainEvent2(Guid entityId)
         {
+            EntityId = entityId;
         }
+
+        public Guid EntityId { get; }
     }
 
-    public class TestDomainEvent : DomainEvent
+    public class TestDomainEvent : IDomainEvent
     {
-        public TestDomainEvent(Guid entityId) : base(entityId)
+        public TestDomainEvent(Guid entityId)
         {
+            EntityId = entityId;
         }
+
+        public Guid EntityId { get; }
     }
 }

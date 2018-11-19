@@ -10,7 +10,7 @@ namespace Application.Framework
         Task Update();
     }
 
-    public class QueryEventHandler<TQuerry, TEvent> : IQueryEventHandler where TQuerry : Query, new() where TEvent : DomainEvent
+    public class QueryEventHandler<TQuerry, TEvent> : IQueryEventHandler where TQuerry : Query, new() where TEvent : IDomainEvent
     {
         private readonly IQeryRepository _qeryRepository;
         private readonly IEventFeed<TEvent> _eventRepository;

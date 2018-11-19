@@ -4,10 +4,11 @@ using Domain.Framework;
 
 namespace Domain.Team.DomainEvents
 {
-    public class RaceCreated : DomainEvent
+    public class RaceCreated : IDomainEvent
     {
-        public RaceCreated(Guid entityId) : base(entityId)
+        public RaceCreated(Guid entityId)
         {
+            EntityId = entityId;
         }
 
         public IEnumerable<AllowedPlayerDto> AllowedPlayers { get; } = new List<AllowedPlayerDto>();
@@ -26,5 +27,7 @@ namespace Domain.Team.DomainEvents
             public int MaximumPlayers { get; }
             public int Cost { get; }
         }
+
+        public Guid EntityId { get; }
     }
 }

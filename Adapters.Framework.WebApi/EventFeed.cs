@@ -6,7 +6,7 @@ using Domain.Framework;
 
 namespace Adapters.Framework.WebApi
 {
-    public class EventFeed<T> : IEventFeed<T> where T : DomainEvent
+    public class EventFeed<T> : IEventFeed<T> where T : IDomainEvent
     {
         private readonly IObjectConverter _objectConverter;
         private readonly DomainEventClient<T> _domainEventClient;

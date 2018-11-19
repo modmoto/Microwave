@@ -13,7 +13,7 @@ namespace Application.Framework
     public class IdentifiableQueryEventHandler<TQuerry, TEvent> :
         IIdentifiableQueryEventHandler
         where TQuerry : IdentifiableQuery, new()
-        where TEvent : DomainEvent
+        where TEvent : IDomainEvent
     {
         private readonly IQeryRepository _qeryRepository;
         private readonly IEventFeed<TEvent> _eventRepository;

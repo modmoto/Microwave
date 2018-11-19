@@ -16,7 +16,7 @@ namespace Adapters.Framework.EventStores
             _entityStreamRepository = entityStreamRepository;
         }
 
-        public async Task AppendAsync(IEnumerable<DomainEvent> domainEvents, long entityVersion)
+        public async Task AppendAsync(IEnumerable<IDomainEvent> domainEvents, long entityVersion)
         {
             var result = await _entityStreamRepository.AppendAsync(domainEvents, entityVersion);
             result.Check();
@@ -32,7 +32,7 @@ namespace Adapters.Framework.EventStores
             return new EventstoreResult<T>(eventList.Count - 1, entity);
         }
 
-        private T Apply<T>(T entity, DomainEvent domainEvent)
+        private T Apply<T>(T entity, IDomainEvent domainEvent)
         {
             var type = domainEvent.GetType();
             var currentEntityType = entity.GetType();

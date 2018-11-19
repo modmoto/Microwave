@@ -32,18 +32,18 @@ namespace Adapters.Framework.EventStores
                 {
                     Created = dbo.Created,
                     Version = dbo.Version,
-                    DomainEvent = _objectConverter.Deserialize<DomainEvent>(dbo.Payload)
+                    DomainEvent = _objectConverter.Deserialize<IDomainEvent>(dbo.Payload)
                 };
             });
             return Result<IEnumerable<DomainEventWrapper>>.Ok(domainEvents);
         }
 
-        public async Task<Result> AppendToTypeStream(DomainEvent domainEvent)
+        public async Task<Result> AppendToTypeStream(IDomainEvent domainEvent)
         {
             return await AppendToStreamWithName(domainEvent.GetType().Name, domainEvent);
         }
 
-        public async Task<Result> AppendToStreamWithName(string streamName, DomainEvent domainEvent)
+        public async Task<Result> AppendToStreamWithName(string streamName, IDomainEvent domainEvent)
         {
             var typeStream = _eventStoreReadContext.TypeStreams
                 .Where(str => str.DomainEventType == streamName).ToList();

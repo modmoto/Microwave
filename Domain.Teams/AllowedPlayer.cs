@@ -20,7 +20,7 @@ namespace Domain.Teams
 
             if (!moreThanMax) return DomainResult.Error(new List<string> { $"Can not add more players than {MaxmimumPlayers} for the PlayerType in this Race."} );
 
-            return DomainResult.Ok(new List<DomainEvent>());
+            return DomainResult.Ok(new List<IDomainEvent>());
         }
 
         public Guid PlayerTypeId { get; }

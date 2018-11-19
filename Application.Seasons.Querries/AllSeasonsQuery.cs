@@ -25,7 +25,7 @@ namespace Application.Seasons.Querries
         }
     }
 
-    public interface IHandle<T> where T : DomainEvent
+    public interface IHandle<T> where T : IDomainEvent
     {
         void Handle(T domainEvent);
     }

@@ -27,7 +27,7 @@ namespace Adapters.Framework.Eventstores.UnitTests
             var eventRepository = new EntityStreamRepository(new ObjectConverter(), eventStoreContext);
 
             var newGuid = Guid.NewGuid();
-            var events = new List<DomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid)};
+            var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid)};
             var res = await eventRepository.AppendAsync(events, -1);
             res.Check();
 
@@ -52,7 +52,7 @@ namespace Adapters.Framework.Eventstores.UnitTests
             var newGuid = Guid.NewGuid();
             var testEvent1 = new TestEvent1(newGuid);
             var testEvent2 = new TestEvent2(newGuid);
-            var events = new List<DomainEvent> { testEvent1, testEvent2};
+            var events = new List<IDomainEvent> { testEvent1, testEvent2};
 
             var res = await eventRepository.AppendAsync(events, -1);
             res.Check();
@@ -79,8 +79,8 @@ namespace Adapters.Framework.Eventstores.UnitTests
             var eventRepository = new EntityStreamRepository(new ObjectConverter(), eventStoreContext);
 
             var newGuid = Guid.NewGuid();
-            var events = new List<DomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid)};
-            var events2 = new List<DomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid)};
+            var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid)};
+            var events2 = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid)};
 
             var t1 = eventRepository.AppendAsync(events, -1);
             var t2 = eventRepository.AppendAsync(events2, -1);
@@ -129,7 +129,7 @@ namespace Adapters.Framework.Eventstores.UnitTests
             var eventRepository = new EntityStreamRepository(new ObjectConverter(), eventStoreContext);
 
             var newGuid = Guid.NewGuid();
-            var events = new List<DomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid), new TestEvent1(newGuid), new TestEvent2(newGuid)};
+            var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid), new TestEvent1(newGuid), new TestEvent2(newGuid)};
 
             await eventRepository.AppendAsync(events, -1);
 
@@ -160,7 +160,7 @@ namespace Adapters.Framework.Eventstores.UnitTests
             var newGuid = Guid.NewGuid();
             var domainEvent = new TestEvent1(newGuid);
 
-            await eventRepository.AppendAsync(new List<DomainEvent> { domainEvent }, -1);
+            await eventRepository.AppendAsync(new List<IDomainEvent> { domainEvent }, -1);
             await typeProjectionRepository.AppendToTypeStream(domainEvent);
 
             var result = await typeProjectionRepository.LoadEventsByTypeAsync(typeof(TestEvent1).Name);
@@ -194,7 +194,7 @@ namespace Adapters.Framework.Eventstores.UnitTests
             var overallProjectionRepository = new OverallProjectionRepository(typeProjectionRepository);
 
             var newGuid = Guid.NewGuid();
-            var events = new List<DomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid), new TestEvent1(newGuid), new TestEvent2(newGuid)};
+            var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid), new TestEvent1(newGuid), new TestEvent2(newGuid)};
 
             await eventRepository.AppendAsync(events, -1);
             var versionRepo = new VersionRepository(new SubscriptionContext(options2));
@@ -221,17 +221,23 @@ namespace Adapters.Framework.Eventstores.UnitTests
         }
     }
 
-    public class TestEvent1 : DomainEvent
+    public class TestEvent1 : IDomainEvent
     {
-        public TestEvent1(Guid entityId) : base(entityId)
+        public TestEvent1(Guid entityId)
         {
+            EntityId = entityId;
         }
+
+        public Guid EntityId { get; }
     }
 
-    public class TestEvent2 : DomainEvent
+    public class TestEvent2 : IDomainEvent
     {
-        public TestEvent2(Guid entityId) : base(entityId)
+        public TestEvent2(Guid entityId)
         {
+            EntityId = entityId;
         }
+
+        public Guid EntityId { get; }
     }
 }

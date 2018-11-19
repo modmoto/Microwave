@@ -4,7 +4,7 @@ using Domain.Framework;
 
 namespace Application.Framework
 {
-    public class EventDelegateHandler<T> : IEventDelegateHandler where T : DomainEvent
+    public class EventDelegateHandler<T> : IEventDelegateHandler where T : IDomainEvent
     {
         private readonly IEventFeed<T> _eventFeed;
         private readonly IEnumerable<IHandleAsync<T>> _handles;

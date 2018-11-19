@@ -7,7 +7,7 @@ namespace Application.Framework
 {
     public interface IEventStore
     {
-        Task AppendAsync(IEnumerable<DomainEvent> domainEvents, long entityVersion);
+        Task AppendAsync(IEnumerable<IDomainEvent> domainEvents, long entityVersion);
         Task<EventstoreResult<T>> LoadAsync<T>(Guid entityId) where T : new ();
     }
 

@@ -9,6 +9,7 @@ using Adapters.Json.ObjectPersistences;
 using Application.Framework;
 using Domain.Framework;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -104,7 +105,7 @@ namespace DependencyInjection.Framework
             var handlerInterfaces = assembly.GetTypes().Where(t => ImplementsIhandleAsyncInterface(t));
             var genericTypeOfDelegateHandler = typeof(EventDelegateHandler<>);
 
-            var interfacesWithDomainEventImplementation = handlerInterfaces.SelectMany(i => i.GetInterfaces().Where(i2 => i2.GenericTypeArguments.Length == 1 && i2.GenericTypeArguments[0].BaseType == typeof(DomainEvent))).ToList();
+            var interfacesWithDomainEventImplementation = handlerInterfaces.SelectMany(i => i.GetInterfaces().Where(IsDomainEvent)).ToList();
             var domainEventTypes = interfacesWithDomainEventImplementation.Select(e => e.GenericTypeArguments.Single()).Distinct();
 
             foreach (var domainEventType in domainEventTypes)
@@ -117,6 +118,11 @@ namespace DependencyInjection.Framework
             return services;
         }
 
+        private static bool IsDomainEvent(Type i2)
+        {
+            return i2.GenericTypeArguments.Length == 1 && i2.GenericTypeArguments[0].GetInterfaces().Contains(typeof(IDomainEvent));
+        }
+
 
         public static IServiceCollection AddEventClient(this IServiceCollection services, Assembly assembly)
         {
@@ -127,7 +133,7 @@ namespace DependencyInjection.Framework
             var handlerInterfaces = assembly.GetTypes().Where(t => ImplementsIhandleAsyncInterface(t));
             var genericTypeOfClient = typeof(DomainEventClient<>);
 
-            var interfacesWithDomainEventImplementation = handlerInterfaces.SelectMany(i => i.GetInterfaces().Where(i2 => i2.GenericTypeArguments.Length == 1 && i2.GenericTypeArguments[0].BaseType == typeof(DomainEvent))).ToList();
+            var interfacesWithDomainEventImplementation = handlerInterfaces.SelectMany(i => i.GetInterfaces().Where(IsDomainEvent)).ToList();
             var domainEventTypes = interfacesWithDomainEventImplementation.Select(e => e.GenericTypeArguments.Single()).Distinct();
 
             foreach (var domainEventType in domainEventTypes)
@@ -150,7 +156,7 @@ namespace DependencyInjection.Framework
             var genericInterfaceTypeOfFeed = typeof(IEventFeed<>);
             var genericTypeOfFeed = typeof(EventFeed<>);
 
-            var interfacesWithDomainEventImplementation = handlerInterfaces.SelectMany(i => i.GetInterfaces().Where(i2 => i2.GenericTypeArguments.Length == 1 && i2.GenericTypeArguments[0].BaseType == typeof(DomainEvent))).ToList();
+            var interfacesWithDomainEventImplementation = handlerInterfaces.SelectMany(i => i.GetInterfaces().Where(IsDomainEvent)).ToList();
             var domainEventTypes = interfacesWithDomainEventImplementation.Select(e => e.GenericTypeArguments.Single()).Distinct();
 
             foreach (var domainEventType in domainEventTypes)
@@ -177,7 +183,7 @@ namespace DependencyInjection.Framework
 
             foreach (var querry in allQuerries)
             {
-                var interfacesWithDomainEventImplementation = querry.GetInterfaces().Where(i2 => i2.GenericTypeArguments.Length == 1 && i2.GenericTypeArguments[0].BaseType == typeof(DomainEvent)).ToList();
+                var interfacesWithDomainEventImplementation = querry.GetInterfaces().Where(IsDomainEvent).ToList();
                 var domainEventTypes = interfacesWithDomainEventImplementation.Select(e => e.GenericTypeArguments.Single()).Distinct();
 
                 foreach (var domainEventType in domainEventTypes)
@@ -204,7 +210,7 @@ namespace DependencyInjection.Framework
 
             foreach (var querry in allQuerries)
             {
-                var interfacesWithDomainEventImplementation = querry.GetInterfaces().Where(i2 => i2.GenericTypeArguments.Length == 1 && i2.GenericTypeArguments[0].BaseType == typeof(DomainEvent)).ToList();
+                var interfacesWithDomainEventImplementation = querry.GetInterfaces().Where(IsDomainEvent).ToList();
                 var domainEventTypes = interfacesWithDomainEventImplementation.Select(e => e.GenericTypeArguments.Single()).Distinct();
 
                 foreach (var domainEventType in domainEventTypes)
@@ -222,12 +228,6 @@ namespace DependencyInjection.Framework
         {
             return myType.GetInterfaces()
                 .Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IHandleAsync<>));
-        }
-
-        private static bool ImplementsIhandleInterface(Type myType)
-        {
-            return myType.GetInterfaces()
-                .Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IHandle<>));
         }
     }
 }

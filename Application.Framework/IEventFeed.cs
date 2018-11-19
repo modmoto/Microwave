@@ -4,7 +4,7 @@ using Domain.Framework;
 
 namespace Application.Framework
 {
-    public interface IEventFeed<T> where T : DomainEvent
+    public interface IEventFeed<T> where T : IDomainEvent
     {
         Task<IEnumerable<T>> GetEventsByTypeAsync(long lastVersion);
     }

@@ -10,7 +10,7 @@ namespace Application.Framework
 
         public long Version { get; set; }
 
-        public void Handle(DomainEvent domainEvent)
+        public void Handle(IDomainEvent domainEvent)
         {
             var type = domainEvent.GetType();
             var currentEntityType = GetType();
@@ -27,7 +27,7 @@ namespace Application.Framework
 
         public long Version { get; set; }
 
-        public void Handle(DomainEvent domainEvent)
+        public void Handle(IDomainEvent domainEvent)
         {
             var type = domainEvent.GetType();
             var currentEntityType = GetType();

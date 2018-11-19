@@ -31,7 +31,7 @@ namespace Adapters.Framework.EventStores
                 {
                     Created = dbo.Created,
                     Version = dbo.Version,
-                    DomainEvent = _eventConverter.Deserialize<DomainEvent>(dbo.Payload)
+                    DomainEvent = _eventConverter.Deserialize<IDomainEvent>(dbo.Payload)
                 };
             });
 
@@ -50,14 +50,14 @@ namespace Adapters.Framework.EventStores
                 {
                     Created = dbo.Created,
                     Version = dbo.Version,
-                    DomainEvent = _eventConverter.Deserialize<DomainEvent>(dbo.Payload)
+                    DomainEvent = _eventConverter.Deserialize<IDomainEvent>(dbo.Payload)
                 };
             });
 
             return Result<IEnumerable<DomainEventWrapper>>.Ok(domainEvents);
         }
 
-        public async Task<Result> AppendAsync(IEnumerable<DomainEvent> domainEvents, long entityVersion)
+        public async Task<Result> AppendAsync(IEnumerable<IDomainEvent> domainEvents, long entityVersion)
         {
             var events = domainEvents.ToList();
             var entityId = events.First().EntityId;

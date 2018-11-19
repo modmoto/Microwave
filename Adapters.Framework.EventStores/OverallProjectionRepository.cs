@@ -15,7 +15,7 @@ namespace Adapters.Framework.EventStores
             _typeProjectionRepository = typeProjectionRepository;
         }
 
-        public async Task<Result> AppendToOverallStream(IEnumerable<DomainEvent> events)
+        public async Task<Result> AppendToOverallStream(IEnumerable<IDomainEvent> events)
         {
             foreach (var domainEvent in events)
             {
