@@ -19,7 +19,7 @@ namespace Adapters.Framework.EventStores
             _eventStoreReadContext = eventStoreReadContext;
         }
 
-        public async Task<Result<IEnumerable<DomainEventWrapper>>> LoadEventsByTypeAsync(string domainEventTypeName,
+    public async Task<Result<IEnumerable<DomainEventWrapper>>> LoadEventsByTypeAsync(string domainEventTypeName,
             long from = -1)
         {
             var stream = _eventStoreReadContext.TypeStreams
@@ -51,17 +51,14 @@ namespace Adapters.Framework.EventStores
 
             var entityVersionTemp = typeStream.Count;
 
-            var payLoad = _objectConverter.Serialize(domainEvent);
-
             var domainEventDbo = new DomainEventTypeDbo
             {
-                Payload = payLoad,
+                Payload = _objectConverter.Serialize(domainEvent),
                 DomainEventType = streamName,
                 Created = DateTime.UtcNow.Ticks,
                 Version = entityVersionTemp
             };
 
-            domainEventDbo.Version = entityVersionTemp;
             _eventStoreReadContext.TypeStreams.Add(domainEventDbo);
 
             await _eventStoreReadContext.SaveChangesAsync();
