@@ -14,7 +14,6 @@ namespace Domain.Framework
         // TODO as wrapper
         public long Version { get; private set; }
         public long Created { get; private set; }
-        public string Type => GetType().Name;
 
         public void MarkNow(int version)
         {

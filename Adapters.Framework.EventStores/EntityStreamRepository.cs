@@ -48,6 +48,7 @@ namespace Adapters.Framework.EventStores
             var stream = _eventStoreWriteContext.EntityStreams
                 .Where(str => str.EntityId == entityId.ToString()).ToList();
 
+            //todo use real version
             var entityVersionTemp = stream.Count - 1;
             if (entityVersionTemp != entityVersion) return Result.ConcurrencyResult(entityVersion, entityVersionTemp);
 

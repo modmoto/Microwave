@@ -12,9 +12,9 @@ namespace Adapters.Json.ObjectPersistences
             ContractResolver = new PrivateSetterContractResolver()
         };
 
-        public string Serialize<T>(T eve)
+        public string Serialize<T>(T objectToSerialize)
         {
-            return JsonConvert.SerializeObject(eve, _settings);
+            return JsonConvert.SerializeObject(objectToSerialize, _settings);
         }
 
         public T Deserialize<T>(string payLoad)
