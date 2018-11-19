@@ -11,14 +11,5 @@ namespace Domain.Framework
         }
 
         public Guid EntityId { get; }
-        // TODO as wrapper
-        public long Version { get; private set; }
-        public long Created { get; private set; }
-
-        public void MarkNow(long version)
-        {
-            Version = version;
-            Created = DateTime.UtcNow.Ticks;
-        }
     }
 }

@@ -34,7 +34,7 @@ namespace Adapters.Framework.Eventstores.UnitTests
             var loadEventsByEntity = await eventRepository.LoadEventsByEntity(newGuid);
             Assert.AreEqual(2, loadEventsByEntity.Value.Count());
             Assert.AreEqual(0, loadEventsByEntity.Value.ToList()[0].Version);
-            Assert.AreEqual(newGuid, loadEventsByEntity.Value.ToList()[0].EntityId);
+            Assert.AreEqual(newGuid, loadEventsByEntity.Value.ToList()[0].DomainEvent.EntityId);
             Assert.AreEqual(1, loadEventsByEntity.Value.ToList()[1].Version);
         }
 
@@ -63,7 +63,7 @@ namespace Adapters.Framework.Eventstores.UnitTests
             Assert.AreNotEqual(0, loadEventsByEntity.Value.ToList()[1].Created);
             Assert.AreEqual(0, loadEventsByEntity.Value.ToList()[0].Version);
             Assert.AreEqual(1, loadEventsByEntity.Value.ToList()[1].Version);
-            Assert.AreEqual(newGuid, loadEventsByEntity.Value.ToList()[0].EntityId);
+            Assert.AreEqual(newGuid, loadEventsByEntity.Value.ToList()[0].DomainEvent.EntityId);
             Assert.AreEqual(1, loadEventsByEntity.Value.ToList()[1].Version);
         }
 
@@ -136,7 +136,7 @@ namespace Adapters.Framework.Eventstores.UnitTests
             var result = await eventRepository.LoadEventsSince();
             Assert.AreEqual(4, result.Value.Count());
             Assert.AreEqual(0, result.Value.ToList()[0].Version);
-            Assert.AreEqual(newGuid, result.Value.ToList()[0].EntityId);
+            Assert.AreEqual(newGuid, result.Value.ToList()[0].DomainEvent.EntityId);
         }
 
         [Test]
@@ -166,8 +166,8 @@ namespace Adapters.Framework.Eventstores.UnitTests
             var result = await typeProjectionRepository.LoadEventsByTypeAsync(typeof(TestEvent1).Name);
             Assert.AreEqual(1, result.Value.Count());
             Assert.AreEqual(0, result.Value.ToList()[0].Version);
-            Assert.AreEqual(newGuid, result.Value.ToList()[0].EntityId);
-            Assert.AreEqual(typeof(TestEvent1), result.Value.ToList()[0].GetType());
+            Assert.AreEqual(newGuid, result.Value.ToList()[0].DomainEvent.EntityId);
+            Assert.AreEqual(typeof(TestEvent1), result.Value.ToList()[0].DomainEvent.GetType());
         }
 
         [Test]
@@ -208,8 +208,8 @@ namespace Adapters.Framework.Eventstores.UnitTests
 
             Assert.AreEqual(2, result.Value.Count());
             Assert.AreEqual(0, result.Value.ToList()[0].Version);
-            Assert.AreEqual(newGuid, result.Value.ToList()[0].EntityId);
-            Assert.AreEqual(typeof(TestEvent1), result.Value.ToList()[0].GetType());
+            Assert.AreEqual(newGuid, result.Value.ToList()[0].DomainEvent.EntityId);
+            Assert.AreEqual(typeof(TestEvent1), result.Value.ToList()[0].DomainEvent.GetType());
         }
 
         private static void CheckAllResults(Result[] whenAll)

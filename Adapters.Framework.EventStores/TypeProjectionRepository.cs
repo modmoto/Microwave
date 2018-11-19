@@ -18,16 +18,24 @@ namespace Adapters.Framework.EventStores
             _eventStoreReadContext = eventStoreReadContext;
         }
 
-        public async Task<Result<IEnumerable<DomainEvent>>> LoadEventsByTypeAsync(string domainEventTypeName,
+        public async Task<Result<IEnumerable<DomainEventWrapper>>> LoadEventsByTypeAsync(string domainEventTypeName,
             long from = -1)
         {
             var stream = _eventStoreReadContext.TypeStreams
                 .Where(str => str.DomainEventType == domainEventTypeName && str.Version > from).ToList();
 
-            if (!stream.Any()) return Result<IEnumerable<DomainEvent>>.Ok(new List<DomainEvent>());
+            if (!stream.Any()) return Result<IEnumerable<DomainEventWrapper>>.Ok(new List<DomainEventWrapper>());
 
-            var domainEvents = stream.Select(dbo => _objectConverter.Deserialize<DomainEvent>(dbo.Payload));
-            return Result<IEnumerable<DomainEvent>>.Ok(domainEvents);
+            var domainEvents = stream.Select(dbo =>
+            {
+                return new DomainEventWrapper
+                {
+                    Created = dbo.Created,
+                    Version = dbo.Version,
+                    DomainEvent = _objectConverter.Deserialize<DomainEvent>(dbo.Payload)
+                };
+            });
+            return Result<IEnumerable<DomainEventWrapper>>.Ok(domainEvents);
         }
 
         public async Task<Result> AppendToTypeStream(DomainEvent domainEvent)
@@ -42,7 +50,14 @@ namespace Adapters.Framework.EventStores
 
             var entityVersionTemp = typeStream.Count;
 
-            var domainEventDbo = CreateDomainEventCopy(streamName, domainEvent);
+            var payLoad = _objectConverter.Serialize(domainEvent);
+
+            var domainEventDbo = new DomainEventTypeDbo
+            {
+                Payload = payLoad,
+                DomainEventType = streamName,
+                Version = entityVersionTemp
+            };
 
             domainEventDbo.Version = entityVersionTemp;
             _eventStoreReadContext.TypeStreams.Add(domainEventDbo);
@@ -50,18 +65,5 @@ namespace Adapters.Framework.EventStores
             await _eventStoreReadContext.SaveChangesAsync();
             return Result.Ok();
         }
-
-        private DomainEventTypeDbo CreateDomainEventCopy(string streamName, DomainEvent domainEventWrapper)
-        {
-            var payLoad = _objectConverter.Serialize(domainEventWrapper);
-            return new DomainEventTypeDbo
-            {
-                Payload = payLoad,
-                DomainEventType = streamName,
-                Created = domainEventWrapper.Created,
-                Version = domainEventWrapper.Version
-            };
-        }
-
     }
 }

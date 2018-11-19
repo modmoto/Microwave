@@ -27,7 +27,7 @@ namespace Adapters.Framework.EventStores
             var result = await _overallProjectionRepository.LoadEventsSince(version);
             foreach (var domainEvent in result.Value)
             {
-                await _typeProjectionRepository.AppendToTypeStream(domainEvent);
+                await _typeProjectionRepository.AppendToTypeStream(domainEvent.DomainEvent);
             }
 
             var lastVersion = result.Value.Any() ? result.Value.Last().Created : version;

@@ -25,7 +25,8 @@ namespace Adapters.Framework.EventStores
             var version = await _versionRepository.GetVersionAsync("AllDomainEventProjections");
             //TODO [ber api machen
             var result = await _streamRepository.LoadEventsSince(version);
-            await _overallProjectionRepository.AppendToOverallStream(result.Value);
+            var domainEventWrappers = result.Value.Select(ev => ev.DomainEvent);
+            await _overallProjectionRepository.AppendToOverallStream(domainEventWrappers);
             var lastVersion = result.Value.Any() ? result.Value.Last().Created : version;
             await _versionRepository.SaveVersion(new LastProcessedVersion("AllDomainEventProjections", lastVersion));
         }

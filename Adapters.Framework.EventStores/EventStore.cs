@@ -27,7 +27,7 @@ namespace Adapters.Framework.EventStores
             var entity = new T();
             var domainEvents = (await _entityStreamRepository.LoadEventsByEntity(entityId)).Value;
             var eventList = domainEvents.ToList();
-            entity = eventList.Aggregate(entity, (current, domainEvent) => Apply(current, domainEvent));
+            entity = eventList.Aggregate(entity, (current, domainEvent) => Apply(current, domainEvent.DomainEvent));
             // TODO get this from stream/events
             return new EventstoreResult<T>(eventList.Count - 1, entity);
         }
