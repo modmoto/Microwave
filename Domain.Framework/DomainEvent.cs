@@ -15,7 +15,7 @@ namespace Domain.Framework
         public long Version { get; private set; }
         public long Created { get; private set; }
 
-        public void MarkNow(int version)
+        public void MarkNow(long version)
         {
             Version = version;
             Created = DateTime.UtcNow.Ticks;
