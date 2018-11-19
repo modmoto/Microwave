@@ -171,6 +171,44 @@ namespace Adapters.Framework.Eventstores.UnitTests
         }
 
         [Test]
+        public async Task AddEvents_IdSet()
+        {
+            var options = new DbContextOptionsBuilder<EventStoreWriteContext>()
+                .UseInMemoryDatabase("AddEvents_IdAndStuffSet")
+                .Options;
+            var eventStoreContext = new EventStoreWriteContext(options);
+
+            var eventRepository = new EntityStreamRepository(new ObjectConverter(), eventStoreContext);
+
+            var testEvent1 = new TestEvent1(Guid.NewGuid());
+            await eventRepository.AppendAsync(new[] {testEvent1}, -1);
+
+            var result = await eventRepository.LoadEventsByEntity(testEvent1.EntityId);
+            var domainEvent = result.Value.Single().DomainEvent;
+
+            Assert.AreEqual(domainEvent.EntityId, testEvent1.EntityId);
+        }
+
+        [Test]
+        public async Task AddEvents_IdOfTypeSet()
+        {
+            var options = new DbContextOptionsBuilder<EventStoreReadContext>()
+                .UseInMemoryDatabase("AddEvents_TypeSet")
+                .Options;
+            var eventStoreContext = new EventStoreReadContext(options);
+
+            var eventRepository = new TypeProjectionRepository(new ObjectConverter(), eventStoreContext);
+
+            var testEvent1 = new TestEvent1(Guid.NewGuid());
+            await eventRepository.AppendToTypeStream(testEvent1);
+
+            var result = await eventRepository.LoadEventsByTypeAsync(testEvent1.GetType().Name);
+            var domainEvent = result.Value.Single().DomainEvent;
+
+            Assert.AreEqual(domainEvent.EntityId, testEvent1.EntityId);
+        }
+
+        [Test]
         public async Task AddEvents_RunTypeProjection()
         {
             var options = new DbContextOptionsBuilder<EventStoreWriteContext>()
