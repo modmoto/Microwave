@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Application.Framework;
@@ -56,6 +57,7 @@ namespace Adapters.Framework.EventStores
             {
                 Payload = payLoad,
                 DomainEventType = streamName,
+                Created = DateTime.UtcNow.Ticks,
                 Version = entityVersionTemp
             };
 
