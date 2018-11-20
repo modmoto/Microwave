@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Application.Framework;
+﻿using Application.Framework;
 using Newtonsoft.Json;
 
 namespace Adapters.Json.ObjectPersistences
@@ -20,12 +19,6 @@ namespace Adapters.Json.ObjectPersistences
         public T Deserialize<T>(string payLoad)
         {
             var deserializeObject = JsonConvert.DeserializeObject<T>(payLoad, _settings);
-            return deserializeObject;
-        }
-
-        public IEnumerable<T> DeserializeList<T>(string payLoad)
-        {
-            var deserializeObject = JsonConvert.DeserializeObject<IEnumerable<T>>(payLoad, _settings);
             return deserializeObject;
         }
     }

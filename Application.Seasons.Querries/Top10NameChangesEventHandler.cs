@@ -47,7 +47,7 @@ namespace Application.Seasons.Querries
             if (result.Is<NotFound<Top10NameChangers>>()) result = Result<Top10NameChangers>.Ok(new Top10NameChangers());
 
             var allEvents = (await _streamRepository.LoadEventsByEntity(domainEvent.EntityId)).Value;
-            var ammountOfNameChanges = allEvents.Where(ev => ev.GetType() == typeof(SeasonNameChangedEvent)).Count();
+            var ammountOfNameChanges = allEvents.Where(ev => ev.DomainEvent.GetType() == typeof(SeasonNameChangedEvent)).Count();
 
             var top10NameChangers = result.Value;
             var seasonNameChangedEvents = SortIn(top10NameChangers.SeasonCounter, new SeasonNameChangCounterDto(domainEvent.EntityId, ammountOfNameChanges));

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Application.Framework;
@@ -23,7 +24,18 @@ namespace Adapters.Framework.WebApi
             var response = await _domainEventClient.GetAsync($"?myLastVersion={lastVersion}");
             if (response.StatusCode != HttpStatusCode.OK) return new List<T>();
             var content = await response.Content.ReadAsStringAsync();
-            return _objectConverter.DeserializeList<T>(content);
+            var eventsByTypeAsync = _objectConverter.Deserialize<IEnumerable<DomainvEventWrapper<T>>>(content);
+            return eventsByTypeAsync.Select(ev => ev.DomainEvent);
         }
+    }
+
+    public class DomainvEventWrapper<TEvent> where TEvent : IDomainEvent
+    {
+        public DomainvEventWrapper(TEvent domainEvent)
+        {
+            DomainEvent = domainEvent;
+        }
+
+        public TEvent DomainEvent { get; }
     }
 }
