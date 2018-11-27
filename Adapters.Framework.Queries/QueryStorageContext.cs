@@ -18,8 +18,6 @@ namespace Adapters.Framework.Queries
     {
         public string Id { get; set; }
         public string Payload { get; set; }
-        [ConcurrencyCheck]
-        public long Version { get; set; }
     }
 
     public class QueryDbo
@@ -27,7 +25,5 @@ namespace Adapters.Framework.Queries
         [Key]
         public string Type { get; set; }
         public string Payload { get; set; }
-        [ConcurrencyCheck]
-        public long Version { get; set; }
     }
 }

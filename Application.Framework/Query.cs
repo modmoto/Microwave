@@ -8,8 +8,6 @@ namespace Application.Framework
     {
         public string Type => GetType().Name;
 
-        public long Version { get; set; }
-
         public void Handle(IDomainEvent domainEvent)
         {
             var type = domainEvent.GetType();
@@ -24,8 +22,6 @@ namespace Application.Framework
     public class IdentifiableQuery
     {
         public Guid Id { get; set; }
-
-        public long Version { get; set; }
 
         public void Handle(IDomainEvent domainEvent)
         {

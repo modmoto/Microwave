@@ -12,7 +12,7 @@ namespace Adapters.Framework.EventStores
     {
         private readonly IObjectConverter _eventConverter;
         private readonly EventStoreWriteContext _eventStoreWriteContext;
-        private object _lock = new Object();
+        private readonly object _lock = new Object();
 
         public EntityStreamRepository(IObjectConverter eventConverter, EventStoreWriteContext eventStoreWriteContext)
         {

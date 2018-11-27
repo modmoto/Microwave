@@ -9,6 +9,8 @@ namespace Adapters.Framework.Queries
     {
         private readonly QueryStorageContext _context;
         private readonly IObjectConverter _converter;
+        private readonly object _idQuerryLock = new object();
+        private readonly object _querryLock = new object();
 
         public QueryRepository(QueryStorageContext context, IObjectConverter converter)
         {
@@ -22,7 +24,6 @@ namespace Adapters.Framework.Queries
             var query = await _context.Querries.FindAsync(name);
             if (query == null) return Result<T>.NotFound(name);
             var data = _converter.Deserialize<T>(query.Payload);
-            data.Version = query.Version;
             return Result<T>.Ok(data);
         }
 
@@ -31,61 +32,59 @@ namespace Adapters.Framework.Queries
             var querry = await _context.IdentifiableQuerries.FindAsync(id.ToString());
             if (querry == null) return Result<T>.NotFound(id.ToString());
             var deserialize = _converter.Deserialize<T>(querry.Payload);
-            deserialize.Version = querry.Version;
             return Result<T>.Ok(deserialize);
         }
 
+        //Todo Remove this locks again
         public async Task<Result> Save(Query query)
         {
-            var firstOrDefault = await _context.Querries.FindAsync(query.Type);
-            if (firstOrDefault != null)
+            lock (_querryLock)
             {
-                if (firstOrDefault.Version != query.Version)
-                    return Result.ConcurrencyResult(firstOrDefault.Version, query.Version);
-                firstOrDefault.Payload = _converter.Serialize(query);
-                firstOrDefault.Version++;
-                _context.Update(firstOrDefault);
-            }
-            else
-            {
-                var queryDbo = new QueryDbo
+                var firstOrDefault = _context.Querries.Find(query.Type);
+                if (firstOrDefault != null)
                 {
-                    Type = query.Type,
-                    Version = 0L,
-                    Payload = _converter.Serialize(query)
-                };
-                await _context.Querries.AddAsync(queryDbo);
-            }
+                    firstOrDefault.Payload = _converter.Serialize(query);
+                    _context.Update(firstOrDefault);
+                }
+                else
+                {
+                    var queryDbo = new QueryDbo
+                    {
+                        Type = query.Type,
+                        Payload = _converter.Serialize(query)
+                    };
+                    _context.Querries.Add(queryDbo);
+                }
 
-            await _context.SaveChangesAsync();
-            return Result.Ok();
+                _context.SaveChanges();
+                return Result.Ok();
+            }
         }
 
         public async Task<Result> Save(IdentifiableQuery query)
         {
-            var firstOrDefault = await _context.IdentifiableQuerries.FindAsync(query.Id.ToString());
-            if (firstOrDefault != null)
+            lock (_idQuerryLock)
             {
-                if (firstOrDefault.Version != query.Version)
-                    return Result.ConcurrencyResult(firstOrDefault.Version, query.Version);
-                firstOrDefault.Payload = _converter.Serialize(query);
-                firstOrDefault.Id = query.Id.ToString();
-                firstOrDefault.Version++;
-                _context.Update(firstOrDefault);
-            }
-            else
-            {
-                var identifiableQueryDbo = new IdentifiableQueryDbo
+                var firstOrDefault = _context.IdentifiableQuerries.Find(query.Id.ToString());
+                if (firstOrDefault != null)
                 {
-                    Id = query.Id.ToString(),
-                    Version = 0L,
-                    Payload = _converter.Serialize(query)
-                };
-                await _context.IdentifiableQuerries.AddAsync(identifiableQueryDbo);
-            }
+                    firstOrDefault.Payload = _converter.Serialize(query);
+                    firstOrDefault.Id = query.Id.ToString();
+                    _context.Update(firstOrDefault);
+                }
+                else
+                {
+                    var identifiableQueryDbo = new IdentifiableQueryDbo
+                    {
+                        Id = query.Id.ToString(),
+                        Payload = _converter.Serialize(query)
+                    };
+                    _context.IdentifiableQuerries.Add(identifiableQueryDbo);
+                }
 
-            await _context.SaveChangesAsync();
-            return Result.Ok();
+                _context.SaveChanges();
+                return Result.Ok();
+            }
         }
     }
 }
