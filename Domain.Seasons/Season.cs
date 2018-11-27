@@ -1,6 +1,6 @@
 ﻿using System;
 using Domain.Framework;
-using Domain.Seasons.Events;
+using Domain.Seasons.DomainEvents;
 
 namespace Domain.Seasons
 {

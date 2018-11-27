@@ -1,7 +1,7 @@
 ﻿using System;
 using Domain.Framework;
 
-namespace Domain.Seasons.Events
+namespace Domain.Seasons.DomainEvents
 {
     public class SeasonCreatedEvent : IDomainEvent
     {

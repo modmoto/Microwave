@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Application.Framework;
-using Domain.Seasons.Events;
+using Domain.Seasons.DomainEvents;
 
 namespace Application.Seasons.Querries
 {

@@ -5,6 +5,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Application.Framework\Application.Framework.csproj" />
     <ProjectReference Include="..\Domain.Framework\Domain.Framework.csproj" />
-    <ProjectReference Include="..\Domain.Seasons.Events\Domain.Seasons.Events.csproj" />
+    <ProjectReference Include="..\Domain.Seasons\Domain.Seasons.csproj" />
   </ItemGroup>
 </Project>

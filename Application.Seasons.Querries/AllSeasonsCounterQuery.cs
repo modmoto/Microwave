@@ -1,5 +1,5 @@
 ﻿using Application.Framework;
-using Domain.Seasons.Events;
+using Domain.Seasons.DomainEvents;
 
 namespace Application.Seasons.Querries
 {

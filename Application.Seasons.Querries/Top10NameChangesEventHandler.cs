@@ -3,7 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Application.Framework;
 using Application.Framework.Results;
-using Domain.Seasons.Events;
+using Domain.Seasons.DomainEvents;
 
 namespace Application.Seasons.Querries
 {

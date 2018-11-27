@@ -4,6 +4,5 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Domain.Framework\Domain.Framework.csproj" />
-    <ProjectReference Include="..\Domain.Seasons.Events\Domain.Seasons.Events.csproj" />
   </ItemGroup>
 </Project>
