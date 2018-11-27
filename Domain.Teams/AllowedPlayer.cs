@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Domain.Framework;
 using Domain.Team.DomainEvents;
+using Domain.Teams.DomainErrors;
 
 namespace Domain.Teams
 {
@@ -26,12 +27,5 @@ namespace Domain.Teams
         public Guid PlayerTypeId { get; }
         public int MaxmimumPlayers { get; private set; }
         public GoldCoins Cost { get; }
-    }
-
-    public class TeamFullError : DomainError
-    {
-        public TeamFullError(int maxmimumPlayers) : base($"Can not add more players than {maxmimumPlayers} for the PlayerType in this Race.")
-        {
-        }
     }
 }

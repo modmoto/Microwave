@@ -53,18 +53,4 @@ namespace Domain.Teams
             PlayersTypes.Append(playerBought.PlayerTypeId);
         }
     }
-
-    public class FewMoneyInTeamChestError : DomainError
-    {
-        public FewMoneyInTeamChestError(long playerCost, long teamMoney) : base($"Can not buy Player. Player costs {playerCost}, your chest only contains {teamMoney}")
-        {
-        }
-    }
-
-    public class CanNotUsePlayerInThisRaceError : DomainError
-    {
-        public CanNotUsePlayerInThisRaceError(Guid playerTypeId, Guid raceId) : base($"Can not use playertyp: {playerTypeId} in Race {raceId}.")
-        {
-        }
-    }
 }
