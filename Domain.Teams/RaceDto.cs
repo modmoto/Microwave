@@ -10,12 +10,6 @@ namespace Domain.Teams
         public IEnumerable<AllowedPlayer> AllowedPlayers { get; private set; } = new List<AllowedPlayer>();
         public Guid Id { get; private set; }
 
-        public void Apply(AllowedPlayerTypeBalanced playerTypeBalanced)
-        {
-            var player = AllowedPlayers.First(type => type.PlayerTypeId == playerTypeBalanced.PlayerTypeId);
-            player.Apply(playerTypeBalanced);
-        }
-
         public void Apply(RaceCreated raceCreated)
         {
             Id = raceCreated.EntityId;

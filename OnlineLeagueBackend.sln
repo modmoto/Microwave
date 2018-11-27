@@ -38,8 +38,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain.Teams", "Domain.Team
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain.Players", "Domain.Players\Domain.Players.csproj", "{6C4C3D0B-6067-4C30-A105-FEC0BEAF9294}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain.Team.DomainEvents", "Domain.Team.DomainEvents\Domain.Team.DomainEvents.csproj", "{4DA015BE-AEF8-4849-B001-0A86B464ECF8}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application.Teams", "Application.Teams\Application.Teams.csproj", "{75E1D4EB-5F06-4CB9-B992-96F956E67208}"
 EndProject
 Global
@@ -124,10 +122,6 @@ Global
 		{6C4C3D0B-6067-4C30-A105-FEC0BEAF9294}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6C4C3D0B-6067-4C30-A105-FEC0BEAF9294}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6C4C3D0B-6067-4C30-A105-FEC0BEAF9294}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4DA015BE-AEF8-4849-B001-0A86B464ECF8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4DA015BE-AEF8-4849-B001-0A86B464ECF8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4DA015BE-AEF8-4849-B001-0A86B464ECF8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4DA015BE-AEF8-4849-B001-0A86B464ECF8}.Release|Any CPU.Build.0 = Release|Any CPU
 		{75E1D4EB-5F06-4CB9-B992-96F956E67208}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{75E1D4EB-5F06-4CB9-B992-96F956E67208}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{75E1D4EB-5F06-4CB9-B992-96F956E67208}.Release|Any CPU.ActiveCfg = Release|Any CPU

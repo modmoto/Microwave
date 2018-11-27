@@ -26,10 +26,5 @@ namespace Domain.Teams
         public Guid PlayerTypeId { get; }
         public int MaxmimumPlayers { get; private set; }
         public GoldCoins Cost { get; }
-
-        public void Apply(AllowedPlayerTypeBalanced playerTypeBalanced)
-        {
-            MaxmimumPlayers = playerTypeBalanced.MaxmimumPlayers;
-        }
     }
 }

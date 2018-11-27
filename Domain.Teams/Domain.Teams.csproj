@@ -6,7 +6,6 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Domain.Framework\Domain.Framework.csproj" />
-      <ProjectReference Include="..\Domain.Team.DomainEvents\Domain.Team.DomainEvents.csproj" />
     </ItemGroup>
 
 </Project>
