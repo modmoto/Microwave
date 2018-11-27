@@ -6,8 +6,6 @@ namespace Application.Framework
 {
     public class Query
     {
-        public string Type => GetType().Name;
-
         public void Handle(IDomainEvent domainEvent)
         {
             var type = domainEvent.GetType();

@@ -40,7 +40,7 @@ namespace Adapters.Framework.Queries
         {
             lock (_querryLock)
             {
-                var firstOrDefault = _context.Querries.Find(query.Type);
+                var firstOrDefault = _context.Querries.Find(query.GetType().Name);
                 if (firstOrDefault != null)
                 {
                     firstOrDefault.Payload = _converter.Serialize(query);
@@ -50,7 +50,7 @@ namespace Adapters.Framework.Queries
                 {
                     var queryDbo = new QueryDbo
                     {
-                        Type = query.Type,
+                        Type = query.GetType().Name,
                         Payload = _converter.Serialize(query)
                     };
                     _context.Querries.Add(queryDbo);
