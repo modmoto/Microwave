@@ -25,7 +25,7 @@ namespace Domain.Teams
         }
 
         public Guid PlayerTypeId { get; }
-        public int MaxmimumPlayers { get; private set; }
+        public int MaxmimumPlayers { get; }
         public GoldCoins Cost { get; }
     }
 }
