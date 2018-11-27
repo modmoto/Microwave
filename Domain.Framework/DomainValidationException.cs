@@ -5,9 +5,9 @@ namespace Domain.Framework
 {
     public class DomainValidationException : Exception
     {
-        public IEnumerable<string> DomainErrors { get; }
+        public IEnumerable<DomainError> DomainErrors { get; }
 
-        public DomainValidationException(IEnumerable<string> domainErrors) : base($"Validation failed because of: {string.Join("", "", domainErrors)}")
+        public DomainValidationException(IEnumerable<DomainError> domainErrors)
         {
             DomainErrors = domainErrors;
         }

@@ -18,7 +18,7 @@ namespace Domain.Teams
         {
             var moreThanMax = ammount < MaxmimumPlayers;
 
-            if (!moreThanMax) return DomainResult.Error(new List<string> { $"Can not add more players than {MaxmimumPlayers} for the PlayerType in this Race."} );
+            if (!moreThanMax) return DomainResult.Error(new TeamFullError(MaxmimumPlayers));
 
             return DomainResult.Ok(new List<IDomainEvent>());
         }
@@ -26,5 +26,12 @@ namespace Domain.Teams
         public Guid PlayerTypeId { get; }
         public int MaxmimumPlayers { get; private set; }
         public GoldCoins Cost { get; }
+    }
+
+    public class TeamFullError : DomainError
+    {
+        public TeamFullError(int maxmimumPlayers) : base($"Can not add more players than {maxmimumPlayers} for the PlayerType in this Race.")
+        {
+        }
     }
 }

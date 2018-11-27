@@ -23,8 +23,7 @@ namespace Domain.Teams
         public DomainResult BuyPlayer(Guid playerTypeId)
         {
             var play = AllowedPlayers.FirstOrDefault(ap => ap.PlayerTypeId == playerTypeId);
-            if (play == null)
-                return DomainResult.Error(new List<string> {$"Can not use playertyp: {playerTypeId} in Race {RaceId}."});
+            if (play == null) return DomainResult.Error(new CanNotUsePlayerInThisRaceError(playerTypeId, RaceId));
             int ammount = PlayersTypes.Count(p => p == playerTypeId);
 
             var canUsePlayer = play.CanUsePlayer(ammount);
@@ -39,7 +38,7 @@ namespace Domain.Teams
                 return DomainResult.Ok(playerBought);
             }
 
-            return DomainResult.Error(new []{$"Can not buy Player. Player costs {play.Cost}, your chest only contains {TeamMoney.Value}" });
+            return DomainResult.Error(new FewMoneyInTeamChestError(play.Cost.Value, TeamMoney.Value));
         }
 
         public void Apply(TeamCreated teamCreated)
@@ -52,6 +51,20 @@ namespace Domain.Teams
         {
             TeamMoney = new GoldCoins(TeamMoney.Value - playerBought.PlayerCost);
             PlayersTypes.Append(playerBought.PlayerTypeId);
+        }
+    }
+
+    public class FewMoneyInTeamChestError : DomainError
+    {
+        public FewMoneyInTeamChestError(long playerCost, long teamMoney) : base($"Can not buy Player. Player costs {playerCost}, your chest only contains {teamMoney}")
+        {
+        }
+    }
+
+    public class CanNotUsePlayerInThisRaceError : DomainError
+    {
+        public CanNotUsePlayerInThisRaceError(Guid playerTypeId, Guid raceId) : base($"Can not use playertyp: {playerTypeId} in Race {raceId}.")
+        {
         }
     }
 }

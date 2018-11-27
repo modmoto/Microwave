@@ -19,9 +19,9 @@ namespace Domain.Framework
             }
         }
 
-        public IEnumerable<string> DomainErrors { get; }
+        public IEnumerable<DomainError> DomainErrors { get; }
 
-        private DomainResult(IEnumerable<IDomainEvent> domainEvents, IEnumerable<string> domainErrors)
+        private DomainResult(IEnumerable<IDomainEvent> domainEvents, IEnumerable<DomainError> domainErrors)
         {
             _domainEvents = domainEvents;
             DomainErrors = domainErrors;
@@ -29,15 +29,20 @@ namespace Domain.Framework
 
         public static DomainResult Ok(IEnumerable<IDomainEvent> domainEvents)
         {
-            return new DomainResult(domainEvents, new List<string>());
+            return new DomainResult(domainEvents, new List<DomainError>());
         }
 
         public static DomainResult Ok(IDomainEvent domainEvent)
         {
-            return new DomainResult(new List<IDomainEvent> { domainEvent }, new List<string>());
+            return new DomainResult(new List<IDomainEvent> { domainEvent }, new List<DomainError>());
         }
 
-        public static DomainResult Error(IEnumerable<string> domainErrors)
+        public static DomainResult Error(DomainError domainDomainError)
+        {
+            return new DomainResult(new List<IDomainEvent>(), new List<DomainError> { domainDomainError });
+        }
+
+        public static DomainResult Error(IEnumerable<DomainError> domainErrors)
         {
             return new DomainResult(new List<IDomainEvent>(), domainErrors);
         }

@@ -11,6 +11,7 @@ namespace Domain.Seasons
 
         public static DomainResult Create(string seasonName)
         {
+            if (seasonName.Contains("Sex")) return DomainResult.Error(new NoSexInNameError());
             var seasonCreatedEvent = new SeasonCreatedEvent(Guid.NewGuid(), seasonName);
             return DomainResult.Ok(seasonCreatedEvent);
         }
@@ -28,10 +29,17 @@ namespace Domain.Seasons
 
         public DomainResult ChangeName(string commandName)
         {
-            if (commandName.Contains("Sex")) return DomainResult.Error(new []{ "Name can not contain Sex" });
+            if (commandName.Contains("Sex")) return DomainResult.Error(new NoSexInNameError());
             var seasonNameChangedEvent = new SeasonNameChangedEvent(Id, commandName);
             Apply(seasonNameChangedEvent);
             return DomainResult.Ok(seasonNameChangedEvent);
+        }
+    }
+
+    public class NoSexInNameError : DomainError
+    {
+        public NoSexInNameError() : base("Name can not contain Sex")
+        {
         }
     }
 }
