@@ -7,11 +7,11 @@ using Adapters.Framework.Subscriptions;
 using Adapters.Framework.WebApi;
 using Adapters.Json.ObjectPersistences;
 using Application.Framework;
-using Domain.Framework;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microwave.Domain;
 
 namespace DependencyInjection.Framework
 {

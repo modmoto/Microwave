@@ -1,7 +1,7 @@
 ﻿using System;
-using Domain.Framework;
+using Microwave.Domain;
 
-namespace Domain.Team.DomainEvents
+namespace Domain.Teams.DomainEvents
 {
     public class PlayerBought : IDomainEvent
     {

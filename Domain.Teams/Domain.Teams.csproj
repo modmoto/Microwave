@@ -5,7 +5,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Domain.Framework\Domain.Framework.csproj" />
+      <ProjectReference Include="..\Domain.Framework\Microwave.Domain.csproj" />
     </ItemGroup>
 
 </Project>

@@ -1,7 +1,7 @@
 ﻿using System;
-using Domain.Framework;
+using Microwave.Domain;
 
-namespace Domain.Teams
+namespace Domain.Teams.DomainErrors
 {
     public class CanNotUsePlayerInThisRaceError : DomainError
     {

@@ -1,6 +1,6 @@
-﻿using Domain.Framework;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microwave.Domain;
 
 namespace Adapters.Framework.WebApi
 {

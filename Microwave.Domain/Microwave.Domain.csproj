@@ -2,7 +2,4 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
   </PropertyGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Domain.Framework\Microwave.Domain.csproj" />
-  </ItemGroup>
 </Project>

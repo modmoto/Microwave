@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Domain.Team.DomainEvents;
+using Domain.Teams.DomainEvents;
 
 namespace Domain.Teams
 {

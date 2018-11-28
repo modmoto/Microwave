@@ -7,8 +7,8 @@ using Adapters.Framework.Subscriptions;
 using Adapters.Json.ObjectPersistences;
 using Application.Framework.Exceptions;
 using Application.Framework.Results;
-using Domain.Framework;
 using Microsoft.EntityFrameworkCore;
+using Microwave.Domain;
 using NUnit.Framework;
 
 namespace Adapters.Framework.Eventstores.UnitTests

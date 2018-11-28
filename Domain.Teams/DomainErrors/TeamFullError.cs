@@ -1,4 +1,4 @@
-﻿using Domain.Framework;
+﻿using Microwave.Domain;
 
 namespace Domain.Teams.DomainErrors
 {

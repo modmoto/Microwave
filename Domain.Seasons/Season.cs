@@ -1,6 +1,6 @@
 ﻿using System;
-using Domain.Framework;
 using Domain.Seasons.DomainEvents;
+using Microwave.Domain;
 
 namespace Domain.Seasons
 {

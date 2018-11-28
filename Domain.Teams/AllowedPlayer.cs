@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using Domain.Framework;
-using Domain.Team.DomainEvents;
 using Domain.Teams.DomainErrors;
+using Microwave.Domain;
 
 namespace Domain.Teams
 {

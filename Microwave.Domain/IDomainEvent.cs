@@ -1,5 +1,3 @@
-using System;
-
 namespace Microwave.Domain
 {
     public interface IDomainEvent

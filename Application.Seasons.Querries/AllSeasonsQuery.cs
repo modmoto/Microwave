@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Application.Framework;
-using Domain.Framework;
 using Domain.Seasons.DomainEvents;
+using Microwave.Domain;
 
 namespace Application.Seasons.Querries
 {

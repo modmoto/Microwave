@@ -15,6 +15,7 @@
 
     <ItemGroup>
     <ProjectReference Include="..\DependencyInjection.Framework\DependencyInjection.Framework.csproj" />
+    <ProjectReference Include="..\Domain.Framework\Microwave.Domain.csproj" />
       <Reference Include="Microsoft.Extensions.DependencyInjection, Version=2.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60">
         <HintPath>..\..\..\.nuget\packages\microsoft.extensions.dependencyinjection\2.1.1\lib\netcoreapp2.0\Microsoft.Extensions.DependencyInjection.dll</HintPath>
       </Reference>

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using Domain.Framework;
+using Microwave.Domain;
 
-namespace Domain.Team.DomainEvents
+namespace Domain.Teams.DomainEvents
 {
     public class RaceCreated : IDomainEvent
     {

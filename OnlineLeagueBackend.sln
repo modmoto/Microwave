@@ -1,42 +1,45 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineLeagueBackend", "OnlineLeagueBackend\OnlineLeagueBackend.csproj", "{B01EBD7F-4339-4F67-A892-6E1D8AB9BA17}"
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.2026
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OnlineLeagueBackend", "OnlineLeagueBackend\OnlineLeagueBackend.csproj", "{B01EBD7F-4339-4F67-A892-6E1D8AB9BA17}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain.Seasons", "Domain.Seasons\Domain.Seasons.csproj", "{3BCECD51-2898-479C-B3AA-EAE4C1078DE4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain.Seasons", "Domain.Seasons\Domain.Seasons.csproj", "{3BCECD51-2898-479C-B3AA-EAE4C1078DE4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application.Seasons", "Application.Seasons\Application.Seasons.csproj", "{E794DE43-CB0A-41FD-8705-9EFACF36783A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Application.Seasons", "Application.Seasons\Application.Seasons.csproj", "{E794DE43-CB0A-41FD-8705-9EFACF36783A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Adapters.WebApi.Seasons", "Adapters.WebApi.Seasons\Adapters.WebApi.Seasons.csproj", "{09B00315-8016-43FC-9CC7-302479C297C9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Adapters.WebApi.Seasons", "Adapters.WebApi.Seasons\Adapters.WebApi.Seasons.csproj", "{09B00315-8016-43FC-9CC7-302479C297C9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain.Framework", "Domain.Framework\Domain.Framework.csproj", "{9A1885D9-77BB-45D4-99E5-A9FC15F9B6A5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microwave.Domain", "Domain.Framework\Microwave.Domain.csproj", "{9A1885D9-77BB-45D4-99E5-A9FC15F9B6A5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Adapters.Framework.EventStores", "Adapters.Framework.EventStores\Adapters.Framework.EventStores.csproj", "{1441D8A6-105E-4B9B-A388-2C64C633CC5D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Adapters.Framework.EventStores", "Adapters.Framework.EventStores\Adapters.Framework.EventStores.csproj", "{1441D8A6-105E-4B9B-A388-2C64C633CC5D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application.Framework", "Application.Framework\Application.Framework.csproj", "{C2CABBC2-F393-4502-B3C8-F6E5DFD15D44}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Application.Framework", "Application.Framework\Application.Framework.csproj", "{C2CABBC2-F393-4502-B3C8-F6E5DFD15D44}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Adapters.Json.ObjectPersistences", "Adapters.Json.ObjectPersistences\Adapters.Json.ObjectPersistences.csproj", "{BEE54EA4-ABC9-4498-A70D-B9EC79D0FEB4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Adapters.Json.ObjectPersistences", "Adapters.Json.ObjectPersistences\Adapters.Json.ObjectPersistences.csproj", "{BEE54EA4-ABC9-4498-A70D-B9EC79D0FEB4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application.Seasons.Querries", "Application.Seasons.Querries\Application.Seasons.Querries.csproj", "{FFB330FD-0FEC-4FB8-9F26-46C6D703B3CE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Application.Seasons.Querries", "Application.Seasons.Querries\Application.Seasons.Querries.csproj", "{FFB330FD-0FEC-4FB8-9F26-46C6D703B3CE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DependencyInjection.Framework", "DependencyInjection.Framework\DependencyInjection.Framework.csproj", "{0AFD928B-1BB2-4A81-A0EB-E167500EA60E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DependencyInjection.Framework", "DependencyInjection.Framework\DependencyInjection.Framework.csproj", "{0AFD928B-1BB2-4A81-A0EB-E167500EA60E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Adapters.Framework.Subscriptions", "Adapters.Framework.Subscriptions\Adapters.Framework.Subscriptions.csproj", "{725D9920-548A-43A9-9976-5E96F8E2B53E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Adapters.Framework.Subscriptions", "Adapters.Framework.Subscriptions\Adapters.Framework.Subscriptions.csproj", "{725D9920-548A-43A9-9976-5E96F8E2B53E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Adapters.Framework.WebApi", "Adapters.Framework.WebApi\Adapters.Framework.WebApi.csproj", "{B2D98342-A15D-415C-8AEB-277F8D1CE93B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Adapters.Framework.WebApi", "Adapters.Framework.WebApi\Adapters.Framework.WebApi.csproj", "{B2D98342-A15D-415C-8AEB-277F8D1CE93B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Adapters.Framework.Queries", "Adapters.Framework.Queries\Adapters.Framework.Queries.csproj", "{041E1443-21E4-4340-8389-2C8336C3209D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Adapters.Framework.Queries", "Adapters.Framework.Queries\Adapters.Framework.Queries.csproj", "{041E1443-21E4-4340-8389-2C8336C3209D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Adapters.Framework.Queries.UnitTests", "Adapters.Framework.Queries.UnitTests\Adapters.Framework.Queries.UnitTests.csproj", "{250F6870-29E3-4362-9842-9056890EEB1B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Adapters.Framework.Queries.UnitTests", "Adapters.Framework.Queries.UnitTests\Adapters.Framework.Queries.UnitTests.csproj", "{250F6870-29E3-4362-9842-9056890EEB1B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Adapters.Framework.Eventstores.UnitTests", "Adapters.Framework.Eventstores.UnitTests\Adapters.Framework.Eventstores.UnitTests.csproj", "{3B1EAD7F-9B27-48A4-87EA-2FB7EF44492B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Adapters.Framework.Eventstores.UnitTests", "Adapters.Framework.Eventstores.UnitTests\Adapters.Framework.Eventstores.UnitTests.csproj", "{3B1EAD7F-9B27-48A4-87EA-2FB7EF44492B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DependencyInjection.Framework.UnitTests", "DependencyInjection.Framework.UnitTests\DependencyInjection.Framework.UnitTests.csproj", "{ADDBBB59-2CD0-42D8-AC04-038C6527A446}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DependencyInjection.Framework.UnitTests", "DependencyInjection.Framework.UnitTests\DependencyInjection.Framework.UnitTests.csproj", "{ADDBBB59-2CD0-42D8-AC04-038C6527A446}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain.Teams", "Domain.Teams\Domain.Teams.csproj", "{F0CC1926-1409-47A9-B88C-5C80E76301A4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain.Teams", "Domain.Teams\Domain.Teams.csproj", "{F0CC1926-1409-47A9-B88C-5C80E76301A4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain.Players", "Domain.Players\Domain.Players.csproj", "{6C4C3D0B-6067-4C30-A105-FEC0BEAF9294}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain.Players", "Domain.Players\Domain.Players.csproj", "{6C4C3D0B-6067-4C30-A105-FEC0BEAF9294}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application.Teams", "Application.Teams\Application.Teams.csproj", "{75E1D4EB-5F06-4CB9-B992-96F956E67208}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Application.Teams", "Application.Teams\Application.Teams.csproj", "{75E1D4EB-5F06-4CB9-B992-96F956E67208}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -120,5 +123,11 @@ Global
 		{75E1D4EB-5F06-4CB9-B992-96F956E67208}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{75E1D4EB-5F06-4CB9-B992-96F956E67208}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{75E1D4EB-5F06-4CB9-B992-96F956E67208}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {10681780-EDC2-4AAC-8551-A22B38DC45CE}
 	EndGlobalSection
 EndGlobal
