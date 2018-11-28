@@ -20,8 +20,10 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Adapters.Framework.Subscriptions\Microwave.Subscriptions.csproj" />
       <ProjectReference Include="..\Microwave.Domain\Microwave.Domain.csproj" />
+      <ProjectReference Include="..\Microwave.EventStores\Microwave.EventStores.csproj" />
+      <ProjectReference Include="..\Microwave.ObjectPersistences\Microwave.ObjectPersistences.csproj" />
+      <ProjectReference Include="..\Microwave.Subscriptions\Microwave.Subscriptions.csproj" />
     </ItemGroup>
 
 </Project>

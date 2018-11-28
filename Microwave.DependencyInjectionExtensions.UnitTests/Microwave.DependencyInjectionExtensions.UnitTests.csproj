@@ -30,7 +30,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\DependencyInjection.Framework\Microwave.DependencyContainerExtensions.csproj" />
+      <ProjectReference Include="..\Microwave.DependencyInjectionExtensions\Microwave.DependencyInjectionExtensions.csproj" />
+      <ProjectReference Include="..\Microwave.WebApi\Microwave.WebApi.csproj" />
     </ItemGroup>
 
 </Project>

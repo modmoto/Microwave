@@ -1,14 +1,14 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Adapters.Framework.WebApi;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microwave.Application;
 using Microwave.Domain;
+using Microwave.WebApi;
 using NUnit.Framework;
 
-namespace Microwave.DependencyContainerExtensions.UnitTests
+namespace Microwave.DependencyInjectionExtensions.UnitTests
 {
     [TestFixture]
     public class ExtensionTests
