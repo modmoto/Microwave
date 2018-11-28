@@ -4,7 +4,7 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Adapters.Json.ObjectPersistences\Adapters.Json.ObjectPersistences.csproj" />
-    <ProjectReference Include="..\Application.Framework\Microwave.Application.csproj" />
+    <ProjectReference Include="..\Microwave.Application\Microwave.Application.csproj" />
     <ProjectReference Include="..\Microwave.Domain\Microwave.Domain.csproj" />
   </ItemGroup>
   <ItemGroup>

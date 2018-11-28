@@ -6,7 +6,7 @@
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Application.Framework\Microwave.Application.csproj" />
+    <ProjectReference Include="..\Microwave.Application\Microwave.Application.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="EventStore.ClientAPI.NetCore, Version=4.1.0.23, Culture=neutral, PublicKeyToken=null">

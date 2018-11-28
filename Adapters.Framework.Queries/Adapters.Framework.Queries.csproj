@@ -6,7 +6,7 @@
         <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="2.1.4" />
     </ItemGroup>
     <ItemGroup>
-      <ProjectReference Include="..\Application.Framework\Microwave.Application.csproj" />
+      <ProjectReference Include="..\Microwave.Application\Microwave.Application.csproj" />
     </ItemGroup>
     <ItemGroup>
       <Reference Include="Microsoft.EntityFrameworkCore, Version=2.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60">
