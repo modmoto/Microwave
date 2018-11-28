@@ -5,7 +5,7 @@ namespace Microwave.WebApi
 {
     public class DomainEventClient<T> : HttpClient
     {
-        public DomainEventClient(EventLocationConfig config)
+        public DomainEventClient(IEventLocationConfig config)
         {
             BaseAddress = config.GetLocationFor(typeof(T).Name);
         }

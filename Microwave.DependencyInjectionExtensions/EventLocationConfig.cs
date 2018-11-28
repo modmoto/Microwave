@@ -1,9 +1,10 @@
 using System;
 using Microsoft.Extensions.Configuration;
+using Microwave.Application;
 
-namespace Microwave.Application
+namespace Microwave.DependencyInjectionExtensions
 {
-    public class EventLocationConfig
+    public class EventLocationConfig : IEventLocationConfig
     {
         private readonly IConfiguration _configuration;
 
