@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Adapters.Json.ObjectPersistences;
@@ -31,14 +32,6 @@ namespace Adapters.Framework.Queries.UnitTests
             Assert.AreEqual("Test", querry1.UserName);
         }
 
-        private static void CheckAllResults(Result[] whenAll)
-        {
-            foreach (var result in whenAll)
-            {
-                result.Check();
-            }
-        }
-
         [Test]
         public async Task InsertQuery()
         {
@@ -52,6 +45,39 @@ namespace Adapters.Framework.Queries.UnitTests
             var query = (await queryRepository.Load<TestQuerry>()).Value;
 
             Assert.AreEqual("Test", query.UserName);
+        }
+
+        [Test]
+        public async Task InsertQuery_ConcurrencyProblem()
+        {
+            var options = new DbContextOptionsBuilder<QueryStorageContext>()
+                .UseInMemoryDatabase("InsertQuery_ConcurrencyProblem")
+                .Options;
+
+            var queryRepository = new QueryRepository(new QueryStorageContext(options), new ObjectConverter());
+            var testQuery = new TestQuerry { UserName = "Test1"};
+            var testQuery2 = new TestQuerry { UserName = "Test2"};
+            var save = queryRepository.Save(testQuery);
+            var save2 = queryRepository.Save(testQuery2);
+
+            await Task.WhenAll(new List<Task> { save, save2});
+        }
+
+        [Test]
+        public async Task InsertIDQuery_ConcurrencyProblem()
+        {
+            var options = new DbContextOptionsBuilder<QueryStorageContext>()
+                .UseInMemoryDatabase("InsertIDQuery_ConcurrencyProblem")
+                .Options;
+
+            var queryRepository = new QueryRepository(new QueryStorageContext(options), new ObjectConverter());
+            Guid guid = Guid.NewGuid();
+            var testQuery = new TestIdQuerry { Id = guid, UserName = "Test1"};
+            var testQuery2 = new TestIdQuerry { Id = guid, UserName = "Test2"};
+            var save = queryRepository.Save(testQuery);
+            var save2 = queryRepository.Save(testQuery2);
+
+            await Task.WhenAll(new List<Task> { save, save2});
         }
 
         [Test]
