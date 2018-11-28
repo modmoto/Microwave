@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Microwave.Domain;
 
-namespace Application.Framework
+namespace Microwave.Application
 {
     public interface IHandleAsync<in T> where T : IDomainEvent
     {

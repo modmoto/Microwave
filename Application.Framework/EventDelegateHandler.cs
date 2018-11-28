@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microwave.Domain;
 
-namespace Application.Framework
+namespace Microwave.Application
 {
     public class EventDelegateHandler<T> : IEventDelegateHandler where T : IDomainEvent
     {

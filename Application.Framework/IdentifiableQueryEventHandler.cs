@@ -1,9 +1,9 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
-using Application.Framework.Results;
+using Microwave.Application.Results;
 using Microwave.Domain;
 
-namespace Application.Framework
+namespace Microwave.Application
 {
     public interface IIdentifiableQueryEventHandler
     {

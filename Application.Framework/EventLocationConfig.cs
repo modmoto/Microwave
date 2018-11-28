@@ -1,7 +1,7 @@
 using System;
 using Microsoft.Extensions.Configuration;
 
-namespace Application.Framework
+namespace Microwave.Application
 {
     public class EventLocationConfig
     {

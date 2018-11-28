@@ -1,4 +1,4 @@
-﻿using Application.Framework;
+﻿using Microwave.Application;
 using Newtonsoft.Json;
 
 namespace Adapters.Json.ObjectPersistences

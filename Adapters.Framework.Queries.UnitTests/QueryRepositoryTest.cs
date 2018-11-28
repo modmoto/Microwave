@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Adapters.Json.ObjectPersistences;
-using Application.Framework;
-using Application.Framework.Exceptions;
-using Application.Framework.Results;
 using Microsoft.EntityFrameworkCore;
+using Microwave.Application;
 using NUnit.Framework;
 
 namespace Adapters.Framework.Queries.UnitTests

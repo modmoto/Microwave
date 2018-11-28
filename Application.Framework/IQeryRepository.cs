@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Application.Framework.Results;
+using Microwave.Application.Results;
 
-namespace Application.Framework
+namespace Microwave.Application
 {
     public interface IQeryRepository
     {

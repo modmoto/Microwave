@@ -1,7 +1,7 @@
 using System.Linq;
 using System.Threading.Tasks;
-using Application.Framework;
 using Microsoft.EntityFrameworkCore;
+using Microwave.Application;
 
 namespace Adapters.Framework.Subscriptions
 {

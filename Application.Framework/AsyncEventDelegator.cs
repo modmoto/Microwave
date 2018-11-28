@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Application.Framework
+namespace Microwave.Application
 {
     public class AsyncEventDelegator
     {

@@ -2,10 +2,10 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Adapters.Framework.WebApi;
-using Application.Framework;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using Microsoft.Extensions.Configuration;
+using Microwave.Application;
 using Microwave.Domain;
 
 namespace DependencyInjection.Framework.UnitTests

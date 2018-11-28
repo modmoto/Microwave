@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 
-namespace Application.Framework
+namespace Microwave.Application
 {
     public interface IVersionRepository
     {

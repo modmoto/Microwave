@@ -1,6 +1,6 @@
-﻿using Application.Framework.Exceptions;
+﻿using Microwave.Application.Exceptions;
 
-namespace Application.Framework.Results
+namespace Microwave.Application.Results
 {
     public class NotFound<T> : Result<T>
     {

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Application.Framework;
-using Application.Framework.Results;
+using Microwave.Application;
+using Microwave.Application.Results;
 using Microwave.Domain;
 
 namespace Adapters.Framework.EventStores

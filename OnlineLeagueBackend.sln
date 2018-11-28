@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microwave.Domain", "Microwa
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Adapters.Framework.EventStores", "Adapters.Framework.EventStores\Adapters.Framework.EventStores.csproj", "{1441D8A6-105E-4B9B-A388-2C64C633CC5D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Application.Framework", "Application.Framework\Application.Framework.csproj", "{C2CABBC2-F393-4502-B3C8-F6E5DFD15D44}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microwave.Application", "Application.Framework\Microwave.Application.csproj", "{C2CABBC2-F393-4502-B3C8-F6E5DFD15D44}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Adapters.Json.ObjectPersistences", "Adapters.Json.ObjectPersistences\Adapters.Json.ObjectPersistences.csproj", "{BEE54EA4-ABC9-4498-A70D-B9EC79D0FEB4}"
 EndProject

@@ -1,6 +1,6 @@
-﻿using Application.Framework.Exceptions;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microwave.Application.Exceptions;
 
 namespace Adapters.Framework.WebApi
 {

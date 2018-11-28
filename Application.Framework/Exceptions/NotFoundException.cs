@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Application.Framework.Exceptions
+namespace Microwave.Application.Exceptions
 {
     public class NotFoundException : Exception
     {

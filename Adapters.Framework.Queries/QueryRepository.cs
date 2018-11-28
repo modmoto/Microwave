@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Application.Framework;
-using Application.Framework.Results;
+using Microwave.Application;
+using Microwave.Application.Results;
 
 namespace Adapters.Framework.Queries
 {

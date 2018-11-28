@@ -1,4 +1,4 @@
-﻿namespace Application.Framework
+﻿namespace Microwave.Application
 {
     public interface IObjectConverter
     {

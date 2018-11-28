@@ -11,11 +11,11 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Application.Framework\Application.Framework.csproj" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="2.1.4" />
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="2.1.4" />
+      <ProjectReference Include="..\Application.Framework\Microwave.Application.csproj" />
     </ItemGroup>
 
 </Project>

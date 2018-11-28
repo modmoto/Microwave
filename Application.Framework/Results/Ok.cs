@@ -1,4 +1,4 @@
-﻿namespace Application.Framework.Results
+﻿namespace Microwave.Application.Results
 {
     internal class Ok : Result
     {
