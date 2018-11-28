@@ -5,6 +5,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Adapters.Json.ObjectPersistences\Adapters.Json.ObjectPersistences.csproj" />
     <ProjectReference Include="..\Application.Framework\Application.Framework.csproj" />
+    <ProjectReference Include="..\Microwave.Domain\Microwave.Domain.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="2.1.4" />

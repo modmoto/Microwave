@@ -16,6 +16,7 @@
     <ItemGroup>
       <ProjectReference Include="..\Adapters.Framework.Queries\Adapters.Framework.Queries.csproj" />
       <ProjectReference Include="..\Adapters.Json.ObjectPersistences\Adapters.Json.ObjectPersistences.csproj" />
+      <ProjectReference Include="..\Application.Framework\Application.Framework.csproj" />
     </ItemGroup>
 
 </Project>
