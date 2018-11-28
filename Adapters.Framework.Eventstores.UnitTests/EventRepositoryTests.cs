@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Adapters.Framework.EventStores;
-using Adapters.Framework.Subscriptions;
-using Adapters.Json.ObjectPersistences;
 using Microsoft.EntityFrameworkCore;
 using Microwave.Application.Exceptions;
 using Microwave.Application.Results;
 using Microwave.Domain;
+using Microwave.ObjectPersistences;
+using Microwave.Subscriptions;
 using NUnit.Framework;
 
-namespace Adapters.Framework.Eventstores.UnitTests
+namespace Microwave.Eventstores.UnitTests
 {
     public class EventRepositoryTests
     {

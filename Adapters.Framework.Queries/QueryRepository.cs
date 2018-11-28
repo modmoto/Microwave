@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Microwave.Application;
 using Microwave.Application.Results;
 
-namespace Adapters.Framework.Queries
+namespace Microwave.Queries
 {
     public class QueryRepository : IQeryRepository
     {

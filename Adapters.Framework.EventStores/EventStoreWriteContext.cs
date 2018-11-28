@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore;
 
-namespace Adapters.Framework.EventStores
+namespace Microwave.EventStores
 {
     public sealed class EventStoreWriteContext : DbContext
     {

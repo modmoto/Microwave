@@ -11,11 +11,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Adapters.Framework.EventStores\Adapters.Framework.EventStores.csproj" />
-    <ProjectReference Include="..\Adapters.Framework.Queries\Adapters.Framework.Queries.csproj" />
-    <ProjectReference Include="..\Adapters.Framework.Subscriptions\Adapters.Framework.Subscriptions.csproj" />
-    <ProjectReference Include="..\Adapters.Framework.WebApi\Adapters.Framework.WebApi.csproj" />
-    <ProjectReference Include="..\Adapters.Json.ObjectPersistences\Adapters.Json.ObjectPersistences.csproj" />
+    <ProjectReference Include="..\Adapters.Framework.EventStores\Microwave.EventStores.csproj" />
+    <ProjectReference Include="..\Adapters.Framework.Queries\Microwave.Queries.csproj" />
+    <ProjectReference Include="..\Adapters.Framework.Subscriptions\Microwave.Subscriptions.csproj" />
+    <ProjectReference Include="..\Adapters.Framework.WebApi\Microwave.WebApi.csproj" />
+    <ProjectReference Include="..\Adapters.Json.ObjectPersistences\Microwave.ObjectPersistences.csproj" />
     <ProjectReference Include="..\Microwave.Application\Microwave.Application.csproj" />
   </ItemGroup>
 </Project>

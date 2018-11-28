@@ -2,7 +2,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microwave.Application;
 
-namespace Adapters.Framework.EventStores
+namespace Microwave.EventStores
 {
     public class ProjectionHandler : IProjectionHandler
     {

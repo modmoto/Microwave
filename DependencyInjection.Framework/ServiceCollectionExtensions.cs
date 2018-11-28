@@ -2,18 +2,17 @@
 using System.Linq;
 using System.Reflection;
 using Adapters.Framework.EventStores;
-using Adapters.Framework.Queries;
-using Adapters.Framework.Subscriptions;
-using Adapters.Framework.WebApi;
-using Adapters.Json.ObjectPersistences;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microwave.Application;
 using Microwave.Domain;
+using Microwave.ObjectPersistences;
+using Microwave.Queries;
+using Microwave.Subscriptions;
+using Microwave.WebApi;
 
-namespace DependencyInjection.Framework
+namespace Microwave.DependencyContainerExtensions
 {
     public static class ServiceCollectionExtensions
     {

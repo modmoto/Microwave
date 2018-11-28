@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microwave.Application;
 
-namespace Adapters.Framework.WebApi
+namespace Microwave.WebApi
 {
     [Route("Api")]
     public class DomainEventController : Controller

@@ -6,7 +6,7 @@ using Microwave.Application;
 using Microwave.Application.Results;
 using Microwave.Domain;
 
-namespace Adapters.Framework.EventStores
+namespace Microwave.EventStores
 {
     public class TypeProjectionRepository : ITypeProjectionRepository
     {

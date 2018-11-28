@@ -2,7 +2,7 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
-namespace Adapters.Json.ObjectPersistences
+namespace Microwave.ObjectPersistences
 {
     public class PrivateSetterContractResolver : DefaultContractResolver
     {

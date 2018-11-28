@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Adapters.Framework.Subscriptions
+namespace Microwave.Subscriptions
 {
     public class LastProcessedVersionDbo
     {

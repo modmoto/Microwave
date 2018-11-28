@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microwave.Application.Exceptions;
 
-namespace Adapters.Framework.WebApi
+namespace Microwave.WebApi
 {
     public class NotFoundFilter : IExceptionFilter
     {

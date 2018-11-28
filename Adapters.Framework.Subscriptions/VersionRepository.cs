@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microwave.Application;
 
-namespace Adapters.Framework.Subscriptions
+namespace Microwave.Subscriptions
 {
     public class VersionRepository : IVersionRepository
     {

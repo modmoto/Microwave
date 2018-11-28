@@ -1,13 +1,12 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using Adapters.Json.ObjectPersistences;
 using Microsoft.EntityFrameworkCore;
 using Microwave.Application;
+using Microwave.ObjectPersistences;
 using NUnit.Framework;
 
-namespace Adapters.Framework.Queries.UnitTests
+namespace Microwave.Queries.UnitTests
 {
     [TestFixture]
     public class QueryRepositoryTest

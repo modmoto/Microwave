@@ -1,7 +1,7 @@
 using System.Net.Http;
 using Microwave.Application;
 
-namespace Adapters.Framework.WebApi
+namespace Microwave.WebApi
 {
     public class DomainEventClient<T> : HttpClient
     {

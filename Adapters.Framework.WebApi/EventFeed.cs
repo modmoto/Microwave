@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microwave.Application;
 using Microwave.Domain;
 
-namespace Adapters.Framework.WebApi
+namespace Microwave.WebApi
 {
     public class EventFeed<T> : IEventFeed<T> where T : IDomainEvent
     {

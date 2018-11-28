@@ -3,7 +3,7 @@
     <TargetFramework>netcoreapp2.1</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Adapters.Json.ObjectPersistences\Adapters.Json.ObjectPersistences.csproj" />
+    <ProjectReference Include="..\Adapters.Json.ObjectPersistences\Microwave.ObjectPersistences.csproj" />
     <ProjectReference Include="..\Microwave.Application\Microwave.Application.csproj" />
     <ProjectReference Include="..\Microwave.Domain\Microwave.Domain.csproj" />
   </ItemGroup>

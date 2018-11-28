@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microwave.Domain;
 
-namespace Adapters.Framework.WebApi
+namespace Microwave.WebApi
 {
     public class DomainValidationFilter : IExceptionFilter
     {

@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace Adapters.Framework.Subscriptions
+namespace Microwave.Subscriptions
 {
     public sealed class SubscriptionContext : DbContext
     {

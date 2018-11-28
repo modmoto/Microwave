@@ -1,7 +1,7 @@
 ﻿using Microwave.Application;
 using Newtonsoft.Json;
 
-namespace Adapters.Json.ObjectPersistences
+namespace Microwave.ObjectPersistences
 {
     public class ObjectConverter : IObjectConverter
     {

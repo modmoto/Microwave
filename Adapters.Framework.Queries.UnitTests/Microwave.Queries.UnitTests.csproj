@@ -14,8 +14,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Adapters.Framework.Queries\Adapters.Framework.Queries.csproj" />
-      <ProjectReference Include="..\Adapters.Json.ObjectPersistences\Adapters.Json.ObjectPersistences.csproj" />
+      <ProjectReference Include="..\Adapters.Framework.Queries\Microwave.Queries.csproj" />
+      <ProjectReference Include="..\Adapters.Json.ObjectPersistences\Microwave.ObjectPersistences.csproj" />
     </ItemGroup>
 
 </Project>

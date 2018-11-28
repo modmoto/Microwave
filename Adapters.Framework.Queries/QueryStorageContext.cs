@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore;
 
-namespace Adapters.Framework.Queries
+namespace Microwave.Queries
 {
     public sealed class QueryStorageContext : DbContext
     {

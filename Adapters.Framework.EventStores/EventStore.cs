@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microwave.Application;
 using Microwave.Domain;
 
-namespace Adapters.Framework.EventStores
+namespace Microwave.EventStores
 {
     public class EventStore : IEventStore
     {
