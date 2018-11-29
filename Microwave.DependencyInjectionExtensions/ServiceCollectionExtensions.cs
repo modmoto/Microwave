@@ -65,7 +65,7 @@ namespace Microwave.DependencyInjectionExtensions
             services.AddQueryHandler(assembly);
             services.AddIdentifiableQueryHandler(assembly);
 
-            services.AddSingleton(new EventLocationConfig(configuration));
+            services.AddSingleton<IEventLocationConfig>(new EventLocationConfig(configuration));
 
             return services;
         }
@@ -130,9 +130,12 @@ namespace Microwave.DependencyInjectionExtensions
                 m.GetParameters().Length == 1);
 
             var handlerInterfaces = assembly.GetTypes().Where(t => ImplementsIhandleAsyncInterface(t));
+            var handlerAsyncInterfaces = assembly.GetTypes().Where(t => ImplementsIhandleInterface(t));
+            var allHandlerTypes = handlerInterfaces.ToList();
+            allHandlerTypes.AddRange(handlerAsyncInterfaces.ToList());
             var genericTypeOfClient = typeof(DomainEventClient<>);
 
-            var interfacesWithDomainEventImplementation = handlerInterfaces.SelectMany(i => i.GetInterfaces().Where(IsDomainEvent)).ToList();
+            var interfacesWithDomainEventImplementation = allHandlerTypes.SelectMany(i => i.GetInterfaces().Where(IsDomainEvent)).ToList();
             var domainEventTypes = interfacesWithDomainEventImplementation.Select(e => e.GenericTypeArguments.Single()).Distinct();
 
             foreach (var domainEventType in domainEventTypes)
@@ -152,10 +155,13 @@ namespace Microwave.DependencyInjectionExtensions
                 m.GetParameters().Length == 1);
 
             var handlerInterfaces = assembly.GetTypes().Where(t => ImplementsIhandleAsyncInterface(t));
+            var handlerAsyncInterfaces = assembly.GetTypes().Where(t => ImplementsIhandleInterface(t));
+            var allHandlerTypes = handlerInterfaces.ToList();
+            allHandlerTypes.AddRange(handlerAsyncInterfaces.ToList());
             var genericInterfaceTypeOfFeed = typeof(IEventFeed<>);
             var genericTypeOfFeed = typeof(EventFeed<>);
 
-            var interfacesWithDomainEventImplementation = handlerInterfaces.SelectMany(i => i.GetInterfaces().Where(IsDomainEvent)).ToList();
+            var interfacesWithDomainEventImplementation = allHandlerTypes.SelectMany(i => i.GetInterfaces().Where(IsDomainEvent)).ToList();
             var domainEventTypes = interfacesWithDomainEventImplementation.Select(e => e.GenericTypeArguments.Single()).Distinct();
 
             foreach (var domainEventType in domainEventTypes)
@@ -227,6 +233,12 @@ namespace Microwave.DependencyInjectionExtensions
         {
             return myType.GetInterfaces()
                 .Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IHandleAsync<>));
+        }
+
+        private static bool ImplementsIhandleInterface(Type myType)
+        {
+            return myType.GetInterfaces()
+                .Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IHandle<>));
         }
     }
 }

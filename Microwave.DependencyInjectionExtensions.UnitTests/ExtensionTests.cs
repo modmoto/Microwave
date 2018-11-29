@@ -41,8 +41,10 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
 
             var eventFeed1 = buildServiceProvider.GetServices<IEventFeed<TestDomainEvent>>().SingleOrDefault();
             var eventFeed2 = buildServiceProvider.GetServices<IEventFeed<TestDomainEvent2>>().SingleOrDefault();
+            var eventFeed3 = buildServiceProvider.GetServices<IEventFeed<TestDomainEvent3>>().SingleOrDefault();
             Assert.NotNull(eventFeed1 as EventFeed<TestDomainEvent>);
             Assert.NotNull(eventFeed2 as EventFeed<TestDomainEvent2>);
+            Assert.NotNull(eventFeed3 as EventFeed<TestDomainEvent3>);
 
             var qHandler1 = buildServiceProvider.GetServices<IQueryEventHandler>().ToList();
             Assert.NotNull(qHandler1[0] as QueryEventHandler<TestQuery, TestDomainEvent>);
@@ -52,7 +54,8 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
             var identHandler = buildServiceProvider.GetServices<IIdentifiableQueryEventHandler>().ToList();
             Assert.NotNull(identHandler[0] as IdentifiableQueryEventHandler<TestIdQuery, TestDomainEvent>);
             Assert.NotNull(identHandler[1] as IdentifiableQueryEventHandler<TestIdQuery, TestDomainEvent2>);
-            Assert.NotNull(identHandler[2] as IdentifiableQueryEventHandler<TestIdQuery2, TestDomainEvent>);
+            Assert.NotNull(identHandler[2] as IdentifiableQueryEventHandler<TestIdQuerySingle, TestDomainEvent3>);
+            Assert.NotNull(identHandler[3] as IdentifiableQueryEventHandler<TestIdQuery2, TestDomainEvent>);
         }
     }
 
@@ -77,6 +80,24 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
         {
             throw new NotImplementedException();
         }
+    }
+
+    public class TestIdQuerySingle : IdentifiableQuery, IHandle<TestDomainEvent3>
+    {
+        public Task HandleAsync(TestDomainEvent3 domainEvent)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Handle(TestDomainEvent3 domainEvent)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class TestDomainEvent3 : IDomainEvent
+    {
+        public Guid EntityId { get; }
     }
 
     public class TestIdQuery2 : IdentifiableQuery, IHandle<TestDomainEvent>
