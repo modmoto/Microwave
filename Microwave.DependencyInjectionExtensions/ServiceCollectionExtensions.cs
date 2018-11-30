@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Reflection;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,6 +17,24 @@ namespace Microwave.DependencyInjectionExtensions
 {
     public static class ServiceCollectionExtensions
     {
+        public static IApplicationBuilder EnsureMicrowaveDatabaseCreated(this IApplicationBuilder builder)
+        {
+            using (var serviceScope = builder.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
+            {
+                var eventStoreReadContext = serviceScope.ServiceProvider.GetRequiredService<EventStoreReadContext>();
+                var eventStoreWriteContext = serviceScope.ServiceProvider.GetRequiredService<EventStoreWriteContext>();
+                var queryStorageContext = serviceScope.ServiceProvider.GetRequiredService<QueryStorageContext>();
+                var subscriptionContext = serviceScope.ServiceProvider.GetRequiredService<SubscriptionContext>();
+
+                if (eventStoreReadContext != null) eventStoreReadContext.Database.EnsureCreated();
+                if (eventStoreWriteContext != null) eventStoreWriteContext.Database.EnsureCreated();
+                if (queryStorageContext != null) queryStorageContext.Database.EnsureCreated();
+                if (subscriptionContext != null) subscriptionContext.Database.EnsureCreated();
+            }
+
+            return builder;
+        }
+
         public static IServiceCollection AddMyEventStoreDependencies(this IServiceCollection services,
             Assembly assembly, IConfiguration configuration)
         {
