@@ -26,10 +26,10 @@ namespace Microwave.DependencyInjectionExtensions
                 var queryStorageContext = serviceScope.ServiceProvider.GetRequiredService<QueryStorageContext>();
                 var subscriptionContext = serviceScope.ServiceProvider.GetRequiredService<SubscriptionContext>();
 
-                if (eventStoreReadContext != null) eventStoreReadContext.Database.EnsureCreated();
-                if (eventStoreWriteContext != null) eventStoreWriteContext.Database.EnsureCreated();
-                if (queryStorageContext != null) queryStorageContext.Database.EnsureCreated();
-                if (subscriptionContext != null) subscriptionContext.Database.EnsureCreated();
+                eventStoreReadContext?.Database.EnsureCreated();
+                eventStoreWriteContext?.Database.EnsureCreated();
+                queryStorageContext?.Database.EnsureCreated();
+                subscriptionContext?.Database.EnsureCreated();
             }
 
             return builder;
