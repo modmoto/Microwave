@@ -27,7 +27,7 @@ namespace Microwave.ObjectPersistences
         {
             var list = JsonConvert.DeserializeObject<IEnumerable<DomainEventWrapper<T>>>(payLoad, _settings);
             var domainEventJobjectStuff = JToken.Parse(payLoad);
-            var jobjectList = domainEventJobjectStuff["$values"];
+            var jobjectList = domainEventJobjectStuff.ToList();
 
             var domainEventWrappers = list.ToList();
             for (int i = 0; i < domainEventWrappers.Count; i++)

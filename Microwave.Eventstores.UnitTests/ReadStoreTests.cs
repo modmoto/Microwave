@@ -39,17 +39,32 @@ namespace Microwave.Eventstores.UnitTests
         [Test]
         public void TestDeserializationOfIdInInterface_DifferentParameterNameList()
         {
-            var objectConverter = new ObjectConverter();
-            var domainEvent = new TestEv_DifferentParamName(Guid.NewGuid(), "testString");
-            var domainvEventWrappers = new List<DomainEventWrapper<TestEv_DifferentParamName>>
-                {new DomainEventWrapper<TestEv_DifferentParamName> { DomainEvent = domainEvent}};
-            var serialize = objectConverter.Serialize(domainvEventWrappers);
+            var domainEvent = new TestEv_DifferentParamName(new Guid("48eb878a-4483-40d9-bf4f-36c85ba5f803"), "testString");
+            var serialize =
+                "[      {   \"Created\":12,       \"Version\":14,         \"DomainEvent\":{    \"SecondProp\":\"testString\",           \"EntityId\":\"48eb878a-4483-40d9-bf4f-36c85ba5f803\"   }     }   ]";
             var deserialize = new DomainEventWrapperListDeserializer(new JSonHack()).Deserialize<TestEv_DifferentParamName>(serialize).First().DomainEvent;
             Assert.AreEqual(domainEvent.EntityId, deserialize.EntityId);
-            Assert.AreEqual((deserialize).SecondProp, "testString");
+            Assert.AreEqual(deserialize.SecondProp, "testString");
             Assert.AreNotEqual(deserialize.EntityId, new Guid());
         }
 
+        [Test]
+        public void TestDeserializationOfIdInInterface_DifferentParameterNameList_TwoEntries()
+        {
+            var domainEvent = new TestEv_DifferentParamName(new Guid("84e5447a-0a28-4fe1-af5a-11dd6a43d3dd"), "testString");
+            var domainEvent2 = new TestEv_DifferentParamName(new Guid("48eb878a-4483-40d9-bf4f-36c85ba5f803"), "andererString");
+            var serialize =
+                "[      {   \"Created\":12,       \"Version\":14,         \"DomainEvent\":{    \"SecondProp\":\"testString\",           \"EntityId\":\"84e5447a-0a28-4fe1-af5a-11dd6a43d3dd\"   }     },   {   \"Created\":12,       \"Version\":14,         \"DomainEvent\":{    \"SecondProp\":\"andererString\",           \"EntityId\":\"48eb878a-4483-40d9-bf4f-36c85ba5f803\"   }     }   ]";
+            var domainEventWrappers = new DomainEventWrapperListDeserializer(new JSonHack()).Deserialize<TestEv_DifferentParamName>(serialize).ToList();
+            var deserialize = domainEventWrappers[0].DomainEvent;
+            var deserialize2 = domainEventWrappers[1].DomainEvent;
+            Assert.AreEqual(domainEvent.EntityId, deserialize.EntityId);
+            Assert.AreEqual(domainEvent2.EntityId, deserialize2.EntityId);
+            Assert.AreEqual(deserialize.SecondProp, "testString");
+            Assert.AreEqual(deserialize2.SecondProp, "andererString");
+            Assert.AreNotEqual(deserialize.EntityId, new Guid());
+            Assert.AreNotEqual(deserialize2.EntityId, new Guid());
+        }
         // This is not supported and might never be
         [Test]
         public void TestDeserializationOfIdInInterface_OwnBackingField()
