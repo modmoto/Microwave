@@ -15,7 +15,8 @@ namespace Microwave.Eventstores.UnitTests
             var serialize = objectConverter.Serialize(domainEvent);
             var deserialize = objectConverter.Deserialize<IDomainEvent>(serialize);
             Assert.AreEqual(deserialize.EntityId, domainEvent.EntityId);
-        }   
+            Assert.AreNotEqual(deserialize.EntityId, new Guid());
+        }
     }
 
     public class TestEv : IDomainEvent
