@@ -12,6 +12,7 @@ namespace Microwave.ObjectPersistences
             var field = domainEvent.GetType().GetField($"<{nameof(IDomainEvent.EntityId)}>k__BackingField",
                 BindingFlags.NonPublic | BindingFlags.Instance);
             var jToken = domainEventJobject[nameof(IDomainEvent.EntityId)];
+            if (jToken == null) jToken = domainEventJobject["entityId"];
             var entityId = (Guid) jToken;
             field?.SetValue(domainEvent, entityId);
         }

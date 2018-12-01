@@ -35,7 +35,8 @@ namespace Microwave.ObjectPersistences
                 var domainEventWrapper = domainEventWrappers[i];
                 if (domainEventWrapper.DomainEvent.EntityId == new Guid())
                 {
-                    var jTokenDomainEvent = jobjectList[i][nameof(domainEventWrapper.DomainEvent)];
+                    var jTokenDomainEvent = jobjectList[i][nameof(DomainEventWrapper.DomainEvent)];
+                    if (jTokenDomainEvent == null) jTokenDomainEvent = jobjectList[i]["domainEvent"];
                     _jsonHack.SetEntityIdBackingField(jTokenDomainEvent, domainEventWrapper.DomainEvent);
                 }
             }
