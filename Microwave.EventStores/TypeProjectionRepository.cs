@@ -49,7 +49,7 @@ namespace Microwave.EventStores
             var typeStream = _eventStoreReadContext.TypeStreams
                 .Where(str => str.DomainEventType == streamName).ToList();
 
-            var entityVersionTemp = typeStream.Last().Version + 1;
+            var entityVersionTemp = typeStream.LastOrDefault()?.Version + 1 ?? 0;
 
             var domainEventDbo = new DomainEventTypeDbo
             {
