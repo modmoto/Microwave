@@ -47,11 +47,12 @@ namespace Microwave.EventStores
 
             var domainEvents = stream.Select(dbo =>
             {
+                var domainEvent = _eventConverter.Deserialize<IDomainEvent>(dbo.Payload);
                 return new DomainEventWrapper
                 {
                     Created = dbo.Created,
                     Version = dbo.Version,
-                    DomainEvent = _eventConverter.Deserialize<IDomainEvent>(dbo.Payload)
+                    DomainEvent = domainEvent
                 };
             });
 

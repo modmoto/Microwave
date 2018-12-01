@@ -7,16 +7,16 @@ namespace Microwave.EventStores
     public class TypeProjectionHandler : ITypeProjectionHandler
     {
         private readonly ITypeProjectionRepository _typeProjectionRepository;
-        private readonly IEntityStreamRepository _overallProjectionRepository;
+        private readonly IEntityStreamRepository _entityStreamRepository;
         private readonly IVersionRepository _versionRepository;
 
         public TypeProjectionHandler(
             ITypeProjectionRepository typeProjectionRepository,
-            IEntityStreamRepository overallProjectionRepository,
+            IEntityStreamRepository entityStreamRepository,
             IVersionRepository versionRepository)
         {
             _typeProjectionRepository = typeProjectionRepository;
-            _overallProjectionRepository = overallProjectionRepository;
+            _entityStreamRepository = entityStreamRepository;
             _versionRepository = versionRepository;
         }
 
@@ -24,7 +24,7 @@ namespace Microwave.EventStores
         {
             var version = await _versionRepository.GetVersionAsync("TypeProjectionHandler");
             // TOdo über api machen
-            var result = await _overallProjectionRepository.LoadEventsSince(version);
+            var result = await _entityStreamRepository.LoadEventsSince(version);
             foreach (var domainEvent in result.Value)
             {
                 await _typeProjectionRepository.AppendToTypeStream(domainEvent.DomainEvent);
