@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microwave.Application;
+using Microwave.Domain;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -22,9 +23,9 @@ namespace Microwave.ObjectPersistences
             ContractResolver = new PrivateSetterContractResolver()
         };
 
-        public IEnumerable<DomainEventWrapper> Deserialize(string payLoad)
+        public IEnumerable<DomainEventWrapper<T>> Deserialize<T>(string payLoad) where T : IDomainEvent
         {
-            var list = JsonConvert.DeserializeObject<IEnumerable<DomainEventWrapper>>(payLoad, _settings);
+            var list = JsonConvert.DeserializeObject<IEnumerable<DomainEventWrapper<T>>>(payLoad, _settings);
             var domainEventJobjectStuff = JToken.Parse(payLoad);
             var jobjectList = domainEventJobjectStuff["$values"];
 

@@ -5,17 +5,20 @@ using System.Threading.Tasks;
 using Microwave.Application;
 using Microwave.Application.Results;
 using Microwave.Domain;
+using Microwave.ObjectPersistences;
 
 namespace Microwave.EventStores
 {
     public class TypeProjectionRepository : ITypeProjectionRepository
     {
         private readonly IObjectConverter _objectConverter;
+        private readonly DomainEventDeserializer _domainEventDeserializer;
         private readonly EventStoreReadContext _eventStoreReadContext;
 
-        public TypeProjectionRepository(IObjectConverter objectConverter, EventStoreReadContext eventStoreReadContext)
+        public TypeProjectionRepository(IObjectConverter objectConverter, DomainEventDeserializer domainEventDeserializer, EventStoreReadContext eventStoreReadContext)
         {
             _objectConverter = objectConverter;
+            _domainEventDeserializer = domainEventDeserializer;
             _eventStoreReadContext = eventStoreReadContext;
         }
 
@@ -33,7 +36,7 @@ namespace Microwave.EventStores
                 {
                     Created = dbo.Created,
                     Version = dbo.Version,
-                    DomainEvent = _objectConverter.Deserialize<IDomainEvent>(dbo.Payload)
+                    DomainEvent = _domainEventDeserializer.Deserialize(dbo.Payload)
                 };
             });
             return Result<IEnumerable<DomainEventWrapper>>.Ok(domainEvents);

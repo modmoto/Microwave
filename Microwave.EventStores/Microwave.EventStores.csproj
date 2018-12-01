@@ -2,7 +2,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <PackageVersion>0.1.7</PackageVersion>
+    <PackageVersion>0.1.9</PackageVersion>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Microwave.Application\Microwave.Application.csproj" />

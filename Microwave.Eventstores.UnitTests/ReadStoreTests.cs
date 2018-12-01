@@ -41,12 +41,12 @@ namespace Microwave.Eventstores.UnitTests
         {
             var objectConverter = new ObjectConverter();
             var domainEvent = new TestEv_DifferentParamName(Guid.NewGuid(), "testString");
-            var domainvEventWrappers = new List<DomainEventWrapper>
-                {new DomainEventWrapper { DomainEvent = domainEvent}};
+            var domainvEventWrappers = new List<DomainEventWrapper<TestEv_DifferentParamName>>
+                {new DomainEventWrapper<TestEv_DifferentParamName> { DomainEvent = domainEvent}};
             var serialize = objectConverter.Serialize(domainvEventWrappers);
-            var deserialize = new DomainEventWrapperListDeserializer(new JSonHack()).Deserialize(serialize).First().DomainEvent;
+            var deserialize = new DomainEventWrapperListDeserializer(new JSonHack()).Deserialize<TestEv_DifferentParamName>(serialize).First().DomainEvent;
             Assert.AreEqual(domainEvent.EntityId, deserialize.EntityId);
-            Assert.AreEqual(((TestEv_DifferentParamName)deserialize).SecondProp, "testString");
+            Assert.AreEqual((deserialize).SecondProp, "testString");
             Assert.AreNotEqual(deserialize.EntityId, new Guid());
         }
 

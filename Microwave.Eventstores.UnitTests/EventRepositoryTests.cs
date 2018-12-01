@@ -155,7 +155,7 @@ namespace Microwave.Eventstores.UnitTests
             var eventStoreReadContext = new EventStoreReadContext(optionsRead);
 
             var eventRepository = new EntityStreamRepository(new DomainEventDeserializer(new JSonHack()), eventStoreContext, new ObjectConverter());
-            var typeProjectionRepository = new TypeProjectionRepository(new ObjectConverter(), eventStoreReadContext);
+            var typeProjectionRepository = new TypeProjectionRepository(new ObjectConverter(), new DomainEventDeserializer(new JSonHack()),  eventStoreReadContext);
 
             var newGuid = Guid.NewGuid();
             var domainEvent = new TestEvent1(newGuid);
@@ -195,9 +195,9 @@ namespace Microwave.Eventstores.UnitTests
             var options = new DbContextOptionsBuilder<EventStoreReadContext>()
                 .UseInMemoryDatabase("AddEvents_TypeSet")
                 .Options;
-            var eventStoreContext = new EventStoreReadContext(options);
+            var eventStoreReadContext = new EventStoreReadContext(options);
 
-            var eventRepository = new TypeProjectionRepository(new ObjectConverter(), eventStoreContext);
+            var eventRepository = new TypeProjectionRepository(new ObjectConverter(), new DomainEventDeserializer(new JSonHack()),  eventStoreReadContext);
 
             var testEvent1 = new TestEvent1(Guid.NewGuid());
             await eventRepository.AppendToTypeStream(testEvent1);
@@ -228,7 +228,7 @@ namespace Microwave.Eventstores.UnitTests
             var eventStoreReadContext = new EventStoreReadContext(optionsRead);
 
             var eventRepository = new EntityStreamRepository(new DomainEventDeserializer(new JSonHack()), eventStoreContext, new ObjectConverter());
-            var typeProjectionRepository = new TypeProjectionRepository(new ObjectConverter(), eventStoreReadContext);
+            var typeProjectionRepository = new TypeProjectionRepository(new ObjectConverter(), new DomainEventDeserializer(new JSonHack()),  eventStoreReadContext);
             var overallProjectionRepository = new OverallProjectionRepository(typeProjectionRepository);
 
             var newGuid = Guid.NewGuid();

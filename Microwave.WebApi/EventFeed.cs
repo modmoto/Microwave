@@ -25,8 +25,8 @@ namespace Microwave.WebApi
             var response = await _domainEventClient.GetAsync($"?myLastVersion={lastVersion}");
             if (response.StatusCode != HttpStatusCode.OK) return new List<T>();
             var content = await response.Content.ReadAsStringAsync();
-            var eventsByTypeAsync = _objectConverter.Deserialize(content);
-            return eventsByTypeAsync.Select(ev => (T) ev.DomainEvent);
+            var eventsByTypeAsync = _objectConverter.Deserialize<T>(content);
+            return eventsByTypeAsync.Select(ev => ev.DomainEvent);
         }
     }
 }
