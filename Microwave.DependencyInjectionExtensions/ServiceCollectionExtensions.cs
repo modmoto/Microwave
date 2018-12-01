@@ -39,6 +39,9 @@ namespace Microwave.DependencyInjectionExtensions
             Assembly assembly, IConfiguration configuration)
         {
             services.AddTransient<DomainEventController>();
+            services.AddTransient<JSonHack>();
+            services.AddTransient<DomainEventDeserializer>();
+            services.AddTransient<DomainEventWrapperListDeserializer>();
 
             services.AddTransient<IEventStore, EventStore>();
             services.AddTransient<IObjectConverter, ObjectConverter>();

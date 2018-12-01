@@ -1,7 +1,9 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microwave.Application;
 using Microwave.Domain;
 using Microwave.EventStores;
 using Microwave.ObjectPersistences;
@@ -28,9 +30,23 @@ namespace Microwave.Eventstores.UnitTests
             var objectConverter = new ObjectConverter();
             var domainEvent = new TestEv_DifferentParamName(Guid.NewGuid(), "testString");
             var serialize = objectConverter.Serialize(domainEvent);
-            var deserialize = (TestEv_DifferentParamName) objectConverter.Deserialize<IDomainEvent>(serialize);
+            var deserialize = (TestEv_DifferentParamName) new DomainEventDeserializer(new JSonHack()).Deserialize(serialize);
             Assert.AreEqual(deserialize.EntityId, domainEvent.EntityId);
             Assert.AreEqual(deserialize.SecondProp, "testString");
+            Assert.AreNotEqual(deserialize.EntityId, new Guid());
+        }
+
+        [Test]
+        public void TestDeserializationOfIdInInterface_DifferentParameterNameList()
+        {
+            var objectConverter = new ObjectConverter();
+            var domainEvent = new TestEv_DifferentParamName(Guid.NewGuid(), "testString");
+            var domainvEventWrappers = new List<DomainEventWrapper>
+                {new DomainEventWrapper { DomainEvent = domainEvent}};
+            var serialize = objectConverter.Serialize(domainvEventWrappers);
+            var deserialize = new DomainEventWrapperListDeserializer(new JSonHack()).Deserialize(serialize).First().DomainEvent;
+            Assert.AreEqual(domainEvent.EntityId, deserialize.EntityId);
+            Assert.AreEqual(((TestEv_DifferentParamName)deserialize).SecondProp, "testString");
             Assert.AreNotEqual(deserialize.EntityId, new Guid());
         }
 
@@ -63,7 +79,8 @@ namespace Microwave.Eventstores.UnitTests
                 .UseInMemoryDatabase("Entitystream_LoadEventsSince_IdNotDefault")
                 .Options;
 
-            var entityStreamRepository = new EntityStreamRepository(new ObjectConverter(), new EventStoreWriteContext(optionsRead));
+            var entityStreamRepository =
+                new EntityStreamRepository(new DomainEventDeserializer(new JSonHack()), new EventStoreWriteContext(optionsRead), new ObjectConverter());
 
             var entityStreamTestEvent = new TestEv(Guid.NewGuid());
             await entityStreamRepository.AppendAsync(new[] {entityStreamTestEvent}, -1);
@@ -93,20 +110,21 @@ namespace Microwave.Eventstores.UnitTests
             SecondProp = secondProp;
         }
 
-        public Guid EntityId { get; }
         public string SecondProp { get; }
+
+        public Guid EntityId { get; }
     }
 
     public class TestEv_CustomBackingField : IDomainEvent
     {
-        private readonly Guid _WeirdKrappyName;
+        private readonly Guid _entityIdBackingFieldWeird;
 
         public TestEv_CustomBackingField(Guid NOTentityId)
         {
-            _WeirdKrappyName = NOTentityId;
+            _entityIdBackingFieldWeird = NOTentityId;
         }
 
-        public Guid EntityId => _WeirdKrappyName;
+        public Guid EntityId => _entityIdBackingFieldWeird;
     }
 
     public class TestEv_AutoProperty : IDomainEvent

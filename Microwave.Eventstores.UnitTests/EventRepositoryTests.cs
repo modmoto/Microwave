@@ -24,7 +24,7 @@ namespace Microwave.Eventstores.UnitTests
 
             var eventStoreContext = new EventStoreWriteContext(options);
 
-            var eventRepository = new EntityStreamRepository(new ObjectConverter(), eventStoreContext);
+            var eventRepository = new EntityStreamRepository(new DomainEventDeserializer(new JSonHack()), eventStoreContext, new ObjectConverter());
 
             var newGuid = Guid.NewGuid();
             var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid)};
@@ -47,7 +47,7 @@ namespace Microwave.Eventstores.UnitTests
 
             var eventStoreContext = new EventStoreWriteContext(options);
 
-            var eventRepository = new EntityStreamRepository(new ObjectConverter(), eventStoreContext);
+            var eventRepository = new EntityStreamRepository(new DomainEventDeserializer(new JSonHack()), eventStoreContext, new ObjectConverter());
 
             var newGuid = Guid.NewGuid();
             var testEvent1 = new TestEvent1(newGuid);
@@ -76,7 +76,7 @@ namespace Microwave.Eventstores.UnitTests
 
             var eventStoreContext = new EventStoreWriteContext(options);
 
-            var eventRepository = new EntityStreamRepository(new ObjectConverter(), eventStoreContext);
+            var eventRepository = new EntityStreamRepository(new DomainEventDeserializer(new JSonHack()), eventStoreContext, new ObjectConverter());
 
             var newGuid = Guid.NewGuid();
             var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid)};
@@ -126,7 +126,7 @@ namespace Microwave.Eventstores.UnitTests
 
             var eventStoreContext = new EventStoreWriteContext(options);
 
-            var eventRepository = new EntityStreamRepository(new ObjectConverter(), eventStoreContext);
+            var eventRepository = new EntityStreamRepository(new DomainEventDeserializer(new JSonHack()), eventStoreContext, new ObjectConverter());
 
             var newGuid = Guid.NewGuid();
             var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid), new TestEvent1(newGuid), new TestEvent2(newGuid)};
@@ -154,7 +154,7 @@ namespace Microwave.Eventstores.UnitTests
 
             var eventStoreReadContext = new EventStoreReadContext(optionsRead);
 
-            var eventRepository = new EntityStreamRepository(new ObjectConverter(), eventStoreContext);
+            var eventRepository = new EntityStreamRepository(new DomainEventDeserializer(new JSonHack()), eventStoreContext, new ObjectConverter());
             var typeProjectionRepository = new TypeProjectionRepository(new ObjectConverter(), eventStoreReadContext);
 
             var newGuid = Guid.NewGuid();
@@ -178,7 +178,7 @@ namespace Microwave.Eventstores.UnitTests
                 .Options;
             var eventStoreContext = new EventStoreWriteContext(options);
 
-            var eventRepository = new EntityStreamRepository(new ObjectConverter(), eventStoreContext);
+            var eventRepository = new EntityStreamRepository(new DomainEventDeserializer(new JSonHack()), eventStoreContext, new ObjectConverter());
 
             var testEvent1 = new TestEvent1(Guid.NewGuid());
             await eventRepository.AppendAsync(new[] {testEvent1}, -1);
@@ -227,7 +227,7 @@ namespace Microwave.Eventstores.UnitTests
 
             var eventStoreReadContext = new EventStoreReadContext(optionsRead);
 
-            var eventRepository = new EntityStreamRepository(new ObjectConverter(), eventStoreContext);
+            var eventRepository = new EntityStreamRepository(new DomainEventDeserializer(new JSonHack()), eventStoreContext, new ObjectConverter());
             var typeProjectionRepository = new TypeProjectionRepository(new ObjectConverter(), eventStoreReadContext);
             var overallProjectionRepository = new OverallProjectionRepository(typeProjectionRepository);
 

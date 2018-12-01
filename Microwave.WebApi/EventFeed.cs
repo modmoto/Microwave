@@ -4,15 +4,16 @@ using System.Net;
 using System.Threading.Tasks;
 using Microwave.Application;
 using Microwave.Domain;
+using Microwave.ObjectPersistences;
 
 namespace Microwave.WebApi
 {
     public class EventFeed<T> : IEventFeed<T> where T : IDomainEvent
     {
-        private readonly IObjectConverter _objectConverter;
+        private readonly DomainEventWrapperListDeserializer _objectConverter;
         private readonly DomainEventClient<T> _domainEventClient;
 
-        public EventFeed(IObjectConverter objectConverter, DomainEventClient<T>
+        public EventFeed(DomainEventWrapperListDeserializer objectConverter, DomainEventClient<T>
             domainEventClient)
         {
             _objectConverter = objectConverter;
@@ -24,18 +25,8 @@ namespace Microwave.WebApi
             var response = await _domainEventClient.GetAsync($"?myLastVersion={lastVersion}");
             if (response.StatusCode != HttpStatusCode.OK) return new List<T>();
             var content = await response.Content.ReadAsStringAsync();
-            var eventsByTypeAsync = _objectConverter.Deserialize<IEnumerable<DomainvEventWrapper<T>>>(content);
-            return eventsByTypeAsync.Select(ev => ev.DomainEvent);
+            var eventsByTypeAsync = _objectConverter.Deserialize(content);
+            return eventsByTypeAsync.Select(ev => (T) ev.DomainEvent);
         }
-    }
-
-    public class DomainvEventWrapper<TEvent> where TEvent : IDomainEvent
-    {
-        public DomainvEventWrapper(TEvent domainEvent)
-        {
-            DomainEvent = domainEvent;
-        }
-
-        public TEvent DomainEvent { get; }
     }
 }

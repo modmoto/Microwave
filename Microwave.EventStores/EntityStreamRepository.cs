@@ -5,19 +5,25 @@ using System.Threading.Tasks;
 using Microwave.Application;
 using Microwave.Application.Results;
 using Microwave.Domain;
+using Microwave.ObjectPersistences;
 
 namespace Microwave.EventStores
 {
     public class EntityStreamRepository : IEntityStreamRepository
     {
-        private readonly IObjectConverter _eventConverter;
+        private readonly DomainEventDeserializer _domainEventConverter;
         private readonly EventStoreWriteContext _eventStoreWriteContext;
+        private readonly IObjectConverter _converter;
         private readonly object _lock = new Object();
 
-        public EntityStreamRepository(IObjectConverter eventConverter, EventStoreWriteContext eventStoreWriteContext)
+        public EntityStreamRepository(
+            DomainEventDeserializer domainEventConverter,
+            EventStoreWriteContext eventStoreWriteContext,
+            IObjectConverter converter)
         {
-            _eventConverter = eventConverter;
+            _domainEventConverter = domainEventConverter;
             _eventStoreWriteContext = eventStoreWriteContext;
+            _converter = converter;
         }
 
         public async Task<Result<IEnumerable<DomainEventWrapper>>> LoadEventsByEntity(Guid entityId, long from = -1)
@@ -32,7 +38,7 @@ namespace Microwave.EventStores
                 {
                     Created = dbo.Created,
                     Version = dbo.Version,
-                    DomainEvent = _eventConverter.Deserialize<IDomainEvent>(dbo.Payload)
+                    DomainEvent = _domainEventConverter.Deserialize(dbo.Payload)
                 };
             });
 
@@ -47,7 +53,7 @@ namespace Microwave.EventStores
 
             var domainEvents = stream.Select(dbo =>
             {
-                var domainEvent = _eventConverter.Deserialize<IDomainEvent>(dbo.Payload);
+                var domainEvent = _domainEventConverter.Deserialize(dbo.Payload);
                 return new DomainEventWrapper
                 {
                     Created = dbo.Created,
@@ -75,7 +81,7 @@ namespace Microwave.EventStores
                 foreach (var domainEvent in events)
                 {
                     entityVersionTemp = entityVersionTemp + 1;
-                    var serialize = _eventConverter.Serialize(domainEvent);
+                    var serialize = _converter.Serialize(domainEvent);
                     var domainEventDbo = new DomainEventDbo
                     {
                         Payload = serialize,

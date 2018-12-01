@@ -25,11 +25,4 @@ namespace Microwave.Application
         Task<Result> AppendToTypeStream(IDomainEvent domainEvent);
         Task<Result> AppendToStreamWithName(string streamName, IDomainEvent domainEvent);
     }
-
-    public class DomainEventWrapper
-    {
-        public long Created { get; set; }
-        public long Version { get; set; }
-        public IDomainEvent DomainEvent { get; set; }
-    }
 }
