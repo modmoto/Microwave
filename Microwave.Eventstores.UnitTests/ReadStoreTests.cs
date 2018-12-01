@@ -15,10 +15,44 @@ namespace Microwave.Eventstores.UnitTests
         public void TestDeserializationOfIdInInterface()
         {
             var objectConverter = new ObjectConverter();
-            TestEv domainEvent = new TestEv(Guid.NewGuid());
+            var domainEvent = new TestEv(Guid.NewGuid());
             var serialize = objectConverter.Serialize(domainEvent);
             var deserialize = objectConverter.Deserialize<IDomainEvent>(serialize);
             Assert.AreEqual(deserialize.EntityId, domainEvent.EntityId);
+            Assert.AreNotEqual(deserialize.EntityId, new Guid());
+        }
+
+        [Test]
+        public void TestDeserializationOfIdInInterface_DifferentParameterName()
+        {
+            var objectConverter = new ObjectConverter();
+            var domainEvent = new TestEv_DifferentParamName(Guid.NewGuid(), "testString");
+            var serialize = objectConverter.Serialize(domainEvent);
+            var deserialize = (TestEv_DifferentParamName) objectConverter.Deserialize<IDomainEvent>(serialize);
+            Assert.AreEqual(deserialize.EntityId, domainEvent.EntityId);
+            Assert.AreEqual(deserialize.SecondProp, "testString");
+            Assert.AreNotEqual(deserialize.EntityId, new Guid());
+        }
+
+        // This is not supported and might never be
+        [Test]
+        public void TestDeserializationOfIdInInterface_OwnBackingField()
+        {
+            var objectConverter = new ObjectConverter();
+            var domainEvent = new TestEv_CustomBackingField(Guid.NewGuid());
+            var serialize = objectConverter.Serialize(domainEvent);
+            var deserialize = objectConverter.Deserialize<IDomainEvent>(serialize);
+            Assert.AreEqual(deserialize.EntityId, new Guid());
+        }
+
+        [Test]
+        public void TestDeserializationOfIdInInterface_GetAutoProperty()
+        {
+            var objectConverter = new ObjectConverter();
+            var domainEvent = new TestEv_AutoProperty(Guid.NewGuid());
+            var serialize = objectConverter.Serialize(domainEvent);
+            var deserialize = objectConverter.Deserialize<IDomainEvent>(serialize);
+            Assert.AreEqual(deserialize.EntityId, new Guid("84e5447a-0a28-4fe1-af5a-11dd6a43d3dd"));
             Assert.AreNotEqual(deserialize.EntityId, new Guid());
         }
 
@@ -49,5 +83,38 @@ namespace Microwave.Eventstores.UnitTests
         }
 
         public Guid EntityId { get; }
+    }
+
+    public class TestEv_DifferentParamName : IDomainEvent
+    {
+        public TestEv_DifferentParamName(Guid NOTentityId, string secondProp)
+        {
+            EntityId = NOTentityId;
+            SecondProp = secondProp;
+        }
+
+        public Guid EntityId { get; }
+        public string SecondProp { get; }
+    }
+
+    public class TestEv_CustomBackingField : IDomainEvent
+    {
+        private readonly Guid _WeirdKrappyName;
+
+        public TestEv_CustomBackingField(Guid NOTentityId)
+        {
+            _WeirdKrappyName = NOTentityId;
+        }
+
+        public Guid EntityId => _WeirdKrappyName;
+    }
+
+    public class TestEv_AutoProperty : IDomainEvent
+    {
+        public TestEv_AutoProperty(Guid NOTentityId)
+        {
+        }
+
+        public Guid EntityId => new Guid("84e5447a-0a28-4fe1-af5a-11dd6a43d3dd");
     }
 }
