@@ -13,13 +13,13 @@ namespace Microwave.Application
 
     public class EventstoreResult<T>
     {
-        public EventstoreResult(long version, T value)
+        public EventstoreResult(long version, T entity)
         {
             Version = version;
-            Value = value;
+            Entity = entity;
         }
 
         public long Version { get; }
-        public T Value { get; }
+        public T Entity { get; }
     }
 }
