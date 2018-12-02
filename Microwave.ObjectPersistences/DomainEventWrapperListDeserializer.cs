@@ -27,7 +27,7 @@ namespace Microwave.ObjectPersistences
         {
             var list = JsonConvert.DeserializeObject<IEnumerable<DomainEventWrapper<T>>>(payLoad, _settings);
             var domainEventJobjectStuff = JToken.Parse(payLoad);
-            var jobjectList = domainEventJobjectStuff.ToList();
+            var jobjectList = domainEventJobjectStuff.ToObject<List<JObject>>();
 
             var domainEventWrappers = list.ToList();
             for (int i = 0; i < domainEventWrappers.Count; i++)
@@ -35,8 +35,8 @@ namespace Microwave.ObjectPersistences
                 var domainEventWrapper = domainEventWrappers[i];
                 if (domainEventWrapper.DomainEvent.EntityId == new Guid())
                 {
-                    var jTokenDomainEvent = jobjectList[i][nameof(DomainEventWrapper.DomainEvent)];
-                    if (jTokenDomainEvent == null) jTokenDomainEvent = jobjectList[i]["domainEvent"];
+                    var jTokenDomainEvent = jobjectList[i].GetValue(nameof(domainEventWrapper.DomainEvent),
+                        StringComparison.OrdinalIgnoreCase).ToObject<JObject>();
                     _jsonHack.SetEntityIdBackingField(jTokenDomainEvent, domainEventWrapper.DomainEvent);
                 }
             }

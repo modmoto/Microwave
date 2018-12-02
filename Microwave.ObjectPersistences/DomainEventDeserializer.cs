@@ -27,7 +27,7 @@ namespace Microwave.ObjectPersistences
             // this is for DomainEvents, where Newtonsoft can not find the EntityId in the constructor (because it is called differently)
             if (domainEvent.EntityId == new Guid())
             {
-                var domainEventJobject = JToken.Parse(payLoad);
+                var domainEventJobject = JObject.Parse(payLoad);
                 _jsonHack.SetEntityIdBackingField(domainEventJobject, domainEvent);
             }
 
