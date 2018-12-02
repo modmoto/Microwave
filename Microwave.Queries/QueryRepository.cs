@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microwave.Application;
+using Microwave.Application.Ports;
 using Microwave.Application.Results;
 
 namespace Microwave.Queries

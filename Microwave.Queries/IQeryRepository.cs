@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Microwave.Application.Results;
 
-namespace Microwave.Application
+namespace Microwave.Queries
 {
     public interface IQeryRepository
     {

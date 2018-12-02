@@ -2,7 +2,7 @@
 using System.Linq;
 using Microwave.Domain;
 
-namespace Microwave.Application
+namespace Microwave.Queries
 {
     public class Query
     {

@@ -1,7 +1,9 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microwave.Application.Ports;
+using Microwave.Queries;
 
-namespace Microwave.Application
+namespace Microwave.DependencyInjectionExtensions
 {
     public class AsyncEventDelegator
     {

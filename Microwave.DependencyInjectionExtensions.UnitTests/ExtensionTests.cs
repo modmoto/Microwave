@@ -4,7 +4,9 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microwave.Application;
+using Microwave.Application.Ports;
 using Microwave.Domain;
+using Microwave.Queries;
 using Microwave.WebApi;
 using NUnit.Framework;
 
