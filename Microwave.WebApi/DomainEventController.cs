@@ -23,21 +23,21 @@ namespace Microwave.WebApi
         }
 
         [HttpGet("DomainEventTypeStreams/{eventType}")]
-        public async Task<ActionResult> GetDomainEventsByType(string eventType, [FromQuery] long myLastVersion = -1)
+        public async Task<ActionResult> GetDomainEventsByType(string eventType, [FromQuery] long myLastVersion = 0)
         {
             var result = await _typeProjectionRepository.LoadEventsByTypeAsync(eventType, myLastVersion);
             return Ok(result.Value);
         }
 
         [HttpGet("EntityStreams/{entityId}")]
-        public async Task<ActionResult> GetDomainEventsByEntityIdType(Guid entityId, [FromQuery] long myLastVersion = -1)
+        public async Task<ActionResult> GetDomainEventsByEntityIdType(Guid entityId, [FromQuery] long myLastVersion = 0)
         {
             var result = await _entityStreamRepository.LoadEventsByEntity(entityId, myLastVersion);
             return Ok(result.Value);
         }
 
         [HttpGet("DomainEvents")]
-        public async Task<ActionResult> GetAllDomainEvents([FromQuery] long myLastVersion = -1)
+        public async Task<ActionResult> GetAllDomainEvents([FromQuery] long myLastVersion = 0)
         {
             var result = await _overallProjectionRepository.LoadOverallStream(myLastVersion);
             return Ok(result.Value);

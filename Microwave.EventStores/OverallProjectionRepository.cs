@@ -24,7 +24,7 @@ namespace Microwave.EventStores
             return Result.Ok();
         }
 
-        public async Task<Result<IEnumerable<DomainEventWrapper>>> LoadOverallStream(long from = -1)
+        public async Task<Result<IEnumerable<DomainEventWrapper>>> LoadOverallStream(long from = 0)
         {
             return await _typeProjectionRepository.LoadEventsByTypeAsync("AllDomainEvents", from);
         }

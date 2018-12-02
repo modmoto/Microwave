@@ -23,7 +23,6 @@ namespace Microwave.EventStores
         public async Task Update()
         {
             var version = await _versionRepository.GetVersionAsync("AllDomainEventProjections");
-            //TODO [ber api machen
             var result = await _streamRepository.LoadEventsSince(version);
             var domainEventWrappers = result.Value.Select(ev => ev.DomainEvent);
             await _overallProjectionRepository.AppendToOverallStream(domainEventWrappers);

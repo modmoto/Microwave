@@ -11,7 +11,7 @@ namespace Microwave.EventStores
     {
         private readonly IEntityStreamRepository _entityStreamRepository;
 
-        public EventStore(IEntityStreamRepository entityStreamRepository )
+        public EventStore(IEntityStreamRepository entityStreamRepository)
         {
             _entityStreamRepository = entityStreamRepository;
         }
@@ -29,7 +29,7 @@ namespace Microwave.EventStores
             var eventList = domainEvents.ToList();
             entity = eventList.Aggregate(entity, (current, domainEvent) => Apply(current, domainEvent.DomainEvent));
             // TODO get this from stream/events
-            return new EventstoreResult<T>(eventList.Count - 1, entity);
+            return new EventstoreResult<T>(eventList.Count, entity);
         }
 
         private T Apply<T>(T entity, IDomainEvent domainEvent)

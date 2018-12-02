@@ -28,14 +28,14 @@ namespace Microwave.Eventstores.UnitTests
 
             var newGuid = Guid.NewGuid();
             var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid)};
-            var res = await eventRepository.AppendAsync(events, -1);
+            var res = await eventRepository.AppendAsync(events, 0);
             res.Check();
 
             var loadEventsByEntity = await eventRepository.LoadEventsByEntity(newGuid);
             Assert.AreEqual(2, loadEventsByEntity.Value.Count());
-            Assert.AreEqual(0, loadEventsByEntity.Value.ToList()[0].Version);
+            Assert.AreEqual(1, loadEventsByEntity.Value.ToList()[0].Version);
             Assert.AreEqual(newGuid, loadEventsByEntity.Value.ToList()[0].DomainEvent.EntityId);
-            Assert.AreEqual(1, loadEventsByEntity.Value.ToList()[1].Version);
+            Assert.AreEqual(2, loadEventsByEntity.Value.ToList()[1].Version);
         }
 
         [Test]
@@ -54,17 +54,16 @@ namespace Microwave.Eventstores.UnitTests
             var testEvent2 = new TestEvent2(newGuid);
             var events = new List<IDomainEvent> { testEvent1, testEvent2};
 
-            var res = await eventRepository.AppendAsync(events, -1);
+            var res = await eventRepository.AppendAsync(events, 0);
             res.Check();
 
             var loadEventsByEntity = await eventRepository.LoadEventsByEntity(newGuid);
             Assert.AreEqual(2, loadEventsByEntity.Value.Count());
             Assert.AreNotEqual(0, loadEventsByEntity.Value.ToList()[0].Created);
             Assert.AreNotEqual(0, loadEventsByEntity.Value.ToList()[1].Created);
-            Assert.AreEqual(0, loadEventsByEntity.Value.ToList()[0].Version);
-            Assert.AreEqual(1, loadEventsByEntity.Value.ToList()[1].Version);
+            Assert.AreEqual(1, loadEventsByEntity.Value.ToList()[0].Version);
+            Assert.AreEqual(2, loadEventsByEntity.Value.ToList()[1].Version);
             Assert.AreEqual(newGuid, loadEventsByEntity.Value.ToList()[0].DomainEvent.EntityId);
-            Assert.AreEqual(1, loadEventsByEntity.Value.ToList()[1].Version);
         }
 
         [Test]
@@ -82,13 +81,13 @@ namespace Microwave.Eventstores.UnitTests
             var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid)};
             var events2 = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid)};
 
-            var t1 = eventRepository.AppendAsync(events, -1);
-            var t2 = eventRepository.AppendAsync(events2, -1);
+            var t1 = eventRepository.AppendAsync(events, 0);
+            var t2 = eventRepository.AppendAsync(events2, 0);
 
             var allResults = await Task.WhenAll(t1, t2);
             var concurrencyException = Assert.Throws<ConcurrencyViolatedException>(() => CheckAllResults(allResults));
             var concurrencyExceptionMessage = concurrencyException.Message;
-            Assert.AreEqual("Concurrency fraud detected, could not update database. ExpectedVersion: -1, ActualVersion: 1", concurrencyExceptionMessage);
+            Assert.AreEqual("Concurrency fraud detected, could not update database. ExpectedVersion: 0, ActualVersion: 2", concurrencyExceptionMessage);
         }
 
         [Test]
@@ -131,11 +130,11 @@ namespace Microwave.Eventstores.UnitTests
             var newGuid = Guid.NewGuid();
             var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid), new TestEvent1(newGuid), new TestEvent2(newGuid)};
 
-            await eventRepository.AppendAsync(events, -1);
+            await eventRepository.AppendAsync(events, 0);
 
             var result = await eventRepository.LoadEventsSince();
             Assert.AreEqual(4, result.Value.Count());
-            Assert.AreEqual(0, result.Value.ToList()[0].Version);
+            Assert.AreEqual(1, result.Value.ToList()[0].Version);
             Assert.AreEqual(newGuid, result.Value.ToList()[0].DomainEvent.EntityId);
         }
 
@@ -154,12 +153,12 @@ namespace Microwave.Eventstores.UnitTests
             var newGuid = Guid.NewGuid();
             var domainEvent = new TestEvent1(newGuid);
 
-            await eventRepository.AppendAsync(new List<IDomainEvent> { domainEvent }, -1);
+            await eventRepository.AppendAsync(new List<IDomainEvent> { domainEvent }, 0);
             await typeProjectionRepository.AppendToTypeStream(domainEvent);
 
             var result = await typeProjectionRepository.LoadEventsByTypeAsync(typeof(TestEvent1).Name);
             Assert.AreEqual(1, result.Value.Count());
-            Assert.AreEqual(0, result.Value.ToList()[0].Version);
+            Assert.AreEqual(1, result.Value.ToList()[0].Version);
             Assert.AreEqual(newGuid, result.Value.ToList()[0].DomainEvent.EntityId);
             Assert.AreEqual(typeof(TestEvent1), result.Value.ToList()[0].DomainEvent.GetType());
         }
@@ -175,7 +174,7 @@ namespace Microwave.Eventstores.UnitTests
             var eventRepository = new EntityStreamRepository(new DomainEventDeserializer(new JSonHack()), eventStoreContext, new ObjectConverter());
 
             var testEvent1 = new TestEvent1(Guid.NewGuid());
-            await eventRepository.AppendAsync(new[] {testEvent1}, -1);
+            await eventRepository.AppendAsync(new[] {testEvent1}, 0);
 
             var result = await eventRepository.LoadEventsByEntity(testEvent1.EntityId);
             var domainEvent = result.Value.Single().DomainEvent;
@@ -219,7 +218,7 @@ namespace Microwave.Eventstores.UnitTests
             var newGuid = Guid.NewGuid();
             var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid), new TestEvent1(newGuid), new TestEvent2(newGuid)};
 
-            await eventRepository.AppendAsync(events, -1);
+            await eventRepository.AppendAsync(events, 0);
             var versionRepo = new VersionRepository(eventStoreContext);
             var typeProjectionHandler = new TypeProjectionHandler(typeProjectionRepository, eventRepository, versionRepo);
             var projectionHandler = new ProjectionHandler(overallProjectionRepository, eventRepository, versionRepo);
@@ -230,7 +229,8 @@ namespace Microwave.Eventstores.UnitTests
             var result = await typeProjectionRepository.LoadEventsByTypeAsync(typeof(TestEvent1).Name);
 
             Assert.AreEqual(2, result.Value.Count());
-            Assert.AreEqual(0, result.Value.ToList()[0].Version);
+            Assert.AreEqual(1, result.Value.ToList()[0].Version);
+            Assert.AreEqual(2, result.Value.ToList()[1].Version);
             Assert.AreEqual(newGuid, result.Value.ToList()[0].DomainEvent.EntityId);
             Assert.AreEqual(typeof(TestEvent1), result.Value.ToList()[0].DomainEvent.GetType());
         }

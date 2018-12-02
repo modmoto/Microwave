@@ -26,9 +26,10 @@ namespace Microwave.EventStores
         }
 
         public Task<Result<IEnumerable<DomainEventWrapper>>> LoadEventsByTypeAsync(string domainEventTypeName,
-            long from = -1)
+            long from = 0)
         {
-            var stream = _eventStoreReadContext.TypeStreams
+            var domainEventTypeDbos = _eventStoreReadContext.TypeStreams;
+            var stream = domainEventTypeDbos
                 .Where(str => str.DomainEventType == domainEventTypeName && str.Version > from).ToList();
 
             if (!stream.Any()) return Task.FromResult(Result<IEnumerable<DomainEventWrapper>>.Ok(new List<DomainEventWrapper>()));
@@ -55,7 +56,7 @@ namespace Microwave.EventStores
             var typeStream = _eventStoreReadContext.TypeStreams
                 .Where(str => str.DomainEventType == streamName).ToList();
 
-            var entityVersionTemp = typeStream.LastOrDefault()?.Version + 1 ?? 0;
+            var entityVersionTemp = typeStream.LastOrDefault()?.Version + 1 ?? 1;
 
             var domainEventDbo = new DomainEventTypeDbo
             {

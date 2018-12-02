@@ -61,37 +61,19 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
 
     public class TestIdQuery : IdentifiableQuery, IHandle<TestDomainEvent>, IHandle<TestDomainEvent2>
     {
-        public Task HandleAsync(TestDomainEvent domainEvent)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task HandleAsync(TestDomainEvent2 domainEvent)
-        {
-            throw new NotImplementedException();
-        }
-
         public void Handle(TestDomainEvent domainEvent)
         {
-            throw new NotImplementedException();
         }
 
         public void Handle(TestDomainEvent2 domainEvent)
         {
-            throw new NotImplementedException();
         }
     }
 
     public class TestIdQuerySingle : IdentifiableQuery, IHandle<TestDomainEvent3>
     {
-        public Task HandleAsync(TestDomainEvent3 domainEvent)
-        {
-            throw new NotImplementedException();
-        }
-
         public void Handle(TestDomainEvent3 domainEvent)
         {
-            throw new NotImplementedException();
         }
     }
 
@@ -102,14 +84,8 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
 
     public class TestIdQuery2 : IdentifiableQuery, IHandle<TestDomainEvent>
     {
-        public Task HandleAsync(TestDomainEvent domainEvent)
-        {
-            throw new NotImplementedException();
-        }
-
         public void Handle(TestDomainEvent domainEvent)
         {
-            throw new NotImplementedException();
         }
     }
 
@@ -117,12 +93,10 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
     {
         public void Handle(TestDomainEvent domainEvent)
         {
-            throw new NotImplementedException();
         }
 
         public void Handle(TestDomainEvent2 domainEvent)
         {
-            throw new NotImplementedException();
         }
     }
 
@@ -130,7 +104,6 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
     {
         public void Handle(TestDomainEvent domainEvent)
         {
-            throw new NotImplementedException();
         }
     }
 
@@ -138,12 +111,12 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
     {
         public Task HandleAsync(TestDomainEvent domainEvent)
         {
-            throw new NotImplementedException();
+            return Task.CompletedTask;
         }
 
         public Task HandleAsync(TestDomainEvent2 domainEvent)
         {
-            throw new NotImplementedException();
+            return Task.CompletedTask;
         }
     }
 
@@ -151,7 +124,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
     {
         public Task HandleAsync(TestDomainEvent domainEvent)
         {
-            throw new NotImplementedException();
+            return  Task.CompletedTask;
         }
     }
 

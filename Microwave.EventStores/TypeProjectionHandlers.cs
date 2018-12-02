@@ -23,7 +23,6 @@ namespace Microwave.EventStores
         public async Task Update()
         {
             var version = await _versionRepository.GetVersionAsync("TypeProjectionHandler");
-            // TOdo über api machen
             var result = await _entityStreamRepository.LoadEventsSince(version);
             foreach (var domainEvent in result.Value)
             {

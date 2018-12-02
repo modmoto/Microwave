@@ -19,7 +19,7 @@ namespace Microwave.EventStores
             var lastProcessedVersion =
                 await _subscriptionContext.ProcessedVersions.FirstOrDefaultAsync(version =>
                     version.EventType == domainEventType);
-            if (lastProcessedVersion == null) return -1L;
+            if (lastProcessedVersion == null) return 0L;
             return lastProcessedVersion.LastVersion;
         }
 

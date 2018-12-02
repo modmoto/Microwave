@@ -26,7 +26,7 @@ namespace Microwave.EventStores
             _converter = converter;
         }
 
-        public Task<Result<IEnumerable<DomainEventWrapper>>> LoadEventsByEntity(Guid entityId, long from = -1)
+        public Task<Result<IEnumerable<DomainEventWrapper>>> LoadEventsByEntity(Guid entityId, long from = 0)
         {
             var stream = _eventStoreContext.EntityStreams
                 .Where(str => str.EntityId == entityId.ToString() && str.Version > from).ToList();
@@ -45,9 +45,10 @@ namespace Microwave.EventStores
             return Task.FromResult(Result<IEnumerable<DomainEventWrapper>>.Ok(domainEvents));
         }
 
-        public Task<Result<IEnumerable<DomainEventWrapper>>> LoadEventsSince(long tickSince = -1)
+        public Task<Result<IEnumerable<DomainEventWrapper>>> LoadEventsSince(long tickSince = 0)
         {
-            var stream = _eventStoreContext.EntityStreams
+            var domainEventDbos = _eventStoreContext.EntityStreams.ToList();
+            var stream = domainEventDbos
                 .Where(str => str.Created > tickSince).ToList();
             if (!stream.Any()) return Task.FromResult(Result<IEnumerable<DomainEventWrapper>>.Ok(new List<DomainEventWrapper>()));
 
@@ -75,7 +76,8 @@ namespace Microwave.EventStores
                 var stream = _eventStoreContext.EntityStreams
                     .Where(str => str.EntityId == entityId.ToString()).ToList();
 
-                var entityVersionTemp = stream.LastOrDefault()?.Version ?? -1;
+                var lastOrDefault = stream.LastOrDefault();
+                var entityVersionTemp = lastOrDefault?.Version ?? 0;
                 if (entityVersionTemp != entityVersion) return Task.FromResult(Result.ConcurrencyResult(entityVersion, entityVersionTemp));
 
                 foreach (var domainEvent in events)
