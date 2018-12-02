@@ -22,7 +22,4 @@ test_script:
 
 artifacts:
 - path: coverage.xml
-  name: MyApp
-
-after_build:
- - ps: Get-ChildItem .\*.xml | % { Push-AppveyorArtifact $_.FullName -FileName $_.Name }
+  name: MyCoverage
