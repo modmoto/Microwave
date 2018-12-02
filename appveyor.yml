@@ -1,0 +1,21 @@
+version: '0.4.1.{build}'
+
+branches:
+  only:
+  - master
+
+init:
+- git config --global core.autocrlf false
+
+before_build:
+- appveyor-retry dotnet restore -v Minimal
+- choco install opencover.portable
+- choco install codecov
+
+build_script:
+- dotnet build
+- dotnet test
+
+test_script:
+- OpenCover.Console.exe -register:user -target:"C:/Program Files/dotnet/dotnet.exe" -targetargs:test -output:"coverage.xml" -oldstyle
+- codecov -f "coverage.xml"
