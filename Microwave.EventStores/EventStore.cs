@@ -34,12 +34,11 @@ namespace Microwave.EventStores
 
         private T Apply<T>(T entity, IDomainEvent domainEvent)
         {
-            var type = domainEvent.GetType();
-            var currentEntityType = entity.GetType();
-            var methodInfos = currentEntityType.GetMethods().Where(method => method.Name == "Apply");
-            var methodToExecute = methodInfos.FirstOrDefault(method => method.GetParameters().FirstOrDefault()?.ParameterType == type);
-            if (methodToExecute == null || methodToExecute.GetParameters().Length != 1) return entity;
-            methodToExecute.Invoke(entity, new object[] {domainEvent});
+            var interfaces = entity.GetType().GetInterfaces();
+            var applyInterfaces = interfaces.Where(inte => inte.GetGenericTypeDefinition() == typeof(IApply<>));
+            var applyInterfaceForType = applyInterfaces.FirstOrDefault(af => af.GetGenericArguments().Single() == domainEvent.GetType());
+            var applyMethod = applyInterfaceForType?.GetMethod(nameof(IApply<IDomainEvent>.Apply));
+            applyMethod?.Invoke(entity, new object[] {domainEvent});
             return entity;
         }
     }

@@ -26,11 +26,11 @@ namespace Microwave.EventStores
             _converter = converter;
         }
 
-        public async Task<Result<IEnumerable<DomainEventWrapper>>> LoadEventsByEntity(Guid entityId, long from = -1)
+        public Task<Result<IEnumerable<DomainEventWrapper>>> LoadEventsByEntity(Guid entityId, long from = -1)
         {
             var stream = _eventStoreContext.EntityStreams
                 .Where(str => str.EntityId == entityId.ToString() && str.Version > from).ToList();
-            if (!stream.Any()) return Result<IEnumerable<DomainEventWrapper>>.NotFound(entityId.ToString());
+            if (!stream.Any()) return Task.FromResult(Result<IEnumerable<DomainEventWrapper>>.NotFound(entityId.ToString()));
 
             var domainEvents = stream.Select(dbo =>
             {
@@ -42,14 +42,14 @@ namespace Microwave.EventStores
                 };
             });
 
-            return Result<IEnumerable<DomainEventWrapper>>.Ok(domainEvents);
+            return Task.FromResult(Result<IEnumerable<DomainEventWrapper>>.Ok(domainEvents));
         }
 
-        public async Task<Result<IEnumerable<DomainEventWrapper>>> LoadEventsSince(long tickSince = -1)
+        public Task<Result<IEnumerable<DomainEventWrapper>>> LoadEventsSince(long tickSince = -1)
         {
             var stream = _eventStoreContext.EntityStreams
                 .Where(str => str.Created > tickSince).ToList();
-            if (!stream.Any()) return Result<IEnumerable<DomainEventWrapper>>.Ok(new List<DomainEventWrapper>());
+            if (!stream.Any()) return Task.FromResult(Result<IEnumerable<DomainEventWrapper>>.Ok(new List<DomainEventWrapper>()));
 
             var domainEvents = stream.Select(dbo =>
             {
@@ -62,11 +62,11 @@ namespace Microwave.EventStores
                 };
             });
 
-            return Result<IEnumerable<DomainEventWrapper>>.Ok(domainEvents);
+            return Task.FromResult(Result<IEnumerable<DomainEventWrapper>>.Ok(domainEvents));
         }
 
         //TODO remove Lock and make threadsafe
-        public async Task<Result> AppendAsync(IEnumerable<IDomainEvent> domainEvents, long entityVersion)
+        public Task<Result> AppendAsync(IEnumerable<IDomainEvent> domainEvents, long entityVersion)
         {
             var events = domainEvents.ToList();
             var entityId = events.First().EntityId;
@@ -76,7 +76,7 @@ namespace Microwave.EventStores
                     .Where(str => str.EntityId == entityId.ToString()).ToList();
 
                 var entityVersionTemp = stream.LastOrDefault()?.Version ?? -1;
-                if (entityVersionTemp != entityVersion) return Result.ConcurrencyResult(entityVersion, entityVersionTemp);
+                if (entityVersionTemp != entityVersion) return Task.FromResult(Result.ConcurrencyResult(entityVersion, entityVersionTemp));
 
                 foreach (var domainEvent in events)
                 {
@@ -94,7 +94,7 @@ namespace Microwave.EventStores
                 }
 
                 _eventStoreContext.SaveChanges();
-                return Result.Ok();
+                return Task.FromResult(Result.Ok());
             }
         }
     }

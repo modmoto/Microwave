@@ -36,7 +36,7 @@ namespace Microwave.Queries
         }
 
         //Todo Remove this locks again
-        public async Task<Result> Save(Query query)
+        public Task<Result> Save(Query query)
         {
             lock (_querryLock)
             {
@@ -57,11 +57,11 @@ namespace Microwave.Queries
                 }
 
                 _context.SaveChanges();
-                return Result.Ok();
+                return Task.FromResult(Result.Ok());
             }
         }
 
-        public async Task<Result> Save(IdentifiableQuery query)
+        public Task<Result> Save(IdentifiableQuery query)
         {
             lock (_idQuerryLock)
             {
@@ -83,7 +83,7 @@ namespace Microwave.Queries
                 }
 
                 _context.SaveChanges();
-                return Result.Ok();
+                return Task.FromResult(Result.Ok());
             }
         }
     }

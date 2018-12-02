@@ -25,13 +25,13 @@ namespace Microwave.EventStores
             _eventStoreReadContext = eventStoreReadContext;
         }
 
-        public async Task<Result<IEnumerable<DomainEventWrapper>>> LoadEventsByTypeAsync(string domainEventTypeName,
+        public Task<Result<IEnumerable<DomainEventWrapper>>> LoadEventsByTypeAsync(string domainEventTypeName,
             long from = -1)
         {
             var stream = _eventStoreReadContext.TypeStreams
                 .Where(str => str.DomainEventType == domainEventTypeName && str.Version > from).ToList();
 
-            if (!stream.Any()) return Result<IEnumerable<DomainEventWrapper>>.Ok(new List<DomainEventWrapper>());
+            if (!stream.Any()) return Task.FromResult(Result<IEnumerable<DomainEventWrapper>>.Ok(new List<DomainEventWrapper>()));
 
             var domainEvents = stream.Select(dbo =>
             {
@@ -42,7 +42,7 @@ namespace Microwave.EventStores
                     DomainEvent = _domainEventDeserializer.Deserialize(dbo.Payload)
                 };
             });
-            return Result<IEnumerable<DomainEventWrapper>>.Ok(domainEvents);
+            return Task.FromResult(Result<IEnumerable<DomainEventWrapper>>.Ok(domainEvents));
         }
 
         public async Task<Result> AppendToTypeStream(IDomainEvent domainEvent)
