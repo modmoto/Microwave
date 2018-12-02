@@ -83,7 +83,7 @@ namespace Microwave.DependencyInjectionExtensions
             return services;
         }
 
-        public static IServiceCollection AddIHandleAsync(this IServiceCollection services, Assembly assembly)
+        private static IServiceCollection AddIHandleAsync(this IServiceCollection services, Assembly assembly)
         {
             var addTransient = typeof(ServiceCollectionServiceExtensions).GetMethods().Single(m =>
                 m.Name == "AddTransient" && m.GetGenericArguments().Length == 2 &&
@@ -108,7 +108,7 @@ namespace Microwave.DependencyInjectionExtensions
             return services;
         }
 
-        public static IServiceCollection AddIEventDelegateHandler(this IServiceCollection services, Assembly assembly)
+        private static IServiceCollection AddIEventDelegateHandler(this IServiceCollection services, Assembly assembly)
         {
             var addTransient = typeof(ServiceCollectionServiceExtensions).GetMethods().Single(m =>
                 m.Name == "AddTransient" && m.GetGenericArguments().Length == 2 &&
@@ -136,7 +136,7 @@ namespace Microwave.DependencyInjectionExtensions
         }
 
 
-        public static IServiceCollection AddEventClient(this IServiceCollection services, Assembly assembly)
+        private static IServiceCollection AddEventClient(this IServiceCollection services, Assembly assembly)
         {
             var addTransient = typeof(ServiceCollectionServiceExtensions).GetMethods().Single(m =>
                 m.Name == "AddTransient" && m.GetGenericArguments().Length == 1 &&
@@ -161,7 +161,7 @@ namespace Microwave.DependencyInjectionExtensions
             return services;
         }
 
-        public static IServiceCollection AddEventFeed(this IServiceCollection services, Assembly assembly)
+        private static IServiceCollection AddEventFeed(this IServiceCollection services, Assembly assembly)
         {
             var addTransient = typeof(ServiceCollectionServiceExtensions).GetMethods().Single(m =>
                 m.Name == "AddTransient" && m.GetGenericArguments().Length == 2 &&
@@ -188,7 +188,7 @@ namespace Microwave.DependencyInjectionExtensions
             return services;
         }
 
-        public static IServiceCollection AddQueryHandler(this IServiceCollection services, Assembly assembly)
+        private static IServiceCollection AddQueryHandler(this IServiceCollection services, Assembly assembly)
         {
             var addTransient = typeof(ServiceCollectionServiceExtensions).GetMethods().Single(m =>
                 m.Name == "AddTransient" && m.GetGenericArguments().Length == 2 &&
@@ -215,7 +215,7 @@ namespace Microwave.DependencyInjectionExtensions
             return services;
         }
 
-        public static IServiceCollection AddIdentifiableQueryHandler(this IServiceCollection services, Assembly assembly)
+        private static IServiceCollection AddIdentifiableQueryHandler(this IServiceCollection services, Assembly assembly)
         {
             var addTransient = typeof(ServiceCollectionServiceExtensions).GetMethods().Single(m =>
                 m.Name == "AddTransient" && m.GetGenericArguments().Length == 2 &&

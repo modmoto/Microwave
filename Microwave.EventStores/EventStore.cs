@@ -10,10 +10,12 @@ namespace Microwave.EventStores
     public class EventStore : IEventStore
     {
         private readonly IEntityStreamRepository _entityStreamRepository;
+        private readonly IEventSourcingStrategy _eventSourcingStrategy;
 
-        public EventStore(IEntityStreamRepository entityStreamRepository)
+        public EventStore(IEntityStreamRepository entityStreamRepository, IEventSourcingStrategy eventSourcingStrategy)
         {
             _entityStreamRepository = entityStreamRepository;
+            _eventSourcingStrategy = eventSourcingStrategy;
         }
 
         public async Task AppendAsync(IEnumerable<IDomainEvent> domainEvents, long entityVersion)
@@ -27,19 +29,9 @@ namespace Microwave.EventStores
             var entity = new T();
             var domainEvents = (await _entityStreamRepository.LoadEventsByEntity(entityId)).Value;
             var eventList = domainEvents.ToList();
-            entity = eventList.Aggregate(entity, (current, domainEvent) => Apply(current, domainEvent.DomainEvent));
+            entity = eventList.Aggregate(entity, (current, domainEvent) => _eventSourcingStrategy.Apply(current, domainEvent.DomainEvent));
             // TODO get this from stream/events
             return new EventstoreResult<T>(eventList.Count, entity);
-        }
-
-        private T Apply<T>(T entity, IDomainEvent domainEvent)
-        {
-            var interfaces = entity.GetType().GetInterfaces();
-            var applyInterfaces = interfaces.Where(inte => inte.GetGenericTypeDefinition() == typeof(IApply<>));
-            var applyInterfaceForType = applyInterfaces.FirstOrDefault(af => af.GetGenericArguments().Single() == domainEvent.GetType());
-            var applyMethod = applyInterfaceForType?.GetMethod(nameof(IApply<IDomainEvent>.Apply));
-            applyMethod?.Invoke(entity, new object[] {domainEvent});
-            return entity;
         }
     }
 }
