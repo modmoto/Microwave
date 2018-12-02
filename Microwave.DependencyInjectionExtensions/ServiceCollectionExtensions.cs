@@ -10,7 +10,6 @@ using Microwave.Domain;
 using Microwave.EventStores;
 using Microwave.ObjectPersistences;
 using Microwave.Queries;
-using Microwave.Subscriptions;
 using Microwave.WebApi;
 
 namespace Microwave.DependencyInjectionExtensions
@@ -21,15 +20,11 @@ namespace Microwave.DependencyInjectionExtensions
         {
             using (var serviceScope = builder.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
             {
-                var eventStoreReadContext = serviceScope.ServiceProvider.GetRequiredService<EventStoreReadContext>();
-                var eventStoreWriteContext = serviceScope.ServiceProvider.GetRequiredService<EventStoreWriteContext>();
+                var eventStoreContext = serviceScope.ServiceProvider.GetRequiredService<EventStoreContext>();
                 var queryStorageContext = serviceScope.ServiceProvider.GetRequiredService<QueryStorageContext>();
-                var subscriptionContext = serviceScope.ServiceProvider.GetRequiredService<SubscriptionContext>();
 
-                eventStoreReadContext?.Database.EnsureCreated();
-                eventStoreWriteContext?.Database.EnsureCreated();
+                eventStoreContext?.Database.EnsureCreated();
                 queryStorageContext?.Database.EnsureCreated();
-                subscriptionContext?.Database.EnsureCreated();
             }
 
             return builder;
@@ -45,13 +40,9 @@ namespace Microwave.DependencyInjectionExtensions
 
             services.AddTransient<IEventStore, EventStore>();
             services.AddTransient<IObjectConverter, ObjectConverter>();
-            services.AddDbContext<EventStoreReadContext>(option =>
-                option.UseSqlite("Data Source=EventStoreReadContext.db"));
-            services.AddDbContext<EventStoreWriteContext>(option =>
-                option.UseSqlite("Data Source=EventStoreWriteContext.db"));
+            services.AddDbContext<EventStoreContext>(option =>
+                option.UseSqlite("Data Source=EventStoreContext.db"));
             services.AddTransient<IEntityStreamRepository, EntityStreamRepository>();
-            services.AddDbContext<SubscriptionContext>(option =>
-                option.UseSqlite("Data Source=SubscriptionContext.db"));
             services.AddDbContext<QueryStorageContext>(option =>
                 option.UseSqlite("Data Source=QueryStorageContext.db"));
             services.AddTransient<IEntityStreamRepository, EntityStreamRepository>();

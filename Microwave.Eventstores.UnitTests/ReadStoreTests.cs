@@ -108,12 +108,12 @@ namespace Microwave.Eventstores.UnitTests
         [Test]
         public async Task Entitystream_LoadEventsSince_IdNotDefault()
         {
-            var optionsRead = new DbContextOptionsBuilder<EventStoreWriteContext>()
+            var optionsRead = new DbContextOptionsBuilder<EventStoreContext>()
                 .UseInMemoryDatabase("Entitystream_LoadEventsSince_IdNotDefault")
                 .Options;
 
             var entityStreamRepository =
-                new EntityStreamRepository(new DomainEventDeserializer(new JSonHack()), new EventStoreWriteContext(optionsRead), new ObjectConverter());
+                new EntityStreamRepository(new DomainEventDeserializer(new JSonHack()), new EventStoreContext(optionsRead), new ObjectConverter());
 
             var entityStreamTestEvent = new TestEv(Guid.NewGuid());
             await entityStreamRepository.AppendAsync(new[] {entityStreamTestEvent}, -1);

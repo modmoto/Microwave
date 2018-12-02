@@ -8,7 +8,7 @@ using Microwave.Application.Results;
 using Microwave.Domain;
 using Microwave.EventStores;
 using Microwave.ObjectPersistences;
-using Microwave.Subscriptions;
+using Microwave.Queries;
 using NUnit.Framework;
 
 namespace Microwave.Eventstores.UnitTests
@@ -18,11 +18,11 @@ namespace Microwave.Eventstores.UnitTests
         [Test]
         public async Task AddAndLoadEvents()
         {
-            var options = new DbContextOptionsBuilder<EventStoreWriteContext>()
+            var options = new DbContextOptionsBuilder<EventStoreContext>()
                 .UseInMemoryDatabase("AddEvents")
                 .Options;
 
-            var eventStoreContext = new EventStoreWriteContext(options);
+            var eventStoreContext = new EventStoreContext(options);
 
             var eventRepository = new EntityStreamRepository(new DomainEventDeserializer(new JSonHack()), eventStoreContext, new ObjectConverter());
 
@@ -41,11 +41,11 @@ namespace Microwave.Eventstores.UnitTests
         [Test]
         public async Task LoadDomainEvents_IdAndStuffIsSetCorreclty()
         {
-            var options = new DbContextOptionsBuilder<EventStoreWriteContext>()
+            var options = new DbContextOptionsBuilder<EventStoreContext>()
                 .UseInMemoryDatabase("LoadDomainEvents_IdAndStuffIsSetCorreclty")
                 .Options;
 
-            var eventStoreContext = new EventStoreWriteContext(options);
+            var eventStoreContext = new EventStoreContext(options);
 
             var eventRepository = new EntityStreamRepository(new DomainEventDeserializer(new JSonHack()), eventStoreContext, new ObjectConverter());
 
@@ -70,11 +70,11 @@ namespace Microwave.Eventstores.UnitTests
         [Test]
         public async Task AddAndLoadEventsConcurrent()
         {
-            var options = new DbContextOptionsBuilder<EventStoreWriteContext>()
+            var options = new DbContextOptionsBuilder<EventStoreContext>()
                 .UseInMemoryDatabase("AddAndLoadEventsConcurrent")
                 .Options;
 
-            var eventStoreContext = new EventStoreWriteContext(options);
+            var eventStoreContext = new EventStoreContext(options);
 
             var eventRepository = new EntityStreamRepository(new DomainEventDeserializer(new JSonHack()), eventStoreContext, new ObjectConverter());
 
@@ -94,11 +94,11 @@ namespace Microwave.Eventstores.UnitTests
         [Test]
         public async Task Context_DoubleKeyException()
         {
-            var options = new DbContextOptionsBuilder<EventStoreWriteContext>()
+            var options = new DbContextOptionsBuilder<EventStoreContext>()
                 .UseInMemoryDatabase("Context_DoubleKeyException")
                 .Options;
 
-            var eventStoreContext = new EventStoreWriteContext(options);
+            var eventStoreContext = new EventStoreContext(options);
 
             var entityId = Guid.NewGuid().ToString();
             var domainEventDbo = new DomainEventDbo
@@ -120,11 +120,11 @@ namespace Microwave.Eventstores.UnitTests
         [Test]
         public async Task AddAndLoadEventsByTimeStamp()
         {
-            var options = new DbContextOptionsBuilder<EventStoreWriteContext>()
+            var options = new DbContextOptionsBuilder<EventStoreContext>()
                 .UseInMemoryDatabase("AddAndLoadEventsByTimeStapmp")
                 .Options;
 
-            var eventStoreContext = new EventStoreWriteContext(options);
+            var eventStoreContext = new EventStoreContext(options);
 
             var eventRepository = new EntityStreamRepository(new DomainEventDeserializer(new JSonHack()), eventStoreContext, new ObjectConverter());
 
@@ -142,20 +142,14 @@ namespace Microwave.Eventstores.UnitTests
         [Test]
         public async Task AddAndLoadEventsByTimeStamp_SavedAsType()
         {
-            var options = new DbContextOptionsBuilder<EventStoreWriteContext>()
+            var options = new DbContextOptionsBuilder<EventStoreContext>()
                 .UseInMemoryDatabase("AddAndLoadEventsByTimeStapmp_SavedAsType")
                 .Options;
 
-            var eventStoreContext = new EventStoreWriteContext(options);
-
-            var optionsRead = new DbContextOptionsBuilder<EventStoreReadContext>()
-                .UseInMemoryDatabase("AddAndLoadEventsByTimeStapmp_SavedAsTypeRead")
-                .Options;
-
-            var eventStoreReadContext = new EventStoreReadContext(optionsRead);
+            var eventStoreContext = new EventStoreContext(options);
 
             var eventRepository = new EntityStreamRepository(new DomainEventDeserializer(new JSonHack()), eventStoreContext, new ObjectConverter());
-            var typeProjectionRepository = new TypeProjectionRepository(new ObjectConverter(), new DomainEventDeserializer(new JSonHack()),  eventStoreReadContext);
+            var typeProjectionRepository = new TypeProjectionRepository(new ObjectConverter(), new DomainEventDeserializer(new JSonHack()),  eventStoreContext);
 
             var newGuid = Guid.NewGuid();
             var domainEvent = new TestEvent1(newGuid);
@@ -173,10 +167,10 @@ namespace Microwave.Eventstores.UnitTests
         [Test]
         public async Task AddEvents_IdSet()
         {
-            var options = new DbContextOptionsBuilder<EventStoreWriteContext>()
+            var options = new DbContextOptionsBuilder<EventStoreContext>()
                 .UseInMemoryDatabase("AddEvents_IdAndStuffSet")
                 .Options;
-            var eventStoreContext = new EventStoreWriteContext(options);
+            var eventStoreContext = new EventStoreContext(options);
 
             var eventRepository = new EntityStreamRepository(new DomainEventDeserializer(new JSonHack()), eventStoreContext, new ObjectConverter());
 
@@ -192,12 +186,13 @@ namespace Microwave.Eventstores.UnitTests
         [Test]
         public async Task AddEvents_IdOfTypeSet()
         {
-            var options = new DbContextOptionsBuilder<EventStoreReadContext>()
+            var options = new DbContextOptionsBuilder<EventStoreContext>()
                 .UseInMemoryDatabase("AddEvents_TypeSet")
                 .Options;
-            var eventStoreReadContext = new EventStoreReadContext(options);
 
-            var eventRepository = new TypeProjectionRepository(new ObjectConverter(), new DomainEventDeserializer(new JSonHack()),  eventStoreReadContext);
+            var eventStoreContext = new EventStoreContext(options);
+
+            var eventRepository = new TypeProjectionRepository(new ObjectConverter(), new DomainEventDeserializer(new JSonHack()),  eventStoreContext);
 
             var testEvent1 = new TestEvent1(Guid.NewGuid());
             await eventRepository.AppendToTypeStream(testEvent1);
@@ -211,31 +206,21 @@ namespace Microwave.Eventstores.UnitTests
         [Test]
         public async Task AddEvents_RunTypeProjection()
         {
-            var options = new DbContextOptionsBuilder<EventStoreWriteContext>()
+            var options = new DbContextOptionsBuilder<EventStoreContext>()
                 .UseInMemoryDatabase("AddEvents_RunTypeProjection")
                 .Options;
 
-            var options2 = new DbContextOptionsBuilder<SubscriptionContext>()
-                .UseInMemoryDatabase("AddEvents_RunTypeProjectionSubs")
-                .Options;
-
-            var eventStoreContext = new EventStoreWriteContext(options);
-
-            var optionsRead = new DbContextOptionsBuilder<EventStoreReadContext>()
-                .UseInMemoryDatabase("AddEvents_RunTypeProjectionReadRead")
-                .Options;
-
-            var eventStoreReadContext = new EventStoreReadContext(optionsRead);
+            var eventStoreContext = new EventStoreContext(options);
 
             var eventRepository = new EntityStreamRepository(new DomainEventDeserializer(new JSonHack()), eventStoreContext, new ObjectConverter());
-            var typeProjectionRepository = new TypeProjectionRepository(new ObjectConverter(), new DomainEventDeserializer(new JSonHack()),  eventStoreReadContext);
+            var typeProjectionRepository = new TypeProjectionRepository(new ObjectConverter(), new DomainEventDeserializer(new JSonHack()),  eventStoreContext);
             var overallProjectionRepository = new OverallProjectionRepository(typeProjectionRepository);
 
             var newGuid = Guid.NewGuid();
             var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid), new TestEvent1(newGuid), new TestEvent2(newGuid)};
 
             await eventRepository.AppendAsync(events, -1);
-            var versionRepo = new VersionRepository(new SubscriptionContext(options2));
+            var versionRepo = new VersionRepository(eventStoreContext);
             var typeProjectionHandler = new TypeProjectionHandler(typeProjectionRepository, eventRepository, versionRepo);
             var projectionHandler = new ProjectionHandler(overallProjectionRepository, eventRepository, versionRepo);
 

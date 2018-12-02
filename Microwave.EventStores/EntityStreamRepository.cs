@@ -12,23 +12,23 @@ namespace Microwave.EventStores
     public class EntityStreamRepository : IEntityStreamRepository
     {
         private readonly DomainEventDeserializer _domainEventConverter;
-        private readonly EventStoreWriteContext _eventStoreWriteContext;
+        private readonly EventStoreContext _eventStoreContext;
         private readonly IObjectConverter _converter;
         private readonly object _lock = new Object();
 
         public EntityStreamRepository(
             DomainEventDeserializer domainEventConverter,
-            EventStoreWriteContext eventStoreWriteContext,
+            EventStoreContext eventStoreContext,
             IObjectConverter converter)
         {
             _domainEventConverter = domainEventConverter;
-            _eventStoreWriteContext = eventStoreWriteContext;
+            _eventStoreContext = eventStoreContext;
             _converter = converter;
         }
 
         public async Task<Result<IEnumerable<DomainEventWrapper>>> LoadEventsByEntity(Guid entityId, long from = -1)
         {
-            var stream = _eventStoreWriteContext.EntityStreams
+            var stream = _eventStoreContext.EntityStreams
                 .Where(str => str.EntityId == entityId.ToString() && str.Version > from).ToList();
             if (!stream.Any()) return Result<IEnumerable<DomainEventWrapper>>.NotFound(entityId.ToString());
 
@@ -47,7 +47,7 @@ namespace Microwave.EventStores
 
         public async Task<Result<IEnumerable<DomainEventWrapper>>> LoadEventsSince(long tickSince = -1)
         {
-            var stream = _eventStoreWriteContext.EntityStreams
+            var stream = _eventStoreContext.EntityStreams
                 .Where(str => str.Created > tickSince).ToList();
             if (!stream.Any()) return Result<IEnumerable<DomainEventWrapper>>.Ok(new List<DomainEventWrapper>());
 
@@ -72,7 +72,7 @@ namespace Microwave.EventStores
             var entityId = events.First().EntityId;
             lock (_lock)
             {
-                var stream = _eventStoreWriteContext.EntityStreams
+                var stream = _eventStoreContext.EntityStreams
                     .Where(str => str.EntityId == entityId.ToString()).ToList();
 
                 var entityVersionTemp = stream.LastOrDefault()?.Version ?? -1;
@@ -90,10 +90,10 @@ namespace Microwave.EventStores
                         EntityId = domainEvent.EntityId.ToString()
                     };
 
-                    _eventStoreWriteContext.EntityStreams.Add(domainEventDbo);
+                    _eventStoreContext.EntityStreams.Add(domainEventDbo);
                 }
 
-                _eventStoreWriteContext.SaveChanges();
+                _eventStoreContext.SaveChanges();
                 return Result.Ok();
             }
         }

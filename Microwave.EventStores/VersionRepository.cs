@@ -3,13 +3,13 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microwave.Application;
 
-namespace Microwave.Subscriptions
+namespace Microwave.EventStores
 {
     public class VersionRepository : IVersionRepository
     {
-        private readonly SubscriptionContext _subscriptionContext;
+        private readonly EventStoreContext _subscriptionContext;
 
-        public VersionRepository(SubscriptionContext subscriptionContext)
+        public VersionRepository(EventStoreContext subscriptionContext)
         {
             _subscriptionContext = subscriptionContext;
         }

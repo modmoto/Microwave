@@ -13,9 +13,12 @@ namespace Microwave.EventStores
     {
         private readonly IObjectConverter _objectConverter;
         private readonly DomainEventDeserializer _domainEventDeserializer;
-        private readonly EventStoreReadContext _eventStoreReadContext;
+        private readonly EventStoreContext _eventStoreReadContext;
 
-        public TypeProjectionRepository(IObjectConverter objectConverter, DomainEventDeserializer domainEventDeserializer, EventStoreReadContext eventStoreReadContext)
+        public TypeProjectionRepository(
+            IObjectConverter objectConverter,
+            DomainEventDeserializer domainEventDeserializer,
+            EventStoreContext eventStoreReadContext)
         {
             _objectConverter = objectConverter;
             _domainEventDeserializer = domainEventDeserializer;
