@@ -10,6 +10,7 @@ namespace Microwave.Domain.UnitTests
         {
             var actualPropertyName = new ActualPropertyName("Name");
             Assert.AreEqual("Name", actualPropertyName.Path[0]);
+
         }
 
         [Test]
