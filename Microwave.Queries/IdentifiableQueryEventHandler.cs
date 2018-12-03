@@ -38,9 +38,9 @@ namespace Microwave.Queries
             var domainEvents = latestEvents.ToList();
             if (!domainEvents.Any()) return;
 
+            var result = await _qeryRepository.Load<TQuerry>(domainEvents.First().DomainEvent.EntityId);
             foreach (var latestEvent in domainEvents)
             {
-                var result = await _qeryRepository.Load<TQuerry>(latestEvent.DomainEvent.EntityId);
                 if (result.Is<NotFound<TQuerry>>()) result = Result<TQuerry>.Ok(new TQuerry());
                 result.Value.Handle(latestEvent.DomainEvent);
 
