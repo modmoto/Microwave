@@ -23,7 +23,7 @@ namespace Microwave.WebApi
 
         public async Task<IEnumerable<DomainEventWrapper<T>>> GetEventsByTypeAsync(long lastVersion)
         {
-            var response = await _domainEventClient.GetAsync($"?createdSince={lastVersion}");
+            var response = await _domainEventClient.GetAsync($"?timeStamp={lastVersion}");
             if (response.StatusCode != HttpStatusCode.OK) return new List<DomainEventWrapper<T>>();
             var content = await response.Content.ReadAsStringAsync();
             var eventsByTypeAsync = _objectConverter.Deserialize<T>(content);
