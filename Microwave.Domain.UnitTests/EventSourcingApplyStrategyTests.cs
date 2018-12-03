@@ -1,9 +1,7 @@
 using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microwave.Domain;
-using Microwave.EventStores;
 
-namespace Microwave.Eventstores.UnitTests
+namespace Microwave.Domain.UnitTests
 {
     [TestClass]
     public class EventSourcingApplyStrategyTests
@@ -11,42 +9,38 @@ namespace Microwave.Eventstores.UnitTests
         [TestMethod]
         public void ApplyGenericMethod()
         {
-            var testUser = new TestUser();
+            var testUser = (Entity) new TestUser();
             var newGuid = Guid.NewGuid();
-            var eventSourcingApplyStrategy = new EventSourcingApplyStrategy();
-            eventSourcingApplyStrategy.Apply(testUser, new TestUserCreatedEvent(newGuid));
-            Assert.AreEqual(newGuid, testUser.Id);
+            testUser.Apply(new [] { new TestUserCreatedEvent(newGuid)});
+            Assert.AreEqual(newGuid, ((TestUser)testUser).Id);
         }
 
         [TestMethod]
         public void ApplyGenericMethod_NoApplyMethodFound()
         {
-            var testUser = new TestUser();
-            var eventSourcingApplyStrategy = new EventSourcingApplyStrategy();
-            eventSourcingApplyStrategy.Apply(testUser, new TestUserNeverDidThatEvent(Guid.NewGuid()));
-            Assert.AreEqual(Guid.Empty, testUser.Id);
+            var testUser = (Entity) new TestUser();
+            testUser.Apply(new [] { new TestUserNeverDidThatEvent(Guid.NewGuid()) });
+            Assert.AreEqual(Guid.Empty, ((TestUser)testUser).Id);
         }
 
         [TestMethod]
         public void ApplyGenericMethod_ApplyMethodWithNotParameter()
         {
-            var testUser = new TestUserWithNoApplyMethod();
-            var eventSourcingApplyStrategy = new EventSourcingApplyStrategy();
-            eventSourcingApplyStrategy.Apply(testUser, new TestUserCreatedEvent(Guid.NewGuid()));
-            Assert.AreEqual(Guid.Empty, testUser.Id);
+            var testUser = (Entity) new TestUserWithNoApplyMethod();
+            testUser.Apply(new [] { new TestUserCreatedEvent(Guid.NewGuid()) } );
+            Assert.AreEqual(Guid.Empty, ((TestUserWithNoApplyMethod)testUser).Id);
         }
 
         [TestMethod]
         public void ApplyGenericMethod_ApplyMethodWithMultipleApplyParameters()
         {
-            var testUser = new TestUserMultipleNoApplyMethod();
-            var eventSourcingApplyStrategy = new EventSourcingApplyStrategy();
-            eventSourcingApplyStrategy.Apply(testUser, new TestUserCreatedEvent(Guid.NewGuid()));
-            Assert.AreEqual(Guid.Empty, testUser.Id);
+            var testUser = (Entity) new TestUserMultipleNoApplyMethod();
+            testUser.Apply(new [] { new TestUserCreatedEvent(Guid.NewGuid()) } );
+            Assert.AreEqual(Guid.Empty, ((TestUserMultipleNoApplyMethod)testUser).Id);
         }
     }
 
-    internal class TestUserMultipleNoApplyMethod
+    internal class TestUserMultipleNoApplyMethod : Entity
     {
         public void Apply(TestUserCreatedEvent domainEvent, TestUserNeverDidThatEvent didThatEvent)
         {
@@ -55,7 +49,7 @@ namespace Microwave.Eventstores.UnitTests
         public Guid Id { get; set; }
     }
 
-    internal class TestUserWithNoApplyMethod
+    internal class TestUserWithNoApplyMethod : Entity
     {
         public void Apply()
         {
@@ -84,7 +78,7 @@ namespace Microwave.Eventstores.UnitTests
         public Guid EntityId { get; }
     }
 
-    internal class TestUser : IApply<TestUserCreatedEvent>
+    internal class TestUser : Entity
     {
         public void Apply(TestUserCreatedEvent domainEvent)
         {

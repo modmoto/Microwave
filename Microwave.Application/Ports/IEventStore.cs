@@ -8,7 +8,7 @@ namespace Microwave.Application.Ports
     public interface IEventStore
     {
         Task AppendAsync(IEnumerable<IDomainEvent> domainEvents, long entityVersion);
-        Task<EventstoreResult<T>> LoadAsync<T>(Guid entityId) where T : new ();
+        Task<EventstoreResult<T>> LoadAsync<T>(Guid entityId) where T : IApply, new();
     }
 
     public class EventstoreResult<T>

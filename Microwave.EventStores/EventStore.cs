@@ -10,12 +10,10 @@ namespace Microwave.EventStores
     public class EventStore : IEventStore
     {
         private readonly IEntityStreamRepository _entityStreamRepository;
-        private readonly IEventSourcingStrategy _eventSourcingStrategy;
 
-        public EventStore(IEntityStreamRepository entityStreamRepository, IEventSourcingStrategy eventSourcingStrategy)
+        public EventStore(IEntityStreamRepository entityStreamRepository)
         {
             _entityStreamRepository = entityStreamRepository;
-            _eventSourcingStrategy = eventSourcingStrategy;
         }
 
         public async Task AppendAsync(IEnumerable<IDomainEvent> domainEvents, long entityVersion)
@@ -24,14 +22,13 @@ namespace Microwave.EventStores
             result.Check();
         }
 
-        public async Task<EventstoreResult<T>> LoadAsync<T>(Guid entityId) where T : new()
+        public async Task<EventstoreResult<T>> LoadAsync<T>(Guid entityId) where T : IApply, new()
         {
             var entity = new T();
             var domainEvents = (await _entityStreamRepository.LoadEventsByEntity(entityId)).Value;
-            var eventList = domainEvents.ToList();
-            entity = eventList.Aggregate(entity, (current, domainEvent) => _eventSourcingStrategy.Apply(current, domainEvent.DomainEvent));
-            // TODO get this from stream/events
-            return new EventstoreResult<T>(eventList.Count, entity);
+            var domainEventWrappers = domainEvents.ToList();
+            entity.Apply(domainEventWrappers.Select(ev => ev.DomainEvent));
+            return new EventstoreResult<T>(domainEventWrappers.Last().Version, entity);
         }
     }
 }

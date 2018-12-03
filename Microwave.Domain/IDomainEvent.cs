@@ -6,9 +6,4 @@ namespace Microwave.Domain
     {
         Guid EntityId { get; }
     }
-
-    public interface IApply<in T> where T : IDomainEvent
-    {
-        void Apply(T domainEvent);
-    }
 }

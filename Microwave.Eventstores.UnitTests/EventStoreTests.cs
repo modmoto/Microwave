@@ -26,7 +26,7 @@ namespace Microwave.Eventstores.UnitTests
             };
             entityStremRepo.Setup(ev => ev.LoadEventsByEntity(It.IsAny<Guid>(), It.IsAny<long>()))
                 .ReturnsAsync( Result<IEnumerable<DomainEventWrapper>>.Ok( new[] { domainEventWrapper }));
-            var eventStore = new EventStore(entityStremRepo.Object, new EventSourcingApplyStrategy());
+            var eventStore = new EventStore(entityStremRepo.Object);
             var loadAsync = await eventStore.LoadAsync<TestEntity>(entityId);
 
             Assert.AreEqual(entityId, loadAsync.Entity.Id);
@@ -44,7 +44,7 @@ namespace Microwave.Eventstores.UnitTests
             };
             entityStremRepo.Setup(ev => ev.LoadEventsByEntity(It.IsAny<Guid>(), It.IsAny<long>()))
                 .ReturnsAsync( Result<IEnumerable<DomainEventWrapper>>.Ok( new[] { domainEventWrapper }));
-            var eventStore = new EventStore(entityStremRepo.Object, new EventSourcingApplyStrategy());
+            var eventStore = new EventStore(entityStremRepo.Object);
             var loadAsync = await eventStore.LoadAsync<TestEntity_NoIApply>(entityId);
 
             Assert.AreEqual(Guid.Empty, loadAsync.Entity.Id);
@@ -62,14 +62,14 @@ namespace Microwave.Eventstores.UnitTests
             };
             entityStremRepo.Setup(ev => ev.LoadEventsByEntity(It.IsAny<Guid>(), It.IsAny<long>()))
                 .ReturnsAsync( Result<IEnumerable<DomainEventWrapper>>.Ok( new[] { domainEventWrapper }));
-            var eventStore = new EventStore(entityStremRepo.Object, new EventSourcingApplyStrategy());
+            var eventStore = new EventStore(entityStremRepo.Object);
             var loadAsync = await eventStore.LoadAsync<TestEntity_NoIApply>(entityId);
 
             Assert.AreEqual(Guid.Empty, loadAsync.Entity.Id);
         }
     }
 
-    public class TestEntity_WrongIApply : IApply<WrongEvent>
+    public class TestEntity_WrongIApply : Entity
     {
         public Guid Id { get; private set; }
         public void Apply(WrongEvent domainEvent)
@@ -88,12 +88,12 @@ namespace Microwave.Eventstores.UnitTests
         public Guid EntityId { get; }
     }
 
-    public class TestEntity_NoIApply
+    public class TestEntity_NoIApply : Entity
     {
         public Guid Id { get; private set; }
     }
 
-    public class TestEntity : IApply<TestEventEventStore>
+    public class TestEntity : Entity
     {
         public void Apply(TestEventEventStore domainEvent)
         {
