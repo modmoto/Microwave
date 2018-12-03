@@ -132,7 +132,7 @@ namespace Microwave.Eventstores.UnitTests
 
             await eventRepository.AppendAsync(events, 0);
 
-            var result = await eventRepository.LoadEventsSince();
+            var result = await eventRepository.LoadEvents();
             Assert.AreEqual(4, result.Value.Count());
             Assert.AreEqual(1, result.Value.ToList()[0].Version);
             Assert.AreEqual(newGuid, result.Value.ToList()[0].DomainEvent.EntityId);

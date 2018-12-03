@@ -46,7 +46,7 @@ namespace Microwave.EventStores
             return Task.FromResult(Result<IEnumerable<DomainEventWrapper>>.Ok(domainEvents));
         }
 
-        public Task<Result<IEnumerable<DomainEventWrapper>>> LoadEventsSince(long tickSince = 0)
+        public Task<Result<IEnumerable<DomainEventWrapper>>> LoadEvents(long tickSince = 0)
         {
             var domainEventDbos = _eventStoreContext.EntityStreams.ToList();
             var stream = domainEventDbos

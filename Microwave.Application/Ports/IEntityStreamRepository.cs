@@ -10,7 +10,7 @@ namespace Microwave.Application.Ports
     {
         Task<Result<IEnumerable<DomainEventWrapper>>> LoadEventsByEntity(Guid entityId, long from = 0);
         Task<Result> AppendAsync(IEnumerable<IDomainEvent> domainEvents, long entityVersion);
-        Task<Result<IEnumerable<DomainEventWrapper>>> LoadEventsSince(long tickSince);
+        Task<Result<IEnumerable<DomainEventWrapper>>> LoadEvents(long tickSince = 0);
     }
 
     public interface IOverallProjectionRepository

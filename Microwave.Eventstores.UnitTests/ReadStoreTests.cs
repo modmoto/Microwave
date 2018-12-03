@@ -118,7 +118,7 @@ namespace Microwave.Eventstores.UnitTests
             var entityStreamTestEvent = new TestEv(Guid.NewGuid());
             await entityStreamRepository.AppendAsync(new[] {entityStreamTestEvent}, 0);
 
-            var eventsSince = await entityStreamRepository.LoadEventsSince();
+            var eventsSince = await entityStreamRepository.LoadEvents();
 
             Assert.AreEqual(entityStreamTestEvent.EntityId, eventsSince.Value.Single().DomainEvent.EntityId);
             Assert.AreNotEqual(entityStreamTestEvent.EntityId, new Guid());

@@ -23,7 +23,7 @@ namespace Microwave.EventStores
         public async Task Update()
         {
             var version = await _versionRepository.GetVersionAsync("TypeProjectionHandler");
-            var result = await _entityStreamRepository.LoadEventsSince(version);
+            var result = await _entityStreamRepository.LoadEvents(version);
             foreach (var domainEvent in result.Value)
             {
                 await _typeProjectionRepository.AppendToTypeStream(domainEvent.DomainEvent);
