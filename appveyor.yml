@@ -12,6 +12,10 @@ before_build:
 - choco install opencover.portable
 - choco install codecov
 
+environment:
+ matrix:
+  - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+
 build_script:
 - dotnet build
 - choco install "msbuild-sonarqube-runner" -y
