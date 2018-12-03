@@ -14,6 +14,11 @@ before_build:
 
 build_script:
 - dotnet build
+- choco install "msbuild-sonarqube-runner" -y
+- MSBuild.SonarQube.Runner.exe begin /k:"Microwave" /d:"sonar.host.url=https://sonarqube.com"
+  /d:"sonar.login=b8ffd4a0a866ccd049eb69e2c0f812bffb573409"
+- msbuild "YourProjectName.sln"
+- MSBuild.SonarQube.Runner.exe end /d:"sonar.login=b8ffd4a0a866ccd049eb69e2c0f812bffb573409"
 
 test_script:
 - OpenCover.Console.exe -register:user -target:"C:/Program Files/dotnet/dotnet.exe" -targetargs:test -output:"coverage.xml" -oldstyle
