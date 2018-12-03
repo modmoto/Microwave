@@ -59,6 +59,27 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
             Assert.IsTrue(identHandler[2] is IdentifiableQueryEventHandler<TestIdQuerySingle, TestDomainEvent3>);
             Assert.IsTrue(identHandler[3] is IdentifiableQueryEventHandler<TestIdQuery2, TestDomainEvent>);
         }
+
+        [Ignore]
+        [TestMethod]
+        public void AddDiContainerTest_Twice()
+        {
+            var collection = (IServiceCollection) new ServiceCollection();
+            var config = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.test.json")
+                .Build();
+
+            var storeDependencies = collection
+                .AddMicrowave(typeof(TestEventHandler).Assembly, config)
+                .AddMicrowave(typeof(TestEventHandler).Assembly, config);
+
+            var buildServiceProvider = storeDependencies.BuildServiceProvider();
+
+            var eventFeed1 = buildServiceProvider.GetServices<IEventFeed<TestDomainEvent>>().SingleOrDefault();
+            var identHandler = buildServiceProvider.GetServices<IIdentifiableQueryEventHandler>().ToList();
+            Assert.IsTrue(identHandler[0] is IdentifiableQueryEventHandler<TestIdQuery, TestDomainEvent>);
+            Assert.IsTrue(eventFeed1 is EventFeed<TestDomainEvent>);
+        }
     }
 
     public class TestIdQuery : IdentifiableQuery, IHandle<TestDomainEvent>, IHandle<TestDomainEvent2>
