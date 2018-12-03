@@ -14,7 +14,6 @@ before_build:
 
 build_script:
 - dotnet build
-- dotnet test
 
 test_script:
 - OpenCover.Console.exe -register:user -target:"C:/Program Files/dotnet/dotnet.exe" -targetargs:test -output:"coverage.xml" -oldstyle
