@@ -16,9 +16,9 @@ namespace Microwave.WebApi
         }
 
         [HttpGet("DomainEventTypeStreams/{eventType}")]
-        public async Task<ActionResult> GetDomainEventsByType(string eventType, [FromQuery] long version = 0)
+        public async Task<ActionResult> GetDomainEventsByType(string eventType, [FromQuery] long createdSince = 0)
         {
-            var result = await _eventRepository.LoadEventsByTypeAsync(eventType, version);
+            var result = await _eventRepository.LoadEventsByTypeAsync(eventType, createdSince);
             return Ok(result.Value);
         }
 
