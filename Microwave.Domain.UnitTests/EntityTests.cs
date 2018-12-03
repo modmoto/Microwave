@@ -4,7 +4,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Microwave.Domain.UnitTests
 {
     [TestClass]
-    public class EventSourcingApplyStrategyTests
+    public class EntityTests
     {
         [TestMethod]
         public void ApplyGenericMethod()
