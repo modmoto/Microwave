@@ -24,7 +24,7 @@ namespace Microwave.Eventstores.UnitTests
             var testUser = new TestUser();
             var eventSourcingApplyStrategy = new EventSourcingApplyStrategy();
             eventSourcingApplyStrategy.Apply(testUser, new TestUserNeverDidThatEvent(Guid.NewGuid()));
-            Assert.AreEqual(new Guid(), testUser.Id);
+            Assert.AreEqual(Guid.Empty, testUser.Id);
         }
 
         [TestMethod]
@@ -33,7 +33,7 @@ namespace Microwave.Eventstores.UnitTests
             var testUser = new TestUserWithNoApplyMethod();
             var eventSourcingApplyStrategy = new EventSourcingApplyStrategy();
             eventSourcingApplyStrategy.Apply(testUser, new TestUserCreatedEvent(Guid.NewGuid()));
-            Assert.AreEqual(new Guid(), testUser.Id);
+            Assert.AreEqual(Guid.Empty, testUser.Id);
         }
 
         [TestMethod]
@@ -42,7 +42,7 @@ namespace Microwave.Eventstores.UnitTests
             var testUser = new TestUserMultipleNoApplyMethod();
             var eventSourcingApplyStrategy = new EventSourcingApplyStrategy();
             eventSourcingApplyStrategy.Apply(testUser, new TestUserCreatedEvent(Guid.NewGuid()));
-            Assert.AreEqual(new Guid(), testUser.Id);
+            Assert.AreEqual(Guid.Empty, testUser.Id);
         }
     }
 

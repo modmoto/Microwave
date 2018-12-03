@@ -47,7 +47,7 @@ namespace Microwave.Eventstores.UnitTests
             var eventStore = new EventStore(entityStremRepo.Object, new EventSourcingApplyStrategy());
             var loadAsync = await eventStore.LoadAsync<TestEntity_NoIApply>(entityId);
 
-            Assert.AreEqual(new Guid(), loadAsync.Entity.Id);
+            Assert.AreEqual(Guid.Empty, loadAsync.Entity.Id);
         }
 
         [TestMethod]
@@ -65,7 +65,7 @@ namespace Microwave.Eventstores.UnitTests
             var eventStore = new EventStore(entityStremRepo.Object, new EventSourcingApplyStrategy());
             var loadAsync = await eventStore.LoadAsync<TestEntity_NoIApply>(entityId);
 
-            Assert.AreEqual(new Guid(), loadAsync.Entity.Id);
+            Assert.AreEqual(Guid.Empty, loadAsync.Entity.Id);
         }
     }
 

@@ -20,7 +20,7 @@ namespace Microwave.Eventstores.UnitTests
             var serialize = objectConverter.Serialize(domainEvent);
             var deserialize = objectConverter.Deserialize<IDomainEvent>(serialize);
             Assert.AreEqual(deserialize.EntityId, domainEvent.EntityId);
-            Assert.AreNotEqual(deserialize.EntityId, new Guid());
+            Assert.AreNotEqual(deserialize.EntityId, Guid.Empty);
         }
 
         [TestMethod]
@@ -32,7 +32,7 @@ namespace Microwave.Eventstores.UnitTests
             var deserialize = (TestEv_DifferentParamName) new DomainEventDeserializer(new JSonHack()).Deserialize(serialize);
             Assert.AreEqual(deserialize.EntityId, domainEvent.EntityId);
             Assert.AreEqual(deserialize.SecondProp, "testString");
-            Assert.AreNotEqual(deserialize.EntityId, new Guid());
+            Assert.AreNotEqual(deserialize.EntityId, Guid.Empty);
         }
 
         [TestMethod]
@@ -44,7 +44,7 @@ namespace Microwave.Eventstores.UnitTests
             var deserialize = new DomainEventWrapperListDeserializer(new JSonHack()).Deserialize<TestEv_DifferentParamName>(serialize).First().DomainEvent;
             Assert.AreEqual(domainEvent.EntityId, deserialize.EntityId);
             Assert.AreEqual(deserialize.SecondProp, "testString");
-            Assert.AreNotEqual(deserialize.EntityId, new Guid());
+            Assert.AreNotEqual(deserialize.EntityId, Guid.Empty);
         }
 
         [TestMethod]
@@ -61,8 +61,8 @@ namespace Microwave.Eventstores.UnitTests
             Assert.AreEqual(domainEvent2.EntityId, deserialize2.EntityId);
             Assert.AreEqual(deserialize.SecondProp, "testString");
             Assert.AreEqual(deserialize2.SecondProp, "andererString");
-            Assert.AreNotEqual(deserialize.EntityId, new Guid());
-            Assert.AreNotEqual(deserialize2.EntityId, new Guid());
+            Assert.AreNotEqual(deserialize.EntityId, Guid.Empty);
+            Assert.AreNotEqual(deserialize2.EntityId, Guid.Empty);
         }
 
         [TestMethod]
@@ -79,8 +79,8 @@ namespace Microwave.Eventstores.UnitTests
             Assert.AreEqual(domainEvent2.EntityId, deserialize2.EntityId);
             Assert.AreEqual(deserialize.SecondProp, "testString");
             Assert.AreEqual(deserialize2.SecondProp, "andererString");
-            Assert.AreNotEqual(deserialize.EntityId, new Guid());
-            Assert.AreNotEqual(deserialize2.EntityId, new Guid());
+            Assert.AreNotEqual(deserialize.EntityId, Guid.Empty);
+            Assert.AreNotEqual(deserialize2.EntityId, Guid.Empty);
         }
 
         // This is not supported and might never be
@@ -91,7 +91,7 @@ namespace Microwave.Eventstores.UnitTests
             var domainEvent = new TestEv_CustomBackingField(Guid.NewGuid());
             var serialize = objectConverter.Serialize(domainEvent);
             var deserialize = objectConverter.Deserialize<IDomainEvent>(serialize);
-            Assert.AreEqual(deserialize.EntityId, new Guid());
+            Assert.AreEqual(deserialize.EntityId, Guid.Empty);
         }
 
         [TestMethod]
@@ -102,7 +102,7 @@ namespace Microwave.Eventstores.UnitTests
             var serialize = objectConverter.Serialize(domainEvent);
             var deserialize = objectConverter.Deserialize<IDomainEvent>(serialize);
             Assert.AreEqual(deserialize.EntityId, new Guid("84e5447a-0a28-4fe1-af5a-11dd6a43d3dd"));
-            Assert.AreNotEqual(deserialize.EntityId, new Guid());
+            Assert.AreNotEqual(deserialize.EntityId, Guid.Empty);
         }
 
         [TestMethod]
@@ -121,7 +121,7 @@ namespace Microwave.Eventstores.UnitTests
             var eventsSince = await entityStreamRepository.LoadEvents();
 
             Assert.AreEqual(entityStreamTestEvent.EntityId, eventsSince.Value.Single().DomainEvent.EntityId);
-            Assert.AreNotEqual(entityStreamTestEvent.EntityId, new Guid());
+            Assert.AreNotEqual(entityStreamTestEvent.EntityId, Guid.Empty);
         }
     }
 

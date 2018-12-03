@@ -25,7 +25,7 @@ namespace Microwave.ObjectPersistences
             var domainEvent = JsonConvert.DeserializeObject<IDomainEvent>(payLoad, _settings);
 
             // this is for DomainEvents, where Newtonsoft can not find the EntityId in the constructor (because it is called differently)
-            if (domainEvent.EntityId == new Guid())
+            if (domainEvent.EntityId == Guid.Empty)
             {
                 var domainEventJobject = JObject.Parse(payLoad);
                 _jsonHack.SetEntityIdBackingField(domainEventJobject, domainEvent);
