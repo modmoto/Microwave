@@ -10,36 +10,33 @@ namespace Microwave.WebApi
     {
         private readonly IEntityStreamRepository _entityStreamRepository;
         private readonly ITypeProjectionRepository _typeProjectionRepository;
-        private readonly IOverallProjectionRepository _overallProjectionRepository;
 
         public DomainEventController(
             IEntityStreamRepository entityStreamRepository,
-            ITypeProjectionRepository typeProjectionRepository,
-            IOverallProjectionRepository overallProjectionRepository)
+            ITypeProjectionRepository typeProjectionRepository)
         {
             _entityStreamRepository = entityStreamRepository;
             _typeProjectionRepository = typeProjectionRepository;
-            _overallProjectionRepository = overallProjectionRepository;
         }
 
         [HttpGet("DomainEventTypeStreams/{eventType}")]
-        public async Task<ActionResult> GetDomainEventsByType(string eventType, [FromQuery] long myLastVersion = 0)
+        public async Task<ActionResult> GetDomainEventsByType(string eventType, [FromQuery] long version = 0)
         {
-            var result = await _typeProjectionRepository.LoadEventsByTypeAsync(eventType, myLastVersion);
+            var result = await _typeProjectionRepository.LoadEventsByTypeAsync(eventType, version);
             return Ok(result.Value);
         }
 
         [HttpGet("EntityStreams/{entityId}")]
-        public async Task<ActionResult> GetDomainEventsByEntityIdType(Guid entityId, [FromQuery] long myLastVersion = 0)
+        public async Task<ActionResult> GetDomainEventsByEntityIdType(Guid entityId, [FromQuery] long version = 0)
         {
-            var result = await _entityStreamRepository.LoadEventsByEntity(entityId, myLastVersion);
+            var result = await _entityStreamRepository.LoadEventsByEntity(entityId, version);
             return Ok(result.Value);
         }
 
         [HttpGet("DomainEvents")]
-        public async Task<ActionResult> GetAllDomainEvents([FromQuery] long myLastVersion = 0)
+        public async Task<ActionResult> GetAllDomainEvents([FromQuery] long createdSince = 0)
         {
-            var result = await _overallProjectionRepository.LoadOverallStream(myLastVersion);
+            var result = await _entityStreamRepository.LoadEvents(createdSince);
             return Ok(result.Value);
         }
     }

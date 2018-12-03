@@ -49,11 +49,9 @@ namespace Microwave.DependencyInjectionExtensions
             services.AddTransient<IEntityStreamRepository, EntityStreamRepository>();
             services.AddTransient<IVersionRepository, VersionRepository>();
             services.AddTransient<IQeryRepository, QueryRepository>();
-            services.AddTransient<IOverallProjectionRepository, OverallProjectionRepository>();
             services.AddTransient<ITypeProjectionRepository, TypeProjectionRepository>();
 
             services.AddTransient<AsyncEventDelegator>();
-            services.AddTransient<IProjectionHandler, ProjectionHandler>();
             services.AddTransient<ITypeProjectionHandler, TypeProjectionHandler>();
 
 

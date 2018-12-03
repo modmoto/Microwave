@@ -213,7 +213,6 @@ namespace Microwave.Eventstores.UnitTests
 
             var eventRepository = new EntityStreamRepository(new DomainEventDeserializer(new JSonHack()), eventStoreContext, new ObjectConverter());
             var typeProjectionRepository = new TypeProjectionRepository(new ObjectConverter(), new DomainEventDeserializer(new JSonHack()),  eventStoreContext);
-            var overallProjectionRepository = new OverallProjectionRepository(typeProjectionRepository);
 
             var newGuid = Guid.NewGuid();
             var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid), new TestEvent1(newGuid), new TestEvent2(newGuid)};
@@ -221,9 +220,7 @@ namespace Microwave.Eventstores.UnitTests
             await eventRepository.AppendAsync(events, 0);
             var versionRepo = new VersionRepository(eventStoreContext);
             var typeProjectionHandler = new TypeProjectionHandler(typeProjectionRepository, eventRepository, versionRepo);
-            var projectionHandler = new ProjectionHandler(overallProjectionRepository, eventRepository, versionRepo);
 
-            await projectionHandler.Update();
             await typeProjectionHandler.Update();
 
             var result = await typeProjectionRepository.LoadEventsByTypeAsync(typeof(TestEvent1).Name);

@@ -13,12 +13,6 @@ namespace Microwave.Application.Ports
         Task<Result<IEnumerable<DomainEventWrapper>>> LoadEvents(long tickSince = 0);
     }
 
-    public interface IOverallProjectionRepository
-    {
-        Task<Result> AppendToOverallStream(IEnumerable<IDomainEvent> events);
-        Task<Result<IEnumerable<DomainEventWrapper>>> LoadOverallStream(long from = 0);
-    }
-
     public interface ITypeProjectionRepository
     {
         Task<Result<IEnumerable<DomainEventWrapper>>> LoadEventsByTypeAsync(string domainEventTypeName, long from = 0);
