@@ -15,7 +15,7 @@ namespace Microwave.Application.Ports
 
     public interface IOverallProjectionRepository
     {
-        Task<Result> AppendToOverallStream(IEnumerable<IDomainEvent> resultValue);
+        Task<Result> AppendToOverallStream(IEnumerable<IDomainEvent> events);
         Task<Result<IEnumerable<DomainEventWrapper>>> LoadOverallStream(long from = 0);
     }
 
