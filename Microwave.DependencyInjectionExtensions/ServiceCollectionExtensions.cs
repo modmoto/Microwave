@@ -65,10 +65,8 @@ namespace Microwave.DependencyInjectionExtensions
                 config.Filters.Add(new ConcurrencyViolatedFilter());
             });
 
-            //services.AddTransient<IEventDelegateHandler, EventDelegateHandler<SeasonCreatedEvent>>();
+            //Handler
             services.AddIEventDelegateHandler(assembly);
-
-            //services.AddTransient<IHandleAsync<SeasonCreatedEvent>, SeasonCreatedEventHandler>();
             services.AddIHandleAsync(assembly);
 
             //Client
