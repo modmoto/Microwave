@@ -38,15 +38,15 @@ namespace Microwave.Queries
             var domainEvents = latestEvents.ToList();
             if (!domainEvents.Any()) return;
 
-            var result = await _qeryRepository.Load<TQuerry>(domainEvents.First().DomainEvent.EntityId);
             foreach (var latestEvent in domainEvents)
             {
+                var result = await _qeryRepository.Load<TQuerry>(domainEvents.First().DomainEvent.EntityId);
                 if (result.Is<NotFound<TQuerry>>()) result = Result<TQuerry>.Ok(new TQuerry());
+
                 result.Value.Handle(latestEvent.DomainEvent);
 
                 await _qeryRepository.Save(result.Value);
-                lastVersion = lastVersion + 1;
-                await _versionRepository.SaveVersion(new LastProcessedVersion(domainEventType, lastVersion));
+                await _versionRepository.SaveVersion(new LastProcessedVersion(domainEventType, latestEvent.Created));
             }
         }
     }
