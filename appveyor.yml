@@ -19,7 +19,7 @@ environment:
 build_script:
 - dotnet build
 - choco install "msbuild-sonarqube-runner" -y
-- MSBuild.SonarQube.Runner.exe begin /k:"Lauchi_Microwave" /d:"sonar.host.url=https://sonarqube.com"
+- MSBuild.SonarQube.Runner.exe begin /k:"Microwave" /d:"sonar.host.url=https://sonarqube.com"
   /d:"sonar.login=b8ffd4a0a866ccd049eb69e2c0f812bffb573409"
 - msbuild "Microwave.sln"
 - MSBuild.SonarQube.Runner.exe end /d:"sonar.login=b8ffd4a0a866ccd049eb69e2c0f812bffb573409"
