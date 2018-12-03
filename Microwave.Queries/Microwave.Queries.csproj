@@ -2,7 +2,8 @@
     <PropertyGroup>
         <TargetFramework>netcoreapp2.1</TargetFramework>
         <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-        <PackageVersion>0.4.2</PackageVersion>    <DebugType>full</DebugType>
+        <PackageVersion>0.4.3</PackageVersion>
+        <DebugType>full</DebugType>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="2.1.4" />
