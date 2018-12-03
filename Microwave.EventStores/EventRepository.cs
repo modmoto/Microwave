@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using Microwave.Application;
 using Microwave.Application.Ports;
 using Microwave.Application.Results;
@@ -11,14 +12,14 @@ using Microwave.ObjectPersistences;
 
 namespace Microwave.EventStores
 {
-    public class EntityStreamRepository : IEntityStreamRepository
+    public class EventRepository : IEventRepository
     {
         private readonly DomainEventDeserializer _domainEventConverter;
         private readonly EventStoreContext _eventStoreContext;
         private readonly IObjectConverter _converter;
         private readonly object _lock = new Object();
 
-        public EntityStreamRepository(
+        public EventRepository(
             DomainEventDeserializer domainEventConverter,
             EventStoreContext eventStoreContext,
             IObjectConverter converter)
@@ -91,6 +92,7 @@ namespace Microwave.EventStores
         public Task<Result> AppendAsync(IEnumerable<IDomainEvent> domainEvents, long entityVersion)
         {
             var events = domainEvents.ToList();
+            if (!events.Any()) return Task.FromResult(Result.Ok());
             var entityId = events.First().EntityId;
             lock (_lock)
             {

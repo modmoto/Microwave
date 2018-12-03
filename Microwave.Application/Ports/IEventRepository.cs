@@ -6,7 +6,7 @@ using Microwave.Domain;
 
 namespace Microwave.Application.Ports
 {
-    public interface IEntityStreamRepository
+    public interface IEventRepository
     {
         Task<Result<IEnumerable<DomainEventWrapper>>> LoadEventsByEntity(Guid entityId, long from = 0);
         Task<Result> AppendAsync(IEnumerable<IDomainEvent> domainEvents, long entityVersion);

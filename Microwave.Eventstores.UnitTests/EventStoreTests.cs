@@ -17,7 +17,7 @@ namespace Microwave.Eventstores.UnitTests
         [TestMethod]
         public async Task ApplyMethod_HappyPath()
         {
-            var entityStremRepo = new Mock<IEntityStreamRepository>();
+            var entityStremRepo = new Mock<IEventRepository>();
             var entityId = Guid.NewGuid();
             var testEventEventStore = new TestEventEventStore(entityId);
             var domainEventWrapper = new DomainEventWrapper
@@ -35,7 +35,7 @@ namespace Microwave.Eventstores.UnitTests
         [TestMethod]
         public async Task ApplyMethod_NoIfDeclared()
         {
-            var entityStremRepo = new Mock<IEntityStreamRepository>();
+            var entityStremRepo = new Mock<IEventRepository>();
             var entityId = Guid.NewGuid();
             var testEventEventStore = new TestEventEventStore(entityId);
             var domainEventWrapper = new DomainEventWrapper
@@ -53,7 +53,7 @@ namespace Microwave.Eventstores.UnitTests
         [TestMethod]
         public async Task ApplyMethod_WrongIfDeclared()
         {
-            var entityStremRepo = new Mock<IEntityStreamRepository>();
+            var entityStremRepo = new Mock<IEventRepository>();
             var entityId = Guid.NewGuid();
             var testEventEventStore = new TestEventEventStore(entityId);
             var domainEventWrapper = new DomainEventWrapper

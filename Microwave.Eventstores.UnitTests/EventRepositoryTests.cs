@@ -24,7 +24,7 @@ namespace Microwave.Eventstores.UnitTests
 
             var eventStoreContext = new EventStoreContext(options);
 
-            var eventRepository = new EntityStreamRepository(new DomainEventDeserializer(new JSonHack()), eventStoreContext, new ObjectConverter());
+            var eventRepository = new EventRepository(new DomainEventDeserializer(new JSonHack()), eventStoreContext, new ObjectConverter());
 
             var newGuid = Guid.NewGuid();
             var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid)};
@@ -47,7 +47,7 @@ namespace Microwave.Eventstores.UnitTests
 
             var eventStoreContext = new EventStoreContext(options);
 
-            var eventRepository = new EntityStreamRepository(new DomainEventDeserializer(new JSonHack()), eventStoreContext, new ObjectConverter());
+            var eventRepository = new EventRepository(new DomainEventDeserializer(new JSonHack()), eventStoreContext, new ObjectConverter());
 
             var newGuid = Guid.NewGuid();
             var testEvent1 = new TestEvent1(newGuid);
@@ -75,7 +75,7 @@ namespace Microwave.Eventstores.UnitTests
 
             var eventStoreContext = new EventStoreContext(options);
 
-            var eventRepository = new EntityStreamRepository(new DomainEventDeserializer(new JSonHack()), eventStoreContext, new ObjectConverter());
+            var eventRepository = new EventRepository(new DomainEventDeserializer(new JSonHack()), eventStoreContext, new ObjectConverter());
 
             var newGuid = Guid.NewGuid();
             var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid)};
@@ -88,6 +88,21 @@ namespace Microwave.Eventstores.UnitTests
             var concurrencyException = Assert.ThrowsException<ConcurrencyViolatedException>(() => CheckAllResults(allResults));
             var concurrencyExceptionMessage = concurrencyException.Message;
             Assert.AreEqual("Concurrency fraud detected, could not update database. ExpectedVersion: 0, ActualVersion: 2", concurrencyExceptionMessage);
+        }
+
+        [TestMethod]
+        public async Task AddEmptyEventListt()
+        {
+            var options = new DbContextOptionsBuilder<EventStoreContext>()
+                .UseInMemoryDatabase("AddAndLoadEventsConcurrent")
+                .Options;
+
+            var eventStoreContext = new EventStoreContext(options);
+
+            var eventRepository = new EventRepository(new DomainEventDeserializer(new JSonHack()), eventStoreContext, new ObjectConverter());
+
+            var appendAsync = await eventRepository.AppendAsync(new List<IDomainEvent>(), 0);
+            appendAsync.Check();
         }
 
         [TestMethod]
@@ -125,7 +140,7 @@ namespace Microwave.Eventstores.UnitTests
 
             var eventStoreContext = new EventStoreContext(options);
 
-            var eventRepository = new EntityStreamRepository(new DomainEventDeserializer(new JSonHack()), eventStoreContext, new ObjectConverter());
+            var eventRepository = new EventRepository(new DomainEventDeserializer(new JSonHack()), eventStoreContext, new ObjectConverter());
 
             var newGuid = Guid.NewGuid();
             var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid), new TestEvent1(newGuid), new TestEvent2(newGuid)};
@@ -147,7 +162,7 @@ namespace Microwave.Eventstores.UnitTests
 
             var eventStoreContext = new EventStoreContext(options);
 
-            var eventRepository = new EntityStreamRepository(new DomainEventDeserializer(new JSonHack()), eventStoreContext, new ObjectConverter());
+            var eventRepository = new EventRepository(new DomainEventDeserializer(new JSonHack()), eventStoreContext, new ObjectConverter());
 
             var newGuid = Guid.NewGuid();
             var domainEvent = new TestEvent1(newGuid);
@@ -169,7 +184,7 @@ namespace Microwave.Eventstores.UnitTests
                 .Options;
             var eventStoreContext = new EventStoreContext(options);
 
-            var eventRepository = new EntityStreamRepository(new DomainEventDeserializer(new JSonHack()), eventStoreContext, new ObjectConverter());
+            var eventRepository = new EventRepository(new DomainEventDeserializer(new JSonHack()), eventStoreContext, new ObjectConverter());
 
             var testEvent1 = new TestEvent1(Guid.NewGuid());
             await eventRepository.AppendAsync(new[] {testEvent1}, 0);
@@ -189,7 +204,7 @@ namespace Microwave.Eventstores.UnitTests
 
             var eventStoreContext = new EventStoreContext(options);
 
-            var eventRepository = new EntityStreamRepository(new DomainEventDeserializer(new JSonHack()),  eventStoreContext, new ObjectConverter());
+            var eventRepository = new EventRepository(new DomainEventDeserializer(new JSonHack()),  eventStoreContext, new ObjectConverter());
 
             var testEvent1 = new TestEvent1(Guid.NewGuid());
             await eventRepository.AppendAsync(new List<IDomainEvent> { testEvent1 }, 0);
@@ -209,7 +224,7 @@ namespace Microwave.Eventstores.UnitTests
 
             var eventStoreContext = new EventStoreContext(options);
 
-            var eventRepository = new EntityStreamRepository(new DomainEventDeserializer(new JSonHack()), eventStoreContext, new ObjectConverter());
+            var eventRepository = new EventRepository(new DomainEventDeserializer(new JSonHack()), eventStoreContext, new ObjectConverter());
 
             var newGuid = Guid.NewGuid();
             var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid), new TestEvent1(newGuid), new TestEvent2(newGuid)};

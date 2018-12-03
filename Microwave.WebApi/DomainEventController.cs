@@ -8,31 +8,31 @@ namespace Microwave.WebApi
     [Route("Api")]
     public class DomainEventController : Controller
     {
-        private readonly IEntityStreamRepository _entityStreamRepository;
+        private readonly IEventRepository _eventRepository;
 
-        public DomainEventController(IEntityStreamRepository entityStreamRepository)
+        public DomainEventController(IEventRepository eventRepository)
         {
-            _entityStreamRepository = entityStreamRepository;
+            _eventRepository = eventRepository;
         }
 
         [HttpGet("DomainEventTypeStreams/{eventType}")]
         public async Task<ActionResult> GetDomainEventsByType(string eventType, [FromQuery] long version = 0)
         {
-            var result = await _entityStreamRepository.LoadEventsByTypeAsync(eventType, version);
+            var result = await _eventRepository.LoadEventsByTypeAsync(eventType, version);
             return Ok(result.Value);
         }
 
         [HttpGet("EntityStreams/{entityId}")]
         public async Task<ActionResult> GetDomainEventsByEntityIdType(Guid entityId, [FromQuery] long version = 0)
         {
-            var result = await _entityStreamRepository.LoadEventsByEntity(entityId, version);
+            var result = await _eventRepository.LoadEventsByEntity(entityId, version);
             return Ok(result.Value);
         }
 
         [HttpGet("DomainEvents")]
         public async Task<ActionResult> GetAllDomainEvents([FromQuery] long createdSince = 0)
         {
-            var result = await _entityStreamRepository.LoadEvents(createdSince);
+            var result = await _eventRepository.LoadEvents(createdSince);
             return Ok(result.Value);
         }
     }

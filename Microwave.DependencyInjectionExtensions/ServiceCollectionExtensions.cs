@@ -43,10 +43,10 @@ namespace Microwave.DependencyInjectionExtensions
             services.AddTransient<IObjectConverter, ObjectConverter>();
             services.AddDbContext<EventStoreContext>(option =>
                 option.UseSqlite("Data Source=EventStoreContext.db"));
-            services.AddTransient<IEntityStreamRepository, EntityStreamRepository>();
+            services.AddTransient<IEventRepository, EventRepository>();
             services.AddDbContext<QueryStorageContext>(option =>
                 option.UseSqlite("Data Source=QueryStorageContext.db"));
-            services.AddTransient<IEntityStreamRepository, EntityStreamRepository>();
+            services.AddTransient<IEventRepository, EventRepository>();
             services.AddTransient<IVersionRepository, VersionRepository>();
             services.AddTransient<IQeryRepository, QueryRepository>();
 
