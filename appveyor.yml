@@ -15,13 +15,15 @@ before_build:
 environment:
  matrix:
   - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+  sonarCubeToken:
+    secure: kQ0ruzPw50qAJfN2Qv36sXyA1SGVJbAHB+Zz26HsRrzAaeuEbTeQkysf3A5G/3Dy
 
 build_script:
 - dotnet build
 - choco install "msbuild-sonarqube-runner" -y
-- SonarScanner.MSBuild.exe begin /k:"Lauchi_Microwave" /d:sonar.organization="lauchi-github" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login="b8ffd4a0a866ccd049eb69e2c0f812bffb573409"
+- SonarScanner.MSBuild.exe begin /k:"Lauchi_Microwave" /d:sonar.organization="lauchi-github" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login=§env:sonarCubeToken
 - MsBuild.exe /t:Rebuild
-- SonarScanner.MSBuild.exe end /d:sonar.login="b8ffd4a0a866ccd049eb69e2c0f812bffb573409"
+- SonarScanner.MSBuild.exe end /d:sonar.login=§env:sonarCubeToken
 
 test_script:
 - OpenCover.Console.exe -register:user -target:"C:/Program Files/dotnet/dotnet.exe" -targetargs:test -output:"coverage.xml" -oldstyle
