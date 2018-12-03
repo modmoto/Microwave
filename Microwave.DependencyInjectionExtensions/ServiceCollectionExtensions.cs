@@ -31,7 +31,7 @@ namespace Microwave.DependencyInjectionExtensions
             return builder;
         }
 
-        public static IServiceCollection AddMyEventStoreDependencies(this IServiceCollection services,
+        public static IServiceCollection AddMicrowave(this IServiceCollection services,
             Assembly assembly, IConfiguration configuration)
         {
             services.AddTransient<DomainEventController>();

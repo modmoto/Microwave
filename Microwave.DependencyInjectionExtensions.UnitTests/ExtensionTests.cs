@@ -23,7 +23,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
                 .AddJsonFile("appsettings.test.json")
                 .Build();
 
-            var storeDependencies = collection.AddMyEventStoreDependencies(typeof(TestEventHandler).Assembly, config);
+            var storeDependencies = collection.AddMicrowave(typeof(TestEventHandler).Assembly, config);
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
             var delegateHandler1 = buildServiceProvider.GetServices<IHandleAsync<TestDomainEvent>>();
