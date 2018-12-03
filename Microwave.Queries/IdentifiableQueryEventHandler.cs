@@ -40,9 +40,9 @@ namespace Microwave.Queries
 
             foreach (var latestEvent in domainEvents)
             {
-                var result = await _qeryRepository.Load<TQuerry>(latestEvent.EntityId);
+                var result = await _qeryRepository.Load<TQuerry>(latestEvent.DomainEvent.EntityId);
                 if (result.Is<NotFound<TQuerry>>()) result = Result<TQuerry>.Ok(new TQuerry());
-                result.Value.Handle(latestEvent);
+                result.Value.Handle(latestEvent.DomainEvent);
 
                 await _qeryRepository.Save(result.Value);
                 lastVersion = lastVersion + 1;

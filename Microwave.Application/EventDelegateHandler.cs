@@ -31,7 +31,7 @@ namespace Microwave.Application
                 foreach (var latestEvent in latestEvents)
                 {
                     lastVersion = lastVersion + 1;
-                    await handle.HandleAsync(latestEvent);
+                    await handle.HandleAsync(latestEvent.DomainEvent);
                     await _versionRepository.SaveVersion(new LastProcessedVersion(domainEventType, lastVersion));
                 }
             }

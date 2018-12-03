@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using Microwave.Application;
 using Microwave.Application.Ports;
 using Microwave.Domain;
 using Microwave.ObjectPersistences;
@@ -20,13 +21,13 @@ namespace Microwave.WebApi
             _domainEventClient = domainEventClient;
         }
 
-        public async Task<IEnumerable<T>> GetEventsByTypeAsync(long lastVersion)
+        public async Task<IEnumerable<DomainEventWrapper<T>>> GetEventsByTypeAsync(long lastVersion)
         {
             var response = await _domainEventClient.GetAsync($"?myLastVersion={lastVersion}");
-            if (response.StatusCode != HttpStatusCode.OK) return new List<T>();
+            if (response.StatusCode != HttpStatusCode.OK) return new List<DomainEventWrapper<T>>();
             var content = await response.Content.ReadAsStringAsync();
             var eventsByTypeAsync = _objectConverter.Deserialize<T>(content);
-            return eventsByTypeAsync.Select(ev => ev.DomainEvent);
+            return eventsByTypeAsync;
         }
     }
 }

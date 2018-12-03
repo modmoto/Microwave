@@ -36,7 +36,7 @@ namespace Microwave.Queries
             foreach (var latestEvent in domainEvents)
             {
                 lastVersion = lastVersion + 1;
-                querryValue.Handle(latestEvent);
+                querryValue.Handle(latestEvent.DomainEvent);
                 await _versionRepository.SaveVersion(new LastProcessedVersion(domainEventType, lastVersion));
             }
 

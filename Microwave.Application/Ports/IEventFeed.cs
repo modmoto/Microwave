@@ -6,6 +6,6 @@ namespace Microwave.Application.Ports
 {
     public interface IEventFeed<T> where T : IDomainEvent
     {
-        Task<IEnumerable<T>> GetEventsByTypeAsync(long lastVersion);
+        Task<IEnumerable<DomainEventWrapper<T>>> GetEventsByTypeAsync(long lastVersion);
     }
 }

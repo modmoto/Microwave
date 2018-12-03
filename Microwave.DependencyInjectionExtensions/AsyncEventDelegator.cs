@@ -5,6 +5,7 @@ using Microwave.Queries;
 
 namespace Microwave.DependencyInjectionExtensions
 {
+    // TODO remove this hack with actors or something (Task will break on exceptions)
     public class AsyncEventDelegator
     {
         private readonly IEnumerable<IEventDelegateHandler> _handler;
