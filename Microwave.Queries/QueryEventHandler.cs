@@ -9,24 +9,24 @@ namespace Microwave.Queries
     public class QueryEventHandler<TQuerry, TEvent> : IQueryEventHandler where TQuerry : Query, new() where TEvent : IDomainEvent
     {
         private readonly IQeryRepository _qeryRepository;
-        private readonly IEventFeed<TEvent> _eventRepository;
+        private readonly IEventFeed<TEvent> _eventFeed;
         private readonly IVersionRepository _versionRepository;
 
         public QueryEventHandler(
             IQeryRepository qeryRepository,
             IVersionRepository versionRepository,
-            IEventFeed<TEvent> eventRepository)
+            IEventFeed<TEvent> eventFeed)
         {
             _qeryRepository = qeryRepository;
             _versionRepository = versionRepository;
-            _eventRepository = eventRepository;
+            _eventFeed = eventFeed;
         }
 
         public async Task Update()
         {
             var domainEventType = $"QuerryHandler-{typeof(TQuerry).Name}-{typeof(TEvent).Name}";
             var lastVersion = await _versionRepository.GetVersionAsync(domainEventType);
-            var latestEvents = await _eventRepository.GetEventsByTypeAsync(lastVersion);
+            var latestEvents = await _eventFeed.GetEventsByTypeAsync(lastVersion);
             var domainEvents = latestEvents.ToList();
             if (!domainEvents.Any()) return;
 
@@ -35,9 +35,8 @@ namespace Microwave.Queries
             var querryValue = querry.Value;
             foreach (var latestEvent in domainEvents)
             {
-                lastVersion = lastVersion + 1;
                 querryValue.Handle(latestEvent.DomainEvent);
-                await _versionRepository.SaveVersion(new LastProcessedVersion(domainEventType, lastVersion));
+                await _versionRepository.SaveVersion(new LastProcessedVersion(domainEventType, latestEvent.Created));
             }
 
             await _qeryRepository.Save(querryValue);

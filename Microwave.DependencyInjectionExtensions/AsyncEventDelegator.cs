@@ -9,18 +9,15 @@ namespace Microwave.DependencyInjectionExtensions
     public class AsyncEventDelegator
     {
         private readonly IEnumerable<IEventDelegateHandler> _handler;
-        private readonly ITypeProjectionHandler _typeProjectionHandler;
         private readonly IEnumerable<IQueryEventHandler> _queryEventHandlers;
         private readonly IEnumerable<IIdentifiableQueryEventHandler> _identifiableQueryEventHandlers;
 
         public AsyncEventDelegator(
             IEnumerable<IEventDelegateHandler> handler,
-            ITypeProjectionHandler typeProjectionHandler,
             IEnumerable<IQueryEventHandler> queryEventHandlers,
             IEnumerable<IIdentifiableQueryEventHandler> identifiableQueryEventHandlers)
         {
             _handler = handler;
-            _typeProjectionHandler = typeProjectionHandler;
             _queryEventHandlers = queryEventHandlers;
             _identifiableQueryEventHandlers = identifiableQueryEventHandlers;
         }
@@ -30,7 +27,6 @@ namespace Microwave.DependencyInjectionExtensions
             while (true)
             {
                 await Task.Delay(1000);
-                await _typeProjectionHandler.Update();
 
                 foreach (var handler in _handler) await handler.Update();
                 foreach (var handler in _queryEventHandlers) await handler.Update();

@@ -11,12 +11,6 @@ namespace Microwave.Application.Ports
         Task<Result<IEnumerable<DomainEventWrapper>>> LoadEventsByEntity(Guid entityId, long from = 0);
         Task<Result> AppendAsync(IEnumerable<IDomainEvent> domainEvents, long entityVersion);
         Task<Result<IEnumerable<DomainEventWrapper>>> LoadEvents(long tickSince = 0);
-    }
-
-    public interface ITypeProjectionRepository
-    {
-        Task<Result<IEnumerable<DomainEventWrapper>>> LoadEventsByTypeAsync(string domainEventTypeName, long from = 0);
-        Task<Result> AppendToTypeStream(IDomainEvent domainEvent);
-        Task<Result> AppendToStreamWithName(string streamName, IDomainEvent domainEvent);
+        Task<Result<IEnumerable<DomainEventWrapper>>> LoadEventsByTypeAsync(string eventType, long version);
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using Microwave.Application;
 using Microwave.Application.Ports;
 using Microwave.Application.Results;
@@ -67,6 +68,25 @@ namespace Microwave.EventStores
             return Task.FromResult(Result<IEnumerable<DomainEventWrapper>>.Ok(domainEvents));
         }
 
+        public async Task<Result<IEnumerable<DomainEventWrapper>>> LoadEventsByTypeAsync(string eventType, long version)
+        {
+            var domainEventTypeDbos = await _eventStoreContext.EntityStreams
+                .Where(eventDbo => eventDbo.EventType == eventType && eventDbo.Created > version).ToListAsync();
+
+            if (!domainEventTypeDbos.Any()) return Result<IEnumerable<DomainEventWrapper>>.Ok(new List<DomainEventWrapper>());
+
+            var domainEvents = domainEventTypeDbos.Select(dbo =>
+            {
+                return new DomainEventWrapper
+                {
+                    Created = dbo.Created,
+                    Version = dbo.Version,
+                    DomainEvent = _domainEventConverter.Deserialize(dbo.Payload)
+                };
+            });
+            return Result<IEnumerable<DomainEventWrapper>>.Ok(domainEvents);
+        }
+
         //TODO remove Lock and make threadsafe
         public Task<Result> AppendAsync(IEnumerable<IDomainEvent> domainEvents, long entityVersion)
         {
@@ -90,6 +110,7 @@ namespace Microwave.EventStores
                         Payload = serialize,
                         Created = DateTime.UtcNow.Ticks,
                         Version = entityVersionTemp,
+                        EventType = domainEvent.GetType().Name,
                         EntityId = domainEvent.EntityId.ToString()
                     };
 

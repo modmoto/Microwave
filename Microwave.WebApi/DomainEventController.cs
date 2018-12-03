@@ -9,20 +9,16 @@ namespace Microwave.WebApi
     public class DomainEventController : Controller
     {
         private readonly IEntityStreamRepository _entityStreamRepository;
-        private readonly ITypeProjectionRepository _typeProjectionRepository;
 
-        public DomainEventController(
-            IEntityStreamRepository entityStreamRepository,
-            ITypeProjectionRepository typeProjectionRepository)
+        public DomainEventController(IEntityStreamRepository entityStreamRepository)
         {
             _entityStreamRepository = entityStreamRepository;
-            _typeProjectionRepository = typeProjectionRepository;
         }
 
         [HttpGet("DomainEventTypeStreams/{eventType}")]
         public async Task<ActionResult> GetDomainEventsByType(string eventType, [FromQuery] long version = 0)
         {
-            var result = await _typeProjectionRepository.LoadEventsByTypeAsync(eventType, version);
+            var result = await _entityStreamRepository.LoadEventsByTypeAsync(eventType, version);
             return Ok(result.Value);
         }
 
