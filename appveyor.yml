@@ -21,9 +21,9 @@ environment:
 build_script:
 - dotnet build
 - choco install "msbuild-sonarqube-runner" -y
-- SonarScanner.MSBuild.exe begin /k:"Lauchi_Microwave" /d:sonar.organization="lauchi-github" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login=§env:sonarCubeToken
+- SonarScanner.MSBuild.exe begin /k:"Lauchi_Microwave" /d:sonar.organization="lauchi-github" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login=%sonarCubeToken%
 - MsBuild.exe /t:Rebuild
-- SonarScanner.MSBuild.exe end /d:sonar.login=§env:sonarCubeToken
+- SonarScanner.MSBuild.exe end /d:sonar.login=%sonarCubeToken%
 
 test_script:
 - OpenCover.Console.exe -register:user -target:"C:/Program Files/dotnet/dotnet.exe" -targetargs:test -output:"coverage.xml" -oldstyle
