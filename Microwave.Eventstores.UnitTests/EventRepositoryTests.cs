@@ -3,19 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Application.Exceptions;
 using Microwave.Application.Results;
 using Microwave.Domain;
 using Microwave.EventStores;
 using Microwave.ObjectPersistences;
-using Microwave.Queries;
-using NUnit.Framework;
 
 namespace Microwave.Eventstores.UnitTests
 {
+    [TestClass]
     public class EventRepositoryTests
     {
-        [Test]
+        [TestMethod]
         public async Task AddAndLoadEvents()
         {
             var options = new DbContextOptionsBuilder<EventStoreContext>()
@@ -38,7 +38,7 @@ namespace Microwave.Eventstores.UnitTests
             Assert.AreEqual(2, loadEventsByEntity.Value.ToList()[1].Version);
         }
 
-        [Test]
+        [TestMethod]
         public async Task LoadDomainEvents_IdAndStuffIsSetCorreclty()
         {
             var options = new DbContextOptionsBuilder<EventStoreContext>()
@@ -66,7 +66,7 @@ namespace Microwave.Eventstores.UnitTests
             Assert.AreEqual(newGuid, loadEventsByEntity.Value.ToList()[0].DomainEvent.EntityId);
         }
 
-        [Test]
+        [TestMethod]
         public async Task AddAndLoadEventsConcurrent()
         {
             var options = new DbContextOptionsBuilder<EventStoreContext>()
@@ -85,12 +85,12 @@ namespace Microwave.Eventstores.UnitTests
             var t2 = eventRepository.AppendAsync(events2, 0);
 
             var allResults = await Task.WhenAll(t1, t2);
-            var concurrencyException = Assert.Throws<ConcurrencyViolatedException>(() => CheckAllResults(allResults));
+            var concurrencyException = Assert.ThrowsException<ConcurrencyViolatedException>(() => CheckAllResults(allResults));
             var concurrencyExceptionMessage = concurrencyException.Message;
             Assert.AreEqual("Concurrency fraud detected, could not update database. ExpectedVersion: 0, ActualVersion: 2", concurrencyExceptionMessage);
         }
 
-        [Test]
+        [TestMethod]
         public async Task Context_DoubleKeyException()
         {
             var options = new DbContextOptionsBuilder<EventStoreContext>()
@@ -113,10 +113,10 @@ namespace Microwave.Eventstores.UnitTests
             };
 
             await eventStoreContext.EntityStreams.AddAsync(domainEventDbo);
-            Assert.ThrowsAsync<InvalidOperationException>(async () => await eventStoreContext.EntityStreams.AddAsync(domainEventDbo2));
+            await Assert.ThrowsExceptionAsync<InvalidOperationException>(async () => await eventStoreContext.EntityStreams.AddAsync(domainEventDbo2));
         }
 
-        [Test]
+        [TestMethod]
         public async Task AddAndLoadEventsByTimeStamp()
         {
             var options = new DbContextOptionsBuilder<EventStoreContext>()
@@ -138,7 +138,7 @@ namespace Microwave.Eventstores.UnitTests
             Assert.AreEqual(newGuid, result.Value.ToList()[0].DomainEvent.EntityId);
         }
 
-        [Test]
+        [TestMethod]
         public async Task AddAndLoadEventsByTimeStamp_SavedAsType()
         {
             var options = new DbContextOptionsBuilder<EventStoreContext>()
@@ -163,7 +163,7 @@ namespace Microwave.Eventstores.UnitTests
             Assert.AreEqual(typeof(TestEvent1), result.Value.ToList()[0].DomainEvent.GetType());
         }
 
-        [Test]
+        [TestMethod]
         public async Task AddEvents_IdSet()
         {
             var options = new DbContextOptionsBuilder<EventStoreContext>()
@@ -182,7 +182,7 @@ namespace Microwave.Eventstores.UnitTests
             Assert.AreEqual(domainEvent.EntityId, testEvent1.EntityId);
         }
 
-        [Test]
+        [TestMethod]
         public async Task AddEvents_IdOfTypeSet()
         {
             var options = new DbContextOptionsBuilder<EventStoreContext>()
@@ -202,7 +202,7 @@ namespace Microwave.Eventstores.UnitTests
             Assert.AreEqual(domainEvent.EntityId, testEvent1.EntityId);
         }
 
-        [Test]
+        [TestMethod]
         public async Task AddEvents_RunTypeProjection()
         {
             var options = new DbContextOptionsBuilder<EventStoreContext>()

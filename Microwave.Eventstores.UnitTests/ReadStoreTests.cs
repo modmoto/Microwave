@@ -1,19 +1,18 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using Microwave.Application;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Domain;
 using Microwave.EventStores;
 using Microwave.ObjectPersistences;
-using NUnit.Framework;
 
 namespace Microwave.Eventstores.UnitTests
 {
+    [TestClass]
     public class ReadStoreTests
     {
-        [Test]
+        [TestMethod]
         public void TestDeserializationOfIdInInterface()
         {
             var objectConverter = new ObjectConverter();
@@ -24,7 +23,7 @@ namespace Microwave.Eventstores.UnitTests
             Assert.AreNotEqual(deserialize.EntityId, new Guid());
         }
 
-        [Test]
+        [TestMethod]
         public void TestDeserializationOfIdInInterface_DifferentParameterName()
         {
             var objectConverter = new ObjectConverter();
@@ -36,7 +35,7 @@ namespace Microwave.Eventstores.UnitTests
             Assert.AreNotEqual(deserialize.EntityId, new Guid());
         }
 
-        [Test]
+        [TestMethod]
         public void TestDeserializationOfIdInInterface_DifferentParameterNameList()
         {
             var domainEvent = new TestEv_DifferentParamName(new Guid("48eb878a-4483-40d9-bf4f-36c85ba5f803"), "testString");
@@ -48,7 +47,7 @@ namespace Microwave.Eventstores.UnitTests
             Assert.AreNotEqual(deserialize.EntityId, new Guid());
         }
 
-        [Test]
+        [TestMethod]
         public void TestDeserializationOfIdInInterface_DifferentParameterNameList_TwoEntries()
         {
             var domainEvent = new TestEv_DifferentParamName(new Guid("84e5447a-0a28-4fe1-af5a-11dd6a43d3dd"), "testString");
@@ -66,7 +65,7 @@ namespace Microwave.Eventstores.UnitTests
             Assert.AreNotEqual(deserialize2.EntityId, new Guid());
         }
 
-        [Test]
+        [TestMethod]
         public void TestDeserializationOfIdInInterface_DifferentParameterNameList_TwoEntries_MixedCamelCaseAndPascalCase()
         {
             var domainEvent = new TestEv_DifferentParamName(new Guid("84e5447a-0a28-4fe1-af5a-11dd6a43d3dd"), "testString");
@@ -83,8 +82,9 @@ namespace Microwave.Eventstores.UnitTests
             Assert.AreNotEqual(deserialize.EntityId, new Guid());
             Assert.AreNotEqual(deserialize2.EntityId, new Guid());
         }
+
         // This is not supported and might never be
-        [Test]
+        [TestMethod]
         public void TestDeserializationOfIdInInterface_OwnBackingField()
         {
             var objectConverter = new ObjectConverter();
@@ -94,7 +94,7 @@ namespace Microwave.Eventstores.UnitTests
             Assert.AreEqual(deserialize.EntityId, new Guid());
         }
 
-        [Test]
+        [TestMethod]
         public void TestDeserializationOfIdInInterface_GetAutoProperty()
         {
             var objectConverter = new ObjectConverter();
@@ -105,7 +105,7 @@ namespace Microwave.Eventstores.UnitTests
             Assert.AreNotEqual(deserialize.EntityId, new Guid());
         }
 
-        [Test]
+        [TestMethod]
         public async Task Entitystream_LoadEventsSince_IdNotDefault()
         {
             var optionsRead = new DbContextOptionsBuilder<EventStoreContext>()

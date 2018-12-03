@@ -1,13 +1,14 @@
 using System;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Domain;
 using Microwave.EventStores;
-using NUnit.Framework;
 
 namespace Microwave.Eventstores.UnitTests
 {
+    [TestClass]
     public class EventSourcingApplyStrategyTests
     {
-        [Test]
+        [TestMethod]
         public void ApplyGenericMethod()
         {
             var testUser = new TestUser();
@@ -17,7 +18,7 @@ namespace Microwave.Eventstores.UnitTests
             Assert.AreEqual(newGuid, testUser.Id);
         }
 
-        [Test]
+        [TestMethod]
         public void ApplyGenericMethod_NoApplyMethodFound()
         {
             var testUser = new TestUser();
@@ -26,7 +27,7 @@ namespace Microwave.Eventstores.UnitTests
             Assert.AreEqual(new Guid(), testUser.Id);
         }
 
-        [Test]
+        [TestMethod]
         public void ApplyGenericMethod_ApplyMethodWithNotParameter()
         {
             var testUser = new TestUserWithNoApplyMethod();
@@ -35,7 +36,7 @@ namespace Microwave.Eventstores.UnitTests
             Assert.AreEqual(new Guid(), testUser.Id);
         }
 
-        [Test]
+        [TestMethod]
         public void ApplyGenericMethod_ApplyMethodWithMultipleApplyParameters()
         {
             var testUser = new TestUserMultipleNoApplyMethod();

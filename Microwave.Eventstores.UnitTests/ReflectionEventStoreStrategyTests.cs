@@ -1,14 +1,15 @@
 using System;
 using System.Collections.Generic;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Domain;
 using Microwave.EventStores;
-using NUnit.Framework;
 
 namespace Microwave.Eventstores.UnitTests
 {
+    [TestClass]
     public class ReflectionEventStoreStrategyTests
     {
-        [Test]
+        [TestMethod]
         public void LoadEntity()
         {
             var entityId = Guid.NewGuid();
@@ -25,7 +26,7 @@ namespace Microwave.Eventstores.UnitTests
             Assert.AreEqual(entityId, testEntity.Id);
         }
 
-        [Test]
+        [TestMethod]
         public void LoadEntity_OldUnusedPropIsCalled()
         {
             var entityId = Guid.NewGuid();
@@ -42,7 +43,7 @@ namespace Microwave.Eventstores.UnitTests
             Assert.AreEqual(entityId, testEntity.Id);
         }
 
-        [Test]
+        [TestMethod]
         public void LoadEntity_CascadingProp()
         {
             var entityId = Guid.NewGuid();
@@ -61,7 +62,7 @@ namespace Microwave.Eventstores.UnitTests
             Assert.AreEqual(12, testEntity.Adress.Number);
         }
 
-        [Test]
+        [TestMethod]
         public void LoadEntity_OverridingPropertyByAccident()
         {
             var entityId = Guid.NewGuid();
@@ -80,7 +81,7 @@ namespace Microwave.Eventstores.UnitTests
             Assert.AreEqual(15, testEntity.Adress.Number);
         }
 
-        [Test]
+        [TestMethod]
         public void  LoadEntity_OverridingProperty_ThatStillFillsOtherProperty()
         {
             var entityId = Guid.NewGuid();

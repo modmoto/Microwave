@@ -1,11 +1,12 @@
 using System;
-using NUnit.Framework;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microwave.Domain.UnitTests
 {
+    [TestClass]
     public class ActualPropertyNameTests
     {
-        [Test]
+        [TestMethod]
         public void Constructor_SinglePath()
         {
             var actualPropertyName = new ActualPropertyName("Name");
@@ -13,7 +14,7 @@ namespace Microwave.Domain.UnitTests
 
         }
 
-        [Test]
+        [TestMethod]
         public void Constructor_MultiPath()
         {
             var actualPropertyName = new ActualPropertyName("User.Name");
@@ -21,10 +22,10 @@ namespace Microwave.Domain.UnitTests
             Assert.AreEqual("Name", actualPropertyName.Path[1]);
         }
 
-        [Test]
+        [TestMethod]
         public void Constructor_Exception()
         {
-            Assert.Throws<ArgumentException>(() => new ActualPropertyName(".User.Name"));
+            Assert.ThrowsException<ArgumentException>(() => new ActualPropertyName(".User.Name"));
         }
     }
 }

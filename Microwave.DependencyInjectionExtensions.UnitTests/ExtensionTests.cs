@@ -3,19 +3,19 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Application;
 using Microwave.Application.Ports;
 using Microwave.Domain;
 using Microwave.Queries;
 using Microwave.WebApi;
-using NUnit.Framework;
 
 namespace Microwave.DependencyInjectionExtensions.UnitTests
 {
-    [TestFixture]
+    [TestClass]
     public class ExtensionTests
     {
-        [Test]
+        [TestMethod]
         public void AddDiContainerTest()
         {
             var collection = (IServiceCollection) new ServiceCollection();
@@ -32,32 +32,32 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
             var handlers1 = delegateHandler1.ToList();
             var handlers2 = delegateHandler2.ToList();
             Assert.AreEqual(2, handlers1.Count);
-            Assert.IsNotNull(handlers1[0] as TestEventHandler);
-            Assert.IsNotNull(handlers1[1] as TestEventHandler2);
+            Assert.IsTrue(handlers1[0] is TestEventHandler);
+            Assert.IsTrue(handlers1[1] is TestEventHandler2);
             Assert.AreEqual(1, handlers2.Count);
-            Assert.IsNotNull(handlers2[0] as TestEventHandler);
+            Assert.IsTrue(handlers2[0] is TestEventHandler);
 
             var eventDelegateHandler = buildServiceProvider.GetServices<IEventDelegateHandler>().ToList();
-            Assert.NotNull(eventDelegateHandler[0] as EventDelegateHandler<TestDomainEvent>);
-            Assert.NotNull(eventDelegateHandler[1] as EventDelegateHandler<TestDomainEvent2>);
+            Assert.IsTrue(eventDelegateHandler[0] is EventDelegateHandler<TestDomainEvent>);
+            Assert.IsTrue(eventDelegateHandler[1] is EventDelegateHandler<TestDomainEvent2>);
 
             var eventFeed1 = buildServiceProvider.GetServices<IEventFeed<TestDomainEvent>>().SingleOrDefault();
             var eventFeed2 = buildServiceProvider.GetServices<IEventFeed<TestDomainEvent2>>().SingleOrDefault();
             var eventFeed3 = buildServiceProvider.GetServices<IEventFeed<TestDomainEvent3>>().SingleOrDefault();
-            Assert.NotNull(eventFeed1 as EventFeed<TestDomainEvent>);
-            Assert.NotNull(eventFeed2 as EventFeed<TestDomainEvent2>);
-            Assert.NotNull(eventFeed3 as EventFeed<TestDomainEvent3>);
+            Assert.IsTrue(eventFeed1 is EventFeed<TestDomainEvent>);
+            Assert.IsTrue(eventFeed2 is EventFeed<TestDomainEvent2>);
+            Assert.IsTrue(eventFeed3 is EventFeed<TestDomainEvent3>);
 
             var qHandler1 = buildServiceProvider.GetServices<IQueryEventHandler>().ToList();
-            Assert.NotNull(qHandler1[0] as QueryEventHandler<TestQuery, TestDomainEvent>);
-            Assert.NotNull(qHandler1[1] as QueryEventHandler<TestQuery, TestDomainEvent2>);
-            Assert.NotNull(qHandler1[2] as QueryEventHandler<TestQuery2, TestDomainEvent>);
+            Assert.IsTrue(qHandler1[0] is QueryEventHandler<TestQuery, TestDomainEvent>);
+            Assert.IsTrue(qHandler1[1] is QueryEventHandler<TestQuery, TestDomainEvent2>);
+            Assert.IsTrue(qHandler1[2] is QueryEventHandler<TestQuery2, TestDomainEvent>);
 
             var identHandler = buildServiceProvider.GetServices<IIdentifiableQueryEventHandler>().ToList();
-            Assert.NotNull(identHandler[0] as IdentifiableQueryEventHandler<TestIdQuery, TestDomainEvent>);
-            Assert.NotNull(identHandler[1] as IdentifiableQueryEventHandler<TestIdQuery, TestDomainEvent2>);
-            Assert.NotNull(identHandler[2] as IdentifiableQueryEventHandler<TestIdQuerySingle, TestDomainEvent3>);
-            Assert.NotNull(identHandler[3] as IdentifiableQueryEventHandler<TestIdQuery2, TestDomainEvent>);
+            Assert.IsTrue(identHandler[0] is IdentifiableQueryEventHandler<TestIdQuery, TestDomainEvent>);
+            Assert.IsTrue(identHandler[1] is IdentifiableQueryEventHandler<TestIdQuery, TestDomainEvent2>);
+            Assert.IsTrue(identHandler[2] is IdentifiableQueryEventHandler<TestIdQuerySingle, TestDomainEvent3>);
+            Assert.IsTrue(identHandler[3] is IdentifiableQueryEventHandler<TestIdQuery2, TestDomainEvent>);
         }
     }
 

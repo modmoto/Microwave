@@ -1,29 +1,29 @@
 using System;
 using Microsoft.Extensions.Configuration;
-using NUnit.Framework;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microwave.DependencyInjectionExtensions.UnitTests
 {
-    [TestFixture]
+    [TestClass]
     public class ConfigTests
     {
-        [Test]
+        [TestMethod]
         public void ConfigTest_ConfigNull()
         {
-            Assert.Throws<ArgumentException>(() => new EventLocationConfig(null));
+            Assert.ThrowsException<ArgumentException>(() => new EventLocationConfig(null));
         }
 
-        [Test]
+        [TestMethod]
         public void ConfigTest_BaseUrlNull()
         {
             var config = new ConfigurationBuilder()
                 .AddJsonFile("appsettings_valueForBaseUrlNull.test.json")
                 .Build();
-            var argumentException = Assert.Throws<ArgumentException>(() => new EventLocationConfig(config));
+            var argumentException = Assert.ThrowsException<ArgumentException>(() => new EventLocationConfig(config));
             Assert.AreEqual("Baseurl for event feed not defined in appsettings.json.", argumentException.Message);
         }
 
-        [Test]
+        [TestMethod]
         public void ConfigTest_LocationDefNull()
         {
             var config = new ConfigurationBuilder()

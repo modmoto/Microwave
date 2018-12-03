@@ -2,16 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using Microwave.Application;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.ObjectPersistences;
-using NUnit.Framework;
 
 namespace Microwave.Queries.UnitTests
 {
-    [TestFixture]
+    [TestClass]
     public class QueryRepositoryTest
     {
-        [Test]
+        [TestMethod]
         public async Task IdentifiableQuerySaveAndLoad()
         {
             var options = new DbContextOptionsBuilder<QueryStorageContext>()
@@ -29,7 +28,7 @@ namespace Microwave.Queries.UnitTests
             Assert.AreEqual("Test", querry1.UserName);
         }
 
-        [Test]
+        [TestMethod]
         public async Task InsertQuery()
         {
             var options = new DbContextOptionsBuilder<QueryStorageContext>()
@@ -44,7 +43,7 @@ namespace Microwave.Queries.UnitTests
             Assert.AreEqual("Test", query.UserName);
         }
 
-        [Test]
+        [TestMethod]
         public async Task InsertQuery_ConcurrencyProblem()
         {
             var options = new DbContextOptionsBuilder<QueryStorageContext>()
@@ -60,7 +59,7 @@ namespace Microwave.Queries.UnitTests
             await Task.WhenAll(new List<Task> { save, save2});
         }
 
-        [Test]
+        [TestMethod]
         public async Task InsertIDQuery_ConcurrencyProblem()
         {
             var options = new DbContextOptionsBuilder<QueryStorageContext>()
@@ -77,7 +76,7 @@ namespace Microwave.Queries.UnitTests
             await Task.WhenAll(new List<Task> { save, save2});
         }
 
-        [Test]
+        [TestMethod]
         public async Task UpdateQuery()
         {
             var options = new DbContextOptionsBuilder<QueryStorageContext>()

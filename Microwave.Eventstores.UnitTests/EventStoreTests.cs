@@ -1,19 +1,20 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Application;
 using Microwave.Application.Ports;
 using Microwave.Application.Results;
 using Microwave.Domain;
 using Microwave.EventStores;
 using Moq;
-using NUnit.Framework;
 
 namespace Microwave.Eventstores.UnitTests
 {
+    [TestClass]
     public class EventStoreTests
     {
-        [Test]
+        [TestMethod]
         public async Task ApplyMethod_HappyPath()
         {
             var entityStremRepo = new Mock<IEntityStreamRepository>();
@@ -31,7 +32,7 @@ namespace Microwave.Eventstores.UnitTests
             Assert.AreEqual(entityId, loadAsync.Entity.Id);
         }
 
-        [Test]
+        [TestMethod]
         public async Task ApplyMethod_NoIfDeclared()
         {
             var entityStremRepo = new Mock<IEntityStreamRepository>();
@@ -49,7 +50,7 @@ namespace Microwave.Eventstores.UnitTests
             Assert.AreEqual(new Guid(), loadAsync.Entity.Id);
         }
 
-        [Test]
+        [TestMethod]
         public async Task ApplyMethod_WrongIfDeclared()
         {
             var entityStremRepo = new Mock<IEntityStreamRepository>();

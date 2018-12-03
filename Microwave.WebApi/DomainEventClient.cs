@@ -1,5 +1,4 @@
 using System.Net.Http;
-using Microwave.Application;
 using Microwave.Application.Ports;
 
 namespace Microwave.WebApi
