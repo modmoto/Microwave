@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 namespace Microwave.Domain
 {
+    [Serializable]
     public class DomainValidationException : Exception
     {
         public IEnumerable<DomainError> DomainErrors { get; }

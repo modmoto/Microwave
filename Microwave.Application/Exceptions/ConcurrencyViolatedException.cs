@@ -2,6 +2,7 @@
 
 namespace Microwave.Application.Exceptions
 {
+    [Serializable]
     public class ConcurrencyViolatedException : Exception
     {
         public ConcurrencyViolatedException(long expectedVersion, long actualVersion) : base(
