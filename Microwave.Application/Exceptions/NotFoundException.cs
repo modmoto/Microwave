@@ -7,6 +7,7 @@ namespace Microwave.Application.Exceptions
     public class NotFoundException : Exception
     {
         protected NotFoundException(SerializationInfo serializationInfo, StreamingContext streamingContext)
+            : base(serializationInfo, streamingContext)
         {
         }
 

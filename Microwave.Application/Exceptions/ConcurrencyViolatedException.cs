@@ -7,6 +7,7 @@ namespace Microwave.Application.Exceptions
     public class ConcurrencyViolatedException : Exception
     {
         protected ConcurrencyViolatedException(SerializationInfo serializationInfo, StreamingContext streamingContext)
+            : base(serializationInfo, streamingContext)
         {
         }
 

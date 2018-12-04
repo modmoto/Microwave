@@ -8,6 +8,7 @@ namespace Microwave.Domain
     public class DomainValidationException : Exception
     {
         protected DomainValidationException(SerializationInfo serializationInfo, StreamingContext streamingContext)
+            : base(serializationInfo, streamingContext)
         {
         }
 
