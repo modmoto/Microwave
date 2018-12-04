@@ -26,7 +26,7 @@ environment:
   - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
  sonarCubeToken:
     secure: kQ0ruzPw50qAJfN2Qv36sXyA1SGVJbAHB+Zz26HsRrzAaeuEbTeQkysf3A5G/3Dy
- actualBuildVersionsonarCubeToken: '{version}'
+ actualBuildVersion: '{version}'
 
 build_script:
 - dotnet build
