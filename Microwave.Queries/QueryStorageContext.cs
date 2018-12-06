@@ -7,6 +7,7 @@ namespace Microwave.Queries
     {
         public DbSet<QueryDbo> Querries { get; set; }
         public DbSet<IdentifiableQueryDbo> IdentifiableQuerries { get; set; }
+        public DbSet<LastProcessedVersionDbo> ProcessedVersions { get; set; }
 
         public QueryStorageContext(DbContextOptions<QueryStorageContext> options) :
             base(options)
@@ -26,5 +27,18 @@ namespace Microwave.Queries
         [Key]
         public string Type { get; set; }
         public string Payload { get; set; }
+    }
+
+    public class LastProcessedVersionDbo
+    {
+        public LastProcessedVersionDbo(string eventType, long lastVersion)
+        {
+            EventType = eventType;
+            LastVersion = lastVersion;
+        }
+
+        [Key] public string EventType { get; set; }
+
+        public long LastVersion { get; set; }
     }
 }

@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Application.Ports;
 using Microwave.Domain;
-using Microwave.EventStores;
+using Microwave.Queries;
 using Moq;
 
 namespace Microwave.Application.UnitTests
@@ -16,11 +16,11 @@ namespace Microwave.Application.UnitTests
         [TestMethod]
         public async Task HandleIsOnlyCalledOnce()
         {
-            var options = new DbContextOptionsBuilder<EventStoreContext>()
+            var options = new DbContextOptionsBuilder<QueryStorageContext>()
                 .UseInMemoryDatabase("HandleIsOnlyCalledOnce")
                 .Options;
 
-            var eventStoreContext = new EventStoreContext(options);
+            var eventStoreContext = new QueryStorageContext(options);
 
             var eventFeedMock = new Mock<IEventFeed<TestEv2>>();
             var domainEventWrapper = new DomainEventHto<TestEv2>

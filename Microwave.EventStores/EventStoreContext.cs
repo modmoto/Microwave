@@ -1,12 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace Microwave.EventStores
 {
     public sealed class EventStoreContext : DbContext
     {
         public DbSet<DomainEventDbo> EntityStreams { get; set; }
-        public DbSet<LastProcessedVersionDbo> ProcessedVersions { get; set; }
 
         public EventStoreContext(DbContextOptions<EventStoreContext> options) :
             base(options)
@@ -27,18 +25,5 @@ namespace Microwave.EventStores
         public long Created { get; set; }
         public long Version { get; set; }
         public string EventType { get; set; }
-    }
-
-    public class LastProcessedVersionDbo
-    {
-        public LastProcessedVersionDbo(string eventType, long lastVersion)
-        {
-            EventType = eventType;
-            LastVersion = lastVersion;
-        }
-
-        [Key] public string EventType { get; set; }
-
-        public long LastVersion { get; set; }
     }
 }

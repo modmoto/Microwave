@@ -23,6 +23,7 @@
     <ItemGroup>
       <ProjectReference Include="..\Microwave.EventStores\Microwave.EventStores.csproj" />
       <ProjectReference Include="..\Microwave.ObjectPersistences\Microwave.ObjectPersistences.csproj" />
+      <ProjectReference Include="..\Microwave.Queries\Microwave.Queries.csproj" />
     </ItemGroup>
 
 </Project>

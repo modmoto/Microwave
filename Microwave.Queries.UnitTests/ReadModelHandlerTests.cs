@@ -6,7 +6,6 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Application;
 using Microwave.Application.Ports;
 using Microwave.Domain;
-using Microwave.EventStores;
 using Microwave.ObjectPersistences;
 
 namespace Microwave.Queries.UnitTests
@@ -22,14 +21,10 @@ namespace Microwave.Queries.UnitTests
                 .UseInMemoryDatabase("UpdateReadmodelHandler")
                 .Options;
 
-            var optionsStore = new DbContextOptionsBuilder<EventStoreContext>()
-                .UseInMemoryDatabase("UpdateReadmodelHandlerEventStore")
-                .Options;
-
             var queryRepository = new QueryRepository(new QueryStorageContext(options), new ObjectConverter());
 
             var readModelHandler = new ReadModelHandler<TestReadModel, TestEvnt2>(queryRepository, new VersionRepository(new
-                EventStoreContext(optionsStore)), new FeedMock());
+                QueryStorageContext(options)), new FeedMock());
             await readModelHandler.Update();
 
             var result = await queryRepository.Load<TestReadModel>(EntityGuid);
