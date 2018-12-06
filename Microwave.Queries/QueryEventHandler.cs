@@ -26,7 +26,7 @@ namespace Microwave.Queries
         {
             var domainEventType = $"QuerryHandler-{typeof(TQuerry).Name}-{typeof(TEvent).Name}";
             var lastVersion = await _versionRepository.GetVersionAsync(domainEventType);
-            var latestEvents = await _eventFeed.GetEventsByTypeAsync(lastVersion);
+            var latestEvents = await _eventFeed.GetEventsAsync(lastVersion);
             var domainEvents = latestEvents.ToList();
             if (!domainEvents.Any()) return;
 

@@ -27,7 +27,7 @@ namespace Microwave.Queries
             return Result<T>.Ok(data);
         }
 
-        public async Task<Result<ReadModelWrapper<T>>> Load<T>(Guid id) where T : IdentifiableQuery
+        public async Task<Result<ReadModelWrapper<T>>> Load<T>(Guid id) where T : ReadModel
         {
             var querry = await _context.IdentifiableQuerries.FindAsync(id.ToString());
             if (querry == null) return Result<ReadModelWrapper<T>>.NotFound(id.ToString());
@@ -62,7 +62,7 @@ namespace Microwave.Queries
             }
         }
 
-        public Task<Result> SaveById<TQuerry>(ReadModelWrapper<TQuerry> query) where TQuerry : IdentifiableQuery, new()
+        public Task<Result> SaveById<TQuerry>(ReadModelWrapper<TQuerry> query) where TQuerry : ReadModel, new()
         {
             lock (_idQuerryLock)
             {

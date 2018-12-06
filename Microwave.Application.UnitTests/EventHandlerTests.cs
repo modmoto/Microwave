@@ -23,13 +23,13 @@ namespace Microwave.Application.UnitTests
             var eventStoreContext = new EventStoreContext(options);
 
             var eventFeedMock = new Mock<IEventFeed<TestEv2>>();
-            var domainEventWrapper = new DomainEventWrapper<TestEv2>
+            var domainEventWrapper = new DomainEventHto<TestEv2>
             {
                 Created = 12,
                 DomainEvent = new TestEv2()
             };
 
-            eventFeedMock.Setup(feed => feed.GetEventsByTypeAsync(0)).ReturnsAsync(new[] { domainEventWrapper });
+            eventFeedMock.Setup(feed => feed.GetEventsAsync(0)).ReturnsAsync(new[] { domainEventWrapper });
 
             var handleAsync = new Handler1();
             var handleAsync2 = new Handler2();

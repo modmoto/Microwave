@@ -27,7 +27,7 @@ namespace Microwave.Application
             {
                 var domainEventType = $"{handle.GetType().Name}-{typeof(T).Name}";
                 var lastVersion = await _versionRepository.GetVersionAsync(domainEventType);
-                var latestEvents = await _eventFeed.GetEventsByTypeAsync(lastVersion);
+                var latestEvents = await _eventFeed.GetEventsAsync(lastVersion);
                 foreach (var latestEvent in latestEvents)
                 {
                     await handle.HandleAsync(latestEvent.DomainEvent);

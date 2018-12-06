@@ -28,7 +28,7 @@ namespace Microwave.Queries.UnitTests
 
             var queryRepository = new QueryRepository(new QueryStorageContext(options), new ObjectConverter());
 
-            var readModelHandler = new ReadModelHandler<TestReadModel>(queryRepository, new VersionRepository(new
+            var readModelHandler = new ReadModelHandler<TestReadModel, TestEvnt2>(queryRepository, new VersionRepository(new
                 EventStoreContext(optionsStore)), new FeedMock());
             await readModelHandler.Update();
 
@@ -40,7 +40,7 @@ namespace Microwave.Queries.UnitTests
         public static Guid EntityGuid { get; set; }
     }
 
-    public class TestReadModel : IdentifiableQuery, IHandle<TestEvnt2>
+    public class TestReadModel : ReadModel, IHandle<TestEvnt2>
     {
         public void Handle(TestEvnt2 domainEvent)
         {
@@ -50,22 +50,22 @@ namespace Microwave.Queries.UnitTests
         public Guid Id { get; set; }
     }
 
-    public class FeedMock : IEventFeed
+    public class FeedMock : IEventFeed<TestEvnt2>
     {
-        public Task<IEnumerable<DomainEventWrapper>> GetEvents(long lastVersion)
+        public Task<IEnumerable<DomainEventHto<TestEvnt2>>> GetEventsAsync(long lastVersion)
         {
-            var domainEventWrapper = new DomainEventWrapper
+            var domainEventWrapper = new DomainEventHto<TestEvnt2>
             {
                 Version = 12,
                 DomainEvent = new TestEvnt2(ReadModelHandlerTests.EntityGuid)
             };
-            var domainEventWrappe2 = new DomainEventWrapper
+            var domainEventWrappe2 = new DomainEventHto<TestEvnt2>
             {
                 Version = 14,
                 DomainEvent = new TestEvnt2(ReadModelHandlerTests.EntityGuid)
             };
-            var list = new List<DomainEventWrapper> {domainEventWrapper, domainEventWrappe2};
-            return Task.FromResult((IEnumerable<DomainEventWrapper>) list);
+            var list = new List<DomainEventHto<TestEvnt2>> {domainEventWrapper, domainEventWrappe2};
+            return Task.FromResult((IEnumerable<DomainEventHto<TestEvnt2>>) list);
         }
     }
 

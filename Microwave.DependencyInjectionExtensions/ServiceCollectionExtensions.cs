@@ -70,7 +70,7 @@ namespace Microwave.DependencyInjectionExtensions
 
             //QueryHandlers
             services.AddQueryHandler(assembly);
-            services.AddIdentifiableQueryHandler(assembly);
+            services.AddReadmodelHandler(assembly);
 
             services.AddSingleton<IEventLocationConfig>(new EventLocationConfig(configuration));
 
@@ -166,7 +166,7 @@ namespace Microwave.DependencyInjectionExtensions
             var allHandlerTypes = handlerInterfaces.ToList();
             allHandlerTypes.AddRange(handlerAsyncInterfaces.ToList());
             var genericInterfaceTypeOfFeed = typeof(IEventFeed<>);
-            var genericTypeOfFeed = typeof(EventFeed<>);
+            var genericTypeOfFeed = typeof(EventTypeFeed<>);
 
             var interfacesWithDomainEventImplementation = allHandlerTypes.SelectMany(i => i.GetInterfaces().Where(IsDomainEvent)).ToList();
             var domainEventTypes = interfacesWithDomainEventImplementation.Select(e => e.GenericTypeArguments.Single()).Distinct();
@@ -209,25 +209,25 @@ namespace Microwave.DependencyInjectionExtensions
             return services;
         }
 
-        private static IServiceCollection AddIdentifiableQueryHandler(this IServiceCollection services, Assembly assembly)
+        private static IServiceCollection AddReadmodelHandler(this IServiceCollection services, Assembly assembly)
         {
             var addTransient = typeof(ServiceCollectionServiceExtensions).GetMethods().Single(m =>
                 m.Name == "AddTransient" && m.GetGenericArguments().Length == 2 &&
                 m.GetParameters().Length == 1);
 
-            var handlerInterface = typeof(IIdentifiableQueryEventHandler);
-            var genericTypeOfHandler = typeof(IdentifiableQueryEventHandler<,>);
+            var handlerInterface = typeof(IReadModelHandler);
+            var genericTypeOfHandler = typeof(ReadModelHandler<,>);
 
-            var allQuerries = assembly.GetTypes().Where(t => t.BaseType == typeof(IdentifiableQuery));
+            var allReadModels = assembly.GetTypes().Where(t => t.BaseType == typeof(ReadModel));
 
-            foreach (var querry in allQuerries)
+            foreach (var readModel in allReadModels)
             {
-                var interfacesWithDomainEventImplementation = querry.GetInterfaces().Where(IsDomainEvent).ToList();
+                var interfacesWithDomainEventImplementation = readModel.GetInterfaces().Where(IsDomainEvent).ToList();
                 var domainEventTypes = interfacesWithDomainEventImplementation.Select(e => e.GenericTypeArguments.Single()).Distinct();
 
                 foreach (var domainEventType in domainEventTypes)
                 {
-                    var handler = genericTypeOfHandler.MakeGenericType(querry, domainEventType);
+                    var handler = genericTypeOfHandler.MakeGenericType(readModel, domainEventType);
                     var addTransientCall = addTransient.MakeGenericMethod(handlerInterface, handler);
                     addTransientCall.Invoke(null, new object[] { services });
                 }

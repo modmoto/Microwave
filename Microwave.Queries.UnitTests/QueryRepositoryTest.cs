@@ -101,7 +101,7 @@ namespace Microwave.Queries.UnitTests
         public string UserName { get; set; }
     }
 
-    public class TestIdQuerry : IdentifiableQuery
+    public class TestIdQuerry : ReadModel
     {
         public string UserName { get; private set; }
 

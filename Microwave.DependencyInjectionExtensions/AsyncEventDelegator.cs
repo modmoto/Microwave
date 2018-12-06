@@ -10,12 +10,12 @@ namespace Microwave.DependencyInjectionExtensions
     {
         private readonly IEnumerable<IEventDelegateHandler> _handler;
         private readonly IEnumerable<IQueryEventHandler> _queryEventHandlers;
-        private readonly IEnumerable<IIdentifiableQueryEventHandler> _identifiableQueryEventHandlers;
+        private readonly IEnumerable<IReadModelHandler> _identifiableQueryEventHandlers;
 
         public AsyncEventDelegator(
             IEnumerable<IEventDelegateHandler> handler,
             IEnumerable<IQueryEventHandler> queryEventHandlers,
-            IEnumerable<IIdentifiableQueryEventHandler> identifiableQueryEventHandlers)
+            IEnumerable<IReadModelHandler> identifiableQueryEventHandlers)
         {
             _handler = handler;
             _queryEventHandlers = queryEventHandlers;

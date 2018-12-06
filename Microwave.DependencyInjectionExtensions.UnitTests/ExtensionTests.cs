@@ -44,20 +44,20 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
             var eventFeed1 = buildServiceProvider.GetServices<IEventFeed<TestDomainEvent>>().SingleOrDefault();
             var eventFeed2 = buildServiceProvider.GetServices<IEventFeed<TestDomainEvent2>>().SingleOrDefault();
             var eventFeed3 = buildServiceProvider.GetServices<IEventFeed<TestDomainEvent3>>().SingleOrDefault();
-            Assert.IsTrue(eventFeed1 is EventFeed<TestDomainEvent>);
-            Assert.IsTrue(eventFeed2 is EventFeed<TestDomainEvent2>);
-            Assert.IsTrue(eventFeed3 is EventFeed<TestDomainEvent3>);
+            Assert.IsTrue(eventFeed1 is EventTypeFeed<TestDomainEvent>);
+            Assert.IsTrue(eventFeed2 is EventTypeFeed<TestDomainEvent2>);
+            Assert.IsTrue(eventFeed3 is EventTypeFeed<TestDomainEvent3>);
 
             var qHandler1 = buildServiceProvider.GetServices<IQueryEventHandler>().ToList();
             Assert.IsTrue(qHandler1[0] is QueryEventHandler<TestQuery, TestDomainEvent>);
             Assert.IsTrue(qHandler1[1] is QueryEventHandler<TestQuery, TestDomainEvent2>);
             Assert.IsTrue(qHandler1[2] is QueryEventHandler<TestQuery2, TestDomainEvent>);
 
-            var identHandler = buildServiceProvider.GetServices<IIdentifiableQueryEventHandler>().ToList();
-            Assert.IsTrue(identHandler[0] is IdentifiableQueryEventHandler<TestIdQuery, TestDomainEvent>);
-            Assert.IsTrue(identHandler[1] is IdentifiableQueryEventHandler<TestIdQuery, TestDomainEvent2>);
-            Assert.IsTrue(identHandler[2] is IdentifiableQueryEventHandler<TestIdQuerySingle, TestDomainEvent3>);
-            Assert.IsTrue(identHandler[3] is IdentifiableQueryEventHandler<TestIdQuery2, TestDomainEvent>);
+            var identHandler = buildServiceProvider.GetServices<IReadModelHandler>().ToList();
+            Assert.IsTrue(identHandler[0] is ReadModelHandler<TestIdQuery, TestDomainEvent>);
+            Assert.IsTrue(identHandler[1] is ReadModelHandler<TestIdQuery, TestDomainEvent2>);
+            Assert.IsTrue(identHandler[2] is ReadModelHandler<TestIdQuerySingle, TestDomainEvent3>);
+            Assert.IsTrue(identHandler[3] is ReadModelHandler<TestIdQuery2, TestDomainEvent>);
         }
 
         [Ignore]
@@ -76,13 +76,13 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
             var eventFeed1 = buildServiceProvider.GetServices<IEventFeed<TestDomainEvent>>().SingleOrDefault();
-            var identHandler = buildServiceProvider.GetServices<IIdentifiableQueryEventHandler>().ToList();
-            Assert.IsTrue(identHandler[0] is IdentifiableQueryEventHandler<TestIdQuery, TestDomainEvent>);
-            Assert.IsTrue(eventFeed1 is EventFeed<TestDomainEvent>);
+            var identHandler = buildServiceProvider.GetServices<IReadModelHandler>().ToList();
+            Assert.IsTrue(identHandler[0] is ReadModelHandler<TestIdQuery, TestDomainEvent>);
+            Assert.IsTrue(eventFeed1 is EventTypeFeed<TestDomainEvent>);
         }
     }
 
-    public class TestIdQuery : IdentifiableQuery, IHandle<TestDomainEvent>, IHandle<TestDomainEvent2>
+    public class TestIdQuery : ReadModel, IHandle<TestDomainEvent>, IHandle<TestDomainEvent2>
     {
         public void Handle(TestDomainEvent domainEvent)
         {
@@ -93,7 +93,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
         }
     }
 
-    public class TestIdQuerySingle : IdentifiableQuery, IHandle<TestDomainEvent3>
+    public class TestIdQuerySingle : ReadModel, IHandle<TestDomainEvent3>
     {
         public void Handle(TestDomainEvent3 domainEvent)
         {
@@ -105,7 +105,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
         public Guid EntityId { get; }
     }
 
-    public class TestIdQuery2 : IdentifiableQuery, IHandle<TestDomainEvent>
+    public class TestIdQuery2 : ReadModel, IHandle<TestDomainEvent>
     {
         public void Handle(TestDomainEvent domainEvent)
         {

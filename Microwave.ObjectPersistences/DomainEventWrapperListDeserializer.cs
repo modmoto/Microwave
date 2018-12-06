@@ -23,9 +23,9 @@ namespace Microwave.ObjectPersistences
             ContractResolver = new PrivateSetterContractResolver()
         };
 
-        public IEnumerable<DomainEventWrapper<T>> Deserialize<T>(string payLoad) where T : IDomainEvent
+        public IEnumerable<DomainEventHto<T>> Deserialize<T>(string payLoad) where T : IDomainEvent
         {
-            var list = JsonConvert.DeserializeObject<IEnumerable<DomainEventWrapper<T>>>(payLoad, _settings);
+            var list = JsonConvert.DeserializeObject<IEnumerable<DomainEventHto<T>>>(payLoad, _settings);
             var domainEventJobjectStuff = JToken.Parse(payLoad);
             var jobjectList = domainEventJobjectStuff.ToObject<List<JObject>>();
 
