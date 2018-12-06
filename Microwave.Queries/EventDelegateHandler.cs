@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Microwave.Application.Ports;
 using Microwave.Domain;
 
-namespace Microwave.Application
+namespace Microwave.Queries
 {
     public class EventDelegateHandler<T> : IEventDelegateHandler where T : IDomainEvent
     {

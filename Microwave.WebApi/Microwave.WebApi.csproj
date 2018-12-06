@@ -11,6 +11,7 @@
     <ItemGroup>
       <ProjectReference Include="..\Microwave.Application\Microwave.Application.csproj" />
       <ProjectReference Include="..\Microwave.ObjectPersistences\Microwave.ObjectPersistences.csproj" />
+      <ProjectReference Include="..\Microwave.Queries\Microwave.Queries.csproj" />
     </ItemGroup>
     <ItemGroup>
         <PackageReference Include="Microsoft.AspNetCore.Mvc">

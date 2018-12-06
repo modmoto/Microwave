@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Microwave.Domain;
 
-namespace Microwave.Application.Ports
+namespace Microwave.Queries
 {
     public interface IHandleAsync<in T> where T : IDomainEvent
     {

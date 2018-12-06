@@ -9,6 +9,7 @@
     <ProjectReference Include="..\Microwave.Application\Microwave.Application.csproj" />
     <ProjectReference Include="..\Microwave.Domain\Microwave.Domain.csproj" />
     <ProjectReference Include="..\Microwave.ObjectPersistences\Microwave.ObjectPersistences.csproj" />
+    <ProjectReference Include="..\Microwave.Queries\Microwave.Queries.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="2.1.4" />

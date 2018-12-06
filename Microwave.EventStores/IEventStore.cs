@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microwave.Domain;
 
-namespace Microwave.Application.Ports
+namespace Microwave.EventStores
 {
     public interface IEventStore
     {
