@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -20,13 +21,14 @@ namespace Microwave.Queries.UnitTests
             var queryRepository = new QueryRepository(new QueryStorageContext(options), new ObjectConverter());
             var guid = Guid.NewGuid();
             var testQuerry = new TestIdQuerry();
-            testQuerry.SetVars("Test", guid);
+            testQuerry.SetVars("Test", guid, new []{ "Jeah", "jeah2"});
             await queryRepository.SaveById(new ReadModelWrapper<TestIdQuerry>(testQuerry, guid, 1));
 
             var querry1 = (await queryRepository.Load<TestIdQuerry>(guid)).Value;
 
             Assert.AreEqual(guid, querry1.Id);
             Assert.AreEqual("Test", querry1.ReadModel.UserName);
+            Assert.AreEqual("Jeah", querry1.ReadModel.Strings.First());
         }
 
         [TestMethod]
@@ -70,14 +72,14 @@ namespace Microwave.Queries.UnitTests
             var queryRepository = new QueryRepository(new QueryStorageContext(options), new ObjectConverter());
             Guid guid = Guid.NewGuid();
             var testQuery = new TestIdQuerry();
-            testQuery.SetVars("Test1", guid);
+            testQuery.SetVars("Test1", guid, new []{ "Jeah", "jeah2"});
             var testQuery2 = new TestIdQuerry();
-            testQuery2.SetVars("Test2", guid);
+            testQuery2.SetVars("Test2", guid, new []{ "Jeah", "jeah2"});
 
             var save = queryRepository.SaveById(new ReadModelWrapper<TestIdQuerry>(testQuery, guid, 1));
             var save2 = queryRepository.SaveById(new ReadModelWrapper<TestIdQuerry>(testQuery2, guid, 2));
 
-            await Task.WhenAll(new List<Task> { save, save2});
+            await Task.WhenAll(new List<Task> { save, save2 });
         }
 
         [TestMethod]
@@ -104,10 +106,12 @@ namespace Microwave.Queries.UnitTests
     public class TestIdQuerry : ReadModel
     {
         public string UserName { get; private set; }
+        public IEnumerable<string> Strings { get; private set; } = new List<string>();
 
-        public void SetVars(string test, Guid guid)
+        public void SetVars(string test, Guid guid, IEnumerable<string> str)
         {
             UserName = test;
+            Strings = str;
         }
     }
 }
