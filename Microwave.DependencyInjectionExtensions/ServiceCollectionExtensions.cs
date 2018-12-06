@@ -31,34 +31,18 @@ namespace Microwave.DependencyInjectionExtensions
             return builder;
         }
 
-        public static IServiceCollection AddMicrowave(this IServiceCollection services,
+        public static IServiceCollection AddMicrowaveQuerries(this IServiceCollection services,
             Assembly assembly, IConfiguration configuration)
         {
-            services.AddTransient<DomainEventController>();
-            services.AddTransient<JSonHack>();
-            services.AddTransient<DomainEventDeserializer>();
-            services.AddTransient<DomainEventWrapperListDeserializer>();
-
-            services.AddTransient<IEventStore, EventStore>();
-            services.AddTransient<IObjectConverter, ObjectConverter>();
-            services.AddDbContext<EventStoreContext>(option =>
-                option.UseSqlite("Data Source=EventStoreContext.db"));
-            services.AddTransient<IEventRepository, EventRepository>();
             services.AddDbContext<QueryStorageContext>(option =>
                 option.UseSqlite("Data Source=QueryStorageContext.db"));
-            services.AddTransient<IEventRepository, EventRepository>();
+
+            services.AddTransient<DomainEventWrapperListDeserializer>();
+            services.AddTransient<JSonHack>();
+            services.AddTransient<IObjectConverter, ObjectConverter>();
             services.AddTransient<IVersionRepository, VersionRepository>();
             services.AddTransient<IQeryRepository, QueryRepository>();
-
             services.AddTransient<AsyncEventDelegator>();
-
-            //WebApi
-            services.AddMvcCore(config =>
-            {
-                config.Filters.Add(new DomainValidationFilter());
-                config.Filters.Add(new NotFoundFilter());
-                config.Filters.Add(new ConcurrencyViolatedFilter());
-            });
 
             //Handler
             services.AddIEventDelegateHandler(assembly);
@@ -73,6 +57,30 @@ namespace Microwave.DependencyInjectionExtensions
             services.AddReadmodelHandler(assembly);
 
             services.AddSingleton<IEventLocationConfig>(new EventLocationConfig(configuration));
+
+            return services;
+        }
+
+        public static IServiceCollection AddMicrowave(this IServiceCollection services)
+        {
+            services.AddTransient<DomainEventController>();
+            services.AddTransient<JSonHack>();
+            services.AddTransient<DomainEventDeserializer>();
+            services.AddTransient<DomainEventWrapperListDeserializer>();
+
+            services.AddTransient<IEventStore, EventStore>();
+            services.AddTransient<IObjectConverter, ObjectConverter>();
+            services.AddDbContext<EventStoreContext>(option =>
+                option.UseSqlite("Data Source=EventStoreContext.db"));
+            services.AddTransient<IEventRepository, EventRepository>();
+
+            //WebApi
+            services.AddMvcCore(config =>
+            {
+                config.Filters.Add(new DomainValidationFilter());
+                config.Filters.Add(new NotFoundFilter());
+                config.Filters.Add(new ConcurrencyViolatedFilter());
+            });
 
             return services;
         }

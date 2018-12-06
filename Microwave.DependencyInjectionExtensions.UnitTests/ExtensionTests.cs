@@ -23,7 +23,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
                 .AddJsonFile("appsettings.test.json")
                 .Build();
 
-            var storeDependencies = collection.AddMicrowave(typeof(TestEventHandler).Assembly, config);
+            var storeDependencies = collection.AddMicrowaveQuerries(typeof(TestEventHandler).Assembly, config);
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
             var delegateHandler1 = buildServiceProvider.GetServices<IHandleAsync<TestDomainEvent>>();
@@ -60,7 +60,6 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
             Assert.IsTrue(identHandler[3] is ReadModelHandler<TestIdQuery2, TestDomainEvent>);
         }
 
-        [Ignore]
         [TestMethod]
         public void AddDiContainerTest_Twice()
         {
@@ -70,15 +69,28 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
                 .Build();
 
             var storeDependencies = collection
-                .AddMicrowave(typeof(TestEventHandler).Assembly, config)
-                .AddMicrowave(typeof(TestEventHandler).Assembly, config);
+                .AddMicrowaveQuerries(typeof(TestEventHandler).Assembly, config)
+                .AddMicrowaveQuerries(typeof(TestEventHandler).Assembly, config);
 
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
-            var eventFeed1 = buildServiceProvider.GetServices<IEventFeed<TestDomainEvent>>().SingleOrDefault();
+            var eventFeed1 = buildServiceProvider.GetServices<IEventFeed<TestDomainEvent>>().FirstOrDefault();
             var identHandler = buildServiceProvider.GetServices<IReadModelHandler>().ToList();
             Assert.IsTrue(identHandler[0] is ReadModelHandler<TestIdQuery, TestDomainEvent>);
             Assert.IsTrue(eventFeed1 is EventTypeFeed<TestDomainEvent>);
+        }
+
+        [TestMethod]
+        public void AddMicrowaveDependencies()
+        {
+            var collection = (IServiceCollection) new ServiceCollection();
+
+            var storeDependencies = collection.AddMicrowave();
+
+            var buildServiceProvider = storeDependencies.BuildServiceProvider();
+
+            var store = buildServiceProvider.GetServices<IEventStore>().FirstOrDefault();
+            Assert.IsNotNull(store);
         }
     }
 
