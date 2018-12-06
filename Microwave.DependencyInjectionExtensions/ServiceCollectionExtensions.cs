@@ -21,8 +21,8 @@ namespace Microwave.DependencyInjectionExtensions
         {
             using (var serviceScope = builder.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
             {
-                var eventStoreContext = serviceScope.ServiceProvider.GetRequiredService<EventStoreContext>();
-                var queryStorageContext = serviceScope.ServiceProvider.GetRequiredService<QueryStorageContext>();
+                var eventStoreContext = serviceScope.ServiceProvider.GetService<EventStoreContext>();
+                var queryStorageContext = serviceScope.ServiceProvider.GetService<QueryStorageContext>();
 
                 eventStoreContext?.Database.EnsureCreated();
                 queryStorageContext?.Database.EnsureCreated();
