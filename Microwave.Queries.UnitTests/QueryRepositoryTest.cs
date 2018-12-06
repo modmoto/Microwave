@@ -19,13 +19,14 @@ namespace Microwave.Queries.UnitTests
 
             var queryRepository = new QueryRepository(new QueryStorageContext(options), new ObjectConverter());
             var guid = Guid.NewGuid();
-            var testQuerry = new TestIdQuerry { UserName = "Test", Id = guid};
-            await queryRepository.Save(testQuerry);
+            var testQuerry = new TestIdQuerry();
+            testQuerry.SetVars("Test", guid);
+            await queryRepository.SaveById(new ReadModelWrapper<TestIdQuerry>(testQuerry, guid, 1));
 
             var querry1 = (await queryRepository.Load<TestIdQuerry>(guid)).Value;
 
             Assert.AreEqual(guid, querry1.Id);
-            Assert.AreEqual("Test", querry1.UserName);
+            Assert.AreEqual("Test", querry1.ReadModel.UserName);
         }
 
         [TestMethod]
@@ -68,10 +69,13 @@ namespace Microwave.Queries.UnitTests
 
             var queryRepository = new QueryRepository(new QueryStorageContext(options), new ObjectConverter());
             Guid guid = Guid.NewGuid();
-            var testQuery = new TestIdQuerry { Id = guid, UserName = "Test1"};
-            var testQuery2 = new TestIdQuerry { Id = guid, UserName = "Test2"};
-            var save = queryRepository.Save(testQuery);
-            var save2 = queryRepository.Save(testQuery2);
+            var testQuery = new TestIdQuerry();
+            testQuery.SetVars("Test1", guid);
+            var testQuery2 = new TestIdQuerry();
+            testQuery2.SetVars("Test2", guid);
+
+            var save = queryRepository.SaveById(new ReadModelWrapper<TestIdQuerry>(testQuery, guid, 1));
+            var save2 = queryRepository.SaveById(new ReadModelWrapper<TestIdQuerry>(testQuery2, guid, 2));
 
             await Task.WhenAll(new List<Task> { save, save2});
         }
@@ -99,6 +103,11 @@ namespace Microwave.Queries.UnitTests
 
     public class TestIdQuerry : IdentifiableQuery
     {
-        public string UserName { get; set; }
+        public string UserName { get; private set; }
+
+        public void SetVars(string test, Guid guid)
+        {
+            UserName = test;
+        }
     }
 }

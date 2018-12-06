@@ -1,6 +1,5 @@
 using System;
 using Microsoft.Extensions.Configuration;
-using Microwave.Application;
 using Microwave.Application.Ports;
 
 namespace Microwave.DependencyInjectionExtensions

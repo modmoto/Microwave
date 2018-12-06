@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Microwave.Application;
 using Microwave.Application.Ports;
 using Microwave.Application.Results;
 
@@ -28,12 +27,13 @@ namespace Microwave.Queries
             return Result<T>.Ok(data);
         }
 
-        public async Task<Result<T>> Load<T>(Guid id) where T : IdentifiableQuery
+        public async Task<Result<ReadModelWrapper<T>>> Load<T>(Guid id) where T : IdentifiableQuery
         {
             var querry = await _context.IdentifiableQuerries.FindAsync(id.ToString());
-            if (querry == null) return Result<T>.NotFound(id.ToString());
+            if (querry == null) return Result<ReadModelWrapper<T>>.NotFound(id.ToString());
             var deserialize = _converter.Deserialize<T>(querry.Payload);
-            return Result<T>.Ok(deserialize);
+            var wrapper = new ReadModelWrapper<T>(deserialize, id, querry.Version);
+            return Result<ReadModelWrapper<T>>.Ok(wrapper);
         }
 
         //Todo Remove this locks again
@@ -62,15 +62,16 @@ namespace Microwave.Queries
             }
         }
 
-        public Task<Result> Save(IdentifiableQuery query)
+        public Task<Result> SaveById<TQuerry>(ReadModelWrapper<TQuerry> query) where TQuerry : IdentifiableQuery, new()
         {
             lock (_idQuerryLock)
             {
                 var firstOrDefault = _context.IdentifiableQuerries.Find(query.Id.ToString());
                 if (firstOrDefault != null)
                 {
-                    firstOrDefault.Payload = _converter.Serialize(query);
+                    firstOrDefault.Payload = _converter.Serialize(query.ReadModel);
                     firstOrDefault.Id = query.Id.ToString();
+                    firstOrDefault.Version = query.Version;
                     _context.Update(firstOrDefault);
                 }
                 else
@@ -78,7 +79,8 @@ namespace Microwave.Queries
                     var identifiableQueryDbo = new IdentifiableQueryDbo
                     {
                         Id = query.Id.ToString(),
-                        Payload = _converter.Serialize(query)
+                        Payload = _converter.Serialize(query.ReadModel),
+                        Version = query.Version
                     };
                     _context.IdentifiableQuerries.Add(identifiableQueryDbo);
                 }

@@ -40,12 +40,20 @@ namespace Microwave.Queries
 
             foreach (var latestEvent in domainEvents)
             {
-                var result = await _qeryRepository.Load<TQuerry>(domainEvents.First().DomainEvent.EntityId);
-                if (result.Is<NotFound<TQuerry>>()) result = Result<TQuerry>.Ok(new TQuerry());
+                var domainEvent = domainEvents.First().DomainEvent;
+                var domainEventEntityId = domainEvent.EntityId;
+                var result = await _qeryRepository.Load<TQuerry>(domainEventEntityId);
+                if (result.Is<NotFound<ReadModelWrapper<TQuerry>>>())
+                {
+                    var wrapper = new ReadModelWrapper<TQuerry>(new TQuerry(), domainEventEntityId, latestEvent.Version);
+                    result = Result<ReadModelWrapper<TQuerry>>.Ok(wrapper);
+                }
 
-                result.Value.Handle(latestEvent.DomainEvent);
+                var readModel = result.Value.ReadModel;
+                readModel.Handle(latestEvent.DomainEvent);
 
-                await _qeryRepository.Save(result.Value);
+                var readModelWrapper = new ReadModelWrapper<TQuerry>(readModel, domainEventEntityId, latestEvent.Version);
+                await _qeryRepository.SaveById(readModelWrapper);
                 await _versionRepository.SaveVersion(new LastProcessedVersion(domainEventType, latestEvent.Created));
             }
         }

@@ -1,5 +1,4 @@
-﻿using Microwave.Application;
-using Microwave.Application.Ports;
+﻿using Microwave.Application.Ports;
 using Newtonsoft.Json;
 
 namespace Microwave.ObjectPersistences

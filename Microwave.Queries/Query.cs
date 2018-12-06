@@ -17,14 +17,7 @@ namespace Microwave.Queries
         }
     }
 
-    //TODO make wrapper for querries and stuff
     public class IdentifiableQuery : Query
     {
-        public Guid Id { get; set; }
-    }
-
-    public class ReadModel : IdentifiableQuery
-    {
-        public long Version { get; set; }
     }
 }

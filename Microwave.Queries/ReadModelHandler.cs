@@ -5,7 +5,7 @@ using Microwave.Application.Results;
 
 namespace Microwave.Queries
 {
-    public class ReadModelHandler<T> where T : ReadModel, new()
+    public class ReadModelHandler<T> where T : IdentifiableQuery, new()
     {
         private readonly IQeryRepository _qeryRepository;
         private readonly IEventFeed _eventFeed;
@@ -31,16 +31,20 @@ namespace Microwave.Queries
 
             foreach (var latestEvent in domainEvents)
             {
-                var latestEventDomainEvent = latestEvent.DomainEvent;
-                var result = await _qeryRepository.Load<T>(latestEventDomainEvent.EntityId);
+                var domainEvent = domainEvents.First().DomainEvent;
+                var domainEventEntityId = domainEvent.EntityId;
+                var result = await _qeryRepository.Load<T>(domainEventEntityId);
+                if (result.Is<NotFound<ReadModelWrapper<T>>>())
+                {
+                    var wrapper = new ReadModelWrapper<T>(new T(), domainEventEntityId, latestEvent.Version);
+                    result = Result<ReadModelWrapper<T>>.Ok(wrapper);
+                }
 
-                if (result.Is<NotFound<T>>()) result = Result<T>.Ok(new T());
+                var readModel = result.Value.ReadModel;
+                readModel.Handle(latestEvent.DomainEvent);
 
-                var readModel = result.Value;
-                readModel.Handle(latestEventDomainEvent);
-                readModel.Version = latestEvent.Version;
-
-                await _qeryRepository.Save(readModel);
+                var readModelWrapper = new ReadModelWrapper<T>(readModel, domainEventEntityId, latestEvent.Version);
+                await _qeryRepository.SaveById(readModelWrapper);
                 await _versionRepository.SaveVersion(new LastProcessedVersion(redaModelVersionCounter, latestEvent.Created));
             }
         }

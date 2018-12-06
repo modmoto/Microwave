@@ -40,12 +40,14 @@ namespace Microwave.Queries.UnitTests
         public static Guid EntityGuid { get; set; }
     }
 
-    public class TestReadModel : ReadModel, IHandle<TestEvnt2>
+    public class TestReadModel : IdentifiableQuery, IHandle<TestEvnt2>
     {
         public void Handle(TestEvnt2 domainEvent)
         {
             Id = domainEvent.EntityId;
         }
+
+        public Guid Id { get; set; }
     }
 
     public class FeedMock : IEventFeed
