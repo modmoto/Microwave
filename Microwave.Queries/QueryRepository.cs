@@ -62,25 +62,25 @@ namespace Microwave.Queries
             }
         }
 
-        public Task<Result> SaveById<TQuerry>(ReadModelWrapper<TQuerry> query) where TQuerry : ReadModel, new()
+        public Task<Result> Save<T>(ReadModelWrapper<T> readModelWrapper) where T : ReadModel, new()
         {
             lock (_idQuerryLock)
             {
-                var firstOrDefault = _context.IdentifiableQuerries.Find(query.Id.ToString());
+                var firstOrDefault = _context.IdentifiableQuerries.Find(readModelWrapper.Id.ToString());
                 if (firstOrDefault != null)
                 {
-                    firstOrDefault.Payload = _converter.Serialize(query.ReadModel);
-                    firstOrDefault.Id = query.Id.ToString();
-                    firstOrDefault.Version = query.Version;
+                    firstOrDefault.Payload = _converter.Serialize(readModelWrapper.ReadModel);
+                    firstOrDefault.Id = readModelWrapper.Id.ToString();
+                    firstOrDefault.Version = readModelWrapper.Version;
                     _context.Update(firstOrDefault);
                 }
                 else
                 {
                     var identifiableQueryDbo = new IdentifiableQueryDbo
                     {
-                        Id = query.Id.ToString(),
-                        Payload = _converter.Serialize(query.ReadModel),
-                        Version = query.Version
+                        Id = readModelWrapper.Id.ToString(),
+                        Payload = _converter.Serialize(readModelWrapper.ReadModel),
+                        Version = readModelWrapper.Version
                     };
                     _context.IdentifiableQuerries.Add(identifiableQueryDbo);
                 }

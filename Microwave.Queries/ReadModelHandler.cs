@@ -50,7 +50,7 @@ namespace Microwave.Queries
                 readModel.Handle(latestEvent.DomainEvent);
 
                 var readModelWrapper = new ReadModelWrapper<T>(readModel, domainEventEntityId, latestEvent.Version);
-                await _qeryRepository.SaveById(readModelWrapper);
+                await _qeryRepository.Save(readModelWrapper);
                 await _versionRepository.SaveVersion(new LastProcessedVersion(redaModelVersionCounter, latestEvent.Created));
             }
         }
