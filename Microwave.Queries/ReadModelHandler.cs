@@ -13,6 +13,7 @@ namespace Microwave.Queries
 
     public class ReadModelHandler<T, TEvent> : IReadModelHandler where T : ReadModel, new() where TEvent : IDomainEvent
     {
+        // TODO Fix concurrency bug
         private readonly IQeryRepository _qeryRepository;
         private readonly IEventFeed<TEvent> _eventFeed;
         private readonly IVersionRepository _versionRepository;
