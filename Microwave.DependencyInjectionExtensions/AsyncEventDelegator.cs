@@ -33,6 +33,7 @@ namespace Microwave.DependencyInjectionExtensions
                 foreach (var handler in _queryEventHandlers) await handler.Update();
                 foreach (var handler in _identifiableQueryEventHandlers)
                 {
+                    // Todo make lock with a eventque
                     lock (_lock)
                     {
                         handler.Update().Wait();
