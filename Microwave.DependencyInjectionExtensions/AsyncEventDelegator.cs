@@ -11,6 +11,7 @@ namespace Microwave.DependencyInjectionExtensions
         private readonly IEnumerable<IEventDelegateHandler> _handler;
         private readonly IEnumerable<IQueryEventHandler> _queryEventHandlers;
         private readonly IEnumerable<IReadModelHandler> _identifiableQueryEventHandlers;
+        private object _lock = new object();
 
         public AsyncEventDelegator(
             IEnumerable<IEventDelegateHandler> handler,
@@ -30,7 +31,13 @@ namespace Microwave.DependencyInjectionExtensions
 
                 foreach (var handler in _handler) await handler.Update();
                 foreach (var handler in _queryEventHandlers) await handler.Update();
-                foreach (var handler in _identifiableQueryEventHandlers) await handler.Update();
+                foreach (var handler in _identifiableQueryEventHandlers)
+                {
+                    lock (_lock)
+                    {
+                        handler.Update().Wait();
+                    }
+                }
             }
         }
     }
