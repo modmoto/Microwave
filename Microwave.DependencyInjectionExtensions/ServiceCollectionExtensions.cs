@@ -37,6 +37,12 @@ namespace Microwave.DependencyInjectionExtensions
             services.AddDbContext<QueryStorageContext>(option =>
                 option.UseSqlite("Data Source=QueryStorageContext.db"));
 
+            //WebApi
+            services.AddMvcCore(config =>
+            {
+                config.Filters.Add(new NotFoundFilter());
+            });
+
             services.AddTransient<DomainEventWrapperListDeserializer>();
             services.AddTransient<JSonHack>();
             services.AddTransient<IObjectConverter, ObjectConverter>();
