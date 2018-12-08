@@ -16,6 +16,7 @@ namespace Microwave.Queries
         private readonly IQeryRepository _qeryRepository;
         private readonly IEventFeed<TEvent> _eventFeed;
         private readonly IVersionRepository _versionRepository;
+        private object _lock = new object();
 
         public ReadModelHandler(
             IQeryRepository qeryRepository,
@@ -37,21 +38,28 @@ namespace Microwave.Queries
 
             foreach (var latestEvent in domainEvents)
             {
-                var domainEvent = domainEvents.First().DomainEvent;
-                var domainEventEntityId = domainEvent.EntityId;
-                var result = await _qeryRepository.Load<T>(domainEventEntityId);
-                if (result.Is<NotFound<ReadModelWrapper<T>>>())
+                lock (_lock)
                 {
-                    var wrapper = new ReadModelWrapper<T>(new T(), domainEventEntityId, latestEvent.Version);
-                    result = Result<ReadModelWrapper<T>>.Ok(wrapper);
+                    var domainEvent = domainEvents.First().DomainEvent;
+                    var domainEventEntityId = domainEvent.EntityId;
+                    var result = _qeryRepository.Load<T>(domainEventEntityId).Result;
+                    var latestEventVersion = latestEvent.Version;
+                    if (result.Is<NotFound<ReadModelWrapper<T>>>())
+                    {
+                        var wrapper = new ReadModelWrapper<T>(new T(), domainEventEntityId, latestEventVersion);
+                        result = Result<ReadModelWrapper<T>>.Ok(wrapper);
+                    }
+
+                    var modelWrapper = result.Value;
+                    var readModel = modelWrapper.ReadModel;
+                    readModel.Handle(latestEvent.DomainEvent);
+
+                    if (latestEventVersion < modelWrapper.Version) latestEventVersion = modelWrapper.Version;
+
+                    var readModelWrapper = new ReadModelWrapper<T>(readModel, domainEventEntityId, latestEventVersion);
+                    _qeryRepository.Save(readModelWrapper).Wait();
+                    _versionRepository.SaveVersion(new LastProcessedVersion(redaModelVersionCounter, latestEvent.Created)).Wait();
                 }
-
-                var readModel = result.Value.ReadModel;
-                readModel.Handle(latestEvent.DomainEvent);
-
-                var readModelWrapper = new ReadModelWrapper<T>(readModel, domainEventEntityId, latestEvent.Version);
-                await _qeryRepository.Save(readModelWrapper);
-                await _versionRepository.SaveVersion(new LastProcessedVersion(redaModelVersionCounter, latestEvent.Created));
             }
         }
     }
