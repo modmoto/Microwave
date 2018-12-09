@@ -1,6 +1,8 @@
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using Microwave.Application.Results;
+using Microwave.Domain;
 
 namespace Microwave.Queries
 {
@@ -38,7 +40,9 @@ namespace Microwave.Queries
             {
                 lock (_lock)
                 {
-                    var domainEventEntityId = latestEvent.DomainEvent.EntityId;
+                    var latestEventDomainEvent = latestEvent.DomainEvent;
+                    if (ReadModelDoesNotHandleEvent(latestEventDomainEvent)) continue;
+                    var domainEventEntityId = latestEventDomainEvent.EntityId;
                     var result = _qeryRepository.Load<T>(domainEventEntityId).Result;
                     var latestEventVersion = latestEvent.Version;
                     if (result.Is<NotFound<ReadModelWrapper<T>>>())
@@ -49,7 +53,7 @@ namespace Microwave.Queries
 
                     var modelWrapper = result.Value;
                     var readModel = modelWrapper.ReadModel;
-                    readModel.Handle(latestEvent.DomainEvent);
+                    readModel.Handle(latestEventDomainEvent);
 
                     if (latestEventVersion < modelWrapper.Version) latestEventVersion = modelWrapper.Version;
 
@@ -58,6 +62,15 @@ namespace Microwave.Queries
                     _versionRepository.SaveVersion(new LastProcessedVersion(redaModelVersionCounter, latestEvent.Created)).Wait();
                 }
             }
+        }
+
+        private bool ReadModelDoesNotHandleEvent(IDomainEvent latestEventDomainEvent)
+        {
+            var readModelType = typeof(T);
+            var methods = readModelType.GetMethods();
+            var methodInfos = methods.Where(m =>
+                m.Name == nameof(Query.Handle) && m.GetParameters().Length == 1&& m.GetParameters().First().ParameterType == latestEventDomainEvent.GetType());
+            return !methodInfos.Any();
         }
     }
 }

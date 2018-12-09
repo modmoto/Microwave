@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Application;
+using Microwave.Application.Results;
 using Microwave.Domain;
 using Microwave.ObjectPersistences;
 
@@ -22,11 +23,11 @@ namespace Microwave.Queries.UnitTests
 
             var queryRepository = new QueryRepository(new QueryStorageContext(options), new ObjectConverter());
 
-            var readModelHandler = new ReadModelHandler<TestReadModel>(queryRepository, new VersionRepository(new
+            var readModelHandler = new ReadModelHandler<TestReadModelQuerries>(queryRepository, new VersionRepository(new
                 QueryStorageContext(options)), new FeedMock2());
             await readModelHandler.Update();
 
-            var result = await queryRepository.Load<TestReadModel>(EntityGuid);
+            var result = await queryRepository.Load<TestReadModelQuerries>(EntityGuid);
             Assert.AreEqual(EntityGuid, result.Value.Id);
             Assert.AreEqual(14, result.Value.Version);
             Assert.AreEqual("testName", result.Value.ReadModel.Name);
@@ -42,10 +43,10 @@ namespace Microwave.Queries.UnitTests
 
             var queryRepository = new QueryRepository(new QueryStorageContext(options), new ObjectConverter());
 
-            var readModelHandler = new ReadModelHandler<TestReadModel>(queryRepository, new VersionRepository(new
+            var readModelHandler = new ReadModelHandler<TestReadModelQuerries>(queryRepository, new VersionRepository(new
                 QueryStorageContext(options)), new FeedMock1());
 
-            var readModelHandler2 = new ReadModelHandler<TestReadModel>(queryRepository, new VersionRepository(new
+            var readModelHandler2 = new ReadModelHandler<TestReadModelQuerries>(queryRepository, new VersionRepository(new
                 QueryStorageContext(options)), new FeedMock2());
 
 
@@ -54,7 +55,7 @@ namespace Microwave.Queries.UnitTests
 
             await Task.WhenAll(update2, update);
 
-            var result = await queryRepository.Load<TestReadModel>(EntityGuid);
+            var result = await queryRepository.Load<TestReadModelQuerries>(EntityGuid);
             Assert.AreEqual(EntityGuid, result.Value.Id);
             Assert.AreEqual(17, result.Value.Version);
             Assert.AreEqual("testName", result.Value.ReadModel.Name);
@@ -72,22 +73,45 @@ namespace Microwave.Queries.UnitTests
 
             var queryRepository = new QueryRepository(new QueryStorageContext(options), new ObjectConverter());
 
-            var readModelHandler = new ReadModelHandler<TestReadModel>(queryRepository, new VersionRepository(new
+            var readModelHandler = new ReadModelHandler<TestReadModelQuerries>(queryRepository, new VersionRepository(new
                 QueryStorageContext(options)), new FeedMock3());
 
             await readModelHandler.Update();
 
-            var result = await queryRepository.Load<TestReadModel>(EntityGuid);
-            var result2 = await queryRepository.Load<TestReadModel>(EntityGuid2);
+            var result = await queryRepository.Load<TestReadModelQuerries>(EntityGuid);
+            var result2 = await queryRepository.Load<TestReadModelQuerries>(EntityGuid2);
             Assert.AreEqual(EntityGuid, result.Value.Id);
             Assert.AreEqual(EntityGuid2, result2.Value.Id);
+        }
+
+        [TestMethod]
+        public async Task UpdateModel_EventsPresentThatAreNotHandleble()
+        {
+            EntityGuid = Guid.NewGuid();
+            EntityGuid2 = Guid.NewGuid();
+            var options = new DbContextOptionsBuilder<QueryStorageContext>()
+                .UseInMemoryDatabase("UpdateModelConcurrencyVersionBug")
+                .Options;
+
+            var queryRepository = new QueryRepository(new QueryStorageContext(options), new ObjectConverter());
+
+            var readModelHandler = new ReadModelHandler<TestReadModelQuerries>(queryRepository, new VersionRepository(new
+                QueryStorageContext(options)), new FeedMock4());
+
+            await readModelHandler.Update();
+
+            var result = await queryRepository.Load<TestReadModelQuerries>(EntityGuid);
+            var result2 = await queryRepository.Load<TestReadModelQuerries>(EntityGuid2);
+            Assert.AreEqual(EntityGuid, result.Value.Id);
+            var condition = result2.Is<NotFound<ReadModelWrapper<TestReadModelQuerries>>>();
+            Assert.IsTrue(condition);
         }
 
         public static Guid EntityGuid { get; set; }
         public static Guid EntityGuid2 { get; set; }
     }
 
-    public class TestReadModel : ReadModel
+    public class TestReadModelQuerries : ReadModel
     {
         public void Handle(TestEvnt2 domainEvent)
         {
@@ -141,6 +165,25 @@ namespace Microwave.Queries.UnitTests
         }
     }
 
+    public class FeedMock4 : IOverallEventFeed
+    {
+        public Task<IEnumerable<DomainEventWrapper>> GetEventsAsync(long lastVersion)
+        {
+            var domainEventWrapper = new DomainEventWrapper
+            {
+                Version = 12,
+                DomainEvent = new TestEvnt2(ReadModelHandlerTests.EntityGuid)
+            };
+            var domainEventWrapper2 = new DomainEventWrapper
+            {
+                Version = 12,
+                DomainEvent = new TestEvnt3(ReadModelHandlerTests.EntityGuid2)
+            };
+            var list = new List<DomainEventWrapper> {domainEventWrapper, domainEventWrapper2};
+            return Task.FromResult((IEnumerable<DomainEventWrapper>) list);
+        }
+    }
+
     public class FeedMock1 : IOverallEventFeed
     {
         public Task<IEnumerable<DomainEventWrapper>> GetEventsAsync(long lastVersion)
@@ -163,6 +206,16 @@ namespace Microwave.Queries.UnitTests
     public class TestEvnt2 : IDomainEvent
     {
         public TestEvnt2(Guid entityId)
+        {
+            EntityId = entityId;
+        }
+
+        public Guid EntityId { get; }
+    }
+
+    public class TestEvnt3 : IDomainEvent
+    {
+        public TestEvnt3(Guid entityId)
         {
             EntityId = entityId;
         }
