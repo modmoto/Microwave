@@ -5,7 +5,7 @@ using Microwave.Domain;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace Microwave.Queries
+namespace Microwave.ObjectPersistences
 {
     public interface IDomainEventFactory
     {
@@ -16,7 +16,7 @@ namespace Microwave.Queries
     {
         private readonly Dictionary<string, Type> _eventTypeRegistration;
 
-        public DomainEventFactory(Dictionary<string, Type> eventTypeRegistration)
+        public DomainEventFactory(EventRegistration eventTypeRegistration)
         {
             _eventTypeRegistration = eventTypeRegistration;
         }
@@ -43,5 +43,9 @@ namespace Microwave.Queries
                 };
             }
         }
+    }
+
+    public class EventRegistration : Dictionary<string, Type>
+    {
     }
 }

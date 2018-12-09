@@ -4,6 +4,7 @@ using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Application;
 using Microwave.Domain;
+using Microwave.ObjectPersistences;
 using Newtonsoft.Json;
 
 namespace Microwave.Queries.UnitTests
@@ -22,7 +23,7 @@ namespace Microwave.Queries.UnitTests
             }};
 
             var serializeObject = JsonConvert.SerializeObject(domainEventWrapper);
-            var eventTypeRegistration = new Dictionary<string, Type> { { nameof(Event1), typeof(Event1) } };
+            var eventTypeRegistration = new EventRegistration { { nameof(Event1), typeof(Event1) } };
             var domainEventFactory = new DomainEventFactory(eventTypeRegistration);
             var ev = domainEventFactory.Deserialize(serializeObject);
             var domainEventWrappers = ev.ToList();
@@ -45,7 +46,7 @@ namespace Microwave.Queries.UnitTests
             }};
 
             var serializeObject = JsonConvert.SerializeObject(domainEventWrapper);
-            var eventTypeRegistration = new Dictionary<string, Type>();
+            var eventTypeRegistration = new EventRegistration();
             var domainEventFactory = new DomainEventFactory(eventTypeRegistration);
             var ev = domainEventFactory.Deserialize(serializeObject);
             var domainEventWrappers = ev.ToList();

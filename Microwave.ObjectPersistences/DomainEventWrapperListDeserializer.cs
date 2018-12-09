@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microwave.Application;
-using Microwave.Queries;
 using Newtonsoft.Json.Linq;
 
 namespace Microwave.ObjectPersistences
