@@ -1,7 +1,6 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Microwave.Application.Results;
-using Microwave.Domain;
 
 namespace Microwave.Queries
 {
@@ -13,14 +12,14 @@ namespace Microwave.Queries
     public class ReadModelHandler<T> : IReadModelHandler where T : ReadModel, new()
     {
         private readonly IQeryRepository _qeryRepository;
-        private readonly IEventFeed _eventFeed;
+        private readonly IOverallEventFeed _eventFeed;
         private readonly IVersionRepository _versionRepository;
         private readonly object _lock = new object();
 
         public ReadModelHandler(
             IQeryRepository qeryRepository,
             IVersionRepository versionRepository,
-            IEventFeed eventFeed)
+            IOverallEventFeed eventFeed)
         {
             _qeryRepository = qeryRepository;
             _versionRepository = versionRepository;

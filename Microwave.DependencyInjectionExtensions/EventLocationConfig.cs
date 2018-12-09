@@ -25,6 +25,14 @@ namespace Microwave.DependencyInjectionExtensions
             return new Uri($"{CleanUrl(eventLocation)}/Api/DomainEventTypeStreams/{domainEvent}");
         }
 
+        public Uri GetLocationFor<T>() where T : ReadModel
+        {
+            var configurationSection = _configuration.GetSection("DomainEventReadModelLocations");
+            var eventLocation = configurationSection[typeof(T).Name];
+            if (string.IsNullOrEmpty(eventLocation)) eventLocation = DefaultEventLocation;
+            return new Uri($"{CleanUrl(eventLocation)}/Api/DomainEvents");
+        }
+
         private static string CleanUrl(string eventLocation)
         {
             if (eventLocation.EndsWith("/")) return eventLocation.Remove(eventLocation.Length - 1);

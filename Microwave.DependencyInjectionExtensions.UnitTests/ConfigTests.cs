@@ -1,6 +1,7 @@
 using System;
 using Microsoft.Extensions.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microwave.Queries;
 
 namespace Microwave.DependencyInjectionExtensions.UnitTests
 {
@@ -32,5 +33,29 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
             var confiNew = new EventLocationConfig(config);
             Assert.AreEqual("http://localhost:5000/Api/DomainEventTypeStreams/whatever", confiNew.GetLocationFor("whatever").ToString());
         }
+
+        [TestMethod]
+        public void ConfigTest_ReadModel()
+        {
+            var config = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.test_ReadModelLocation.json")
+                .Build();
+            var confiNew = new EventLocationConfig(config);
+            Assert.AreEqual("http://localhost:6000/Api/DomainEvents", confiNew.GetLocationFor<TestReadModel>().ToString());
+        }
+
+        [TestMethod]
+        public void ConfigTest_ReadModel_Default()
+        {
+            var config = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.test_ReadModelLocation_Default.json")
+                .Build();
+            var confiNew = new EventLocationConfig(config);
+            Assert.AreEqual("http://localhost:5000/Api/DomainEvents", confiNew.GetLocationFor<TestReadModel>().ToString());
+        }
+    }
+
+    public class TestReadModel : ReadModel
+    {
     }
 }

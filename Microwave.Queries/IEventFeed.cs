@@ -8,4 +8,9 @@ namespace Microwave.Queries
     {
         Task<IEnumerable<DomainEventWrapper>> GetEventsAsync(long lastVersion);
     }
+
+    public interface IOverallEventFeed
+    {
+        Task<IEnumerable<DomainEventWrapper>> GetEventsAsync(long lastVersion);
+    }
 }

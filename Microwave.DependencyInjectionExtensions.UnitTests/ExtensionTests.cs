@@ -56,9 +56,10 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
             Assert.IsTrue(qHandler1[2] is QueryEventHandler<TestQuery2, TestDomainEvent>);
 
             var identHandler = buildServiceProvider.GetServices<IReadModelHandler>().ToList();
-            Assert.IsTrue(identHandler[0] is ReadModelHandler<TestIdQuery>);
-            Assert.IsTrue(identHandler[1] is ReadModelHandler<TestIdQuerySingle>);
-            Assert.IsTrue(identHandler[2] is ReadModelHandler<TestIdQuery2>);
+            Assert.IsTrue(identHandler[0] is ReadModelHandler<TestReadModel>);
+            Assert.IsTrue(identHandler[1] is ReadModelHandler<TestIdQuery>);
+            Assert.IsTrue(identHandler[2] is ReadModelHandler<TestIdQuerySingle>);
+            Assert.IsTrue(identHandler[3] is ReadModelHandler<TestIdQuery2>);
         }
 
         [TestMethod]
@@ -77,7 +78,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
 
             var eventFeed1 = buildServiceProvider.GetServices<IEventFeed>().FirstOrDefault();
             var identHandler = buildServiceProvider.GetServices<IReadModelHandler>().ToList();
-            Assert.IsTrue(identHandler[0] is ReadModelHandler<TestIdQuery>);
+            Assert.IsTrue(identHandler[0] is ReadModelHandler<TestReadModel>);
             Assert.IsTrue(eventFeed1 is EventTypeFeed<TestDomainEvent>);
         }
 

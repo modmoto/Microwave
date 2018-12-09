@@ -80,7 +80,7 @@ namespace Microwave.Queries.UnitTests
         public string Name { get; set; }
     }
 
-    public class FeedMock2 : IEventFeed
+    public class FeedMock2 : IOverallEventFeed
     {
         public Task<IEnumerable<DomainEventWrapper>> GetEventsAsync(long lastVersion)
         {
@@ -99,7 +99,7 @@ namespace Microwave.Queries.UnitTests
         }
     }
 
-    public class FeedMock1 : IEventFeed
+    public class FeedMock1 : IOverallEventFeed
     {
         public Task<IEnumerable<DomainEventWrapper>> GetEventsAsync(long lastVersion)
         {
