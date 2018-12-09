@@ -12,7 +12,7 @@ namespace Microwave.DependencyInjectionExtensions
         {
             if (configuration == null) throw new ArgumentException("There is no config file in the solution. Add an appsettings.json!");
             _configuration = configuration;
-            var baseUrl = _configuration["ServiceBaseURl"];
+            var baseUrl = _configuration["DefaultDomainEventLocation"];
             if (baseUrl == null) throw new ArgumentException("Baseurl for event feed not defined in appsettings.json.");
             DefaultEventLocation = CleanUrl(baseUrl);
         }
