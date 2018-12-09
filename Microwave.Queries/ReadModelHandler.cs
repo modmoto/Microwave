@@ -10,12 +10,12 @@ namespace Microwave.Queries
         Task Update();
     }
 
-    public class ReadModelHandler<T, TEvent> : IReadModelHandler where T : ReadModel, new() where TEvent : IDomainEvent
+    public class ReadModelHandler<T> : IReadModelHandler where T : ReadModel, new()
     {
         private readonly IQeryRepository _qeryRepository;
         private readonly IEventFeed _eventFeed;
         private readonly IVersionRepository _versionRepository;
-        private object _lock = new object();
+        private readonly object _lock = new object();
 
         public ReadModelHandler(
             IQeryRepository qeryRepository,

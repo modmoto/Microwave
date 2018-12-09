@@ -22,7 +22,7 @@ namespace Microwave.Queries.UnitTests
 
             var queryRepository = new QueryRepository(new QueryStorageContext(options), new ObjectConverter());
 
-            var readModelHandler = new ReadModelHandler<TestReadModel, TestEvnt2>(queryRepository, new VersionRepository(new
+            var readModelHandler = new ReadModelHandler<TestReadModel>(queryRepository, new VersionRepository(new
                 QueryStorageContext(options)), new FeedMock2());
             await readModelHandler.Update();
 
@@ -41,10 +41,10 @@ namespace Microwave.Queries.UnitTests
 
             var queryRepository = new QueryRepository(new QueryStorageContext(options), new ObjectConverter());
 
-            var readModelHandler = new ReadModelHandler<TestReadModel, TestEvnt1>(queryRepository, new VersionRepository(new
+            var readModelHandler = new ReadModelHandler<TestReadModel>(queryRepository, new VersionRepository(new
                 QueryStorageContext(options)), new FeedMock1());
 
-            var readModelHandler2 = new ReadModelHandler<TestReadModel, TestEvnt2>(queryRepository, new VersionRepository(new
+            var readModelHandler2 = new ReadModelHandler<TestReadModel>(queryRepository, new VersionRepository(new
                 QueryStorageContext(options)), new FeedMock2());
 
 

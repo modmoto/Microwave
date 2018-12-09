@@ -232,21 +232,15 @@ namespace Microwave.DependencyInjectionExtensions
                 m.GetParameters().Length == 1);
 
             var handlerInterface = typeof(IReadModelHandler);
-            var genericTypeOfHandler = typeof(ReadModelHandler<,>);
+            var genericTypeOfHandler = typeof(ReadModelHandler<>);
 
             var allReadModels = assembly.GetTypes().Where(t => t.BaseType == typeof(ReadModel));
 
             foreach (var readModel in allReadModels)
             {
-                var interfacesWithDomainEventImplementation = readModel.GetInterfaces().Where(IsDomainEvent).ToList();
-                var domainEventTypes = interfacesWithDomainEventImplementation.Select(e => e.GenericTypeArguments.Single()).Distinct();
-
-                foreach (var domainEventType in domainEventTypes)
-                {
-                    var handler = genericTypeOfHandler.MakeGenericType(readModel, domainEventType);
-                    var addTransientCall = addTransient.MakeGenericMethod(handlerInterface, handler);
-                    addTransientCall.Invoke(null, new object[] { services });
-                }
+                var handler = genericTypeOfHandler.MakeGenericType(readModel);
+                var addTransientCall = addTransient.MakeGenericMethod(handlerInterface, handler);
+                addTransientCall.Invoke(null, new object[] { services });
             }
 
             return services;
