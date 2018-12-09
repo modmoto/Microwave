@@ -61,7 +61,30 @@ namespace Microwave.Queries.UnitTests
             Assert.AreEqual(EntityGuid, result.Value.ReadModel.Id);
         }
 
+        [TestMethod]
+        public async Task UpdateModel_TwoEntities()
+        {
+            EntityGuid = Guid.NewGuid();
+            EntityGuid2 = Guid.NewGuid();
+            var options = new DbContextOptionsBuilder<QueryStorageContext>()
+                .UseInMemoryDatabase("UpdateModelConcurrencyVersionBug")
+                .Options;
+
+            var queryRepository = new QueryRepository(new QueryStorageContext(options), new ObjectConverter());
+
+            var readModelHandler = new ReadModelHandler<TestReadModel>(queryRepository, new VersionRepository(new
+                QueryStorageContext(options)), new FeedMock3());
+
+            await readModelHandler.Update();
+
+            var result = await queryRepository.Load<TestReadModel>(EntityGuid);
+            var result2 = await queryRepository.Load<TestReadModel>(EntityGuid2);
+            Assert.AreEqual(EntityGuid, result.Value.Id);
+            Assert.AreEqual(EntityGuid2, result2.Value.Id);
+        }
+
         public static Guid EntityGuid { get; set; }
+        public static Guid EntityGuid2 { get; set; }
     }
 
     public class TestReadModel : ReadModel
@@ -95,6 +118,25 @@ namespace Microwave.Queries.UnitTests
                 DomainEvent = new TestEvnt1(ReadModelHandlerTests.EntityGuid, "testName")
             };
             var list = new List<DomainEventWrapper> {domainEventWrapper, domainEventWrappe2};
+            return Task.FromResult((IEnumerable<DomainEventWrapper>) list);
+        }
+    }
+
+    public class FeedMock3 : IOverallEventFeed
+    {
+        public Task<IEnumerable<DomainEventWrapper>> GetEventsAsync(long lastVersion)
+        {
+            var domainEventWrapper = new DomainEventWrapper
+            {
+                Version = 12,
+                DomainEvent = new TestEvnt2(ReadModelHandlerTests.EntityGuid)
+            };
+            var domainEventWrapper2 = new DomainEventWrapper
+            {
+                Version = 12,
+                DomainEvent = new TestEvnt2(ReadModelHandlerTests.EntityGuid2)
+            };
+            var list = new List<DomainEventWrapper> {domainEventWrapper, domainEventWrapper2};
             return Task.FromResult((IEnumerable<DomainEventWrapper>) list);
         }
     }

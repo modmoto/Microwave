@@ -38,8 +38,7 @@ namespace Microwave.Queries
             {
                 lock (_lock)
                 {
-                    var domainEvent = domainEvents.First().DomainEvent;
-                    var domainEventEntityId = domainEvent.EntityId;
+                    var domainEventEntityId = latestEvent.DomainEvent.EntityId;
                     var result = _qeryRepository.Load<T>(domainEventEntityId).Result;
                     var latestEventVersion = latestEvent.Version;
                     if (result.Is<NotFound<ReadModelWrapper<T>>>())
