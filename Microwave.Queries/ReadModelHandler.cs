@@ -13,14 +13,14 @@ namespace Microwave.Queries
     public class ReadModelHandler<T, TEvent> : IReadModelHandler where T : ReadModel, new() where TEvent : IDomainEvent
     {
         private readonly IQeryRepository _qeryRepository;
-        private readonly IEventFeed<TEvent> _eventFeed;
+        private readonly IEventFeed _eventFeed;
         private readonly IVersionRepository _versionRepository;
         private object _lock = new object();
 
         public ReadModelHandler(
             IQeryRepository qeryRepository,
             IVersionRepository versionRepository,
-            IEventFeed<TEvent> eventFeed)
+            IEventFeed eventFeed)
         {
             _qeryRepository = qeryRepository;
             _versionRepository = versionRepository;

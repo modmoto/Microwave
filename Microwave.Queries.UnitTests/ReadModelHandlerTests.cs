@@ -79,41 +79,41 @@ namespace Microwave.Queries.UnitTests
         public string Name { get; set; }
     }
 
-    public class FeedMock2 : IEventFeed<TestEvnt2>
+    public class FeedMock2 : IEventFeed
     {
-        public Task<IEnumerable<DomainEventHto<TestEvnt2>>> GetEventsAsync(long lastVersion)
+        public Task<IEnumerable<DomainEventWrapper>> GetEventsAsync(long lastVersion)
         {
-            var domainEventWrapper = new DomainEventHto<TestEvnt2>
+            var domainEventWrapper = new DomainEventWrapper
             {
                 Version = 12,
                 DomainEvent = new TestEvnt2(ReadModelHandlerTests.EntityGuid)
             };
-            var domainEventWrappe2 = new DomainEventHto<TestEvnt2>
+            var domainEventWrappe2 = new DomainEventWrapper
             {
                 Version = 14,
                 DomainEvent = new TestEvnt2(ReadModelHandlerTests.EntityGuid)
             };
-            var list = new List<DomainEventHto<TestEvnt2>> {domainEventWrapper, domainEventWrappe2};
-            return Task.FromResult((IEnumerable<DomainEventHto<TestEvnt2>>) list);
+            var list = new List<DomainEventWrapper> {domainEventWrapper, domainEventWrappe2};
+            return Task.FromResult((IEnumerable<DomainEventWrapper>) list);
         }
     }
 
-    public class FeedMock1 : IEventFeed<TestEvnt1>
+    public class FeedMock1 : IEventFeed
     {
-        public Task<IEnumerable<DomainEventHto<TestEvnt1>>> GetEventsAsync(long lastVersion)
+        public Task<IEnumerable<DomainEventWrapper>> GetEventsAsync(long lastVersion)
         {
-            var domainEventWrapper = new DomainEventHto<TestEvnt1>
+            var domainEventWrapper = new DomainEventWrapper
             {
                 Version = 15,
                 DomainEvent = new TestEvnt1(ReadModelHandlerTests.EntityGuid, "ersterName")
             };
-            var domainEventWrappe2 = new DomainEventHto<TestEvnt1>
+            var domainEventWrappe2 = new DomainEventWrapper
             {
                 Version = 17,
                 DomainEvent = new TestEvnt1(ReadModelHandlerTests.EntityGuid, "zweiterName")
             };
-            var list = new List<DomainEventHto<TestEvnt1>> {domainEventWrapper, domainEventWrappe2};
-            return Task.FromResult((IEnumerable<DomainEventHto<TestEvnt1>>) list);
+            var list = new List<DomainEventWrapper> {domainEventWrapper, domainEventWrappe2};
+            return Task.FromResult((IEnumerable<DomainEventWrapper>) list);
         }
     }
 

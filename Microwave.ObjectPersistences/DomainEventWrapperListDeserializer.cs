@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microwave.Application;
-using Microwave.Domain;
-using Newtonsoft.Json;
+using Microwave.Queries;
 using Newtonsoft.Json.Linq;
 
 namespace Microwave.ObjectPersistences
@@ -11,28 +10,24 @@ namespace Microwave.ObjectPersistences
     public class DomainEventWrapperListDeserializer
     {
         private readonly JSonHack _jsonHack;
+        private readonly IDomainEventFactory _domainEventFactory;
 
-        public DomainEventWrapperListDeserializer(JSonHack jsonHack)
+        public DomainEventWrapperListDeserializer(JSonHack jsonHack, IDomainEventFactory domainEventFactory)
         {
             _jsonHack = jsonHack;
+            _domainEventFactory = domainEventFactory;
         }
 
-        private readonly JsonSerializerSettings _settings = new JsonSerializerSettings
+        public IEnumerable<DomainEventWrapper> Deserialize(string payLoad)
         {
-            TypeNameHandling = TypeNameHandling.All,
-            ContractResolver = new PrivateSetterContractResolver()
-        };
-
-        public IEnumerable<DomainEventHto<T>> Deserialize<T>(string payLoad) where T : IDomainEvent
-        {
-            var list = JsonConvert.DeserializeObject<IEnumerable<DomainEventHto<T>>>(payLoad, _settings);
+            var domainEventWrappers = _domainEventFactory.Deserialize(payLoad);
             var domainEventJobjectStuff = JToken.Parse(payLoad);
             var jobjectList = domainEventJobjectStuff.ToObject<List<JObject>>();
 
-            var domainEventWrappers = list.ToList();
-            for (int i = 0; i < domainEventWrappers.Count; i++)
+            var eventWrappers = domainEventWrappers.ToList();
+            for (int i = 0; i < eventWrappers.Count; i++)
             {
-                var domainEventWrapper = domainEventWrappers[i];
+                var domainEventWrapper = eventWrappers[i];
                 if (domainEventWrapper.DomainEvent.EntityId == Guid.Empty)
                 {
                     var jTokenDomainEvent = jobjectList[i].GetValue(nameof(domainEventWrapper.DomainEvent),
@@ -41,7 +36,7 @@ namespace Microwave.ObjectPersistences
                 }
             }
 
-            return domainEventWrappers;
+            return eventWrappers;
         }
     }
 }

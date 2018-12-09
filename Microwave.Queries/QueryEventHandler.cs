@@ -8,13 +8,13 @@ namespace Microwave.Queries
     public class QueryEventHandler<TQuerry, TEvent> : IQueryEventHandler where TQuerry : Query, new() where TEvent : IDomainEvent
     {
         private readonly IQeryRepository _qeryRepository;
-        private readonly IEventFeed<TEvent> _eventFeed;
+        private readonly IEventFeed _eventFeed;
         private readonly IVersionRepository _versionRepository;
 
         public QueryEventHandler(
             IQeryRepository qeryRepository,
             IVersionRepository versionRepository,
-            IEventFeed<TEvent> eventFeed)
+            IEventFeed eventFeed)
         {
             _qeryRepository = qeryRepository;
             _versionRepository = versionRepository;

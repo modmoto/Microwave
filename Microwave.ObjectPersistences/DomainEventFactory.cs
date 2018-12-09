@@ -7,7 +7,12 @@ using Newtonsoft.Json.Linq;
 
 namespace Microwave.Queries
 {
-    public class DomainEventFactory
+    public interface IDomainEventFactory
+    {
+        IEnumerable<DomainEventWrapper> Deserialize(string serializeObject);
+    }
+
+    public class DomainEventFactory : IDomainEventFactory
     {
         private readonly Dictionary<string, Type> _eventTypeRegistration;
 
@@ -22,12 +27,12 @@ namespace Microwave.Queries
             foreach (var jToken in jArray)
             {
                 var jObject = (JObject) jToken;
-                var value = jObject.GetValue(nameof(DomainEventWrapper.DomainEventType)).Value<string>();
+                var value = jObject.GetValue(nameof(DomainEventWrapper.DomainEventType), StringComparison.OrdinalIgnoreCase).Value<string>();
                 if (!_eventTypeRegistration.ContainsKey(value)) yield break;
                 var type = _eventTypeRegistration[value];
-                var version = jObject.GetValue(nameof(DomainEventWrapper.Version)).Value<long>();
-                var created = jObject.GetValue(nameof(DomainEventWrapper.Created)).Value<long>();
-                var domainEventJObject = jObject.GetValue(nameof(DomainEventWrapper.DomainEvent));
+                var version = jObject.GetValue(nameof(DomainEventWrapper.Version), StringComparison.OrdinalIgnoreCase).Value<long>();
+                var created = jObject.GetValue(nameof(DomainEventWrapper.Created), StringComparison.OrdinalIgnoreCase).Value<long>();
+                var domainEventJObject = jObject.GetValue(nameof(DomainEventWrapper.DomainEvent), StringComparison.OrdinalIgnoreCase);
                 var domainevent = (IDomainEvent) domainEventJObject.ToObject(type);
 
                 yield return new DomainEventWrapper
