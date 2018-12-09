@@ -5,6 +5,6 @@ namespace Microwave.Queries
     public interface IEventLocationConfig
     {
         Uri GetLocationForDomainEvent(string domainEvent);
-        Uri GetLocationForReadModel(string name);
+        Uri GetLocationForReadModel(string readModel);
     }
 }
