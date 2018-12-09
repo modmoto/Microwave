@@ -44,8 +44,4 @@ namespace Microwave.ObjectPersistences
             }
         }
     }
-
-    public class EventRegistration : Dictionary<string, Type>
-    {
-    }
 }
