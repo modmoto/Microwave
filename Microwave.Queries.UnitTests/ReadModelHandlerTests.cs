@@ -111,7 +111,7 @@ namespace Microwave.Queries.UnitTests
         public static Guid EntityGuid2 { get; set; }
     }
 
-    public class TestReadModelQuerries : ReadModel
+    public class TestReadModelQuerries : ReadModel, IHandle<TestEvnt2>, IHandle<TestEvnt1>
     {
         public void Handle(TestEvnt2 domainEvent)
         {

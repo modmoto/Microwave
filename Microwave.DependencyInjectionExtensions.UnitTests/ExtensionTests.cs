@@ -62,6 +62,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
             Assert.AreEqual("http://localhost:5000/Api/DomainEvents", value.BaseAddress.ToString());
 
             var qHandler1 = buildServiceProvider.GetServices<IQueryEventHandler>().ToList();
+            Assert.AreEqual(3, qHandler1.Count);
             Assert.IsTrue(qHandler1[0] is QueryEventHandler<TestQuery, TestDomainEvent1>);
             Assert.IsTrue(qHandler1[1] is QueryEventHandler<TestQuery, TestDomainEvent2>);
             Assert.IsTrue(qHandler1[2] is QueryEventHandler<TestQuery2, TestDomainEvent1>);
