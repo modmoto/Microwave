@@ -8,7 +8,7 @@ using Microwave.Queries;
 
 namespace Microwave.WebApi
 {
-    public class EventTypeFeed<T> : IEventFeed where T : IDomainEvent
+    public class EventTypeFeed<T> : IEventFeed<T> where T : IDomainEvent
     {
         private readonly DomainEventWrapperListDeserializer _objectConverter;
         private readonly DomainEventClient<T> _domainEventClient;

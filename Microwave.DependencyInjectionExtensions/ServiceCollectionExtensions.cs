@@ -192,7 +192,7 @@ namespace Microwave.DependencyInjectionExtensions
             var handlerAsyncInterfaces = assembly.GetTypes().Where(t => ImplementsIhandleInterface(t));
             var allHandlerTypes = handlerInterfaces.ToList();
             allHandlerTypes.AddRange(handlerAsyncInterfaces.ToList());
-            var genericInterfaceTypeOfFeed = typeof(IEventFeed);
+            var genericInterfaceTypeOfFeed = typeof(IEventFeed<>);
             var genericTypeOfFeed = typeof(EventTypeFeed<>);
 
             var interfacesWithDomainEventImplementation = allHandlerTypes.SelectMany(i => i.GetInterfaces().Where(IsDomainEvent)).ToList();
@@ -201,7 +201,8 @@ namespace Microwave.DependencyInjectionExtensions
             foreach (var domainEventType in domainEventTypes)
             {
                 var feed = genericTypeOfFeed.MakeGenericType(domainEventType);
-                var addTransientCall = addTransient.MakeGenericMethod(genericInterfaceTypeOfFeed, feed);
+                var feedInterface = genericInterfaceTypeOfFeed.MakeGenericType(domainEventType);
+                var addTransientCall = addTransient.MakeGenericMethod(feedInterface, feed);
                 addTransientCall.Invoke(null, new object[] { services });
             }
 

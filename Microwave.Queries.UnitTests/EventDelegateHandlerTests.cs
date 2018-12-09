@@ -16,7 +16,7 @@ namespace Microwave.Queries.UnitTests
         [TestMethod]
         public async Task MixedEventsInFeed()
         {
-            var mock = new Mock<IEventFeed>();
+            var mock = new Mock<IEventFeed<TestEv>>();
             IEnumerable<DomainEventWrapper> list = new [] { new DomainEventWrapper
             {
                 DomainEvent = new TestEv(Guid.NewGuid())
@@ -39,7 +39,7 @@ namespace Microwave.Queries.UnitTests
         [TestMethod]
         public async Task MixedEventsInFeed_QuerryRepo()
         {
-            var mock = new Mock<IEventFeed>();
+            var mock = new Mock<IEventFeed<TestEv>>();
             IEnumerable<DomainEventWrapper> list = new [] { new DomainEventWrapper
                 {
                     DomainEvent = new TestEv(Guid.NewGuid())

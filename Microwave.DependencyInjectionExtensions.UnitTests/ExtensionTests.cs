@@ -42,10 +42,10 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
             Assert.IsTrue(eventDelegateHandler[0] is EventDelegateHandler<TestDomainEvent1>);
             Assert.IsTrue(eventDelegateHandler[1] is EventDelegateHandler<TestDomainEvent2>);
 
-            var eventFeeds = buildServiceProvider.GetServices<IEventFeed>().ToList();
-            Assert.AreEqual(2, eventFeeds.Count);
-            Assert.IsTrue(eventFeeds[0] is EventTypeFeed<TestDomainEvent1>);
-            Assert.IsTrue(eventFeeds[1] is EventTypeFeed<TestDomainEvent2>);
+            var eventFeeds = buildServiceProvider.GetServices<IEventFeed<TestDomainEvent1>>().FirstOrDefault();
+            var eventFeeds2 = buildServiceProvider.GetServices<IEventFeed<TestDomainEvent2>>().FirstOrDefault();
+            Assert.IsTrue(eventFeeds is EventTypeFeed<TestDomainEvent1>);
+            Assert.IsTrue(eventFeeds2 is EventTypeFeed<TestDomainEvent2>);
 
             var eventOverallClients = buildServiceProvider.GetServices<IOverallEventFeed>().ToList();
             Assert.IsTrue(eventOverallClients[0] is ReadModelFeed<TestReadModel>);
@@ -91,7 +91,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
 
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
-            var eventFeed1 = buildServiceProvider.GetServices<IEventFeed>().FirstOrDefault();
+            var eventFeed1 = buildServiceProvider.GetServices<IEventFeed<TestDomainEvent1>>().FirstOrDefault();
             var identHandler = buildServiceProvider.GetServices<IReadModelHandler>().ToList();
             Assert.IsTrue(identHandler[0] is ReadModelHandler<TestReadModel>);
             Assert.IsTrue(eventFeed1 is EventTypeFeed<TestDomainEvent1>);

@@ -7,13 +7,13 @@ namespace Microwave.Queries
 {
     public class EventDelegateHandler<T> : IEventDelegateHandler where T : IDomainEvent
     {
-        private readonly IEventFeed _eventFeed;
+        private readonly IEventFeed<T> _eventFeed;
         private readonly IEnumerable<IHandleAsync<T>> _handles;
         private readonly IVersionRepository _versionRepository;
 
         public EventDelegateHandler(
             IVersionRepository versionRepository,
-            IEventFeed eventFeed,
+            IEventFeed<T> eventFeed,
             IEnumerable<IHandleAsync<T>> handles)
         {
             _versionRepository = versionRepository;
