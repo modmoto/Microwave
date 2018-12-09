@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -8,7 +9,6 @@ using Microwave.Domain;
 using Microwave.EventStores;
 using Microwave.Queries;
 using Microwave.WebApi;
-using BindingFlags = System.Reflection.BindingFlags;
 
 namespace Microwave.DependencyInjectionExtensions.UnitTests
 {
