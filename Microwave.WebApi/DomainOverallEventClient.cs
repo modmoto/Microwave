@@ -7,7 +7,7 @@ namespace Microwave.WebApi
     {
         public DomainOverallEventClient(IEventLocationConfig config)
         {
-            BaseAddress = config.GetLocationFor<T>();
+            BaseAddress = config.GetLocationForReadModel(typeof(T).Name);
         }
 
         public DomainOverallEventClient(HttpMessageHandler handler) : base(handler)
