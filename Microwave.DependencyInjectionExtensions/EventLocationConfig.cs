@@ -17,26 +17,28 @@ namespace Microwave.DependencyInjectionExtensions
             DefaultEventLocation = CleanUrl(baseUrl);
         }
 
-        public Uri GetLocationFor(string domainEvent)
+        public Uri GetLocationForDomainEvent(string domainEvent)
         {
-            var configurationSection = _configuration.GetSection("DomainEventLocations");
-            var eventLocation = configurationSection[domainEvent];
-            if (string.IsNullOrEmpty(eventLocation)) eventLocation = DefaultEventLocation;
-            return new Uri($"{CleanUrl(eventLocation)}/Api/DomainEventTypeStreams/{domainEvent}");
+            return new Uri($"{LocationFor(domainEvent, "DomainEventLocations")}/Api/DomainEventTypes/{domainEvent}");
         }
 
         public Uri GetLocationForReadModel(string readModel)
         {
-            var configurationSection = _configuration.GetSection("DomainEventReadModelLocations");
-            var eventLocation = configurationSection[readModel];
-            if (string.IsNullOrEmpty(eventLocation)) eventLocation = DefaultEventLocation;
-            return new Uri($"{CleanUrl(eventLocation)}/Api/DomainEvents");
+            return new Uri($"{LocationFor(readModel, "DomainEventReadModelLocations")}/Api/DomainEvents");
         }
 
         private static string CleanUrl(string eventLocation)
         {
             if (eventLocation.EndsWith("/")) return eventLocation.Remove(eventLocation.Length - 1);
             return eventLocation;
+        }
+
+        private string LocationFor(string item, string section)
+        {
+            var configurationSection = _configuration.GetSection(section);
+            var eventLocation = configurationSection[item];
+            if (string.IsNullOrEmpty(eventLocation)) eventLocation = DefaultEventLocation;
+            return CleanUrl(eventLocation);
         }
 
         public string DefaultEventLocation { get; }
