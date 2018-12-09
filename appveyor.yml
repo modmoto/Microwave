@@ -27,9 +27,21 @@ environment:
  sonarCubeToken:
     secure: kQ0ruzPw50qAJfN2Qv36sXyA1SGVJbAHB+Zz26HsRrzAaeuEbTeQkysf3A5G/3Dy
 
+build_script:
+- dotnet build
+
 test_script:
 - OpenCover.Console.exe -register:user -target:"C:/Program Files/dotnet/dotnet.exe" -targetargs:test -output:"coverage.xml" -oldstyle
 - choco install "msbuild-sonarqube-runner" -y
 - SonarScanner.MSBuild.exe begin /k:"Lauchi_Microwave" /v:%APPVEYOR_BUILD_VERSION% /d:sonar.organization="lauchi-github" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.opencover.reportsPaths="%CD%\coverage.xml" /d:sonar.login=%sonarCubeToken%
 - MsBuild.exe /t:Rebuild
 - SonarScanner.MSBuild.exe end /d:sonar.login=%sonarCubeToken%
+
+deploy:
+- provider: NuGet
+  symbol_server: https://ci.appveyor.com/nuget/lauchi-jwih9ne6cq4t/api/v2/package
+  api_key: e7jrjjfqck2ajelalqvp5sl6
+  artifact: /.*\.symbols\.nupkg/
+
+after_build:
+- ps: Get-ChildItem .**\*.nupkg | % { Push-AppveyorArtifact $_.FullName -FileName $_.Name }
