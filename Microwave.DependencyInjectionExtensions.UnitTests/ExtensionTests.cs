@@ -42,7 +42,6 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
             Assert.IsTrue(eventDelegateHandler[0] is EventDelegateHandler<TestDomainEvent1>);
             Assert.IsTrue(eventDelegateHandler[1] is EventDelegateHandler<TestDomainEvent2>);
 
-
             var eventFeeds = buildServiceProvider.GetServices<IEventFeed>().ToList();
             Assert.AreEqual(2, eventFeeds.Count);
             Assert.IsTrue(eventFeeds[0] is EventTypeFeed<TestDomainEvent1>);
