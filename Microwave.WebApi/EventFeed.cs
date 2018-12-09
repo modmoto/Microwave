@@ -10,11 +10,11 @@ namespace Microwave.WebApi
     public class EventFeed<T> : IEventFeed<T>
     {
         private readonly DomainEventWrapperListDeserializer _objectConverter;
-        private readonly NewDomainEventClient<T> _domainEventClient;
+        private readonly DomainEventClient<T> _domainEventClient;
 
         public EventFeed(
             DomainEventWrapperListDeserializer objectConverter,
-            NewDomainEventClient<T> domainEventClient)
+            DomainEventClient<T> domainEventClient)
         {
             _objectConverter = objectConverter;
             _domainEventClient = domainEventClient;

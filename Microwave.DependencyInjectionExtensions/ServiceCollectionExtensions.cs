@@ -164,7 +164,7 @@ namespace Microwave.DependencyInjectionExtensions
             var genericInterfaceTypeOfFeed = typeof(IEventFeed<>);
             var genericTypeOfFeed = typeof(EventFeed<>);
             var genericTypeOfHandler = typeof(QueryEventHandler<,>);
-            var clientType = typeof(NewDomainEventClient<>);
+            var clientType = typeof(DomainEventClient<>);
 
             foreach (var query in queryInterfaces)
             {
@@ -198,7 +198,7 @@ namespace Microwave.DependencyInjectionExtensions
             var genericInterfaceTypeOfFeed = typeof(IEventFeed<>);
             var genericTypeOfFeed = typeof(EventFeed<>);
             var genericTypeOfHandler = typeof(EventDelegateHandler<>);
-            var clientType = typeof(NewDomainEventClient<>);
+            var clientType = typeof(DomainEventClient<>);
 
             foreach (var handleAsync in handleAsyncInterfaces)
             {
@@ -258,7 +258,7 @@ namespace Microwave.DependencyInjectionExtensions
             var feedType = typeof(EventFeed<>);
 
             var genericTypeOfHandler = typeof(ReadModelHandler<>);
-            var clientType = typeof(NewDomainEventClient<>);
+            var clientType = typeof(DomainEventClient<>);
 
             var allReadModels = assembly.GetTypes().Where(t => t.BaseType == typeof(ReadModel));
 

@@ -12,10 +12,19 @@
         <PackageReference Include="MSTest.TestFramework" Version="1.3.2" />
         <PackageReference Include="Moq" Version="4.10.1" />
         <PackageReference Include="RichardSzalay.MockHttp" Version="5.0.0" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.1.1" />
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Microwave.DependencyInjectionExtensions\Microwave.DependencyInjectionExtensions.csproj" />
       <ProjectReference Include="..\Microwave.WebApi\Microwave.WebApi.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Include="appsettings.test.json">
+        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
     </ItemGroup>
 
 </Project>
