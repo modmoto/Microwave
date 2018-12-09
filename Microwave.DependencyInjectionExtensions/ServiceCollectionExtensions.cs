@@ -11,6 +11,7 @@ using Microwave.EventStores;
 using Microwave.ObjectPersistences;
 using Microwave.Queries;
 using Microwave.WebApi;
+using Microwave.WebApi.Filters;
 
 namespace Microwave.DependencyInjectionExtensions
 {

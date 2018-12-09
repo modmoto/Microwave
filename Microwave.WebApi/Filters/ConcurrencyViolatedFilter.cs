@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microwave.Application.Exceptions;
 
-namespace Microwave.WebApi
+namespace Microwave.WebApi.Filters
 {
     public class ConcurrencyViolatedFilter : IExceptionFilter
     {
