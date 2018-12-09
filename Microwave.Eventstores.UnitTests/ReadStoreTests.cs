@@ -14,7 +14,7 @@ namespace Microwave.Eventstores.UnitTests
     [TestClass]
     public class ReadStoreTests
     {
-        private DomainEventFactory _domainEventFactory = new DomainEventFactory(new EventRegistration
+        private readonly DomainEventFactory _domainEventFactory = new DomainEventFactory(new EventRegistration
         {
             { nameof(TestEv), typeof(TestEv) },
             { nameof(TestEv_AutoProperty), typeof(TestEv_AutoProperty) },
