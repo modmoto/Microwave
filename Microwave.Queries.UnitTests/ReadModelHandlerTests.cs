@@ -127,7 +127,7 @@ namespace Microwave.Queries.UnitTests
         public string Name { get; set; }
     }
 
-    public class FeedMock2 : IOverallEventFeed
+    public class FeedMock2 : IOverallEventFeed<TestReadModelQuerries>
     {
         public Task<IEnumerable<DomainEventWrapper>> GetEventsAsync(long lastVersion)
         {
@@ -146,7 +146,7 @@ namespace Microwave.Queries.UnitTests
         }
     }
 
-    public class FeedMock3 : IOverallEventFeed
+    public class FeedMock3 : IOverallEventFeed<TestReadModelQuerries>
     {
         public Task<IEnumerable<DomainEventWrapper>> GetEventsAsync(long lastVersion)
         {
@@ -165,7 +165,7 @@ namespace Microwave.Queries.UnitTests
         }
     }
 
-    public class FeedMock4 : IOverallEventFeed
+    public class FeedMock4 : IOverallEventFeed<TestReadModelQuerries>
     {
         public Task<IEnumerable<DomainEventWrapper>> GetEventsAsync(long lastVersion)
         {
@@ -184,7 +184,7 @@ namespace Microwave.Queries.UnitTests
         }
     }
 
-    public class FeedMock1 : IOverallEventFeed
+    public class FeedMock1 : IOverallEventFeed<TestReadModelQuerries>
     {
         public Task<IEnumerable<DomainEventWrapper>> GetEventsAsync(long lastVersion)
         {

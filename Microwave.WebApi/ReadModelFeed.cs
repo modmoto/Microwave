@@ -7,7 +7,7 @@ using Microwave.Queries;
 
 namespace Microwave.WebApi
 {
-    public class ReadModelFeed<T> : IOverallEventFeed where T : ReadModel
+    public class ReadModelFeed<T> : IOverallEventFeed<T> where T : ReadModel
     {
         private readonly DomainEventWrapperListDeserializer _objectConverter;
         private readonly DomainOverallEventClient<T> _domainEventClient;

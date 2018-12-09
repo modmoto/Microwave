@@ -10,7 +10,7 @@ namespace Microwave.Queries
         Task<IEnumerable<DomainEventWrapper>> GetEventsAsync(long lastVersion);
     }
 
-    public interface IOverallEventFeed
+    public interface IOverallEventFeed<T> where T : ReadModel
     {
         Task<IEnumerable<DomainEventWrapper>> GetEventsAsync(long lastVersion);
     }

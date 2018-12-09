@@ -41,7 +41,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
                 .AddJsonFile("appsettings.test_ReadModelLocation.json")
                 .Build();
             var confiNew = new EventLocationConfig(config);
-            Assert.AreEqual("http://localhost:6000/Api/DomainEvents", confiNew.GetLocationForDomainEvent(typeof(TestReadModel).Name).ToString());
+            Assert.AreEqual("http://localhost:6000/Api/DomainEvents", confiNew.GetLocationForReadModel(typeof(TestReadModel).Name).ToString());
         }
 
         [TestMethod]
@@ -51,7 +51,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
                 .AddJsonFile("appsettings.test_ReadModelLocation_Default.json")
                 .Build();
             var confiNew = new EventLocationConfig(config);
-            Assert.AreEqual("http://localhost:5000/Api/DomainEvents", confiNew.GetLocationForDomainEvent(typeof(TestReadModel).Name).ToString());
+            Assert.AreEqual("http://localhost:5000/Api/DomainEvents", confiNew.GetLocationForReadModel(typeof(TestReadModel).Name).ToString());
         }
     }
 

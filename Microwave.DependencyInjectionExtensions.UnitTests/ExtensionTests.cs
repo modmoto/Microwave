@@ -47,15 +47,18 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
             Assert.IsTrue(eventFeeds is EventTypeFeed<TestDomainEvent1>);
             Assert.IsTrue(eventFeeds2 is EventTypeFeed<TestDomainEvent2>);
 
-            var eventOverallClients = buildServiceProvider.GetServices<IOverallEventFeed>().ToList();
-            Assert.IsTrue(eventOverallClients[0] is ReadModelFeed<TestReadModel>);
-            Assert.IsTrue(eventOverallClients[1] is ReadModelFeed<TestIdQuery>);
-            Assert.IsTrue(eventOverallClients[2] is ReadModelFeed<TestIdQuerySingle>);
-            Assert.IsTrue(eventOverallClients[3] is ReadModelFeed<TestIdQuery2>);
+            var eventOverallClients1 = buildServiceProvider.GetServices<IOverallEventFeed<TestReadModel>>().FirstOrDefault();
+            var eventOverallClients2 = buildServiceProvider.GetServices<IOverallEventFeed<TestIdQuery>>().FirstOrDefault();
+            var eventOverallClients3 = buildServiceProvider.GetServices<IOverallEventFeed<TestIdQuerySingle>>().FirstOrDefault();
+            var eventOverallClients4 = buildServiceProvider.GetServices<IOverallEventFeed<TestIdQuery2>>().FirstOrDefault();
+            Assert.IsTrue(eventOverallClients1 is ReadModelFeed<TestReadModel>);
+            Assert.IsTrue(eventOverallClients2 is ReadModelFeed<TestIdQuery>);
+            Assert.IsTrue(eventOverallClients3 is ReadModelFeed<TestIdQuerySingle>);
+            Assert.IsTrue(eventOverallClients4 is ReadModelFeed<TestIdQuery2>);
 
-            var type = eventOverallClients[0].GetType();
+            var type = eventOverallClients1.GetType();
             var fieldInfo = type.GetField("_domainEventClient", BindingFlags.NonPublic | BindingFlags.Instance);
-            var value = (DomainOverallEventClient<TestReadModel>) fieldInfo.GetValue(eventOverallClients[0]);
+            var value = (DomainOverallEventClient<TestReadModel>) fieldInfo.GetValue(eventOverallClients1);
             Assert.AreEqual("http://localhost:5000/Api/DomainEvents", value.BaseAddress.ToString());
 
             var qHandler1 = buildServiceProvider.GetServices<IQueryEventHandler>().ToList();

@@ -248,7 +248,7 @@ namespace Microwave.DependencyInjectionExtensions
                 m.GetParameters().Length == 1);
 
             var handlerInterface = typeof(IReadModelHandler);
-            var overallInterface = typeof(IOverallEventFeed);
+            var overallInterface = typeof(IOverallEventFeed<>);
             var genericTypeOfHandler = typeof(ReadModelHandler<>);
             var feedType = typeof(ReadModelFeed<>);
             var clientType = typeof(DomainOverallEventClient<>);
@@ -260,9 +260,10 @@ namespace Microwave.DependencyInjectionExtensions
                 var handler = genericTypeOfHandler.MakeGenericType(readModel);
                 var readModelFeedType = feedType.MakeGenericType(readModel);
                 var clientTypeGeneric = clientType.MakeGenericType(readModel);
+                var overallInterfaceGeneric = overallInterface.MakeGenericType(readModel);
 
                 var addTransientCall = addTransient.MakeGenericMethod(handlerInterface, handler);
-                var addTransientCallFeed = addTransient.MakeGenericMethod(overallInterface, readModelFeedType);
+                var addTransientCallFeed = addTransient.MakeGenericMethod(overallInterfaceGeneric, readModelFeedType);
                 var addClientTypeCall = addTransientSingle.MakeGenericMethod(clientTypeGeneric);
 
                 addTransientCall.Invoke(null, new object[] { services });
