@@ -38,33 +38,42 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
             Assert.AreEqual(1, handlers2.Count);
             Assert.IsTrue(handlers2[0] is TestEventHandler);
 
-            var eventDelegateHandler = buildServiceProvider.GetServices<IEventDelegateHandler>().ToList();
-            Assert.IsTrue(eventDelegateHandler[0] is EventDelegateHandler<TestDomainEvent1>);
-            Assert.IsTrue(eventDelegateHandler[1] is EventDelegateHandler<TestDomainEvent2>);
+            var queryFeed1 = buildServiceProvider.GetServices<IEventFeed<QueryEventHandler<TestQuery1, TestDomainEvent1>>>().FirstOrDefault();
+            var queryFeed2 = buildServiceProvider.GetServices<IEventFeed<QueryEventHandler<TestQuery1, TestDomainEvent2>>>().FirstOrDefault();
+            var queryFeed3 = buildServiceProvider.GetServices<IEventFeed<QueryEventHandler<TestQuery2, TestDomainEvent1>>>().FirstOrDefault();
+            Assert.IsNotNull(queryFeed1);
+            Assert.IsNotNull(queryFeed2);
+            Assert.IsNotNull(queryFeed3);
 
-            var eventFeeds = buildServiceProvider.GetServices<IEventFeed<TestDomainEvent1>>().FirstOrDefault();
-            var eventFeeds2 = buildServiceProvider.GetServices<IEventFeed<TestDomainEvent2>>().FirstOrDefault();
-            Assert.IsTrue(eventFeeds is EventTypeFeed<TestDomainEvent1>);
-            Assert.IsTrue(eventFeeds2 is EventTypeFeed<TestDomainEvent2>);
+            var eventFeeds = buildServiceProvider.GetServices<IEventFeed<EventDelegateHandler<TestDomainEvent1>>>().FirstOrDefault();
+            var eventFeeds2 = buildServiceProvider.GetServices<IEventFeed<EventDelegateHandler<TestDomainEvent2>>>().FirstOrDefault();
+            Assert.IsNotNull(eventFeeds);
+            Assert.IsNotNull(eventFeeds2);
 
-            var eventOverallClients1 = buildServiceProvider.GetServices<IOverallEventFeed<TestReadModel>>().FirstOrDefault();
-            var eventOverallClients2 = buildServiceProvider.GetServices<IOverallEventFeed<TestIdQuery>>().FirstOrDefault();
-            var eventOverallClients3 = buildServiceProvider.GetServices<IOverallEventFeed<TestIdQuerySingle>>().FirstOrDefault();
-            var eventOverallClients4 = buildServiceProvider.GetServices<IOverallEventFeed<TestIdQuery2>>().FirstOrDefault();
-            Assert.IsTrue(eventOverallClients1 is ReadModelFeed<TestReadModel>);
-            Assert.IsTrue(eventOverallClients2 is ReadModelFeed<TestIdQuery>);
-            Assert.IsTrue(eventOverallClients3 is ReadModelFeed<TestIdQuerySingle>);
-            Assert.IsTrue(eventOverallClients4 is ReadModelFeed<TestIdQuery2>);
+            var eventOverallClients1 = buildServiceProvider.GetServices<IEventFeed<ReadModelHandler<TestReadModel>>>().FirstOrDefault();
+            var eventOverallClients2 = buildServiceProvider.GetServices<IEventFeed<ReadModelHandler<TestIdQuery>>>().FirstOrDefault();
+            var eventOverallClients3 = buildServiceProvider.GetServices<IEventFeed<ReadModelHandler<TestIdQuerySingle>>>().FirstOrDefault();
+            var eventOverallClients4 = buildServiceProvider.GetServices<IEventFeed<ReadModelHandler<TestIdQuery2>>>().FirstOrDefault();
+            Assert.IsTrue(eventOverallClients1 is EventFeed<ReadModelHandler<TestReadModel>>);
+            Assert.IsTrue(eventOverallClients2 is EventFeed<ReadModelHandler<TestIdQuery>>);
+            Assert.IsTrue(eventOverallClients3 is EventFeed<ReadModelHandler<TestIdQuerySingle>>);
+            Assert.IsTrue(eventOverallClients4 is EventFeed<ReadModelHandler<TestIdQuery2>>);
 
             var type = eventOverallClients1.GetType();
             var fieldInfo = type.GetField("_domainEventClient", BindingFlags.NonPublic | BindingFlags.Instance);
             var value = (DomainOverallEventClient<TestReadModel>) fieldInfo.GetValue(eventOverallClients1);
             Assert.AreEqual("http://localhost:5000/Api/DomainEvents", value.BaseAddress.ToString());
 
+            var typeQueryFeed = queryFeed1.GetType();
+            var fieldInfoQueryFeed = typeQueryFeed.GetField("_domainEventClient", BindingFlags.NonPublic | BindingFlags.Instance);
+            var valueQueryFeed = (DomainOverallEventClient<TestReadModel>) fieldInfoQueryFeed.GetValue(queryFeed1);
+            Assert.AreEqual("http://localhost:5000/Api/DomainEventTypeStreams/TestDomainEvent1", valueQueryFeed.BaseAddress.ToString());
+
+
             var qHandler1 = buildServiceProvider.GetServices<IQueryEventHandler>().ToList();
             Assert.AreEqual(3, qHandler1.Count);
-            Assert.IsTrue(qHandler1[0] is QueryEventHandler<TestQuery, TestDomainEvent1>);
-            Assert.IsTrue(qHandler1[1] is QueryEventHandler<TestQuery, TestDomainEvent2>);
+            Assert.IsTrue(qHandler1[0] is QueryEventHandler<TestQuery1, TestDomainEvent1>);
+            Assert.IsTrue(qHandler1[1] is QueryEventHandler<TestQuery1, TestDomainEvent2>);
             Assert.IsTrue(qHandler1[2] is QueryEventHandler<TestQuery2, TestDomainEvent1>);
 
             var identHandler = buildServiceProvider.GetServices<IReadModelHandler>().ToList();
@@ -94,10 +103,10 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
 
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
-            var eventFeed1 = buildServiceProvider.GetServices<IEventFeed<TestDomainEvent1>>().FirstOrDefault();
+            var eventFeed1 = buildServiceProvider.GetServices<IEventFeed<EventDelegateHandler<TestDomainEvent1>>>().FirstOrDefault();
+            Assert.IsNotNull(eventFeed1);
             var identHandler = buildServiceProvider.GetServices<IReadModelHandler>().ToList();
             Assert.IsTrue(identHandler[0] is ReadModelHandler<TestReadModel>);
-            Assert.IsTrue(eventFeed1 is EventTypeFeed<TestDomainEvent1>);
         }
 
         [TestMethod]
@@ -125,7 +134,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
         }
     }
 
-    public class TestIdQuerySingle : ReadModel
+    public class TestIdQuerySingle : ReadModel, IHandle<TestDomainEvent3>
     {
         public void Handle(TestDomainEvent3 domainEvent)
         {
@@ -137,14 +146,14 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
         public Guid EntityId { get; }
     }
 
-    public class TestIdQuery2 : ReadModel
+    public class TestIdQuery2 : ReadModel, IHandle<TestDomainEvent1>
     {
         public void Handle(TestDomainEvent1 domainEvent)
         {
         }
     }
 
-    public class TestQuery : Query, IHandle<TestDomainEvent1>, IHandle<TestDomainEvent2>
+    public class TestQuery1 : Query, IHandle<TestDomainEvent1>, IHandle<TestDomainEvent2>
     {
         public void Handle(TestDomainEvent1 domainEvent)
         {

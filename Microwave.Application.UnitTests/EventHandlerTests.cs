@@ -21,7 +21,7 @@ namespace Microwave.Application.UnitTests
 
             var eventStoreContext = new QueryStorageContext(options);
 
-            var eventFeedMock = new Mock<IEventFeed<TestEv2>>();
+            var eventFeedMock = new Mock<IEventFeed<EventDelegateHandler<TestEv2>>>();
             var domainEventWrapper = new DomainEventWrapper
             {
                 Created = 12,

@@ -1,12 +1,10 @@
 using System;
 using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Domain;
 using Microwave.ObjectPersistences;
 using Microwave.Queries;
-using Moq;
 using RichardSzalay.MockHttp;
 
 namespace Microwave.WebApi.UnitTests
@@ -26,12 +24,12 @@ namespace Microwave.WebApi.UnitTests
             mockHttp.When("http://localost:5000/api/DomainEvents/?timeStamp=0")
                 .Respond("application/json", "[{ \"domainEventType\": \"UNKNOWN_TYPE\",\"version\": 12, \"created\": 14, \"domainEvent\": {\"EntityId\" : \"5a8b63c8-0f7f-4de7-a9e5-b6b377aa2180\" }}, { \"domainEventType\": \"TestEv\",\"version\": 12, \"created\": 14, \"domainEvent\": {\"EntityId\" : \"5a8b63c8-0f7f-4de7-a9e5-b6b377aa2180\" }}]");
 
-            var domainOverallEventClient = new DomainOverallEventClient<TestReadModel>(mockHttp);
+            var domainOverallEventClient = new NewDomainEventClient<ReadModelHandler<TestReadModel>>(mockHttp);
             domainOverallEventClient.BaseAddress = new Uri("http://localost:5000/api/DomainEvents/");
 
             var domainEventFactory = new DomainEventFactory(_eventTypeRegistration);
             var domainEventWrapperListDeserializer = new DomainEventWrapperListDeserializer(new JSonHack(), domainEventFactory);
-            var readModelFeed = new ReadModelFeed<TestReadModel>(domainEventWrapperListDeserializer, domainOverallEventClient);
+            var readModelFeed = new EventFeed<ReadModelHandler<TestReadModel>>(domainEventWrapperListDeserializer, domainOverallEventClient);
             var domainEvents = await readModelFeed.GetEventsAsync(0);
             var domainEventWrappers = domainEvents.ToList();
             Assert.AreEqual(1, domainEventWrappers.Count);

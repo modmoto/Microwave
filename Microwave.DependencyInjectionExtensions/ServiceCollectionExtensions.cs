@@ -58,7 +58,8 @@ namespace Microwave.DependencyInjectionExtensions
 
             //Client
             services.AddEventClient(assembly);
-            services.AddEventFeed(assembly);
+            services.AddQuerryEventFeed(assembly);
+            services.AddEventDelegateHandlerFeed(assembly);
 
             //QueryHandlers
             services.AddQueryHandler(assembly);
@@ -132,9 +133,7 @@ namespace Microwave.DependencyInjectionExtensions
 
         private static IServiceCollection AddIEventDelegateHandler(this IServiceCollection services, Assembly assembly)
         {
-            var addTransient = typeof(ServiceCollectionServiceExtensions).GetMethods().Single(m =>
-                m.Name == "AddTransient" && m.GetGenericArguments().Length == 2 &&
-                m.GetParameters().Length == 1);
+            var addTransient = AddTransient();
 
             var handlerInterfaces = assembly.GetTypes().Where(t => ImplementsIhandleAsyncInterface(t));
             var genericTypeOfDelegateHandler = typeof(EventDelegateHandler<>);
@@ -183,28 +182,69 @@ namespace Microwave.DependencyInjectionExtensions
             return services;
         }
 
-        private static IServiceCollection AddEventFeed(this IServiceCollection services, Assembly assembly)
+        private static IServiceCollection AddQuerryEventFeed(this IServiceCollection services, Assembly assembly)
         {
-            var addTransient = typeof(ServiceCollectionServiceExtensions).GetMethods().Single(m =>
-                m.Name == "AddTransient" && m.GetGenericArguments().Length == 2 &&
-                m.GetParameters().Length == 1);
+            var addTransient = AddTransient();
+            var addTransientSingle = AddTransientSingle();
 
-            var handlerInterfaces = assembly.GetTypes().Where(t => ImplementsIhandleAsyncInterface(t));
-            var handlerAsyncInterfaces = assembly.GetTypes().Where(t => ImplementsIhandleInterface(t));
-            var allHandlerTypes = handlerInterfaces.ToList();
-            allHandlerTypes.AddRange(handlerAsyncInterfaces.ToList());
+            var queryInterfaces = assembly.GetTypes().Where(ImplementsIhandleInterface).ToList();
             var genericInterfaceTypeOfFeed = typeof(IEventFeed<>);
-            var genericTypeOfFeed = typeof(EventTypeFeed<>);
+            var genericTypeOfFeed = typeof(EventFeed<>);
+            var genericTypeOfHandler = typeof(QueryEventHandler<,>);
+            var clientType = typeof(NewDomainEventClient<>);
 
-            var interfacesWithDomainEventImplementation = allHandlerTypes.SelectMany(i => i.GetInterfaces().Where(IsDomainEvent)).ToList();
-            var domainEventTypes = interfacesWithDomainEventImplementation.Select(e => e.GenericTypeArguments.Single()).Distinct();
-
-            foreach (var domainEventType in domainEventTypes)
+            foreach (var query in queryInterfaces)
             {
-                var feed = genericTypeOfFeed.MakeGenericType(domainEventType);
-                var feedInterface = genericInterfaceTypeOfFeed.MakeGenericType(domainEventType);
-                var addTransientCall = addTransient.MakeGenericMethod(feedInterface, feed);
-                addTransientCall.Invoke(null, new object[] { services });
+                var types = query.GetInterfaces().Where(IsDomainEvent).ToList();
+                foreach (var iHandleEvent in types)
+                {
+                    //feed
+                    var domainEventType = iHandleEvent.GenericTypeArguments.Single();
+                    var genericHandler = genericTypeOfHandler.MakeGenericType(query, domainEventType);
+                    var feed = genericTypeOfFeed.MakeGenericType(genericHandler);
+                    var feedInterface = genericInterfaceTypeOfFeed.MakeGenericType(genericHandler);
+                    var addTransientCall = addTransient.MakeGenericMethod(feedInterface, feed);
+                    addTransientCall.Invoke(null, new object[] { services });
+
+                    //client
+                    var genericClient = clientType.MakeGenericType(genericHandler);
+                    var addTransientCallClient = addTransientSingle.MakeGenericMethod(genericClient);
+                    addTransientCallClient.Invoke(null, new object[] {services});
+                }
+            }
+
+            return services;
+        }
+
+        private static IServiceCollection AddEventDelegateHandlerFeed(this IServiceCollection services, Assembly assembly)
+        {
+            var addTransient = AddTransient();
+            var addTransientSingle = AddTransientSingle();
+
+            var handleAsyncInterfaces = assembly.GetTypes().Where(ImplementsIhandleAsyncInterface).ToList();
+            var genericInterfaceTypeOfFeed = typeof(IEventFeed<>);
+            var genericTypeOfFeed = typeof(EventFeed<>);
+            var genericTypeOfHandler = typeof(EventDelegateHandler<>);
+            var clientType = typeof(NewDomainEventClient<>);
+
+            foreach (var handleAsync in handleAsyncInterfaces)
+            {
+                var types = handleAsync.GetInterfaces().Where(IsDomainEvent).ToList();
+                foreach (var iHandleEvent in types)
+                {
+                    //feed
+                    var domainEventType = iHandleEvent.GenericTypeArguments.Single();
+                    var genericHandler = genericTypeOfHandler.MakeGenericType(domainEventType);
+                    var feed = genericTypeOfFeed.MakeGenericType(genericHandler);
+                    var feedInterface = genericInterfaceTypeOfFeed.MakeGenericType(genericHandler);
+                    var addTransientCall = addTransient.MakeGenericMethod(feedInterface, feed);
+                    addTransientCall.Invoke(null, new object[] { services });
+
+                    //client
+                    var genericClient = clientType.MakeGenericType(genericHandler);
+                    var addTransientCallClient = addTransientSingle.MakeGenericMethod(genericClient);
+                    addTransientCallClient.Invoke(null, new object[] {services});
+                }
             }
 
             return services;
@@ -212,9 +252,7 @@ namespace Microwave.DependencyInjectionExtensions
 
         private static IServiceCollection AddQueryHandler(this IServiceCollection services, Assembly assembly)
         {
-            var addTransient = typeof(ServiceCollectionServiceExtensions).GetMethods().Single(m =>
-                m.Name == "AddTransient" && m.GetGenericArguments().Length == 2 &&
-                m.GetParameters().Length == 1);
+            var addTransient = AddTransient();
 
             var handlerInterface = typeof(IQueryEventHandler);
             var genericTypeOfHandler = typeof(QueryEventHandler<,>);
@@ -239,18 +277,14 @@ namespace Microwave.DependencyInjectionExtensions
 
         private static IServiceCollection AddReadmodelHandlerAndClients(this IServiceCollection services, Assembly assembly)
         {
-            var addTransient = typeof(ServiceCollectionServiceExtensions).GetMethods().Single(m =>
-                m.Name == "AddTransient" && m.GetGenericArguments().Length == 2 &&
-                m.GetParameters().Length == 1);
-
-            var addTransientSingle = typeof(ServiceCollectionServiceExtensions).GetMethods().Single(m =>
-                m.Name == "AddTransient" && m.GetGenericArguments().Length == 1 &&
-                m.GetParameters().Length == 1);
+            var addTransient = AddTransient();
+            var addTransientSingle = AddTransientSingle();
 
             var handlerInterface = typeof(IReadModelHandler);
-            var overallInterface = typeof(IOverallEventFeed<>);
+            var overallInterface = typeof(IEventFeed<>);
+            var feedType = typeof(EventFeed<>);
+
             var genericTypeOfHandler = typeof(ReadModelHandler<>);
-            var feedType = typeof(ReadModelFeed<>);
             var clientType = typeof(DomainOverallEventClient<>);
 
             var allReadModels = assembly.GetTypes().Where(t => t.BaseType == typeof(ReadModel));
@@ -258,9 +292,10 @@ namespace Microwave.DependencyInjectionExtensions
             foreach (var readModel in allReadModels)
             {
                 var handler = genericTypeOfHandler.MakeGenericType(readModel);
-                var readModelFeedType = feedType.MakeGenericType(readModel);
                 var clientTypeGeneric = clientType.MakeGenericType(readModel);
-                var overallInterfaceGeneric = overallInterface.MakeGenericType(readModel);
+
+                var readModelFeedType = feedType.MakeGenericType(handler);
+                var overallInterfaceGeneric = overallInterface.MakeGenericType(handler);
 
                 var addTransientCall = addTransient.MakeGenericMethod(handlerInterface, handler);
                 var addTransientCallFeed = addTransient.MakeGenericMethod(overallInterfaceGeneric, readModelFeedType);
@@ -284,6 +319,20 @@ namespace Microwave.DependencyInjectionExtensions
         {
             return myType.GetInterfaces()
                 .Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IHandle<>));
+        }
+
+        private static MethodInfo AddTransientSingle()
+        {
+            return typeof(ServiceCollectionServiceExtensions).GetMethods().Single(m =>
+                m.Name == "AddTransient" && m.GetGenericArguments().Length == 1 &&
+                m.GetParameters().Length == 1);
+        }
+
+        private static MethodInfo AddTransient()
+        {
+            return typeof(ServiceCollectionServiceExtensions).GetMethods().Single(m =>
+                m.Name == "AddTransient" && m.GetGenericArguments().Length == 2 &&
+                m.GetParameters().Length == 1);
         }
     }
 }
