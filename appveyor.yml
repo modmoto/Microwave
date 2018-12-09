@@ -27,9 +27,6 @@ environment:
  sonarCubeToken:
     secure: kQ0ruzPw50qAJfN2Qv36sXyA1SGVJbAHB+Zz26HsRrzAaeuEbTeQkysf3A5G/3Dy
 
-build_script:
-- dotnet build
-
 test_script:
 - OpenCover.Console.exe -register:user -target:"C:/Program Files/dotnet/dotnet.exe" -targetargs:test -output:"coverage.xml" -oldstyle
 - choco install "msbuild-sonarqube-runner" -y
