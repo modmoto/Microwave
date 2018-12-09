@@ -29,6 +29,7 @@ namespace Microwave.Queries.UnitTests
             var result = await queryRepository.Load<TestReadModel>(EntityGuid);
             Assert.AreEqual(EntityGuid, result.Value.Id);
             Assert.AreEqual(14, result.Value.Version);
+            Assert.AreEqual("testName", result.Value.ReadModel.Name);
         }
 
         [TestMethod]
@@ -56,7 +57,7 @@ namespace Microwave.Queries.UnitTests
             var result = await queryRepository.Load<TestReadModel>(EntityGuid);
             Assert.AreEqual(EntityGuid, result.Value.Id);
             Assert.AreEqual(17, result.Value.Version);
-            Assert.AreEqual("zweiterName", result.Value.ReadModel.Name);
+            Assert.AreEqual("testName", result.Value.ReadModel.Name);
             Assert.AreEqual(EntityGuid, result.Value.ReadModel.Id);
         }
 
@@ -91,7 +92,7 @@ namespace Microwave.Queries.UnitTests
             var domainEventWrappe2 = new DomainEventWrapper
             {
                 Version = 14,
-                DomainEvent = new TestEvnt2(ReadModelHandlerTests.EntityGuid)
+                DomainEvent = new TestEvnt1(ReadModelHandlerTests.EntityGuid, "testName")
             };
             var list = new List<DomainEventWrapper> {domainEventWrapper, domainEventWrappe2};
             return Task.FromResult((IEnumerable<DomainEventWrapper>) list);
