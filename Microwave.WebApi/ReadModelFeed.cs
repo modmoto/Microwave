@@ -2,18 +2,17 @@ using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using Microwave.Application;
-using Microwave.Domain;
 using Microwave.ObjectPersistences;
 using Microwave.Queries;
 
 namespace Microwave.WebApi
 {
-    public class EventTypeFeed<T> : IEventFeed
+    public class ReadModelFeed<T> : IOverallEventFeed where T : ReadModel
     {
         private readonly DomainEventWrapperListDeserializer _objectConverter;
-        private readonly DomainEventClient<T> _domainEventClient;
+        private readonly DomainOverallEventClient<T> _domainEventClient;
 
-        public EventTypeFeed(DomainEventWrapperListDeserializer objectConverter, DomainEventClient<T>
+        public ReadModelFeed(DomainEventWrapperListDeserializer objectConverter, DomainOverallEventClient<T>
             domainEventClient)
         {
             _objectConverter = objectConverter;

@@ -28,7 +28,7 @@ namespace Microwave.ObjectPersistences
             {
                 var jObject = (JObject) jToken;
                 var value = jObject.GetValue(nameof(DomainEventWrapper.DomainEventType), StringComparison.OrdinalIgnoreCase).Value<string>();
-                if (!_eventTypeRegistration.ContainsKey(value)) yield break;
+                if (!_eventTypeRegistration.ContainsKey(value)) continue;
                 var type = _eventTypeRegistration[value];
                 var version = jObject.GetValue(nameof(DomainEventWrapper.Version), StringComparison.OrdinalIgnoreCase).Value<long>();
                 var created = jObject.GetValue(nameof(DomainEventWrapper.Created), StringComparison.OrdinalIgnoreCase).Value<long>();

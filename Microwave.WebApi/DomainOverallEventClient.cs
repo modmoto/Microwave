@@ -9,5 +9,9 @@ namespace Microwave.WebApi
         {
             BaseAddress = config.GetLocationFor<T>();
         }
+
+        public DomainOverallEventClient(HttpMessageHandler handler) : base(handler)
+        {
+        }
     }
 }

@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Domain;
 using Microwave.EventStores;
+using Microwave.ObjectPersistences;
 using Microwave.Queries;
 using Microwave.WebApi;
 
@@ -70,6 +71,9 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
             Assert.IsTrue(identHandler[1] is ReadModelHandler<TestIdQuery>);
             Assert.IsTrue(identHandler[2] is ReadModelHandler<TestIdQuerySingle>);
             Assert.IsTrue(identHandler[3] is ReadModelHandler<TestIdQuery2>);
+
+            var eventRegister = buildServiceProvider.GetServices<EventRegistration>().Single();
+            Assert.AreEqual(eventRegister[nameof(TestDomainEvent2)], typeof(TestDomainEvent2));
         }
 
         [TestMethod]
