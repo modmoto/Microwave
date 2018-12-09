@@ -63,6 +63,8 @@ namespace Microwave.DependencyInjectionExtensions
             services.AddQueryHandler(assembly);
             services.AddReadmodelHandlerAndClients(assembly);
 
+            services.AddDomainEventRegistration(assembly);
+
             return services;
         }
 
@@ -87,6 +89,18 @@ namespace Microwave.DependencyInjectionExtensions
                 config.Filters.Add(new ConcurrencyViolatedFilter());
             });
 
+            return services;
+        }
+
+        private static IServiceCollection AddDomainEventRegistration(this IServiceCollection services, Assembly assembly)
+        {
+            var domainEventTypes = assembly.GetTypes().Where(ev => ev.GetInterfaces().Contains(typeof(IDomainEvent)));
+            var eventRegistration = new EventRegistration();
+            foreach (var domainEventType in domainEventTypes)
+            {
+                eventRegistration.Add(domainEventType.Name, domainEventType);
+            }
+            services.AddSingleton(eventRegistration);
             return services;
         }
 
@@ -184,16 +198,12 @@ namespace Microwave.DependencyInjectionExtensions
             var interfacesWithDomainEventImplementation = allHandlerTypes.SelectMany(i => i.GetInterfaces().Where(IsDomainEvent)).ToList();
             var domainEventTypes = interfacesWithDomainEventImplementation.Select(e => e.GenericTypeArguments.Single()).Distinct();
 
-            var eventRegistration = new EventRegistration();
             foreach (var domainEventType in domainEventTypes)
             {
-                eventRegistration.Add(domainEventType.Name, domainEventType);
                 var feed = genericTypeOfFeed.MakeGenericType(domainEventType);
                 var addTransientCall = addTransient.MakeGenericMethod(genericInterfaceTypeOfFeed, feed);
                 addTransientCall.Invoke(null, new object[] { services });
             }
-
-            services.AddSingleton(eventRegistration);
 
             return services;
         }

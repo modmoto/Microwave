@@ -27,7 +27,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
             var storeDependencies = collection.AddMicrowaveQuerries(typeof(TestEventHandler).Assembly, config);
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
-            var delegateHandler1 = buildServiceProvider.GetServices<IHandleAsync<TestDomainEvent>>();
+            var delegateHandler1 = buildServiceProvider.GetServices<IHandleAsync<TestDomainEvent1>>();
             var delegateHandler2 = buildServiceProvider.GetServices<IHandleAsync<TestDomainEvent2>>();
 
             var handlers1 = delegateHandler1.ToList();
@@ -39,7 +39,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
             Assert.IsTrue(handlers2[0] is TestEventHandler);
 
             var eventDelegateHandler = buildServiceProvider.GetServices<IEventDelegateHandler>().ToList();
-            Assert.IsTrue(eventDelegateHandler[0] is EventDelegateHandler<TestDomainEvent>);
+            Assert.IsTrue(eventDelegateHandler[0] is EventDelegateHandler<TestDomainEvent1>);
             Assert.IsTrue(eventDelegateHandler[1] is EventDelegateHandler<TestDomainEvent2>);
 
 
@@ -47,7 +47,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
 
             var eventFeed1 = eventFeeds[0];
             var eventFeed2 = eventFeeds[1];
-            Assert.IsTrue(eventFeed1 is EventTypeFeed<TestDomainEvent>);
+            Assert.IsTrue(eventFeed1 is EventTypeFeed<TestDomainEvent1>);
             Assert.IsTrue(eventFeed2 is EventTypeFeed<TestDomainEvent2>);
 
             var eventOverallClients = buildServiceProvider.GetServices<IOverallEventFeed>().ToList();
@@ -62,9 +62,9 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
             Assert.AreEqual("http://localhost:5000/Api/DomainEvents", value.BaseAddress.ToString());
 
             var qHandler1 = buildServiceProvider.GetServices<IQueryEventHandler>().ToList();
-            Assert.IsTrue(qHandler1[0] is QueryEventHandler<TestQuery, TestDomainEvent>);
+            Assert.IsTrue(qHandler1[0] is QueryEventHandler<TestQuery, TestDomainEvent1>);
             Assert.IsTrue(qHandler1[1] is QueryEventHandler<TestQuery, TestDomainEvent2>);
-            Assert.IsTrue(qHandler1[2] is QueryEventHandler<TestQuery2, TestDomainEvent>);
+            Assert.IsTrue(qHandler1[2] is QueryEventHandler<TestQuery2, TestDomainEvent1>);
 
             var identHandler = buildServiceProvider.GetServices<IReadModelHandler>().ToList();
             Assert.IsTrue(identHandler[0] is ReadModelHandler<TestReadModel>);
@@ -73,7 +73,9 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
             Assert.IsTrue(identHandler[3] is ReadModelHandler<TestIdQuery2>);
 
             var eventRegister = buildServiceProvider.GetServices<EventRegistration>().Single();
+            Assert.AreEqual(eventRegister[nameof(TestDomainEvent1)], typeof(TestDomainEvent1));
             Assert.AreEqual(eventRegister[nameof(TestDomainEvent2)], typeof(TestDomainEvent2));
+            Assert.AreEqual(eventRegister[nameof(TestDomainEvent3)], typeof(TestDomainEvent3));
         }
 
         [TestMethod]
@@ -93,7 +95,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
             var eventFeed1 = buildServiceProvider.GetServices<IEventFeed>().FirstOrDefault();
             var identHandler = buildServiceProvider.GetServices<IReadModelHandler>().ToList();
             Assert.IsTrue(identHandler[0] is ReadModelHandler<TestReadModel>);
-            Assert.IsTrue(eventFeed1 is EventTypeFeed<TestDomainEvent>);
+            Assert.IsTrue(eventFeed1 is EventTypeFeed<TestDomainEvent1>);
         }
 
         [TestMethod]
@@ -112,7 +114,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
 
     public class TestIdQuery : ReadModel
     {
-        public void Handle(TestDomainEvent domainEvent)
+        public void Handle(TestDomainEvent1 domainEvent)
         {
         }
 
@@ -135,14 +137,14 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
 
     public class TestIdQuery2 : ReadModel
     {
-        public void Handle(TestDomainEvent domainEvent)
+        public void Handle(TestDomainEvent1 domainEvent)
         {
         }
     }
 
-    public class TestQuery : Query, IHandle<TestDomainEvent>, IHandle<TestDomainEvent2>
+    public class TestQuery : Query, IHandle<TestDomainEvent1>, IHandle<TestDomainEvent2>
     {
-        public void Handle(TestDomainEvent domainEvent)
+        public void Handle(TestDomainEvent1 domainEvent)
         {
         }
 
@@ -151,16 +153,16 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
         }
     }
 
-    public class TestQuery2 : Query, IHandle<TestDomainEvent>
+    public class TestQuery2 : Query, IHandle<TestDomainEvent1>
     {
-        public void Handle(TestDomainEvent domainEvent)
+        public void Handle(TestDomainEvent1 domainEvent)
         {
         }
     }
 
-    public class TestEventHandler : IHandleAsync<TestDomainEvent>, IHandleAsync<TestDomainEvent2>
+    public class TestEventHandler : IHandleAsync<TestDomainEvent1>, IHandleAsync<TestDomainEvent2>
     {
-        public Task HandleAsync(TestDomainEvent domainEvent)
+        public Task HandleAsync(TestDomainEvent1 domainEvent)
         {
             return Task.CompletedTask;
         }
@@ -171,9 +173,9 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
         }
     }
 
-    public class TestEventHandler2 : IHandleAsync<TestDomainEvent>
+    public class TestEventHandler2 : IHandleAsync<TestDomainEvent1>
     {
-        public Task HandleAsync(TestDomainEvent domainEvent)
+        public Task HandleAsync(TestDomainEvent1 domainEvent)
         {
             return  Task.CompletedTask;
         }
@@ -189,9 +191,9 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
         public Guid EntityId { get; }
     }
 
-    public class TestDomainEvent : IDomainEvent
+    public class TestDomainEvent1 : IDomainEvent
     {
-        public TestDomainEvent(Guid entityId)
+        public TestDomainEvent1(Guid entityId)
         {
             EntityId = entityId;
         }
