@@ -34,7 +34,7 @@ namespace Microwave.Queries
                     var methodInfos = handleType.GetMethods();
                     var methodInfo = methodInfos.FirstOrDefault(m => m.GetParameters().Length == 1
                                                                      && m.Name == "HandleAsync"
-                                                                     && m.GetParameters().First().ParameterType == typeof(T));
+                                                                     && m.GetParameters().First().ParameterType == latestEvent.DomainEvent.GetType());
                     if (methodInfo == null) continue;
                     await (Task) methodInfo.Invoke(handle, new object[] { latestEvent.DomainEvent });
                     await _versionRepository.SaveVersion(new LastProcessedVersion(domainEventType, latestEvent.Created));
