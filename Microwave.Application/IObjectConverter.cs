@@ -1,4 +1,4 @@
-﻿namespace Microwave.Application.Ports
+﻿namespace Microwave.Application
 {
     public interface IObjectConverter
     {

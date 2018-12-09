@@ -5,7 +5,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Application;
-using Microwave.Application.Ports;
 using Microwave.Domain;
 using Microwave.EventStores;
 using Microwave.Queries;

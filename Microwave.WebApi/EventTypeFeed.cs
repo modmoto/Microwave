@@ -2,9 +2,9 @@ using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using Microwave.Application;
-using Microwave.Application.Ports;
 using Microwave.Domain;
 using Microwave.ObjectPersistences;
+using Microwave.Queries;
 
 namespace Microwave.WebApi
 {

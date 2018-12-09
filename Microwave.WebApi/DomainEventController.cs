@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microwave.Application.Ports;
+using Microwave.Queries;
 
 namespace Microwave.WebApi
 {

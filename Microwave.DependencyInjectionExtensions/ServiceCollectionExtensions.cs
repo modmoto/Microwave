@@ -6,7 +6,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microwave.Application;
-using Microwave.Application.Ports;
 using Microwave.Domain;
 using Microwave.EventStores;
 using Microwave.ObjectPersistences;

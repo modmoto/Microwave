@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Application;
-using Microwave.Application.Ports;
 using Microwave.Domain;
 using Microwave.ObjectPersistences;
 

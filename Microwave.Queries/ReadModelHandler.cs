@@ -1,6 +1,5 @@
 using System.Linq;
 using System.Threading.Tasks;
-using Microwave.Application.Ports;
 using Microwave.Application.Results;
 using Microwave.Domain;
 

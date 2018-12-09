@@ -1,6 +1,6 @@
 using System;
 
-namespace Microwave.Application.Ports
+namespace Microwave.Queries
 {
     public interface IEventLocationConfig
     {
