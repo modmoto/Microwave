@@ -37,6 +37,9 @@ test_script:
 - MsBuild.exe /t:Rebuild
 - SonarScanner.MSBuild.exe end /d:sonar.login=%sonarCubeToken%
 
+artifacts:
+- path: '**\*.nupkg'
+
 deploy:
 - provider: NuGet
   symbol_server: https://ci.appveyor.com/nuget/lauchi-jwih9ne6cq4t/api/v2/package
