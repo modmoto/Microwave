@@ -8,6 +8,7 @@ using Microwave.Domain;
 using Microwave.EventStores;
 using Microwave.Queries;
 using Microwave.WebApi;
+using BindingFlags = System.Reflection.BindingFlags;
 
 namespace Microwave.DependencyInjectionExtensions.UnitTests
 {
@@ -53,6 +54,11 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
             Assert.IsTrue(eventOverallClients[1] is ReadModelFeed<TestIdQuery>);
             Assert.IsTrue(eventOverallClients[2] is ReadModelFeed<TestIdQuerySingle>);
             Assert.IsTrue(eventOverallClients[3] is ReadModelFeed<TestIdQuery2>);
+
+            var type = eventOverallClients[0].GetType();
+            var fieldInfo = type.GetField("_domainEventClient", BindingFlags.NonPublic | BindingFlags.Instance);
+            var value = (DomainOverallEventClient<TestReadModel>) fieldInfo.GetValue(eventOverallClients[0]);
+            Assert.AreEqual("http://localhost:5000/Api/DomainEvents", value.BaseAddress.ToString());
 
             var qHandler1 = buildServiceProvider.GetServices<IQueryEventHandler>().ToList();
             Assert.IsTrue(qHandler1[0] is QueryEventHandler<TestQuery, TestDomainEvent>);
