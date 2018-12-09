@@ -12,8 +12,9 @@ namespace Microwave.WebApi
         private readonly DomainEventWrapperListDeserializer _objectConverter;
         private readonly DomainOverallEventClient<T> _domainEventClient;
 
-        public ReadModelFeed(DomainEventWrapperListDeserializer objectConverter, DomainOverallEventClient<T>
-            domainEventClient)
+        public ReadModelFeed(
+            DomainEventWrapperListDeserializer objectConverter,
+            DomainOverallEventClient<T> domainEventClient)
         {
             _objectConverter = objectConverter;
             _domainEventClient = domainEventClient;
