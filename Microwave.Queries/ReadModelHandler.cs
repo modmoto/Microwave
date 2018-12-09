@@ -45,7 +45,7 @@ namespace Microwave.Queries
                     var domainEventEntityId = latestEventDomainEvent.EntityId;
                     var result = _qeryRepository.Load<T>(domainEventEntityId).Result;
                     var latestEventVersion = latestEvent.Version;
-                    if (result.Is<NotFound<ReadModelWrapper<T>>>())
+                    if (result.Is<NotFound>())
                     {
                         var wrapper = new ReadModelWrapper<T>(new T(), domainEventEntityId, latestEventVersion);
                         result = Result<ReadModelWrapper<T>>.Ok(wrapper);

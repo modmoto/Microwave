@@ -30,7 +30,7 @@ namespace Microwave.Queries
             if (!domainEvents.Any()) return;
 
             var querry = await _qeryRepository.Load<TQuerry>();
-            if (querry.Is<NotFound<TQuerry>>()) querry = Result<TQuerry>.Ok(new TQuerry());
+            if (querry.Is<NotFound>()) querry = Result<TQuerry>.Ok(new TQuerry());
             var querryValue = querry.Value;
             foreach (var latestEvent in domainEvents)
             {

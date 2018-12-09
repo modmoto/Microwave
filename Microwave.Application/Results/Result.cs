@@ -2,31 +2,57 @@
 {
     public abstract class Result
     {
-        public abstract void Check();
+        protected ResultStatus Status { get; }
+
+        protected Result(ResultStatus status)
+        {
+            Status = status;
+        }
 
         public static Result ConcurrencyResult(long expectedVersion, long actualVersion)
         {
-            return new ConcurrencyError(expectedVersion, actualVersion);
+            return new ConcurrencyErrorResult(expectedVersion, actualVersion);
         }
 
         public static Result Ok()
         {
-            return new Ok();
+            return new OkResult();
         }
 
         public bool Is<T>() where T : Result
         {
-            return typeof(T) == GetType();
+            return typeof(T) == Status.GetType();
         }
+
+        public void Check()
+        {
+            Status.Check();
+        }
+    }
+
+    public abstract class ResultStatus
+    {
+        public abstract void Check();
     }
 
     public abstract class Result<T>
     {
-        public abstract T Value { get; }
+        private T _value;
+        protected ResultStatus Status { get; }
 
-        public static Result ConcurrencyResult(long expectedVersion, long actualVersion)
+        protected Result(ResultStatus status)
         {
-            return new ConcurrencyError(expectedVersion, actualVersion);
+            Status = status;
+        }
+
+        public T Value
+        {
+            get
+            {
+                Status.Check();
+                return _value;
+            }
+            protected set => _value = value;
         }
 
         public static Result<T> Ok(T value)
@@ -34,14 +60,16 @@
             return new Ok<T>(value);
         }
 
-        public bool Is<TCheck>() where TCheck : Result<T>
+        public bool Is<TCheck>() where TCheck : ResultStatus
         {
-            return typeof(TCheck) == GetType();
+            return typeof(TCheck) == Status.GetType();
         }
 
         public static Result<T> NotFound(string notFoundId)
         {
-            return new NotFound<T>(notFoundId);
+            return new NotFoundResult<T>(notFoundId);
         }
     }
+
+
 }

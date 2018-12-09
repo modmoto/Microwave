@@ -2,7 +2,14 @@
 
 namespace Microwave.Application.Results
 {
-    internal class ConcurrencyError : Result
+    internal class ConcurrencyErrorResult : Result
+    {
+        public ConcurrencyErrorResult(long expectedVersion, long actualVersion) : base(new ConcurrencyError(expectedVersion, actualVersion))
+        {
+        }
+    }
+
+    internal class ConcurrencyError : ResultStatus
     {
         public long ExpectedVersion { get; }
         public long ActualVersion { get; }

@@ -103,7 +103,7 @@ namespace Microwave.Queries.UnitTests
             var result = await queryRepository.Load<TestReadModelQuerries>(EntityGuid);
             var result2 = await queryRepository.Load<TestReadModelQuerries>(EntityGuid2);
             Assert.AreEqual(EntityGuid, result.Value.Id);
-            var condition = result2.Is<NotFound<ReadModelWrapper<TestReadModelQuerries>>>();
+            var condition = result2.Is<NotFound>();
             Assert.IsTrue(condition);
         }
 
