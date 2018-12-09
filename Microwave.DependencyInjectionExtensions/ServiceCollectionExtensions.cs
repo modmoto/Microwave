@@ -57,7 +57,6 @@ namespace Microwave.DependencyInjectionExtensions
             services.AddIHandleAsync(assembly);
 
             //Client
-            services.AddEventClient(assembly);
             services.AddQuerryEventFeed(assembly);
             services.AddEventDelegateHandlerFeed(assembly);
 
@@ -154,32 +153,6 @@ namespace Microwave.DependencyInjectionExtensions
         private static bool IsDomainEvent(Type i2)
         {
             return i2.GenericTypeArguments.Length == 1 && i2.GenericTypeArguments[0].GetInterfaces().Contains(typeof(IDomainEvent));
-        }
-
-
-        private static IServiceCollection AddEventClient(this IServiceCollection services, Assembly assembly)
-        {
-            var addTransient = typeof(ServiceCollectionServiceExtensions).GetMethods().Single(m =>
-                m.Name == "AddTransient" && m.GetGenericArguments().Length == 1 &&
-                m.GetParameters().Length == 1);
-
-            var handlerInterfaces = assembly.GetTypes().Where(t => ImplementsIhandleAsyncInterface(t));
-            var handlerAsyncInterfaces = assembly.GetTypes().Where(t => ImplementsIhandleInterface(t));
-            var allHandlerTypes = handlerInterfaces.ToList();
-            allHandlerTypes.AddRange(handlerAsyncInterfaces.ToList());
-            var genericTypeOfClient = typeof(DomainEventClient<>);
-
-            var interfacesWithDomainEventImplementation = allHandlerTypes.SelectMany(i => i.GetInterfaces().Where(IsDomainEvent)).ToList();
-            var domainEventTypes = interfacesWithDomainEventImplementation.Select(e => e.GenericTypeArguments.Single()).Distinct();
-
-            foreach (var domainEventType in domainEventTypes)
-            {
-                var delegateHandler = genericTypeOfClient.MakeGenericType(domainEventType);
-                var addTransientCall = addTransient.MakeGenericMethod(delegateHandler);
-                addTransientCall.Invoke(null, new object[] { services });
-            }
-
-            return services;
         }
 
         private static IServiceCollection AddQuerryEventFeed(this IServiceCollection services, Assembly assembly)
@@ -285,14 +258,14 @@ namespace Microwave.DependencyInjectionExtensions
             var feedType = typeof(EventFeed<>);
 
             var genericTypeOfHandler = typeof(ReadModelHandler<>);
-            var clientType = typeof(DomainOverallEventClient<>);
+            var clientType = typeof(NewDomainEventClient<>);
 
             var allReadModels = assembly.GetTypes().Where(t => t.BaseType == typeof(ReadModel));
 
             foreach (var readModel in allReadModels)
             {
                 var handler = genericTypeOfHandler.MakeGenericType(readModel);
-                var clientTypeGeneric = clientType.MakeGenericType(readModel);
+                var clientTypeGeneric = clientType.MakeGenericType(handler);
 
                 var readModelFeedType = feedType.MakeGenericType(handler);
                 var overallInterfaceGeneric = overallInterface.MakeGenericType(handler);

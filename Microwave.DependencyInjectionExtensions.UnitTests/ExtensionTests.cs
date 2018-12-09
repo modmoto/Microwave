@@ -61,12 +61,12 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
 
             var type = eventOverallClients1.GetType();
             var fieldInfo = type.GetField("_domainEventClient", BindingFlags.NonPublic | BindingFlags.Instance);
-            var value = (DomainOverallEventClient<TestReadModel>) fieldInfo.GetValue(eventOverallClients1);
+            var value = (NewDomainEventClient<ReadModelHandler<TestReadModel>>) fieldInfo.GetValue(eventOverallClients1);
             Assert.AreEqual("http://localhost:5000/Api/DomainEvents", value.BaseAddress.ToString());
 
             var typeQueryFeed = queryFeed1.GetType();
             var fieldInfoQueryFeed = typeQueryFeed.GetField("_domainEventClient", BindingFlags.NonPublic | BindingFlags.Instance);
-            var valueQueryFeed = (DomainOverallEventClient<TestReadModel>) fieldInfoQueryFeed.GetValue(queryFeed1);
+            var valueQueryFeed = (NewDomainEventClient<QueryEventHandler<TestQuery1, TestDomainEvent1>>) fieldInfoQueryFeed.GetValue(queryFeed1);
             Assert.AreEqual("http://localhost:5000/Api/DomainEventTypeStreams/TestDomainEvent1", valueQueryFeed.BaseAddress.ToString());
 
 
