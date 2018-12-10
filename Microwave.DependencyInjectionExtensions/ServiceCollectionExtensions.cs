@@ -73,6 +73,7 @@ namespace Microwave.DependencyInjectionExtensions
             services.AddDbContext<EventStoreContext>(option =>
                 option.UseSqlite("Data Source=EventStoreContext.db"));
             services.AddTransient<IEventRepository, EventRepository>();
+            services.AddTransient<ISnapShotRepository, SnapShotRepository>();
 
             //WebApi
             services.AddMvcCore(config =>
