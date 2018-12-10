@@ -21,7 +21,7 @@ namespace Microwave.Application.UnitTests
 
             var eventStoreContext = new QueryStorageContext(options);
 
-            var eventFeedMock = new Mock<IEventFeed<EventDelegateHandler<TestEv2>>>();
+            var eventFeedMock = new Mock<IEventFeed<AsyncEventHandler<TestEv2>>>();
             var domainEventWrapper = new DomainEventWrapper
             {
                 Created = 12,
@@ -32,7 +32,7 @@ namespace Microwave.Application.UnitTests
 
             var handleAsync = new Handler1();
             var handleAsync2 = new Handler2();
-            var eventDelegateHandler = new EventDelegateHandler<TestEv2>(
+            var eventDelegateHandler = new AsyncEventHandler<TestEv2>(
                 new VersionRepository(eventStoreContext),
                 eventFeedMock.Object,
                 new List<IHandleAsync<TestEv2>> {handleAsync, handleAsync2});

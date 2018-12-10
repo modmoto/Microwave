@@ -9,7 +9,7 @@ namespace Microwave.WebApi
         public DomainEventClient(IEventLocationConfig config)
         {
             var type = typeof(T);
-            if (typeof(IEventDelegateHandler).IsAssignableFrom(type))
+            if (typeof(IAsyncEventHandler).IsAssignableFrom(type))
             {
                 var eventType = type.GetGenericArguments().First();
                 BaseAddress = config.GetLocationForDomainEvent(eventType.Name);

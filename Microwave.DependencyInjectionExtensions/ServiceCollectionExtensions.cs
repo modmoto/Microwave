@@ -149,13 +149,15 @@ namespace Microwave.DependencyInjectionExtensions
             var handleAsyncInterfaces = assembly.GetTypes().Where(ImplementsIhandleAsyncInterface).ToList();
             var genericInterfaceTypeOfFeed = typeof(IEventFeed<>);
             var genericTypeOfFeed = typeof(EventFeed<>);
-            var genericTypeOfHandler = typeof(EventDelegateHandler<>);
+            var genericTypeOfHandler = typeof(AsyncEventHandler<>);
+            var genericTypeOfHandlerInterface = typeof(IAsyncEventHandler);
             var clientType = typeof(DomainEventClient<>);
-            var iHandleAsyncType = typeof(IHandleAsync<>);
+            var handleAsyncType = typeof(IHandleAsync<>);
 
             foreach (var handleAsync in handleAsyncInterfaces)
             {
                 var types = handleAsync.GetInterfaces().Where(IsDomainEvent).ToList();
+                bool added = false;
                 foreach (var iHandleEvent in types)
                 {
                     //feed
@@ -172,9 +174,17 @@ namespace Microwave.DependencyInjectionExtensions
                     addTransientCallClient.Invoke(null, new object[] {services});
 
                     //handler
-                    var handleAsyncInterface = iHandleAsyncType.MakeGenericType(domainEventType);
-                    var callToAddTransient = addTransient.MakeGenericMethod(handleAsyncInterface, handleAsync);
-                    callToAddTransient.Invoke(null, new object[] { services });
+                    if (!added)
+                    {
+                        var callToAddTransient = addTransient.MakeGenericMethod(genericTypeOfHandlerInterface, genericHandler);
+                        callToAddTransient.Invoke(null, new object[] { services });
+                        added = true;
+                    }
+
+                    //handleAsyncs
+                    var handleAsyncTypeWithEvent = handleAsyncType.MakeGenericType(domainEventType);
+                    var callToAddTransientHandleAsyncs = addTransient.MakeGenericMethod(handleAsyncTypeWithEvent, handleAsync);
+                    callToAddTransientHandleAsyncs.Invoke(null, new object[] { services });
                 }
             }
 

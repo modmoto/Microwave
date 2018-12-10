@@ -7,12 +7,12 @@ namespace Microwave.DependencyInjectionExtensions
     // TODO remove this hack with actors or something (Task will break on exceptions)
     public class AsyncEventDelegator
     {
-        private readonly IEnumerable<IEventDelegateHandler> _handler;
+        private readonly IEnumerable<IAsyncEventHandler> _handler;
         private readonly IEnumerable<IQueryEventHandler> _queryEventHandlers;
         private readonly IEnumerable<IReadModelHandler> _identifiableQueryEventHandlers;
 
         public AsyncEventDelegator(
-            IEnumerable<IEventDelegateHandler> handler,
+            IEnumerable<IAsyncEventHandler> handler,
             IEnumerable<IQueryEventHandler> queryEventHandlers,
             IEnumerable<IReadModelHandler> identifiableQueryEventHandlers)
         {

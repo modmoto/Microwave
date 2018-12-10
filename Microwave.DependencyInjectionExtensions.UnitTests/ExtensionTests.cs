@@ -27,11 +27,16 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
             var storeDependencies = collection.AddMicrowaveQuerries(typeof(TestEventHandler).Assembly, config);
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
-            var delegateHandler1 = buildServiceProvider.GetServices<IHandleAsync<TestDomainEvent1>>();
-            var delegateHandler2 = buildServiceProvider.GetServices<IHandleAsync<TestDomainEvent2>>();
+            var eventDelegateHandlers = buildServiceProvider.GetServices<IAsyncEventHandler>().ToList();
+            Assert.AreEqual(2, eventDelegateHandlers.Count);
+            Assert.IsNotNull(eventDelegateHandlers[0]);
+            Assert.IsNotNull(eventDelegateHandlers[1]);
 
-            var handlers1 = delegateHandler1.ToList();
-            var handlers2 = delegateHandler2.ToList();
+            var handleAsync1 = buildServiceProvider.GetServices<IHandleAsync<TestDomainEvent1>>();
+            var handleAsync2 = buildServiceProvider.GetServices<IHandleAsync<TestDomainEvent2>>();
+
+            var handlers1 = handleAsync1.ToList();
+            var handlers2 = handleAsync2.ToList();
             Assert.AreEqual(2, handlers1.Count);
             Assert.IsTrue(handlers1[0] is TestEventHandler);
             Assert.IsTrue(handlers1[1] is TestEventHandler2);
@@ -45,8 +50,8 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
             Assert.IsNotNull(queryFeed2);
             Assert.IsNotNull(queryFeed3);
 
-            var eventFeeds = buildServiceProvider.GetServices<IEventFeed<EventDelegateHandler<TestDomainEvent1>>>().FirstOrDefault();
-            var eventFeeds2 = buildServiceProvider.GetServices<IEventFeed<EventDelegateHandler<TestDomainEvent2>>>().FirstOrDefault();
+            var eventFeeds = buildServiceProvider.GetServices<IEventFeed<AsyncEventHandler<TestDomainEvent1>>>().FirstOrDefault();
+            var eventFeeds2 = buildServiceProvider.GetServices<IEventFeed<AsyncEventHandler<TestDomainEvent2>>>().FirstOrDefault();
             Assert.IsNotNull(eventFeeds);
             Assert.IsNotNull(eventFeeds2);
 
@@ -103,7 +108,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
 
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
-            var eventFeed1 = buildServiceProvider.GetServices<IEventFeed<EventDelegateHandler<TestDomainEvent1>>>().FirstOrDefault();
+            var eventFeed1 = buildServiceProvider.GetServices<IEventFeed<AsyncEventHandler<TestDomainEvent1>>>().FirstOrDefault();
             Assert.IsNotNull(eventFeed1);
             var identHandler = buildServiceProvider.GetServices<IReadModelHandler>().ToList();
             Assert.IsTrue(identHandler[0] is ReadModelHandler<TestReadModel>);

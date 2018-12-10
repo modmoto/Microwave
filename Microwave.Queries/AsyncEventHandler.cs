@@ -5,15 +5,15 @@ using Microwave.Domain;
 
 namespace Microwave.Queries
 {
-    public class EventDelegateHandler<T> : IEventDelegateHandler where T : IDomainEvent
+    public class AsyncEventHandler<T> : IAsyncEventHandler where T : IDomainEvent
     {
-        private readonly IEventFeed<EventDelegateHandler<T>>  _eventFeed;
+        private readonly IEventFeed<AsyncEventHandler<T>>  _eventFeed;
         private readonly IEnumerable<IHandleAsync<T>> _handles;
         private readonly IVersionRepository _versionRepository;
 
-        public EventDelegateHandler(
+        public AsyncEventHandler(
             IVersionRepository versionRepository,
-            IEventFeed<EventDelegateHandler<T>> eventFeed,
+            IEventFeed<AsyncEventHandler<T>> eventFeed,
             IEnumerable<IHandleAsync<T>> handles)
         {
             _versionRepository = versionRepository;

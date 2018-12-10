@@ -29,7 +29,7 @@ namespace Microwave.WebApi.UnitTests
         [TestMethod]
         public async Task ClientForAsyncHandles()
         {
-            var domainEventClient = new DomainEventClient<EventDelegateHandler<Ev2>>(config);
+            var domainEventClient = new DomainEventClient<AsyncEventHandler<Ev2>>(config);
             Assert.AreEqual("http://localhost:5000/Api/DomainEventTypeStreams/Ev2", domainEventClient.BaseAddress.ToString());
         }
 

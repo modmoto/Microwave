@@ -16,11 +16,12 @@ namespace Microwave.Queries.UnitTests
         [TestMethod]
         public async Task MixedEventsInFeed()
         {
-            var mock = new Mock<IEventFeed<EventDelegateHandler<TestEv>>>();
-            IEnumerable<DomainEventWrapper> list = new [] { new DomainEventWrapper
-            {
-                DomainEvent = new TestEv(Guid.NewGuid())
-            },
+            var mock = new Mock<IEventFeed<AsyncEventHandler<TestEv>>>();
+            IEnumerable<DomainEventWrapper> list = new [] {
+                new DomainEventWrapper
+                {
+                    DomainEvent = new TestEv(Guid.NewGuid())
+                },
                 new DomainEventWrapper
                 {
                     DomainEvent = new TestEv2(Guid.NewGuid())
@@ -31,7 +32,7 @@ namespace Microwave.Queries.UnitTests
             versionRepo.Setup(repo => repo.SaveVersion(It.IsAny<LastProcessedVersion>())).Returns(Task.CompletedTask);
             versionRepo.Setup(repo => repo.GetVersionAsync(It.IsAny<string>())).ReturnsAsync(0);
             var handler = new Handler();
-            var eventDelegateHandler = new EventDelegateHandler<TestEv>(versionRepo.Object, mock.Object, new []{ handler });
+            var eventDelegateHandler = new AsyncEventHandler<TestEv>(versionRepo.Object, mock.Object, new []{ handler });
             await eventDelegateHandler.Update();
             Assert.AreEqual(1, handler.WasCalled);
         }

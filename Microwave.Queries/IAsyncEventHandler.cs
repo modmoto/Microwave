@@ -2,7 +2,7 @@ using System.Threading.Tasks;
 
 namespace Microwave.Queries
 {
-    public interface IEventDelegateHandler
+    public interface IAsyncEventHandler
     {
         Task Update();
     }
