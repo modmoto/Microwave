@@ -52,17 +52,9 @@ namespace Microwave.DependencyInjectionExtensions
             services.AddTransient<IDomainEventFactory, DomainEventFactory>();
             services.AddSingleton<IEventLocationConfig>(new EventLocationConfig(configuration));
 
-            //Handler
-            services.AddIEventDelegateHandler(assembly);
-            services.AddIHandleAsync(assembly);
-
-            //Client
-            services.AddQuerryEventFeed(assembly);
-            services.AddEventDelegateHandlerFeed(assembly);
-
-            //QueryHandlers
-            services.AddQueryHandler(assembly);
-            services.AddReadmodelHandlerAndClients(assembly);
+            services.AddQuerryHandling(assembly);
+            services.AddEventDelegateHandling(assembly);
+            services.AddReadmodelHandling(assembly);
 
             services.AddDomainEventRegistration(assembly);
 
@@ -105,66 +97,22 @@ namespace Microwave.DependencyInjectionExtensions
             return services;
         }
 
-        private static IServiceCollection AddIHandleAsync(this IServiceCollection services, Assembly assembly)
-        {
-            var addTransient = typeof(ServiceCollectionServiceExtensions).GetMethods().Single(m =>
-                m.Name == "AddTransient" && m.GetGenericArguments().Length == 2 &&
-                m.GetParameters().Length == 1);
-
-            var handlerInterfaces = assembly.GetTypes().Where(t => ImplementsIhandleAsyncInterface(t)).ToList();
-            var genericTypeOfHandler = typeof(IHandleAsync<>);
-
-            foreach (var handler in handlerInterfaces)
-            {
-                var eventTypes = handler.GetInterfaces();
-                foreach (var eventType in eventTypes)
-                {
-                    var domainEventType = eventType.GenericTypeArguments.Single();
-                    var handleAsyncInterfaceWithDomainEventType = genericTypeOfHandler.MakeGenericType(domainEventType);
-
-                    var callToAddTransient = addTransient.MakeGenericMethod(handleAsyncInterfaceWithDomainEventType, handler);
-                    callToAddTransient.Invoke(null, new object[] { services });
-                }
-            }
-
-            return services;
-        }
-
-        private static IServiceCollection AddIEventDelegateHandler(this IServiceCollection services, Assembly assembly)
-        {
-            var addTransient = AddTransient();
-
-            var handlerInterfaces = assembly.GetTypes().Where(t => ImplementsIhandleAsyncInterface(t));
-            var genericTypeOfDelegateHandler = typeof(EventDelegateHandler<>);
-
-            var interfacesWithDomainEventImplementation = handlerInterfaces.SelectMany(i => i.GetInterfaces().Where(IsDomainEvent)).ToList();
-            var domainEventTypes = interfacesWithDomainEventImplementation.Select(e => e.GenericTypeArguments.Single()).Distinct();
-
-            foreach (var domainEventType in domainEventTypes)
-            {
-                var delegateHandler = genericTypeOfDelegateHandler.MakeGenericType(domainEventType);
-                var addTransientCall = addTransient.MakeGenericMethod(typeof(IEventDelegateHandler), delegateHandler);
-                addTransientCall.Invoke(null, new object[] { services });
-            }
-
-            return services;
-        }
-
         private static bool IsDomainEvent(Type i2)
         {
             return i2.GenericTypeArguments.Length == 1 && i2.GenericTypeArguments[0].GetInterfaces().Contains(typeof(IDomainEvent));
         }
 
-        private static IServiceCollection AddQuerryEventFeed(this IServiceCollection services, Assembly assembly)
+        private static IServiceCollection AddQuerryHandling(this IServiceCollection services, Assembly assembly)
         {
             var addTransient = AddTransient();
             var addTransientSingle = AddTransientSingle();
 
-            var queryInterfaces = assembly.GetTypes().Where(ImplementsIhandleInterface).ToList();
+            var queryInterfaces = assembly.GetTypes().Where(ImplementsIhandleInterfaceAndQuerry).ToList();
             var genericInterfaceTypeOfFeed = typeof(IEventFeed<>);
             var genericTypeOfFeed = typeof(EventFeed<>);
             var genericTypeOfHandler = typeof(QueryEventHandler<,>);
             var clientType = typeof(DomainEventClient<>);
+            var iHandleType = typeof(IQueryEventHandler);
 
             foreach (var query in queryInterfaces)
             {
@@ -183,13 +131,17 @@ namespace Microwave.DependencyInjectionExtensions
                     var genericClient = clientType.MakeGenericType(genericHandler);
                     var addTransientCallClient = addTransientSingle.MakeGenericMethod(genericClient);
                     addTransientCallClient.Invoke(null, new object[] {services});
+
+                    //handler
+                    var callToAddTransient = addTransient.MakeGenericMethod(iHandleType, genericHandler);
+                    callToAddTransient.Invoke(null, new object[] { services });
                 }
             }
 
             return services;
         }
 
-        private static IServiceCollection AddEventDelegateHandlerFeed(this IServiceCollection services, Assembly assembly)
+        private static IServiceCollection AddEventDelegateHandling(this IServiceCollection services, Assembly assembly)
         {
             var addTransient = AddTransient();
             var addTransientSingle = AddTransientSingle();
@@ -199,6 +151,7 @@ namespace Microwave.DependencyInjectionExtensions
             var genericTypeOfFeed = typeof(EventFeed<>);
             var genericTypeOfHandler = typeof(EventDelegateHandler<>);
             var clientType = typeof(DomainEventClient<>);
+            var iHandleAsyncType = typeof(IHandleAsync<>);
 
             foreach (var handleAsync in handleAsyncInterfaces)
             {
@@ -217,38 +170,18 @@ namespace Microwave.DependencyInjectionExtensions
                     var genericClient = clientType.MakeGenericType(genericHandler);
                     var addTransientCallClient = addTransientSingle.MakeGenericMethod(genericClient);
                     addTransientCallClient.Invoke(null, new object[] {services});
+
+                    //handler
+                    var handleAsyncInterface = iHandleAsyncType.MakeGenericType(domainEventType);
+                    var callToAddTransient = addTransient.MakeGenericMethod(handleAsyncInterface, handleAsync);
+                    callToAddTransient.Invoke(null, new object[] { services });
                 }
             }
 
             return services;
         }
 
-        private static IServiceCollection AddQueryHandler(this IServiceCollection services, Assembly assembly)
-        {
-            var addTransient = AddTransient();
-
-            var handlerInterface = typeof(IQueryEventHandler);
-            var genericTypeOfHandler = typeof(QueryEventHandler<,>);
-
-            var allQuerries = assembly.GetTypes().Where(t => t.BaseType == typeof(Query));
-
-            foreach (var querry in allQuerries)
-            {
-                var interfacesWithDomainEventImplementation = querry.GetInterfaces().Where(IsDomainEvent).ToList();
-                var domainEventTypes = interfacesWithDomainEventImplementation.Select(e => e.GenericTypeArguments.Single()).Distinct();
-
-                foreach (var domainEventType in domainEventTypes)
-                {
-                    var handler = genericTypeOfHandler.MakeGenericType(querry, domainEventType);
-                    var addTransientCall = addTransient.MakeGenericMethod(handlerInterface, handler);
-                    addTransientCall.Invoke(null, new object[] { services });
-                }
-            }
-
-            return services;
-        }
-
-        private static IServiceCollection AddReadmodelHandlerAndClients(this IServiceCollection services, Assembly assembly)
+        private static IServiceCollection AddReadmodelHandling(this IServiceCollection services, Assembly assembly)
         {
             var addTransient = AddTransient();
             var addTransientSingle = AddTransientSingle();
@@ -288,10 +221,10 @@ namespace Microwave.DependencyInjectionExtensions
                 .Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IHandleAsync<>));
         }
 
-        private static bool ImplementsIhandleInterface(Type myType)
+        private static bool ImplementsIhandleInterfaceAndQuerry(Type myType)
         {
             return myType.GetInterfaces()
-                .Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IHandle<>));
+                .Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IHandle<>)) && myType.BaseType == typeof(Query);
         }
 
         private static MethodInfo AddTransientSingle()
