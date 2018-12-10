@@ -1,6 +1,7 @@
 using System;
 using Microsoft.Extensions.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microwave.Domain;
 using Microwave.Queries;
 
 namespace Microwave.DependencyInjectionExtensions.UnitTests
@@ -55,7 +56,15 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
         }
     }
 
-    public class TestReadModel : ReadModel
+    public class TestReadModel : ReadModel, IHandle<Ev>
     {
+        public void Handle(Ev domainEvent)
+        {
+        }
+    }
+
+    public class Ev : IDomainEvent
+    {
+        public Guid EntityId { get; }
     }
 }

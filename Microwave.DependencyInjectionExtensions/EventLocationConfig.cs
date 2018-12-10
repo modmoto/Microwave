@@ -17,7 +17,6 @@ namespace Microwave.DependencyInjectionExtensions
             DefaultEventLocation = CleanUrl(baseUrl);
         }
 
-
         public Uri GetLocationForDomainEvent(string domainEvent)
         {
             var configurationSection = _configuration.GetSection("DomainEventLocations");
