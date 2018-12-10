@@ -192,27 +192,21 @@ namespace Microwave.DependencyInjectionExtensions
             var genericTypeOfHandler = typeof(ReadModelHandler<>);
             var interfaceReadModelHandler = typeof(IReadModelHandler);
             var clientType = typeof(DomainEventClient<>);
-            var iHandleAsyncType = typeof(IHandle<>);
 
             foreach (var readModel in readModels)
             {
-                var types = readModel.GetInterfaces().Where(IsDomainEvent).ToList();
                 var genericReadModelHandler = genericTypeOfHandler.MakeGenericType(readModel);
-                foreach (var iHandleEvent in types)
-                {
-                    //feed
-                    var domainEventType = iHandleEvent.GenericTypeArguments.Single();
-                    var genericHandler = genericReadModelHandler;
-                    var feed = genericTypeOfFeed.MakeGenericType(genericHandler);
-                    var feedInterface = genericInterfaceTypeOfFeed.MakeGenericType(genericHandler);
-                    var addTransientCall = addTransient.MakeGenericMethod(feedInterface, feed);
-                    addTransientCall.Invoke(null, new object[] { services });
+                //feed
+                var genericHandler = genericReadModelHandler;
+                var feed = genericTypeOfFeed.MakeGenericType(genericHandler);
+                var feedInterface = genericInterfaceTypeOfFeed.MakeGenericType(genericHandler);
+                var addTransientCall = addTransient.MakeGenericMethod(feedInterface, feed);
+                addTransientCall.Invoke(null, new object[] { services });
 
-                    //client
-                    var genericClient = clientType.MakeGenericType(genericHandler);
-                    var addTransientCallClient = addTransientSingle.MakeGenericMethod(genericClient);
-                    addTransientCallClient.Invoke(null, new object[] {services});
-                }
+                //client
+                var genericClient = clientType.MakeGenericType(genericHandler);
+                var addTransientCallClient = addTransientSingle.MakeGenericMethod(genericClient);
+                addTransientCallClient.Invoke(null, new object[] {services});
 
                 //handler
                 var callToAddTransient = addTransient.MakeGenericMethod(interfaceReadModelHandler, genericReadModelHandler);
