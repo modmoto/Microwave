@@ -11,10 +11,10 @@ namespace Microwave.EventStores
     {
         private readonly IEventRepository _eventRepository;
         private readonly ISnapShotRepository _snapShotRepository;
-        private readonly SnapShotConfig _snapShotConfig;
+        private readonly ISnapShotConfig _snapShotConfig;
 
         public EventStore(IEventRepository eventRepository, ISnapShotRepository snapShotRepository,
-            SnapShotConfig snapShotConfig)
+            ISnapShotConfig snapShotConfig)
         {
             _eventRepository = eventRepository;
             _snapShotRepository = snapShotRepository;

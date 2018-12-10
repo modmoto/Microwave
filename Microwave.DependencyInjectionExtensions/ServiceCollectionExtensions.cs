@@ -61,7 +61,7 @@ namespace Microwave.DependencyInjectionExtensions
             return services;
         }
 
-        public static IServiceCollection AddMicrowave(this IServiceCollection services)
+        public static IServiceCollection AddMicrowave(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddTransient<DomainEventController>();
             services.AddTransient<JSonHack>();
@@ -74,6 +74,7 @@ namespace Microwave.DependencyInjectionExtensions
                 option.UseSqlite("Data Source=EventStoreContext.db"));
             services.AddTransient<IEventRepository, EventRepository>();
             services.AddTransient<ISnapShotRepository, SnapShotRepository>();
+            services.AddSingleton<ISnapShotConfig>(new SnapShotConfig(configuration));
 
             //WebApi
             services.AddMvcCore(config =>

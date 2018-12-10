@@ -117,9 +117,13 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
         [TestMethod]
         public void AddMicrowaveDependencies()
         {
+            var config = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.test.json")
+                .Build();
+
             var collection = (IServiceCollection) new ServiceCollection();
 
-            var storeDependencies = collection.AddMicrowave();
+            var storeDependencies = collection.AddMicrowave(config);
 
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
