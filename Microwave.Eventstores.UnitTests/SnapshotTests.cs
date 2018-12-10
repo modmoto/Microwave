@@ -27,10 +27,20 @@ namespace Microwave.Eventstores.UnitTests
             await eventStore.AppendAsync(new List<IDomainEvent>
             {
                 new Event1(entityId),
-                new Event2(entityId, "Peter"),
+                new Event2(entityId, "Peter")
+            }, 0);
+
+            await eventStore.LoadAsync<User>(entityId);
+
+            var snapShotDboOld = await eventStoreContext.SnapShots.FindAsync(entityId.ToString());
+
+            Assert.IsNull(snapShotDboOld);
+
+            await eventStore.AppendAsync(new List<IDomainEvent>
+            {
                 new Event3(entityId, 14),
                 new Event2(entityId, "PeterNeu")
-            }, 0);
+            }, 2);
 
             var eventstoreResult = await eventStore.LoadAsync<User>(entityId);
 
