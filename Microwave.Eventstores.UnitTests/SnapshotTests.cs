@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Domain;
 using Microwave.EventStores;
@@ -15,13 +16,18 @@ namespace Microwave.Eventstores.UnitTests
         [TestMethod]
         public async Task SnapshotRealized()
         {
+            var config = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.test.json")
+                .Build();
+            var snapShotConfig = new SnapShotConfig(config);
+
             var options = new DbContextOptionsBuilder<EventStoreContext>()
                 .UseInMemoryDatabase("SnapshotRealized")
                 .Options;
 
             var eventStoreContext = new EventStoreContext(options);
             var repo = new EventRepository(new DomainEventDeserializer(new JSonHack()), eventStoreContext, new ObjectConverter());
-            var eventStore = new EventStore(repo, new SnapShotRepository(eventStoreContext, new ObjectConverter()));
+            var eventStore = new EventStore(repo, new SnapShotRepository(eventStoreContext, new ObjectConverter()), snapShotConfig);
 
             var entityId = Guid.NewGuid();
             await eventStore.AppendAsync(new List<IDomainEvent>

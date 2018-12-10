@@ -12,6 +12,7 @@
         <PackageReference Include="Moq" Version="4.10.1" />
         <PackageReference Include="MSTest.TestAdapter" Version="1.4.0" />
         <PackageReference Include="MSTest.TestFramework" Version="1.4.0" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.1.1" />
     </ItemGroup>
 
     <ItemGroup>
@@ -26,6 +27,13 @@
       <ProjectReference Include="..\Microwave.ObjectPersistences\Microwave.ObjectPersistences.csproj" />
       <ProjectReference Include="..\Microwave.Queries\Microwave.Queries.csproj" />
       <ProjectReference Include="..\Microwave.WebApi\Microwave.WebApi.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Include="appsettings.test.json">
+        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
     </ItemGroup>
 
 </Project>

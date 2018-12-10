@@ -30,7 +30,7 @@ namespace Microwave.Eventstores.UnitTests
             };
             entityStremRepo.Setup(ev => ev.LoadEventsByEntity(It.IsAny<Guid>(), It.IsAny<long>()))
                 .ReturnsAsync( Result<IEnumerable<DomainEventWrapper>>.Ok( new[] { domainEventWrapper }));
-            var eventStore = new EventStore(entityStremRepo.Object, snapShotRepo.Object);
+            var eventStore = new EventStore(entityStremRepo.Object, snapShotRepo.Object, new SnapShotConfig(null));
             var loadAsync = await eventStore.LoadAsync<TestEntity>(entityId);
 
             Assert.AreEqual(entityId, loadAsync.Entity.Id);
@@ -52,7 +52,7 @@ namespace Microwave.Eventstores.UnitTests
             };
             entityStremRepo.Setup(ev => ev.LoadEventsByEntity(It.IsAny<Guid>(), It.IsAny<long>()))
                 .ReturnsAsync( Result<IEnumerable<DomainEventWrapper>>.Ok( new[] { domainEventWrapper }));
-            var eventStore = new EventStore(entityStremRepo.Object, snapShotRepo.Object);
+            var eventStore = new EventStore(entityStremRepo.Object, snapShotRepo.Object, new SnapShotConfig(null));
             var loadAsync = await eventStore.LoadAsync<TestEntity_NoIApply>(entityId);
 
             Assert.AreEqual(Guid.Empty, loadAsync.Entity.Id);
@@ -73,7 +73,7 @@ namespace Microwave.Eventstores.UnitTests
             };
             entityStremRepo.Setup(ev => ev.LoadEventsByEntity(It.IsAny<Guid>(), It.IsAny<long>()))
                 .ReturnsAsync( Result<IEnumerable<DomainEventWrapper>>.Ok( new[] { domainEventWrapper }));
-            var eventStore = new EventStore(entityStremRepo.Object, snapShotRepo.Object);
+            var eventStore = new EventStore(entityStremRepo.Object, snapShotRepo.Object, new SnapShotConfig(null));
             var loadAsync = await eventStore.LoadAsync<TestEntity_NoIApply>(entityId);
 
             Assert.AreEqual(Guid.Empty, loadAsync.Entity.Id);

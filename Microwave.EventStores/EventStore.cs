@@ -11,11 +11,14 @@ namespace Microwave.EventStores
     {
         private readonly IEventRepository _eventRepository;
         private readonly ISnapShotRepository _snapShotRepository;
+        private readonly SnapShotConfig _snapShotConfig;
 
-        public EventStore(IEventRepository eventRepository, ISnapShotRepository snapShotRepository)
+        public EventStore(IEventRepository eventRepository, ISnapShotRepository snapShotRepository,
+            SnapShotConfig snapShotConfig)
         {
             _eventRepository = eventRepository;
             _snapShotRepository = snapShotRepository;
+            _snapShotConfig = snapShotConfig;
         }
 
         public async Task AppendAsync(IEnumerable<IDomainEvent> domainEvents, long entityVersion)
@@ -32,14 +35,9 @@ namespace Microwave.EventStores
             var domainEventWrappers = result.Value.ToList();
             entity.Apply(domainEventWrappers.Select(ev => ev.DomainEvent));
             var version = domainEventWrappers.Last().Version;
-            if (DueSavingSnapshot<T>(version)) await _snapShotRepository.SaveSnapShot(entity, entityId, version);
+            if (_snapShotConfig.DoesNeedSnapshot(typeof(T).Name, snapShot.Version, version))
+                await _snapShotRepository.SaveSnapShot(entity, entityId, version);
             return new EventstoreResult<T>(version, entity);
-        }
-
-        private bool DueSavingSnapshot<T>(long version) where T : IApply, new()
-        {
-            if (version >= 3) return true;
-            return false;
         }
     }
 }
