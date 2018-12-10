@@ -10,10 +10,12 @@ namespace Microwave.EventStores
     public class EventStore : IEventStore
     {
         private readonly IEventRepository _eventRepository;
+        private readonly ISnapShotRepository _snapShotRepository;
 
-        public EventStore(IEventRepository eventRepository)
+        public EventStore(IEventRepository eventRepository, ISnapShotRepository snapShotRepository)
         {
             _eventRepository = eventRepository;
+            _snapShotRepository = snapShotRepository;
         }
 
         public async Task AppendAsync(IEnumerable<IDomainEvent> domainEvents, long entityVersion)
@@ -24,11 +26,14 @@ namespace Microwave.EventStores
 
         public async Task<EventstoreResult<T>> LoadAsync<T>(Guid entityId) where T : IApply, new()
         {
-            var entity = new T();
-            var domainEvents = (await _eventRepository.LoadEventsByEntity(entityId)).Value;
-            var domainEventWrappers = domainEvents.ToList();
+            var snapShot = await _snapShotRepository.LoadSnapShot<T>(entityId);
+            var entity = snapShot.Entity;
+            var result = await _eventRepository.LoadEventsByEntity(entityId, snapShot.Version);
+            var domainEventWrappers = result.Value.ToList();
             entity.Apply(domainEventWrappers.Select(ev => ev.DomainEvent));
-            return new EventstoreResult<T>(domainEventWrappers.Last().Version, entity);
+            var version = domainEventWrappers.Last().Version;
+            await _snapShotRepository.SaveSnapShot(entity, entityId, version);
+            return new EventstoreResult<T>(version, entity);
         }
     }
 }

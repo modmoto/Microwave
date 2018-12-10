@@ -1,14 +1,11 @@
 
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.DependencyInjectionExtensions;
 using Microwave.Domain;
-using Microwave.ObjectPersistences;
 using Microwave.Queries;
-using RichardSzalay.MockHttp;
 
 namespace Microwave.WebApi.UnitTests
 {
