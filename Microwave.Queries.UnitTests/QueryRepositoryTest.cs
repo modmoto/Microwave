@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microwave.Application.Results;
 using Microwave.ObjectPersistences;
 
 namespace Microwave.Queries.UnitTests
@@ -44,6 +45,30 @@ namespace Microwave.Queries.UnitTests
             var query = (await queryRepository.Load<TestQuerry>()).Value;
 
             Assert.AreEqual("Test", query.UserName);
+        }
+
+        [TestMethod]
+        public async Task GetQuery_WrongType()
+        {
+            var options = new DbContextOptionsBuilder<QueryStorageContext>()
+                .UseInMemoryDatabase("GetQuery_WrongType")
+                .Options;
+
+            var queryStorageContext = new QueryStorageContext(options);
+            var identifiableQueryDbo = new IdentifiableQueryDbo
+            {
+                Id = "6695a111-9aee-44e1-b7cc-94ec5ab5e81b",
+                Version = 0,
+                Payload = "{\"$type\":\"Microwave.Queries.UnitTests.TestQuerry, Microwave.Queries.UnitTests\",\"UserName\":\"Test\"}",
+                QueryType = "TestQuerry"
+            };
+            queryStorageContext.IdentifiableQuerries.Add(identifiableQueryDbo);
+            await queryStorageContext.SaveChangesAsync();
+            var queryRepository = new QueryRepository(queryStorageContext, new ObjectConverter());
+
+            var result = await queryRepository.Load<TestIdQuerry>(new Guid("6695a111-9aee-44e1-b7cc-94ec5ab5e81b"));
+
+            Assert.IsTrue(result.Is<NotFound>());
         }
 
         [TestMethod]

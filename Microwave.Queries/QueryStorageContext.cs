@@ -20,6 +20,7 @@ namespace Microwave.Queries
         public string Id { get; set; }
         public string Payload { get; set; }
         public long Version { get; set; }
+        public string QueryType { get; set; }
     }
 
     public class QueryDbo

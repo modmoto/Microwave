@@ -30,7 +30,7 @@ namespace Microwave.Queries
         public async Task<Result<ReadModelWrapper<T>>> Load<T>(Guid id) where T : ReadModel
         {
             var querry = await _context.IdentifiableQuerries.FindAsync(id.ToString());
-            if (querry == null) return Result<ReadModelWrapper<T>>.NotFound(id.ToString());
+            if (querry == null || querry.QueryType != typeof(T).Name) return Result<ReadModelWrapper<T>>.NotFound(id.ToString());
             var deserialize = _converter.Deserialize<T>(querry.Payload);
             var wrapper = new ReadModelWrapper<T>(deserialize, id, querry.Version);
             return Result<ReadModelWrapper<T>>.Ok(wrapper);
@@ -52,7 +52,7 @@ namespace Microwave.Queries
                     var queryDbo = new QueryDbo
                     {
                         Type = query.GetType().Name,
-                        Payload = _converter.Serialize(query)
+                        Payload = _converter.Serialize(query),
                     };
                     _context.Querries.Add(queryDbo);
                 }
@@ -80,7 +80,8 @@ namespace Microwave.Queries
                     {
                         Id = readModelWrapper.Id.ToString(),
                         Payload = _converter.Serialize(readModelWrapper.ReadModel),
-                        Version = readModelWrapper.Version
+                        Version = readModelWrapper.Version,
+                        QueryType = readModelWrapper.ReadModel.GetType().Name
                     };
                     _context.IdentifiableQuerries.Add(identifiableQueryDbo);
                 }
