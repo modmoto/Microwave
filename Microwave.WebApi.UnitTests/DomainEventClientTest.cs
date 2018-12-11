@@ -17,21 +17,21 @@ namespace Microwave.WebApi.UnitTests
             .Build());
 
         [TestMethod]
-        public async Task ClientForQueries()
+        public void ClientForQueries()
         {
             var domainEventClient = new DomainEventClient<QueryEventHandler<Q1, Ev1>>(config);
             Assert.AreEqual("http://luls.de/Api/DomainEventTypeStreams/Ev1", domainEventClient.BaseAddress.ToString());
         }
 
         [TestMethod]
-        public async Task ClientForAsyncHandles()
+        public void ClientForAsyncHandles()
         {
             var domainEventClient = new DomainEventClient<AsyncEventHandler<Ev2>>(config);
             Assert.AreEqual("http://localhost:5000/Api/DomainEventTypeStreams/Ev2", domainEventClient.BaseAddress.ToString());
         }
 
         [TestMethod]
-        public async Task ClientForReadModels()
+        public void ClientForReadModels()
         {
             var domainEventClient = new DomainEventClient<ReadModelHandler<IdQuery>>(config);
             Assert.AreEqual("http://lulsreadmodel.de/Api/DomainEvents", domainEventClient.BaseAddress.ToString());

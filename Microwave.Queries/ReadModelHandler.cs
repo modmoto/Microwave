@@ -57,7 +57,7 @@ namespace Microwave.Queries
                     {
                         result = await _qeryRepository.Load<T>(domainEventEntityId);
                     }
-                    catch (JsonSerializationException e)
+                    catch (JsonSerializationException)
                     {
                         continue;
                     }
