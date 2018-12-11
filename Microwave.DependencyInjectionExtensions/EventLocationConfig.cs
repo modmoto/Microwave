@@ -27,16 +27,18 @@ namespace Microwave.DependencyInjectionExtensions
 
         public Uri GetLocationForReadModel(string readModel)
         {
-            var configurationSection = _configuration.GetSection("DomainEventReadModelLocations");
-            var eventLocation = configurationSection[readModel];
+            var configurationSection = _configuration.GetSection("ReadModelConfig");
+            var readModelConfig = configurationSection.GetSection(readModel);
+            var eventLocation = readModelConfig["EventLocation"];
             if (string.IsNullOrEmpty(eventLocation)) eventLocation = DefaultEventLocation;
             return new Uri($"{CleanUrl(eventLocation)}/Api/DomainEvents");
         }
 
         public string GetCreationEventForReadModel(string readModel)
         {
-            var configurationSection = _configuration.GetSection("DomainEventReadModelCreationEvents");
-            var creationEventName = configurationSection[readModel];
+            var configurationSection = _configuration.GetSection("ReadModelConfig");
+            var readModelConfig = configurationSection.GetSection(readModel);
+            var creationEventName = readModelConfig["CreationEvent"];
             return creationEventName;
         }
 
