@@ -52,14 +52,7 @@ namespace Microwave.Queries
                 }
                 else
                 {
-                    try
-                    {
-                        result = await _qeryRepository.Load<T>(domainEventEntityId);
-                    }
-                    catch (JsonSerializationException)
-                    {
-                        continue;
-                    }
+                    result = await _qeryRepository.Load<T>(domainEventEntityId);
                 }
 
                 if (result.Is<NotFound>()) continue;
