@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microwave.Application.Results;
 using Microwave.Domain;
+using Newtonsoft.Json;
 
 namespace Microwave.Queries
 {
@@ -54,9 +55,9 @@ namespace Microwave.Queries
                 {
                     try
                     {
-                        result = _qeryRepository.Load<T>(domainEventEntityId).Result;
+                        result = await _qeryRepository.Load<T>(domainEventEntityId);
                     }
-                    catch (AggregateException e)
+                    catch (JsonSerializationException e)
                     {
                         continue;
                     }
@@ -71,9 +72,9 @@ namespace Microwave.Queries
                 if (latestEventVersion < modelWrapper.Version) latestEventVersion = modelWrapper.Version;
 
                 var readModelWrapper = new ReadModelWrapper<T>(readModel, domainEventEntityId, latestEventVersion);
-                _qeryRepository.Save(readModelWrapper).Wait();
-                _versionRepository
-                    .SaveVersion(new LastProcessedVersion(redaModelVersionCounter, latestEvent.Created)).Wait();
+                await _qeryRepository.Save(readModelWrapper);
+                await _versionRepository
+                    .SaveVersion(new LastProcessedVersion(redaModelVersionCounter, latestEvent.Created));
             }
         }
 
