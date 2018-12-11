@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -27,6 +28,19 @@ namespace Microwave.DependencyInjectionExtensions
                 eventStoreContext?.Database.EnsureCreated();
                 queryStorageContext?.Database.EnsureCreated();
             }
+
+            return builder;
+        }
+
+        public static IApplicationBuilder RunQueries(this IApplicationBuilder builder)
+        {
+            var serviceScope = builder.ApplicationServices.CreateScope();
+            var asyncEventDelegator = serviceScope.ServiceProvider.GetService<AsyncEventDelegator>();
+            Task.Run(() =>
+            {
+                Task.Delay(10000).Wait();
+                asyncEventDelegator.Update();
+            });
 
             return builder;
         }
