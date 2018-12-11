@@ -2,9 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Application;
 using Microwave.Application.Results;
+using Microwave.DependencyInjectionExtensions;
 using Microwave.Domain;
 using Microwave.ObjectPersistences;
 
@@ -13,6 +15,10 @@ namespace Microwave.Queries.UnitTests
     [TestClass]
     public class ReadModelHandlerTests
     {
+        EventLocationConfig config = new EventLocationConfig(new ConfigurationBuilder()
+            .AddJsonFile("appsettings.test.json")
+            .Build());
+
         [TestMethod]
         public async Task UpdateReadmodelHandler()
         {
@@ -24,7 +30,7 @@ namespace Microwave.Queries.UnitTests
             var queryRepository = new QueryRepository(new QueryStorageContext(options), new ObjectConverter());
 
             var readModelHandler = new ReadModelHandler<TestReadModelQuerries>(queryRepository, new VersionRepository(new
-                QueryStorageContext(options)), new FeedMock2());
+                QueryStorageContext(options)), new FeedMock2(), config);
             await readModelHandler.Update();
 
             var result = await queryRepository.Load<TestReadModelQuerries>(EntityGuid);
@@ -33,6 +39,7 @@ namespace Microwave.Queries.UnitTests
             Assert.AreEqual("testName", result.Value.ReadModel.Name);
         }
 
+        [Ignore("As handlers are singleton, this should never happen in one service, look that up")]
         [TestMethod]
         public async Task UpdateModelConcurrencyVersionBug()
         {
@@ -44,10 +51,10 @@ namespace Microwave.Queries.UnitTests
             var queryRepository = new QueryRepository(new QueryStorageContext(options), new ObjectConverter());
 
             var readModelHandler = new ReadModelHandler<TestReadModelQuerries>(queryRepository, new VersionRepository(new
-                QueryStorageContext(options)), new FeedMock1());
+                QueryStorageContext(options)), new FeedMock1(), config);
 
             var readModelHandler2 = new ReadModelHandler<TestReadModelQuerries>(queryRepository, new VersionRepository(new
-                QueryStorageContext(options)), new FeedMock2());
+                QueryStorageContext(options)), new FeedMock2(), config);
 
 
             var update = readModelHandler.Update();
@@ -74,7 +81,7 @@ namespace Microwave.Queries.UnitTests
             var queryRepository = new QueryRepository(new QueryStorageContext(options), new ObjectConverter());
 
             var readModelHandler = new ReadModelHandler<TestReadModelQuerries>(queryRepository, new VersionRepository(new
-                QueryStorageContext(options)), new FeedMock3());
+                QueryStorageContext(options)), new FeedMock3(), config);
 
             await readModelHandler.Update();
 
@@ -96,7 +103,7 @@ namespace Microwave.Queries.UnitTests
             var queryRepository = new QueryRepository(new QueryStorageContext(options), new ObjectConverter());
 
             var readModelHandler = new ReadModelHandler<TestReadModelQuerries>(queryRepository, new VersionRepository(new
-                QueryStorageContext(options)), new FeedMock4());
+                QueryStorageContext(options)), new FeedMock4(), config);
 
             await readModelHandler.Update();
 
@@ -105,6 +112,27 @@ namespace Microwave.Queries.UnitTests
             Assert.AreEqual(EntityGuid, result.Value.Id);
             var condition = result2.Is<NotFound>();
             Assert.IsTrue(condition);
+        }
+
+        [TestMethod]
+        public async Task UpdateModel_EventsNotAppliedStillUpdatesVersion()
+        {
+            EntityGuid = Guid.NewGuid();
+            var options = new DbContextOptionsBuilder<QueryStorageContext>()
+                .UseInMemoryDatabase("UpdateModelConcurrencyVersionBug")
+                .Options;
+
+            var queryRepository = new QueryRepository(new QueryStorageContext(options), new ObjectConverter());
+
+            var readModelHandler = new ReadModelHandler<TestReadModelQuerries_OnlyOneEventAndVersionIsCounted>(queryRepository, new VersionRepository(new
+                QueryStorageContext(options)), new FeedMock5(), config);
+
+            await readModelHandler.Update();
+
+            var result = await queryRepository.Load<TestReadModelQuerries_OnlyOneEventAndVersionIsCounted>(EntityGuid);
+            Assert.AreEqual(14, result.Value.Version);
+            Assert.AreEqual(null, result.Value.ReadModel.Name);
+            Assert.AreEqual(EntityGuid, result.Value.ReadModel.Id);
         }
 
         public static Guid EntityGuid { get; set; }
@@ -127,7 +155,37 @@ namespace Microwave.Queries.UnitTests
         public string Name { get; set; }
     }
 
+    public class TestReadModelQuerries_OnlyOneEventAndVersionIsCounted : ReadModel, IHandle<TestEvnt2>
+    {
+        public void Handle(TestEvnt2 domainEvent)
+        {
+            Id = domainEvent.EntityId;
+        }
+
+        public Guid Id { get; set; }
+        public string Name { get; set; }
+    }
+
     public class FeedMock2 : IEventFeed<ReadModelHandler<TestReadModelQuerries>>
+    {
+        public Task<IEnumerable<DomainEventWrapper>> GetEventsAsync(long lastVersion)
+        {
+            var domainEventWrapper = new DomainEventWrapper
+            {
+                Version = 12,
+                DomainEvent = new TestEvnt2(ReadModelHandlerTests.EntityGuid)
+            };
+            var domainEventWrappe2 = new DomainEventWrapper
+            {
+                Version = 14,
+                DomainEvent = new TestEvnt1(ReadModelHandlerTests.EntityGuid, "testName")
+            };
+            var list = new List<DomainEventWrapper> {domainEventWrapper, domainEventWrappe2};
+            return Task.FromResult((IEnumerable<DomainEventWrapper>) list);
+        }
+    }
+
+    public class FeedMock5 : IEventFeed<ReadModelHandler<TestReadModelQuerries_OnlyOneEventAndVersionIsCounted>>
     {
         public Task<IEnumerable<DomainEventWrapper>> GetEventsAsync(long lastVersion)
         {

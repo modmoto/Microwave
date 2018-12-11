@@ -6,5 +6,6 @@ namespace Microwave.Queries
     {
         Uri GetLocationForDomainEvent(string domainEvent);
         Uri GetLocationForReadModel(string readModel);
+        string GetCreationEventForReadModel(string readModel);
     }
 }

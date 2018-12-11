@@ -33,6 +33,13 @@ namespace Microwave.DependencyInjectionExtensions
             return new Uri($"{CleanUrl(eventLocation)}/Api/DomainEvents");
         }
 
+        public string GetCreationEventForReadModel(string readModel)
+        {
+            var configurationSection = _configuration.GetSection("DomainEventReadModelCreationEvents");
+            var creationEventName = configurationSection[readModel];
+            return creationEventName;
+        }
+
         private static string CleanUrl(string eventLocation)
         {
             if (eventLocation.EndsWith("/")) return eventLocation.Remove(eventLocation.Length - 1);
