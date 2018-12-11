@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microwave.Application.Results;
@@ -51,7 +52,14 @@ namespace Microwave.Queries
                 }
                 else
                 {
-                    result = _qeryRepository.Load<T>(domainEventEntityId).Result;
+                    try
+                    {
+                        result = _qeryRepository.Load<T>(domainEventEntityId).Result;
+                    }
+                    catch (AggregateException e)
+                    {
+                        continue;
+                    }
                 }
 
                 if (result.Is<NotFound>()) continue;

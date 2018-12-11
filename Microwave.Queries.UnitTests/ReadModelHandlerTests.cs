@@ -135,8 +135,51 @@ namespace Microwave.Queries.UnitTests
             Assert.AreEqual(EntityGuid, result.Value.ReadModel.Id);
         }
 
+        [TestMethod]
+        public async Task UpdateModel_TwoParallelReadModelHandler_SerializationBug()
+        {
+            EntityGuid = Guid.NewGuid();
+            EntityGuid2 = Guid.NewGuid();
+            var options = new DbContextOptionsBuilder<QueryStorageContext>()
+                .UseInMemoryDatabase("UpdateModel_TwoParallelReadModelHandler_SerializationBug")
+                .Options;
+
+            var queryRepository = new QueryRepository(new QueryStorageContext(options), new ObjectConverter());
+
+            var readModelHandler = new ReadModelHandler<TestReadModelQuerries_TwoParallelFeeds1>(queryRepository, new VersionRepository(new
+                QueryStorageContext(options)), new FeedMock6(), config);
+
+            var readModelHandler2 = new ReadModelHandler<TestReadModelQuerries_TwoParallelFeeds2>(queryRepository, new VersionRepository(new
+                QueryStorageContext(options)), new FeedMock7(), config);
+
+            await readModelHandler.Update();
+            await readModelHandler2.Update();
+
+            var result = await queryRepository.Load<TestReadModelQuerries_TwoParallelFeeds1>(EntityGuid);
+            var result2 = await queryRepository.Load<TestReadModelQuerries_TwoParallelFeeds2>(EntityGuid2);
+            Assert.AreEqual(EntityGuid, result.Value.ReadModel.Id);
+            Assert.AreEqual(EntityGuid2, result2.Value.ReadModel.Id);
+        }
+
         public static Guid EntityGuid { get; set; }
         public static Guid EntityGuid2 { get; set; }
+
+        public static Task<IEnumerable<DomainEventWrapper>> MakeEvents()
+        {
+            var wrapper1 = new DomainEventWrapper
+            {
+                Version = 12,
+                DomainEvent = new TestEvnt1(EntityGuid, "testName")
+            };
+
+            var wrapper2 = new DomainEventWrapper
+            {
+                Version = 14,
+                DomainEvent = new TestEvnt2(EntityGuid2)
+            };
+            var list = new List<DomainEventWrapper> {wrapper1, wrapper2};
+            return Task.FromResult((IEnumerable<DomainEventWrapper>) list);
+        }
     }
 
     public class TestReadModelQuerries : ReadModel, IHandle<TestEvnt2>, IHandle<TestEvnt1>
@@ -202,6 +245,42 @@ namespace Microwave.Queries.UnitTests
             var list = new List<DomainEventWrapper> {domainEventWrapper, domainEventWrappe2};
             return Task.FromResult((IEnumerable<DomainEventWrapper>) list);
         }
+    }
+
+    public class FeedMock6 : IEventFeed<ReadModelHandler<TestReadModelQuerries_TwoParallelFeeds1>>
+    {
+        public Task<IEnumerable<DomainEventWrapper>> GetEventsAsync(long lastVersion)
+        {
+            return ReadModelHandlerTests.MakeEvents();
+        }
+    }
+
+    public class TestReadModelQuerries_TwoParallelFeeds1 : ReadModel, IHandle<TestEvnt1>
+    {
+        public void Handle(TestEvnt1 domainEvent)
+        {
+            Id = domainEvent.EntityId;
+        }
+
+        public Guid Id { get; set; }
+    }
+
+    public class FeedMock7 : IEventFeed<ReadModelHandler<TestReadModelQuerries_TwoParallelFeeds2>>
+    {
+        public Task<IEnumerable<DomainEventWrapper>> GetEventsAsync(long lastVersion)
+        {
+            return ReadModelHandlerTests.MakeEvents();
+        }
+    }
+
+    public class TestReadModelQuerries_TwoParallelFeeds2 : ReadModel, IHandle<TestEvnt2>
+    {
+        public void Handle(TestEvnt2 domainEvent)
+        {
+            Id = domainEvent.EntityId;
+        }
+
+        public Guid Id { get; set; }
     }
 
     public class FeedMock3 : IEventFeed<ReadModelHandler<TestReadModelQuerries>>
