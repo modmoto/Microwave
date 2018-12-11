@@ -54,12 +54,6 @@ namespace Microwave.EventStores
         }
     }
 
-    public class Identifiable
-    {
-        public Guid Id { get; }
-    }
-
-
     public class DefaultSnapshot<T> : SnapShotResult<T> where T : new()
     {
         public DefaultSnapshot() : base(new T(), 0)
