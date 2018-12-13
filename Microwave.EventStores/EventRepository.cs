@@ -16,7 +16,6 @@ namespace Microwave.EventStores
         private readonly DomainEventDeserializer _domainEventConverter;
         private readonly EventStoreContext _eventStoreContext;
         private readonly IObjectConverter _converter;
-        private readonly object _lock = new Object();
 
         public EventRepository(
             DomainEventDeserializer domainEventConverter,
@@ -87,40 +86,38 @@ namespace Microwave.EventStores
             return Result<IEnumerable<DomainEventWrapper>>.Ok(domainEvents);
         }
 
-        //TODO remove Lock and make threadsafe
-        public Task<Result> AppendAsync(IEnumerable<IDomainEvent> domainEvents, long entityVersion)
+        public async Task<Result> AppendAsync(IEnumerable<IDomainEvent> domainEvents, long entityVersion)
         {
             var events = domainEvents.ToList();
-            if (!events.Any()) return Task.FromResult(Result.Ok());
-            var entityId = events.First().EntityId;
-            lock (_lock)
+            var result = Result.Ok();
+            if (!events.Any()) return result;
+
+            var entityVersionTemp = entityVersion;
+            var domainEventDbos = events.Select(domainEvent =>
             {
-                var stream = _eventStoreContext.EntityStreams
-                    .Where(str => str.EntityId == entityId.ToString()).ToList();
-
-                var lastOrDefault = stream.LastOrDefault();
-                var entityVersionTemp = lastOrDefault?.Version ?? 0;
-                if (entityVersionTemp != entityVersion) return Task.FromResult(Result.ConcurrencyResult(entityVersion, entityVersionTemp));
-
-                foreach (var domainEvent in events)
+                return new DomainEventDbo
                 {
-                    entityVersionTemp = entityVersionTemp + 1;
-                    var serialize = _converter.Serialize(domainEvent);
-                    var domainEventDbo = new DomainEventDbo
-                    {
-                        Payload = serialize,
-                        Created = DateTime.UtcNow.Ticks,
-                        Version = entityVersionTemp,
-                        EventType = domainEvent.GetType().Name,
-                        EntityId = domainEvent.EntityId.ToString()
-                    };
+                    Payload = _converter.Serialize(domainEvent),
+                    Created = DateTime.UtcNow.Ticks,
+                    Version = ++entityVersionTemp,
+                    EventType = domainEvent.GetType().Name,
+                    EntityId = domainEvent.EntityId.ToString()
+                };
+            });
 
-                    _eventStoreContext.EntityStreams.Add(domainEventDbo);
-                }
-
-                _eventStoreContext.SaveChanges();
-                return Task.FromResult(Result.Ok());
+            try
+            {
+                await _eventStoreContext.EntityStreams
+                    .AddRangeAsync(domainEventDbos);
             }
+            catch (InvalidOperationException)
+            {
+                var domainEventDbo = _eventStoreContext.EntityStreams.Last(e => events.First().EntityId.ToString() == e.EntityId);
+                return Result.ConcurrencyResult(entityVersion, domainEventDbo.Version);
+            }
+
+            await _eventStoreContext.SaveChangesAsync();
+            return result;
         }
     }
 }

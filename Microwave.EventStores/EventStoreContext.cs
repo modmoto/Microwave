@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 
 namespace Microwave.EventStores
 {
@@ -24,6 +25,7 @@ namespace Microwave.EventStores
 
     public class SnapShotDbo
     {
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public string EntityId { get; set; }
         public string Payload { get; set; }
         public long Version { get; set; }
@@ -31,6 +33,7 @@ namespace Microwave.EventStores
 
     public class DomainEventDbo
     {
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public string EntityId { get; set; }
         public string Payload { get; set; }
         public long Created { get; set; }

@@ -88,6 +88,9 @@ namespace Microwave.Eventstores.UnitTests
             var concurrencyException = Assert.ThrowsException<ConcurrencyViolatedException>(() => CheckAllResults(allResults));
             var concurrencyExceptionMessage = concurrencyException.Message;
             Assert.AreEqual("Concurrency fraud detected, could not update database. ExpectedVersion: 0, ActualVersion: 2", concurrencyExceptionMessage);
+
+            var loadEvents = await eventRepository.LoadEvents();
+            Assert.AreEqual(2, loadEvents.Value.Count());
         }
 
         [TestMethod]

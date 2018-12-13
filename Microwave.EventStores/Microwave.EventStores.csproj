@@ -12,6 +12,7 @@
     <ProjectReference Include="..\Microwave.Queries\Microwave.Queries.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="FlexLabs.EntityFrameworkCore.Upsert" Version="2.0.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="2.2.0" />
   </ItemGroup>
   <ItemGroup>
