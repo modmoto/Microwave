@@ -27,6 +27,9 @@ namespace Microwave.DependencyInjectionExtensions
 
                 eventStoreContext?.Database.EnsureCreated();
                 queryStorageContext?.Database.EnsureCreated();
+
+                SQLitePCL.raw.SetProvider(new SQLitePCL.SQLite3Provider_sqlite3());
+                SQLitePCL.raw.FreezeProvider();
             }
 
             return builder;
