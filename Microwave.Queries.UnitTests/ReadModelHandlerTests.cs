@@ -33,36 +33,6 @@ namespace Microwave.Queries.UnitTests
             Assert.AreEqual("testName", result.Value.ReadModel.Name);
         }
 
-        [Ignore("As handlers are singleton, this should never happen in one service, look that up")]
-        [TestMethod]
-        public async Task UpdateModelConcurrencyVersionBug()
-        {
-            EntityGuid = Guid.NewGuid();
-            var options = new DbContextOptionsBuilder<QueryStorageContext>()
-                .UseInMemoryDatabase("UpdateModelConcurrencyVersionBug")
-                .Options;
-
-            var queryRepository = new QueryRepository(new QueryStorageContext(options), new ObjectConverter());
-
-            var readModelHandler = new ReadModelHandler<TestReadModelQuerries>(queryRepository, new VersionRepository(new
-                QueryStorageContext(options)), new FeedMock1());
-
-            var readModelHandler2 = new ReadModelHandler<TestReadModelQuerries>(queryRepository, new VersionRepository(new
-                QueryStorageContext(options)), new FeedMock2());
-
-
-            var update = readModelHandler.Update();
-            var update2 = readModelHandler2.Update();
-
-            await Task.WhenAll(update2, update);
-
-            var result = await queryRepository.Load<TestReadModelQuerries>(EntityGuid);
-            Assert.AreEqual(EntityGuid, result.Value.Id);
-            Assert.AreEqual(17, result.Value.Version);
-            Assert.AreEqual("testName", result.Value.ReadModel.Name);
-            Assert.AreEqual(EntityGuid, result.Value.ReadModel.Id);
-        }
-
         [TestMethod]
         public async Task UpdateModel_TwoEntities()
         {
