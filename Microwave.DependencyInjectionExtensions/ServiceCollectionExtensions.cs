@@ -39,7 +39,9 @@ namespace Microwave.DependencyInjectionExtensions
             Task.Run(() =>
             {
                 Task.Delay(10000).Wait();
+                #pragma warning disable 4014
                 asyncEventDelegator.Update();
+                #pragma warning restore 4014
             });
 
             return builder;

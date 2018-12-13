@@ -15,10 +15,6 @@ namespace Microwave.Queries.UnitTests
     [TestClass]
     public class ReadModelHandlerTests
     {
-        EventLocationConfig config = new EventLocationConfig(new ConfigurationBuilder()
-            .AddJsonFile("appsettings.test.json")
-            .Build());
-
         [TestMethod]
         public async Task UpdateReadmodelHandler()
         {
@@ -30,7 +26,7 @@ namespace Microwave.Queries.UnitTests
             var queryRepository = new QueryRepository(new QueryStorageContext(options), new ObjectConverter());
 
             var readModelHandler = new ReadModelHandler<TestReadModelQuerries>(queryRepository, new VersionRepository(new
-                QueryStorageContext(options)), new FeedMock2(), config);
+                QueryStorageContext(options)), new FeedMock2());
             await readModelHandler.Update();
 
             var result = await queryRepository.Load<TestReadModelQuerries>(EntityGuid);
@@ -51,10 +47,10 @@ namespace Microwave.Queries.UnitTests
             var queryRepository = new QueryRepository(new QueryStorageContext(options), new ObjectConverter());
 
             var readModelHandler = new ReadModelHandler<TestReadModelQuerries>(queryRepository, new VersionRepository(new
-                QueryStorageContext(options)), new FeedMock1(), config);
+                QueryStorageContext(options)), new FeedMock1());
 
             var readModelHandler2 = new ReadModelHandler<TestReadModelQuerries>(queryRepository, new VersionRepository(new
-                QueryStorageContext(options)), new FeedMock2(), config);
+                QueryStorageContext(options)), new FeedMock2());
 
 
             var update = readModelHandler.Update();
@@ -81,7 +77,7 @@ namespace Microwave.Queries.UnitTests
             var queryRepository = new QueryRepository(new QueryStorageContext(options), new ObjectConverter());
 
             var readModelHandler = new ReadModelHandler<TestReadModelQuerries>(queryRepository, new VersionRepository(new
-                QueryStorageContext(options)), new FeedMock3(), config);
+                QueryStorageContext(options)), new FeedMock3());
 
             await readModelHandler.Update();
 
@@ -103,7 +99,7 @@ namespace Microwave.Queries.UnitTests
             var queryRepository = new QueryRepository(new QueryStorageContext(options), new ObjectConverter());
 
             var readModelHandler = new ReadModelHandler<TestReadModelQuerries>(queryRepository, new VersionRepository(new
-                QueryStorageContext(options)), new FeedMock4(), config);
+                QueryStorageContext(options)), new FeedMock4());
 
             await readModelHandler.Update();
 
@@ -125,7 +121,7 @@ namespace Microwave.Queries.UnitTests
             var queryRepository = new QueryRepository(new QueryStorageContext(options), new ObjectConverter());
 
             var readModelHandler = new ReadModelHandler<TestReadModelQuerries_OnlyOneEventAndVersionIsCounted>(queryRepository, new VersionRepository(new
-                QueryStorageContext(options)), new FeedMock5(), config);
+                QueryStorageContext(options)), new FeedMock5());
 
             await readModelHandler.Update();
 
@@ -147,10 +143,10 @@ namespace Microwave.Queries.UnitTests
             var queryRepository = new QueryRepository(new QueryStorageContext(options), new ObjectConverter());
 
             var readModelHandler = new ReadModelHandler<TestReadModelQuerries_TwoParallelFeeds1>(queryRepository, new VersionRepository(new
-                QueryStorageContext(options)), new FeedMock6(), config);
+                QueryStorageContext(options)), new FeedMock6());
 
             var readModelHandler2 = new ReadModelHandler<TestReadModelQuerries_TwoParallelFeeds2>(queryRepository, new VersionRepository(new
-                QueryStorageContext(options)), new FeedMock7(), config);
+                QueryStorageContext(options)), new FeedMock7());
 
             await readModelHandler.Update();
             await readModelHandler2.Update();
@@ -159,6 +155,12 @@ namespace Microwave.Queries.UnitTests
             var result2 = await queryRepository.Load<TestReadModelQuerries_TwoParallelFeeds2>(EntityGuid2);
             Assert.AreEqual(EntityGuid, result.Value.ReadModel.Id);
             Assert.AreEqual(EntityGuid2, result2.Value.ReadModel.Id);
+        }
+
+        [TestMethod]
+        public async Task CreatedOnAttribute_Exception()
+        {
+            Assert.ThrowsException<ArgumentException>(() => new CreateReadmodelOn(typeof(ReadModel)));
         }
 
         public static Guid EntityGuid { get; set; }
@@ -182,6 +184,7 @@ namespace Microwave.Queries.UnitTests
         }
     }
 
+    [CreateReadmodelOn(typeof(TestEvnt2))]
     public class TestReadModelQuerries : ReadModel, IHandle<TestEvnt2>, IHandle<TestEvnt1>
     {
         public void Handle(TestEvnt2 domainEvent)
@@ -198,6 +201,7 @@ namespace Microwave.Queries.UnitTests
         public string Name { get; set; }
     }
 
+    [CreateReadmodelOn(typeof(TestEvnt2))]
     public class TestReadModelQuerries_OnlyOneEventAndVersionIsCounted : ReadModel, IHandle<TestEvnt2>
     {
         public void Handle(TestEvnt2 domainEvent)
@@ -255,6 +259,7 @@ namespace Microwave.Queries.UnitTests
         }
     }
 
+    [CreateReadmodelOn(typeof(TestEvnt1))]
     public class TestReadModelQuerries_TwoParallelFeeds1 : ReadModel, IHandle<TestEvnt1>
     {
         public void Handle(TestEvnt1 domainEvent)
@@ -273,6 +278,7 @@ namespace Microwave.Queries.UnitTests
         }
     }
 
+    [CreateReadmodelOn(typeof(TestEvnt2))]
     public class TestReadModelQuerries_TwoParallelFeeds2 : ReadModel, IHandle<TestEvnt2>
     {
         public void Handle(TestEvnt2 domainEvent)

@@ -16,7 +16,7 @@ namespace Microwave.Queries
         }
     }
 
-    public class ReadModel : Query
+    public abstract class ReadModel: Query
     {
     }
 }

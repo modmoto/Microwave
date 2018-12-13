@@ -1,8 +1,8 @@
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using Microwave.Application.Results;
 using Microwave.Domain;
-using Newtonsoft.Json;
 
 namespace Microwave.Queries
 {
@@ -15,19 +15,16 @@ namespace Microwave.Queries
     {
         private readonly IQeryRepository _qeryRepository;
         private readonly IEventFeed<ReadModelHandler<T>> _eventFeed;
-        private readonly IEventLocationConfig _eventLocationConfig;
         private readonly IVersionRepository _versionRepository;
 
         public ReadModelHandler(
             IQeryRepository qeryRepository,
             IVersionRepository versionRepository,
-            IEventFeed<ReadModelHandler<T>> eventFeed,
-            IEventLocationConfig eventLocationConfig)
+            IEventFeed<ReadModelHandler<T>> eventFeed)
         {
             _qeryRepository = qeryRepository;
             _versionRepository = versionRepository;
             _eventFeed = eventFeed;
-            _eventLocationConfig = eventLocationConfig;
         }
 
         public async Task Update()
@@ -72,9 +69,9 @@ namespace Microwave.Queries
 
         private bool IsCreationEvent(IDomainEvent latestEventDomainEvent)
         {
-            var eventName = latestEventDomainEvent.GetType().Name;
-            var readModelName = typeof(T).Name;
-            return _eventLocationConfig.GetCreationEventForReadModel(readModelName) == eventName;
+            var eventType = latestEventDomainEvent.GetType();
+            var attribute = typeof(T).GetCustomAttribute(typeof(CreateReadmodelOn)) as CreateReadmodelOn;
+            return attribute?.CreationEvent == eventType;
         }
     }
 }
