@@ -24,7 +24,9 @@ namespace Microwave.Queries
         public async Task SaveVersion(LastProcessedVersion version)
         {
             await _subscriptionContext.ProcessedVersions
-                .Upsert(new LastProcessedVersionDbo(version.EventType, version.LastVersion))
+                .Upsert(new LastProcessedVersionDbo {
+                    EventType = version.EventType,
+                    LastVersion = version.LastVersion})
                 .RunAsync();
         }
     }

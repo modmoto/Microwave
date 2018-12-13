@@ -34,12 +34,6 @@ namespace Microwave.Queries
 
     public class LastProcessedVersionDbo
     {
-        public LastProcessedVersionDbo(string eventType, long lastVersion)
-        {
-            EventType = eventType;
-            LastVersion = lastVersion;
-        }
-
         [Key, DatabaseGenerated(DatabaseGeneratedOption.None)]
         public string EventType { get; set; }
         public long LastVersion { get; set; }
