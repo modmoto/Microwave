@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
 namespace Microwave.Queries
@@ -17,6 +18,7 @@ namespace Microwave.Queries
 
     public class IdentifiableQueryDbo
     {
+        [Key, DatabaseGenerated(DatabaseGeneratedOption.None)]
         public string Id { get; set; }
         public string Payload { get; set; }
         public long Version { get; set; }
@@ -25,7 +27,7 @@ namespace Microwave.Queries
 
     public class QueryDbo
     {
-        [Key]
+        [Key, DatabaseGenerated(DatabaseGeneratedOption.None)]
         public string Type { get; set; }
         public string Payload { get; set; }
     }
@@ -38,8 +40,8 @@ namespace Microwave.Queries
             LastVersion = lastVersion;
         }
 
-        [Key] public string EventType { get; set; }
-
+        [Key, DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public string EventType { get; set; }
         public long LastVersion { get; set; }
     }
 }

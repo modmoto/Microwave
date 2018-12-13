@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using Microwave.Application;
 using Microwave.Application.Results;
 
@@ -9,8 +10,6 @@ namespace Microwave.Queries
     {
         private readonly QueryStorageContext _context;
         private readonly IObjectConverter _converter;
-        private readonly object _idQuerryLock = new object();
-        private readonly object _querryLock = new object();
 
         public QueryRepository(QueryStorageContext context, IObjectConverter converter)
         {
@@ -36,59 +35,28 @@ namespace Microwave.Queries
             return Result<ReadModelWrapper<T>>.Ok(wrapper);
         }
 
-        //Todo Remove this locks again
-        public Task<Result> Save(Query query)
+        public async Task<Result> Save(Query query)
         {
-            lock (_querryLock)
-            {
-                var firstOrDefault = _context.Querries.Find(query.GetType().Name);
-                if (firstOrDefault != null)
+            await _context.Querries.Upsert(new QueryDbo
                 {
-                    firstOrDefault.Payload = _converter.Serialize(query);
-                    _context.Update(firstOrDefault);
-                }
-                else
-                {
-                    var queryDbo = new QueryDbo
-                    {
-                        Type = query.GetType().Name,
-                        Payload = _converter.Serialize(query),
-                    };
-                    _context.Querries.Add(queryDbo);
-                }
-
-                _context.SaveChanges();
-                return Task.FromResult(Result.Ok());
-            }
+                    Type = query.GetType().Name,
+                    Payload = _converter.Serialize(query)
+                })
+                .RunAsync();
+            return Result.Ok();
         }
 
-        public Task<Result> Save<T>(ReadModelWrapper<T> readModelWrapper) where T : ReadModel, new()
+        public async Task<Result> Save<T>(ReadModelWrapper<T> query) where T : ReadModel, new()
         {
-            lock (_idQuerryLock)
-            {
-                var firstOrDefault = _context.IdentifiableQuerries.Find(readModelWrapper.Id.ToString());
-                if (firstOrDefault != null)
+            await _context.IdentifiableQuerries.Upsert(new IdentifiableQueryDbo
                 {
-                    firstOrDefault.Payload = _converter.Serialize(readModelWrapper.ReadModel);
-                    firstOrDefault.Id = readModelWrapper.Id.ToString();
-                    firstOrDefault.Version = readModelWrapper.Version;
-                    _context.Update(firstOrDefault);
-                }
-                else
-                {
-                    var identifiableQueryDbo = new IdentifiableQueryDbo
-                    {
-                        Id = readModelWrapper.Id.ToString(),
-                        Payload = _converter.Serialize(readModelWrapper.ReadModel),
-                        Version = readModelWrapper.Version,
-                        QueryType = readModelWrapper.ReadModel.GetType().Name
-                    };
-                    _context.IdentifiableQuerries.Add(identifiableQueryDbo);
-                }
-
-                _context.SaveChanges();
-                return Task.FromResult(Result.Ok());
-            }
+                    Id = query.Id.ToString(),
+                    Version = query.Version,
+                    QueryType = query.ReadModel.GetType().Name,
+                    Payload = _converter.Serialize(query.ReadModel)
+                })
+                .RunAsync();
+            return Result.Ok();
         }
     }
 }

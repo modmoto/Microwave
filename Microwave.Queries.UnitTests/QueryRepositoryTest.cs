@@ -105,6 +105,9 @@ namespace Microwave.Queries.UnitTests
             var save2 = queryRepository.Save(new ReadModelWrapper<TestIdQuerry>(testQuery2, guid, 2));
 
             await Task.WhenAll(new List<Task> { save, save2 });
+
+            var result = await queryRepository.Load<TestIdQuerry>(guid);
+            Assert.AreEqual(2, result.Value.Version);
         }
 
         [TestMethod]
