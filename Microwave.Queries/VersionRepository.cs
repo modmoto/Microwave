@@ -24,22 +24,9 @@ namespace Microwave.Queries
 
         public async Task SaveVersion(LastProcessedVersion version)
         {
-            var lastProcessedVersionDbo =
-                _subscriptionContext.ProcessedVersions.FirstOrDefault(ev => ev.EventType == version.EventType);
-            if (lastProcessedVersionDbo == null)
-            {
-                _subscriptionContext.ProcessedVersions.Add(new LastProcessedVersionDbo(version.EventType,
-                    version.LastVersion));
-            }
-            else
-            {
-                var processedVersionDbo =
-                    _subscriptionContext.ProcessedVersions.Single(e => e.EventType == version.EventType);
-                processedVersionDbo.LastVersion = version.LastVersion;
-                _subscriptionContext.Update(processedVersionDbo);
-            }
-
-            await _subscriptionContext.SaveChangesAsync();
+            await _subscriptionContext.ProcessedVersions
+                .Upsert(new LastProcessedVersionDbo(version.EventType, version.LastVersion))
+                .RunAsync();
         }
     }
 }

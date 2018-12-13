@@ -58,6 +58,8 @@ namespace Microwave.Queries
                 var readModel = modelWrapper.ReadModel;
                 readModel.Handle(latestEventDomainEvent);
 
+                if (latestEventVersion < modelWrapper.Version) latestEventVersion = modelWrapper.Version;
+
                 var readModelWrapper = new ReadModelWrapper<T>(readModel, domainEventEntityId, latestEventVersion);
                 await _qeryRepository.Save(readModelWrapper);
                 await _versionRepository
