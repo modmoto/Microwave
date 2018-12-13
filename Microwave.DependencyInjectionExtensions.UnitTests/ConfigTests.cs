@@ -64,16 +64,6 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
             var confiNew = new EventLocationConfig(config);
             Assert.AreEqual("http://localhost:5000/Api/DomainEvents", confiNew.GetLocationForReadModel(typeof(TestReadModel).Name).ToString());
         }
-
-//        [TestMethod]
-//        public void ConfigTest_ReadModelCreationEvent()
-//        {
-//            var config = new ConfigurationBuilder()
-//                .AddJsonFile("appsettings_ReadModelCreationEvent.json")
-//                .Build();
-//            var confiNew = new EventLocationConfig(config);
-//            Assert.AreEqual("ReadModelCreated", confiNew.GetCreationEventForReadModel(typeof(TestReadModel).Name));
-//        }
     }
 
     public class TestReadModel : ReadModel, IHandle<Ev>

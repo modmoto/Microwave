@@ -2,11 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Application;
 using Microwave.Application.Results;
-using Microwave.DependencyInjectionExtensions;
 using Microwave.Domain;
 using Microwave.ObjectPersistences;
 
@@ -158,7 +156,7 @@ namespace Microwave.Queries.UnitTests
         }
 
         [TestMethod]
-        public async Task CreatedOnAttribute_Exception()
+        public void CreatedOnAttribute_Exception()
         {
             Assert.ThrowsException<ArgumentException>(() => new CreateReadmodelOn(typeof(ReadModel)));
         }
