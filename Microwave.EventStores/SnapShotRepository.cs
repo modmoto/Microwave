@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using Microwave.Application;
 
 namespace Microwave.EventStores
@@ -8,7 +9,6 @@ namespace Microwave.EventStores
     {
         private readonly EventStoreContext _context;
         private readonly IObjectConverter _converter;
-        private readonly object _lock = new object();
 
         public SnapShotRepository(EventStoreContext context, IObjectConverter converter)
         {
@@ -24,33 +24,15 @@ namespace Microwave.EventStores
             return new SnapShotResult<T>(data, snapShot.Version);
         }
 
-        public Task SaveSnapShot<T>(T snapShot, Guid entityId, long version)
+        public async Task SaveSnapShot<T>(T snapShot, Guid entityId, long version)
         {
-            lock (_lock)
-            {
-                var firstOrDefault = _context.SnapShots.Find(entityId.ToString());
-                if (firstOrDefault != null)
+            await _context.SnapShots.Upsert(new SnapShotDbo
                 {
-                    firstOrDefault.Payload = _converter.Serialize(snapShot);
-                    firstOrDefault.EntityId = entityId.ToString();
-                    firstOrDefault.Version = 0;
-                    _context.Update(firstOrDefault);
-                }
-                else
-                {
-                    var snapShotDbo = new SnapShotDbo
-                    {
-                        EntityId = entityId.ToString(),
-                        Payload = _converter.Serialize(snapShot),
-                        Version = version
-                    };
-                    _context.SnapShots.Add(snapShotDbo);
-                }
-
-                _context.SaveChanges();
-            }
-
-            return Task.CompletedTask;
+                    EntityId = entityId.ToString(),
+                    Payload = _converter.Serialize(snapShot),
+                    Version = version
+                })
+                .RunAsync();
         }
     }
 
