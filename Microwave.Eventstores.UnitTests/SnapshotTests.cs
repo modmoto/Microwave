@@ -16,18 +16,13 @@ namespace Microwave.Eventstores.UnitTests
         [TestMethod]
         public async Task SnapshotRealized()
         {
-            var config = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.test.json")
-                .Build();
-            var snapShotConfig = new SnapShotConfig(config);
-
             var options = new DbContextOptionsBuilder<EventStoreContext>()
                 .UseInMemoryDatabase("SnapshotRealized")
                 .Options;
 
             var eventStoreContext = new EventStoreContext(options);
             var repo = new EventRepository(new DomainEventDeserializer(new JSonHack()), eventStoreContext, new ObjectConverter());
-            var eventStore = new EventStore(repo, new SnapShotRepository(eventStoreContext, new ObjectConverter()), snapShotConfig);
+            var eventStore = new EventStore(repo, new SnapShotRepository(eventStoreContext, new ObjectConverter()));
 
             var entityId = Guid.NewGuid();
             await eventStore.AppendAsync(new List<IDomainEvent>
@@ -68,6 +63,7 @@ namespace Microwave.Eventstores.UnitTests
         }
     }
 
+    [SnapShotAfter(3)]
     public class User : Entity
     {
         public string Name { get; set; }
