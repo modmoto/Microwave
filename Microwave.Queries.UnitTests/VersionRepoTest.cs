@@ -8,13 +8,19 @@ namespace Microwave.Queries.UnitTests
     public class VersionRepoTest
     {
         [TestMethod]
-        public async Task VersionRepo_SaveAndLoad()
+        public async Task VersionRepo_SaveAndLoad_UpsertOptionTest()
         {
             var options = new DbContextOptionsBuilder<QueryStorageContext>()
-                .UseInMemoryDatabase("VersionRepo_SaveAndLoad")
+                .UseSqlite("Data Source=QueryStorageContext.db")
                 .Options;
 
-            var versionRepository = new VersionRepository(new QueryStorageContext(options));
+            SQLitePCL.raw.SetProvider(new SQLitePCL.SQLite3Provider_sqlite3());
+            SQLitePCL.raw.FreezeProvider();
+
+            var queryStorageContext = new QueryStorageContext(options);
+            queryStorageContext.Database.EnsureDeleted();
+            queryStorageContext.Database.EnsureCreated();
+            var versionRepository = new VersionRepository(queryStorageContext);
 
             await versionRepository.SaveVersion(new LastProcessedVersion("Type", 1));
             await versionRepository.SaveVersion(new LastProcessedVersion("Type", 2));
