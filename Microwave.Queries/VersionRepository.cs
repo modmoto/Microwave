@@ -1,4 +1,3 @@
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
@@ -24,25 +23,11 @@ namespace Microwave.Queries
 
         public async Task SaveVersion(LastProcessedVersion version)
         {
-            var lastProcessedVersionDbo =
-                _subscriptionContext.ProcessedVersions.FirstOrDefault(ev => ev.EventType == version.EventType);
-            if (lastProcessedVersionDbo == null)
-            {
-                _subscriptionContext.ProcessedVersions.Add(new LastProcessedVersionDbo
-                {
+            await _subscriptionContext.ProcessedVersions
+                .Upsert(new LastProcessedVersionDbo {
                     EventType = version.EventType,
-                    LastVersion = version.LastVersion
-                });
-            }
-            else
-            {
-                var processedVersionDbo =
-                    _subscriptionContext.ProcessedVersions.Single(e => e.EventType == version.EventType);
-                processedVersionDbo.LastVersion = version.LastVersion;
-                _subscriptionContext.Update(processedVersionDbo);
-            }
-
-            await _subscriptionContext.SaveChangesAsync();
+                    LastVersion = version.LastVersion})
+                .RunAsync();
         }
     }
 }
