@@ -7,7 +7,7 @@ namespace Microwave.ObjectPersistences
     {
         private readonly JsonSerializerSettings _settings = new JsonSerializerSettings
         {
-            TypeNameHandling = TypeNameHandling.All,
+            TypeNameHandling = TypeNameHandling.Objects,
             ContractResolver = new PrivateSetterContractResolver()
         };
 
