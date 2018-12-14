@@ -128,7 +128,7 @@ namespace Microwave.Queries.UnitTests
         [TestMethod]
         public void CreatedOnAttribute_Exception()
         {
-            Assert.ThrowsException<ArgumentException>(() => new CreateReadmodelOn(typeof(ReadModel)));
+            Assert.ThrowsException<ArgumentException>(() => new CreateReadmodelOnAttribute(typeof(ReadModel)));
         }
 
         public static Guid EntityGuid { get; set; }

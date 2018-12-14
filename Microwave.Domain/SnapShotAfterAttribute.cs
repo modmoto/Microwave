@@ -2,11 +2,11 @@ using System;
 
 namespace Microwave.Domain
 {
-    public class SnapShotAfter : Attribute
+    public class SnapShotAfterAttribute : Attribute
     {
         public int Writes { get; }
 
-        public SnapShotAfter(int writes)
+        public SnapShotAfterAttribute(int writes)
         {
             Writes = writes;
         }

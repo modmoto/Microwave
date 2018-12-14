@@ -70,7 +70,7 @@ namespace Microwave.Queries
         private bool IsCreationEvent(IDomainEvent latestEventDomainEvent)
         {
             var eventType = latestEventDomainEvent.GetType();
-            var attribute = typeof(T).GetCustomAttribute(typeof(CreateReadmodelOn)) as CreateReadmodelOn;
+            var attribute = typeof(T).GetCustomAttribute(typeof(CreateReadmodelOnAttribute)) as CreateReadmodelOnAttribute;
             return attribute?.CreationEvent == eventType;
         }
     }

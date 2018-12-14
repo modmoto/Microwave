@@ -46,14 +46,14 @@ namespace Microwave.Queries
             return Result.Ok();
         }
 
-        public async Task<Result> Save<T>(ReadModelWrapper<T> query) where T : ReadModel, new()
+        public async Task<Result> Save<T>(ReadModelWrapper<T> readModelWrapper) where T : ReadModel, new()
         {
             await _context.IdentifiableQuerries.Upsert(new IdentifiableQueryDbo
                 {
-                    Id = query.Id.ToString(),
-                    Version = query.Version,
-                    QueryType = query.ReadModel.GetType().Name,
-                    Payload = _converter.Serialize(query.ReadModel)
+                    Id = readModelWrapper.Id.ToString(),
+                    Version = readModelWrapper.Version,
+                    QueryType = readModelWrapper.ReadModel.GetType().Name,
+                    Payload = _converter.Serialize(readModelWrapper.ReadModel)
                 })
                 .RunAsync();
             return Result.Ok();
