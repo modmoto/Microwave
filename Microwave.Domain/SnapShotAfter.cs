@@ -1,6 +1,6 @@
 using System;
 
-namespace Microwave.EventStores
+namespace Microwave.Domain
 {
     public class SnapShotAfter : Attribute
     {
