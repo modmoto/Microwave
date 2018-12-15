@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Builder.Internal;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -129,6 +130,33 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
 
             var store = buildServiceProvider.GetServices<IEventStore>().FirstOrDefault();
             Assert.IsNotNull(store);
+        }
+
+        [TestMethod]
+        public async Task BuildDatabaseAndCheckUpsertIsWorking()
+        {
+            var config = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.test.json")
+                .Build();
+
+            var collection = (IServiceCollection) new ServiceCollection();
+
+            collection.AddMicrowave(config);
+            collection.AddMicrowaveQuerries(typeof(TestIdQuery).Assembly, config);
+            var serviceProvider = collection.BuildServiceProvider();
+            var applicationBuilder = new ApplicationBuilder(serviceProvider);
+
+            var qeryRepository = serviceProvider.GetService<IQeryRepository>();
+            var eventStore = serviceProvider.GetService<IEventRepository>();
+
+            var eventStoreContext = serviceProvider.GetService<EventStoreContext>();
+            var queryStorageContext = serviceProvider.GetService<QueryStorageContext>();
+            eventStoreContext.Database.EnsureDeleted();
+            queryStorageContext.Database.EnsureDeleted();
+
+            applicationBuilder.EnsureMicrowaveDatabaseCreated();
+            await qeryRepository.Save(new TestIdQuery());
+            await eventStore.AppendAsync(new [] { new TestDomainEvent1(Guid.NewGuid()) }, 0);
         }
     }
 

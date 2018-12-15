@@ -35,7 +35,7 @@ namespace Microwave.DependencyInjectionExtensions
             return builder;
         }
 
-        public static IApplicationBuilder RunQueries(this IApplicationBuilder builder)
+        public static IApplicationBuilder RunMicrowaveQueries(this IApplicationBuilder builder)
         {
             var serviceScope = builder.ApplicationServices.CreateScope();
             var asyncEventDelegator = serviceScope.ServiceProvider.GetService<AsyncEventDelegator>();
