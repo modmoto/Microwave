@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microwave.Queries;
@@ -27,9 +28,32 @@ namespace Microwave.DependencyInjectionExtensions
             {
                 await Task.Delay(1000);
 
-                foreach (var handler in _handler) await handler.Update();
-                foreach (var handler in _queryEventHandlers) await handler.Update();
-                foreach (var handler in _identifiableQueryEventHandlers) await handler.Update();
+                try
+                {
+                    foreach (var handler in _handler) await handler.Update();
+                }
+                catch (Exception e)
+                {
+                    Console.Error.WriteLine(e.Message);
+                }
+
+                try
+                {
+                    foreach (var handler in _queryEventHandlers) await handler.Update();
+                }
+                catch (Exception e)
+                {
+                    Console.Error.WriteLine(e.Message);
+                }
+
+                try
+                {
+                    foreach (var handler in _identifiableQueryEventHandlers) await handler.Update();
+                }
+                catch (Exception e)
+                {
+                    Console.Error.WriteLine(e.Message);
+                }
             }
         }
     }
