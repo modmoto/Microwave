@@ -11,11 +11,8 @@ namespace Microwave.Queries.UnitTests
         public async Task VersionRepo_SaveAndLoad_UpsertOptionTest()
         {
             var options = new DbContextOptionsBuilder<QueryStorageContext>()
-                .UseSqlite("Data Source=QueryStorageContext.db")
+                .UseInMemoryDatabase("VersionRepo_SaveAndLoad_UpsertOptionTest")
                 .Options;
-
-            SQLitePCL.raw.SetProvider(new SQLitePCL.SQLite3Provider_sqlite3());
-            SQLitePCL.raw.FreezeProvider();
 
             var queryStorageContext = new QueryStorageContext(options);
             queryStorageContext.Database.EnsureDeleted();
