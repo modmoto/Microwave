@@ -132,6 +132,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
             Assert.IsNotNull(store);
         }
 
+        // this is to check if the upsert hack is working. It will throw an error if you remove the hack lines on creation
         [TestMethod]
         public async Task BuildDatabaseAndCheckUpsertIsWorking()
         {
