@@ -34,7 +34,7 @@ namespace Microwave.DependencyInjectionExtensions
                 }
                 catch (Exception e)
                 {
-                    Console.Error.WriteLine(e.Message);
+                    Console.Error.WriteLine(e.ToString(), ConsoleColor.Red);
                 }
 
                 try
@@ -43,7 +43,7 @@ namespace Microwave.DependencyInjectionExtensions
                 }
                 catch (Exception e)
                 {
-                    Console.Error.WriteLine(e.Message);
+                    Console.Error.WriteLine(e.ToString(), ConsoleColor.Red);
                 }
 
                 try
@@ -52,7 +52,7 @@ namespace Microwave.DependencyInjectionExtensions
                 }
                 catch (Exception e)
                 {
-                    Console.Error.WriteLine(e.Message);
+                    Console.Error.WriteLine(e.ToString(), ConsoleColor.Red);
                 }
             }
         }
