@@ -11,6 +11,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
     [TestClass]
     public class AsyncEventDelegatorTests
     {
+        [Ignore]
         [TestMethod]
         public async Task ExceptionIsThrown_IsRed()
         {
