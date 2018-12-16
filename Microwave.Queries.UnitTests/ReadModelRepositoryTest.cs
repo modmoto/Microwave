@@ -10,7 +10,7 @@ using Microwave.ObjectPersistences;
 namespace Microwave.Queries.UnitTests
 {
     [TestClass]
-    public class QueryRepositoryTest
+    public class ReadModelRepositoryTest
     {
         [TestMethod]
         public async Task IdentifiableQuerySaveAndLoad()
@@ -21,11 +21,11 @@ namespace Microwave.Queries.UnitTests
 
             var queryRepository = new ReadModelRepository(new ReadModelStorageContext(options), new ObjectConverter());
             var guid = Guid.NewGuid();
-            var testQuerry = new TestIdQuerry();
+            var testQuerry = new TestReadModel();
             testQuerry.SetVars("Test", guid, new []{ "Jeah", "jeah2"});
-            await queryRepository.Save(new ReadModelWrapper<TestIdQuerry>(testQuerry, guid, 1));
+            await queryRepository.Save(new ReadModelWrapper<TestReadModel>(testQuerry, guid, 1));
 
-            var querry1 = (await queryRepository.Load<TestIdQuerry>(guid)).Value;
+            var querry1 = (await queryRepository.Load<TestReadModel>(guid)).Value;
 
             Assert.AreEqual(guid, querry1.Id);
             Assert.AreEqual("Test", querry1.ReadModel.UserName);
@@ -66,7 +66,7 @@ namespace Microwave.Queries.UnitTests
             await queryStorageContext.SaveChangesAsync();
             var queryRepository = new ReadModelRepository(queryStorageContext, new ObjectConverter());
 
-            var result = await queryRepository.Load<TestIdQuerry>(new Guid("6695a111-9aee-44e1-b7cc-94ec5ab5e81b"));
+            var result = await queryRepository.Load<TestReadModel>(new Guid("6695a111-9aee-44e1-b7cc-94ec5ab5e81b"));
 
             Assert.IsTrue(result.Is<NotFound>());
         }
@@ -96,17 +96,17 @@ namespace Microwave.Queries.UnitTests
 
             var queryRepository = new ReadModelRepository(new ReadModelStorageContext(options), new ObjectConverter());
             Guid guid = Guid.NewGuid();
-            var testQuery = new TestIdQuerry();
+            var testQuery = new TestReadModel();
             testQuery.SetVars("Test1", guid, new []{ "Jeah", "jeah2"});
-            var testQuery2 = new TestIdQuerry();
+            var testQuery2 = new TestReadModel();
             testQuery2.SetVars("Test2", guid, new []{ "Jeah", "jeah2"});
 
-            var save = queryRepository.Save(new ReadModelWrapper<TestIdQuerry>(testQuery, guid, 1));
-            var save2 = queryRepository.Save(new ReadModelWrapper<TestIdQuerry>(testQuery2, guid, 2));
+            var save = queryRepository.Save(new ReadModelWrapper<TestReadModel>(testQuery, guid, 1));
+            var save2 = queryRepository.Save(new ReadModelWrapper<TestReadModel>(testQuery2, guid, 2));
 
             await Task.WhenAll(new List<Task<Result>> { save, save2 });
 
-            var resultOfLoad = await queryRepository.Load<TestIdQuerry>(guid);
+            var resultOfLoad = await queryRepository.Load<TestReadModel>(guid);
             Assert.AreEqual(2, resultOfLoad.Value.Version);
         }
 
@@ -135,15 +135,15 @@ namespace Microwave.Queries.UnitTests
             var queryRepository = new ReadModelRepository(new ReadModelStorageContext(options), new ObjectConverter());
             Guid guid = Guid.NewGuid();
             Guid guid2 = Guid.NewGuid();
-            var testQuery = new TestIdQuerry();
+            var testQuery = new TestReadModel();
             testQuery.SetVars("Test1", guid, new []{ "Jeah", "jeah2"});
-            var testQuery2 = new TestIdQuerry();
+            var testQuery2 = new TestReadModel();
             testQuery2.SetVars("Test2", guid2, new []{ "Jeah", "jeah2"});
 
-            await queryRepository.Save(new ReadModelWrapper<TestIdQuerry>(testQuery, guid, 1));
-            await queryRepository.Save(new ReadModelWrapper<TestIdQuerry>(testQuery2, guid2, 1));
+            await queryRepository.Save(new ReadModelWrapper<TestReadModel>(testQuery, guid, 1));
+            await queryRepository.Save(new ReadModelWrapper<TestReadModel>(testQuery2, guid2, 1));
 
-            var loadAll = await queryRepository.LoadAll<TestIdQuerry>();
+            var loadAll = await queryRepository.LoadAll<TestReadModel>();
             var readModelWrappers = loadAll.Value.ToList();
 
             Assert.AreEqual(2, readModelWrappers.Count);
@@ -157,7 +157,7 @@ namespace Microwave.Queries.UnitTests
         public string UserName { get; set; }
     }
 
-    public class TestIdQuerry : ReadModel
+    public class TestReadModel : ReadModel
     {
         public string UserName { get; private set; }
         public IEnumerable<string> Strings { get; private set; } = new List<string>();
