@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microwave.Application;
 using Microwave.Application.Results;
@@ -53,24 +54,37 @@ namespace Microwave.Queries
         public async Task<Result> Save(Query query)
         {
             var mongoCollection = _database.GetCollection<QueryDbo>("QueryDbos");
-            await mongoCollection.InsertOneAsync(new QueryDbo
+
+            var findOneAndReplaceOptions = new FindOneAndReplaceOptions<QueryDbo>();
+            findOneAndReplaceOptions.IsUpsert = true;
+            var querryName = query.GetType().Name;
+            await mongoCollection.FindOneAndReplaceAsync(
+                (Expression<Func<QueryDbo, bool>>) (e => e.Type == querryName),
+                new QueryDbo
                 {
-                    Type = query.GetType().Name,
+                    Type = querryName,
                     Payload = _converter.Serialize(query)
-                });
+                }, findOneAndReplaceOptions);
+
             return Result.Ok();
         }
 
         public async Task<Result> Save<T>(ReadModelWrapper<T> readModelWrapper) where T : ReadModel, new()
         {
             var mongoCollection = _database.GetCollection<IdentifiableQueryDbo>("IdentifiableQueryDbos");
-            await mongoCollection.InsertOneAsync(new IdentifiableQueryDbo
-            {
-                Id = readModelWrapper.Id.ToString(),
-                Version = readModelWrapper.Version,
-                QueryType = readModelWrapper.ReadModel.GetType().Name,
-                Payload = _converter.Serialize(readModelWrapper.ReadModel)
-            });
+
+            var findOneAndReplaceOptions = new FindOneAndReplaceOptions<IdentifiableQueryDbo>();
+            findOneAndReplaceOptions.IsUpsert = true;
+            await mongoCollection.FindOneAndReplaceAsync(
+                (Expression<Func<IdentifiableQueryDbo, bool>>) (e => e.Id == readModelWrapper.Id.ToString()),
+                new IdentifiableQueryDbo
+                {
+                    Id = readModelWrapper.Id.ToString(),
+                    Version = readModelWrapper.Version,
+                    QueryType = readModelWrapper.ReadModel.GetType().Name,
+                    Payload = _converter.Serialize(readModelWrapper.ReadModel)
+                }, findOneAndReplaceOptions);
+
             return Result.Ok();
         }
     }

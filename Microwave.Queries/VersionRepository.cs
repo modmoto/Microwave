@@ -1,7 +1,6 @@
 using System;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
 using MongoDB.Driver;
 
 namespace Microwave.Queries
@@ -29,17 +28,13 @@ namespace Microwave.Queries
 
             var findOneAndReplaceOptions = new FindOneAndReplaceOptions<LastProcessedVersionDbo>();
             findOneAndReplaceOptions.IsUpsert = true;
-            await mongoCollection.FindOneAndReplaceAsync(IsSameType(version),
+            await mongoCollection.FindOneAndReplaceAsync(
+                (Expression<Func<LastProcessedVersionDbo, bool>>) (e => e.EventType == version.EventType),
                 new LastProcessedVersionDbo
             {
                 EventType = version.EventType,
                 LastVersion = version.LastVersion
             }, findOneAndReplaceOptions);
-        }
-
-        private static Expression<Func<LastProcessedVersionDbo, bool>> IsSameType(LastProcessedVersion version)
-        {
-            return e => e.EventType == version.EventType;
         }
     }
 }
