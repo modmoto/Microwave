@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microwave.Domain;
 using Microwave.Queries;
 
 namespace Microwave.DependencyInjectionExtensions.UnitTests
@@ -11,7 +9,6 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
     [TestClass]
     public class AsyncEventDelegatorTests
     {
-        [Ignore]
         [TestMethod]
         public async Task ExceptionIsThrown_IsRed()
         {

@@ -28,23 +28,24 @@ namespace Microwave.DependencyInjectionExtensions
             {
                 await Task.Delay(1000);
 
-                foreach (var handler in _handler) SecureCall(async () => await handler.Update());
-                foreach (var handler in _queryEventHandlers) SecureCall(async () => await handler.Update());
-                foreach (var handler in _identifiableQueryEventHandlers) SecureCall(async () => await handler.Update());
+                foreach (var handler in _handler) await SecureCall(() => handler.Update());
+                foreach (var handler in _queryEventHandlers) await SecureCall(() => handler.Update());
+                foreach (var handler in _identifiableQueryEventHandlers) await SecureCall(() => handler.Update());
             }
         }
 
-        private void SecureCall(Action action)
+        private async Task SecureCall(Func<Task> action)
         {
             try
             {
-                action.Invoke();
+                await action.Invoke();
             }
             catch (Exception e)
             {
                 var currentForeground = Console.ForegroundColor;
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.Error.WriteLine(e.ToString(), ConsoleColor.Red);
+                Console.Error.WriteLine("Exception was thrown during a Async Handler, this queue is stuck now");
+                Console.Error.WriteLine(e.ToString());
                 Console.ForegroundColor = currentForeground;
             }
         }
