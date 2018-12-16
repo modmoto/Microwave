@@ -11,13 +11,12 @@ using MongoDB.Driver;
 namespace Microwave.Queries.UnitTests
 {
     [TestClass]
-    public class ReadModelMogoDbRepositoryTests
+    public class ReadModelRepositoryTests
     {
         [TestMethod]
         public async Task IdentifiableQuerySaveAndLoad()
         {
             var runner = MongoDbRunner.Start("IdentifiableQuerySaveAndLoad");
-
             var client = new MongoClient(runner.ConnectionString);
             var database = client.GetDatabase("IdentifiableQuerySaveAndLoad");
 

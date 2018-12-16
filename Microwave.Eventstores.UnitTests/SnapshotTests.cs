@@ -6,6 +6,8 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Domain;
 using Microwave.EventStores;
 using Microwave.ObjectPersistences;
+using Mongo2Go;
+using MongoDB.Driver;
 
 namespace Microwave.Eventstores.UnitTests
 {
@@ -19,8 +21,12 @@ namespace Microwave.Eventstores.UnitTests
                 .UseInMemoryDatabase("SnapshotRealized")
                 .Options;
 
+            var runner = MongoDbRunner.Start("SnapshotRealized");
+            var client = new MongoClient(runner.ConnectionString);
+            var database = client.GetDatabase("SnapshotRealized");
+
             var eventStoreContext = new EventStoreContext(options);
-            var repo = new EventRepository(eventStoreContext, new DomainEventDeserializer(new JSonHack()), new ObjectConverter());
+            var repo = new EventRepository(database, new DomainEventDeserializer(new JSonHack()), new ObjectConverter());
             var eventStore = new EventStore(repo, new SnapShotRepository(eventStoreContext, new ObjectConverter()));
 
             var entityId = Guid.NewGuid();
@@ -59,6 +65,9 @@ namespace Microwave.Eventstores.UnitTests
             Assert.AreEqual(14, userSnapShot.Age);
             Assert.AreEqual("PeterNeu", userSnapShot.Name);
             Assert.AreEqual(entityId, userSnapShot.Id);
+
+            client.DropDatabase("SnapshotRealized");
+            runner.Dispose();
         }
     }
 

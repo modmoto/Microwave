@@ -1,11 +1,12 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Domain;
 using Microwave.EventStores;
 using Microwave.ObjectPersistences;
+using Mongo2Go;
+using MongoDB.Driver;
 
 namespace Microwave.Eventstores.UnitTests
 {
@@ -116,12 +117,13 @@ namespace Microwave.Eventstores.UnitTests
         [TestMethod]
         public async Task Entitystream_LoadEventsSince_IdNotDefault()
         {
-            var optionsRead = new DbContextOptionsBuilder<EventStoreContext>()
-                .UseInMemoryDatabase("Entitystream_LoadEventsSince_IdNotDefault")
-                .Options;
+            var runner = MongoDbRunner.Start("Entitystream_LoadEventsSince_IdNotDefault");
+            var client = new MongoClient(runner.ConnectionString);
+            var database = client.GetDatabase("Entitystream_LoadEventsSince_IdNotDefault");
+
 
             var entityStreamRepository =
-                new EventRepository(new EventStoreContext(optionsRead), new DomainEventDeserializer(new JSonHack()), new ObjectConverter());
+                new EventRepository(database, new DomainEventDeserializer(new JSonHack()), new ObjectConverter());
 
             var entityStreamTestEvent = new TestEv(Guid.NewGuid());
             await entityStreamRepository.AppendAsync(new[] {entityStreamTestEvent}, 0);
@@ -130,6 +132,9 @@ namespace Microwave.Eventstores.UnitTests
 
             Assert.AreEqual(entityStreamTestEvent.EntityId, eventsSince.Value.Single().DomainEvent.EntityId);
             Assert.AreNotEqual(entityStreamTestEvent.EntityId, Guid.Empty);
+
+            client.DropDatabase("Entitystream_LoadEventsSince_IdNotDefault");
+            runner.Dispose();
         }
     }
 

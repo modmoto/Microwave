@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace Microwave.EventStores
 {
@@ -15,9 +16,6 @@ namespace Microwave.EventStores
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<DomainEventDbo>()
-                .HasKey(p => new {p.EntityId , p.Version});
-
             modelBuilder.Entity<SnapShotDbo>()
                 .HasKey(p => new {p.EntityId});
         }
@@ -33,11 +31,16 @@ namespace Microwave.EventStores
 
     public class DomainEventDbo
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public string EntityId { get; set; }
+        [BsonId]
+        public DomainEventKey Key { get; set; }
         public string Payload { get; set; }
         public long Created { get; set; }
-        public long Version { get; set; }
         public string EventType { get; set; }
+    }
+
+    public class DomainEventKey
+    {
+        public string EntityId { get; set; }
+        public long Version { get; set; }
     }
 }

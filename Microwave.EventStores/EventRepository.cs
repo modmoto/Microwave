@@ -2,75 +2,74 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
 using Microwave.Application;
 using Microwave.Application.Results;
 using Microwave.Domain;
 using Microwave.ObjectPersistences;
 using Microwave.Queries;
+using MongoDB.Driver;
 
 namespace Microwave.EventStores
 {
     public class EventRepository : IEventRepository
     {
         private readonly DomainEventDeserializer _domainEventConverter;
-        private readonly EventStoreContext _eventStoreContext;
+        private readonly IMongoDatabase _database;
         private readonly IObjectConverter _converter;
 
         public EventRepository(
-            EventStoreContext eventStoreContext,
+            IMongoDatabase database,
             DomainEventDeserializer domainEventConverter,
             IObjectConverter converter)
         {
             _domainEventConverter = domainEventConverter;
-            _eventStoreContext = eventStoreContext;
+            _database = database;
             _converter = converter;
         }
 
-        public Task<Result<IEnumerable<DomainEventWrapper>>> LoadEventsByEntity(Guid entityId, long from = 0)
+        public async Task<Result<IEnumerable<DomainEventWrapper>>> LoadEventsByEntity(Guid entityId, long from = 0)
         {
-            var stream = _eventStoreContext.EntityStreams
-                .Where(str => str.EntityId == entityId.ToString() && str.Version > from).ToList();
-            if (!stream.Any()) return Task.FromResult(Result<IEnumerable<DomainEventWrapper>>.NotFound(entityId.ToString()));
+            var mongoCollection = _database.GetCollection<DomainEventDbo>("DomainEventDbos");
+            var domainEventDbos = (await mongoCollection.FindAsync(ev => ev.Key.EntityId == entityId.ToString() && ev.Key.Version > from)).ToList();
+            if (!domainEventDbos.Any()) return Result<IEnumerable<DomainEventWrapper>>.NotFound(entityId.ToString());
 
-            var domainEvents = stream.Select(dbo =>
+            var domainEvents = domainEventDbos.Select(dbo =>
             {
                 return new DomainEventWrapper
                 {
                     Created = dbo.Created,
-                    Version = dbo.Version,
+                    Version = dbo.Key.Version,
                     DomainEvent = _domainEventConverter.Deserialize(dbo.Payload)
                 };
             });
 
-            return Task.FromResult(Result<IEnumerable<DomainEventWrapper>>.Ok(domainEvents));
+            return Result<IEnumerable<DomainEventWrapper>>.Ok(domainEvents);
         }
 
-        public Task<Result<IEnumerable<DomainEventWrapper>>> LoadEvents(long tickSince = 0)
+        public async Task<Result<IEnumerable<DomainEventWrapper>>> LoadEvents(long tickSince = 0)
         {
-            var domainEventDbos = _eventStoreContext.EntityStreams.ToList();
-            var stream = domainEventDbos
-                .Where(str => str.Created > tickSince).ToList();
-            if (!stream.Any()) return Task.FromResult(Result<IEnumerable<DomainEventWrapper>>.Ok(new List<DomainEventWrapper>()));
+            var mongoCollection = _database.GetCollection<DomainEventDbo>("DomainEventDbos");
+            var domainEventDbos = (await mongoCollection.FindAsync(ev => ev.Created > tickSince)).ToList();
+            if (!domainEventDbos.Any()) return Result<IEnumerable<DomainEventWrapper>>.Ok(new List<DomainEventWrapper>());
 
-            var domainEvents = stream.Select(dbo =>
+            var domainEvents = domainEventDbos.Select(dbo =>
             {
                 var domainEvent = _domainEventConverter.Deserialize(dbo.Payload);
                 return new DomainEventWrapper
                 {
                     Created = dbo.Created,
-                    Version = dbo.Version,
+                    Version = dbo.Key.Version,
                     DomainEvent = domainEvent
                 };
             });
 
-            return Task.FromResult(Result<IEnumerable<DomainEventWrapper>>.Ok(domainEvents));
+            return Result<IEnumerable<DomainEventWrapper>>.Ok(domainEvents);
         }
 
         public async Task<Result<IEnumerable<DomainEventWrapper>>> LoadEventsByTypeAsync(string eventType, long version)
         {
-            var domainEventTypeDbos = await _eventStoreContext.EntityStreams
-                .Where(eventDbo => eventDbo.EventType == eventType && eventDbo.Created > version).ToListAsync();
+            var mongoCollection = _database.GetCollection<DomainEventDbo>("DomainEventDbos");
+            var domainEventTypeDbos = (await mongoCollection.FindAsync(ev => ev.EventType == eventType && ev.Created > version)).ToList();
 
             if (!domainEventTypeDbos.Any()) return Result<IEnumerable<DomainEventWrapper>>.Ok(new List<DomainEventWrapper>());
 
@@ -79,7 +78,7 @@ namespace Microwave.EventStores
                 return new DomainEventWrapper
                 {
                     Created = dbo.Created,
-                    Version = dbo.Version,
+                    Version = dbo.Key.Version,
                     DomainEvent = _domainEventConverter.Deserialize(dbo.Payload)
                 };
             });
@@ -91,10 +90,6 @@ namespace Microwave.EventStores
             var events = domainEvents.ToList();
             if (!events.Any()) return Result.Ok();
 
-            var entityId = events.First().EntityId;
-            var actualVersion = _eventStoreContext.EntityStreams.ToList().LastOrDefault(stream => stream.EntityId == entityId.ToString())?.Version ?? 0;
-            if (actualVersion < entityVersion) return Result.ConcurrencyResult(entityVersion, actualVersion);
-
             var entityVersionTemp = entityVersion;
             var domainEventDbos = events.Select(domainEvent =>
             {
@@ -102,24 +97,27 @@ namespace Microwave.EventStores
                 {
                     Payload = _converter.Serialize(domainEvent),
                     Created = DateTime.UtcNow.Ticks,
-                    Version = ++entityVersionTemp,
+                    Key = new DomainEventKey
+                    {
+                        Version = ++entityVersionTemp,
+                        EntityId = domainEvent.EntityId.ToString()
+                    },
                     EventType = domainEvent.GetType().Name,
-                    EntityId = domainEvent.EntityId.ToString()
                 };
-            });
+            }).ToList();
+
+            var mongoCollection = _database.GetCollection<DomainEventDbo>("DomainEventDbos");
 
             try
             {
-                await _eventStoreContext.EntityStreams
-                    .AddRangeAsync(domainEventDbos);
+                await mongoCollection.InsertManyAsync(domainEventDbos);
             }
-            catch (InvalidOperationException)
+            catch (MongoWriteException)
             {
-                var domainEventDbo = _eventStoreContext.EntityStreams.Last(e => entityId.ToString() == e.EntityId);
-                return Result.ConcurrencyResult(entityVersion, domainEventDbo.Version);
+                var asyncCursor = await mongoCollection.FindAsync(e => e.Key.EntityId == events.First().EntityId.ToString());
+                var domainEventDbo = await asyncCursor.ToListAsync();
+                return Result.ConcurrencyResult(entityVersion, domainEventDbo.Last().Key.Version);
             }
-
-            await _eventStoreContext.SaveChangesAsync();
             return Result.Ok();
         }
     }
