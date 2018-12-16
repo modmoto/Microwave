@@ -97,7 +97,7 @@ namespace Microwave.Eventstores.UnitTests
         public async Task AddEmptyEventListt()
         {
             var options = new DbContextOptionsBuilder<EventStoreContext>()
-                .UseInMemoryDatabase("AddAndLoadEventsConcurrent")
+                .UseInMemoryDatabase("AddEmptyEventListt")
                 .Options;
 
             var eventStoreContext = new EventStoreContext(options);
@@ -154,6 +154,67 @@ namespace Microwave.Eventstores.UnitTests
             Assert.AreEqual(4, result.Value.Count());
             Assert.AreEqual(1, result.Value.ToList()[0].Version);
             Assert.AreEqual(newGuid, result.Value.ToList()[0].DomainEvent.EntityId);
+        }
+
+        [TestMethod]
+        public async Task AddEvents_FirstEventAfterCreationHasWrongRowVersionBug()
+        {
+            var options = new DbContextOptionsBuilder<EventStoreContext>()
+                .UseInMemoryDatabase("AddEvents_FirstEventAfterCreationHasWrongRowVersionBug")
+                .Options;
+
+            var eventStoreContext = new EventStoreContext(options);
+
+            var eventRepository = new EventRepository(new DomainEventDeserializer(new JSonHack()), eventStoreContext, new ObjectConverter());
+
+            var newGuid = Guid.NewGuid();
+            var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid), new TestEvent1(newGuid), new TestEvent2(newGuid)};
+
+            await eventRepository.AppendAsync(events, 0);
+
+            var result = await eventRepository.LoadEvents();
+            Assert.AreEqual(4, result.Value.Count());
+            Assert.AreEqual(1, result.Value.ToList()[0].Version);
+            Assert.AreEqual(2, result.Value.ToList()[1].Version);
+            Assert.AreEqual(3, result.Value.ToList()[2].Version);
+            Assert.AreEqual(newGuid, result.Value.ToList()[0].DomainEvent.EntityId);
+        }
+
+        [TestMethod]
+        public async Task AddEvents_VersionTooHigh()
+        {
+            var options = new DbContextOptionsBuilder<EventStoreContext>()
+                .UseInMemoryDatabase("AddEvents_VersionTooHigh")
+                .Options;
+
+            var eventStoreContext = new EventStoreContext(options);
+
+            var eventRepository = new EventRepository(new DomainEventDeserializer(new JSonHack()), eventStoreContext, new ObjectConverter());
+
+            var newGuid = Guid.NewGuid();
+            var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid), new TestEvent1(newGuid), new TestEvent2(newGuid)};
+
+            var result = await eventRepository.AppendAsync(events, 1);
+
+            Assert.IsTrue(result.Is<ConcurrencyError>());
+        }
+
+        [TestMethod]
+        public async Task AddEvents_VersionWayTooHigh()
+        {
+            var options = new DbContextOptionsBuilder<EventStoreContext>()
+                .UseInMemoryDatabase("AddEvents_VersionWayTooHigh")
+                .Options;
+
+            var eventStoreContext = new EventStoreContext(options);
+
+            var eventRepository = new EventRepository(new DomainEventDeserializer(new JSonHack()), eventStoreContext, new ObjectConverter());
+
+            var newGuid = Guid.NewGuid();
+            var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid), new TestEvent1(newGuid), new TestEvent2(newGuid)};
+
+            var result = await eventRepository.AppendAsync(events, 5);
+            Assert.IsTrue(result.Is<ConcurrencyError>());
         }
 
         [TestMethod]

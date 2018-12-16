@@ -89,8 +89,11 @@ namespace Microwave.EventStores
         public async Task<Result> AppendAsync(IEnumerable<IDomainEvent> domainEvents, long entityVersion)
         {
             var events = domainEvents.ToList();
-            var result = Result.Ok();
-            if (!events.Any()) return result;
+            if (!events.Any()) return Result.Ok();
+
+            var entityId = events.First().EntityId;
+            var actualVersion = _eventStoreContext.EntityStreams.ToList().LastOrDefault(stream => stream.EntityId == entityId.ToString())?.Version ?? 0;
+            if (actualVersion < entityVersion) return Result.ConcurrencyResult(entityVersion, actualVersion);
 
             var entityVersionTemp = entityVersion;
             var domainEventDbos = events.Select(domainEvent =>
@@ -112,12 +115,12 @@ namespace Microwave.EventStores
             }
             catch (InvalidOperationException)
             {
-                var domainEventDbo = _eventStoreContext.EntityStreams.Last(e => events.First().EntityId.ToString() == e.EntityId);
+                var domainEventDbo = _eventStoreContext.EntityStreams.Last(e => entityId.ToString() == e.EntityId);
                 return Result.ConcurrencyResult(entityVersion, domainEventDbo.Version);
             }
 
             await _eventStoreContext.SaveChangesAsync();
-            return result;
+            return Result.Ok();
         }
     }
 }
