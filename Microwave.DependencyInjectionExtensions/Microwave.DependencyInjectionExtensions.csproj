@@ -15,6 +15,7 @@
     <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60">
       <HintPath>..\..\..\.nuget\packages\microsoft.extensions.dependencyinjection.abstractions\1.0.0\lib\netstandard1.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
     </Reference>
+
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Microwave.Application\Microwave.Application.csproj" />
@@ -25,5 +26,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="SQLitePCLRaw.provider.sqlite3.netstandard11" Version="1.1.11" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="2.2.0" />
   </ItemGroup>
+
 </Project>
