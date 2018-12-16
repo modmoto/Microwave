@@ -5,7 +5,6 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microwave.Application;
 using Microwave.Application.Results;
-using Microwave.ObjectPersistences;
 using MongoDB.Driver;
 
 namespace Microwave.Queries
