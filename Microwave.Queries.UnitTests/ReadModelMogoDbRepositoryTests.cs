@@ -34,6 +34,7 @@ namespace Microwave.Queries.UnitTests
             Assert.AreEqual("Test", querry1.ReadModel.UserName);
             Assert.AreEqual("Jeah", querry1.ReadModel.Strings.First());
 
+            client.DropDatabase("IdentifiableQuerySaveAndLoad");
             runner.Dispose();
         }
 
@@ -50,6 +51,8 @@ namespace Microwave.Queries.UnitTests
             var query = (await queryRepository.Load<TestQuerry>()).Value;
 
             Assert.AreEqual("Test", query.UserName);
+
+            client.DropDatabase("InsertQuery");
             runner.Dispose();
         }
 
@@ -59,6 +62,7 @@ namespace Microwave.Queries.UnitTests
             var runner = MongoDbRunner.Start("GetQuery_WrongType");
             var client = new MongoClient(runner.ConnectionString);
             var database = client.GetDatabase("GetQuery_WrongType");
+            client.DropDatabase("GetQuery_WrongType");
 
             var mongoCollection = database.GetCollection<IdentifiableQueryDbo>("IdentifiableQueryDbos");
             await mongoCollection.InsertOneAsync(new IdentifiableQueryDbo
@@ -74,6 +78,8 @@ namespace Microwave.Queries.UnitTests
             var result = await queryRepository.Load<TestReadModel>(new Guid("6695a111-9aee-44e1-b7cc-94ec5ab5e81b"));
 
             Assert.IsTrue(result.Is<NotFound>());
+
+            client.DropDatabase("GetQuery_WrongType");
             runner.Dispose();
         }
 
@@ -91,6 +97,8 @@ namespace Microwave.Queries.UnitTests
             var save2 = queryRepository.Save(testQuery2);
 
             await Task.WhenAll(new List<Task> { save, save2});
+
+            client.DropDatabase("InsertQuery_ConcurrencyProblem");
             runner.Dispose();
         }
 
@@ -115,6 +123,8 @@ namespace Microwave.Queries.UnitTests
 
             var resultOfLoad = await queryRepository.Load<TestReadModel>(guid);
             Assert.AreEqual(2, resultOfLoad.Value.Version);
+
+            client.DropDatabase("InsertIDQuery_ConcurrencyProblem");
             runner.Dispose();
         }
 
@@ -131,6 +141,8 @@ namespace Microwave.Queries.UnitTests
             var query = (await queryRepository.Load<TestQuerry>()).Value;
 
             Assert.AreEqual("NewName", query.UserName);
+
+            client.DropDatabase("UpdateQuery");
             runner.Dispose();
         }
 
@@ -158,6 +170,8 @@ namespace Microwave.Queries.UnitTests
             Assert.AreEqual(2, readModelWrappers.Count);
             Assert.AreEqual(testQuery.UserName, readModelWrappers[0].ReadModel.UserName);
             Assert.AreEqual(testQuery2.UserName, readModelWrappers[1].ReadModel.UserName);
+
+            client.DropDatabase("LoadAllReadModels");
             runner.Dispose();
         }
     }

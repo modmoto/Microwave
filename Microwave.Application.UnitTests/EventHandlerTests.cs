@@ -16,9 +16,9 @@ namespace Microwave.Application.UnitTests
         [TestMethod]
         public async Task HandleIsOnlyCalledOnce()
         {
-            var runner = MongoDbRunner.Start("LoadAllReadModels");
+            var runner = MongoDbRunner.Start("HandleIsOnlyCalledOnce");
             var client = new MongoClient(runner.ConnectionString);
-            var database = client.GetDatabase("LoadAllReadModels");
+            var database = client.GetDatabase("HandleIsOnlyCalledOnce");
 
             var eventFeedMock = new Mock<IEventFeed<AsyncEventHandler<TestEv2>>>();
             var domainEventWrapper = new DomainEventWrapper
@@ -41,6 +41,8 @@ namespace Microwave.Application.UnitTests
 
             Assert.AreEqual(1, handleAsync.TimesCalled);
             Assert.AreEqual(1, handleAsync.TimesCalled);
+
+            client.DropDatabase("HandleIsOnlyCalledOnce");
             runner.Dispose();
         }
     }
