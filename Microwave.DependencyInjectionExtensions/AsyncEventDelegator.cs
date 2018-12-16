@@ -28,32 +28,21 @@ namespace Microwave.DependencyInjectionExtensions
             {
                 await Task.Delay(1000);
 
-                try
-                {
-                    foreach (var handler in _handler) await handler.Update();
-                }
-                catch (Exception e)
-                {
-                    Console.Error.WriteLine(e.ToString(), ConsoleColor.Red);
-                }
+                foreach (var handler in _handler) SecureCall(async () => await handler.Update());
+                foreach (var handler in _queryEventHandlers) SecureCall(async () => await handler.Update());
+                foreach (var handler in _identifiableQueryEventHandlers) SecureCall(async () => await handler.Update());
+            }
+        }
 
-                try
-                {
-                    foreach (var handler in _queryEventHandlers) await handler.Update();
-                }
-                catch (Exception e)
-                {
-                    Console.Error.WriteLine(e.ToString(), ConsoleColor.Red);
-                }
-
-                try
-                {
-                    foreach (var handler in _identifiableQueryEventHandlers) await handler.Update();
-                }
-                catch (Exception e)
-                {
-                    Console.Error.WriteLine(e.ToString(), ConsoleColor.Red);
-                }
+        private void SecureCall(Action action)
+        {
+            try
+            {
+                action.Invoke();
+            }
+            catch (Exception e)
+            {
+                Console.Error.WriteLine(e.ToString(), ConsoleColor.Red);
             }
         }
     }
