@@ -24,4 +24,8 @@
     <ProjectReference Include="..\Microwave.Queries\Microwave.Queries.csproj" />
     <ProjectReference Include="..\Microwave.WebApi\Microwave.WebApi.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="SQLitePCLRaw.provider.sqlite3.netstandard11" Version="1.1.11" />
+  </ItemGroup>
+
 </Project>
