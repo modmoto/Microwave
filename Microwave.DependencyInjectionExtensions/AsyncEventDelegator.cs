@@ -42,7 +42,10 @@ namespace Microwave.DependencyInjectionExtensions
             }
             catch (Exception e)
             {
+                var currentForeground = Console.ForegroundColor;
+                Console.ForegroundColor = ConsoleColor.Red;
                 Console.Error.WriteLine(e.ToString(), ConsoleColor.Red);
+                Console.ForegroundColor = currentForeground;
             }
         }
     }
