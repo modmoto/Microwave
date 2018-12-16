@@ -133,6 +133,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
         }
 
         // this is to check if the upsert hack is working. It will throw an error if you remove the hack lines on creation
+        [Ignore]
         [TestMethod]
         public async Task BuildDatabaseAndCheckUpsertIsWorking()
         {
