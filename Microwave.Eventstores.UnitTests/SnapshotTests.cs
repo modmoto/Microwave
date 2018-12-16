@@ -20,7 +20,7 @@ namespace Microwave.Eventstores.UnitTests
                 .Options;
 
             var eventStoreContext = new EventStoreContext(options);
-            var repo = new EventRepository(new DomainEventDeserializer(new JSonHack()), eventStoreContext, new ObjectConverter());
+            var repo = new EventRepository(eventStoreContext, new DomainEventDeserializer(new JSonHack()), new ObjectConverter());
             var eventStore = new EventStore(repo, new SnapShotRepository(eventStoreContext, new ObjectConverter()));
 
             var entityId = Guid.NewGuid();
