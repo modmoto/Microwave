@@ -1,33 +1,45 @@
+using System;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using MongoDB.Driver;
 
 namespace Microwave.Queries
 {
     public class VersionRepository : IVersionRepository
     {
-        private readonly ReadModelStorageContext _subscriptionContext;
+        private readonly IMongoDatabase _dataBase;
 
-        public VersionRepository(ReadModelStorageContext subscriptionContext)
+        public VersionRepository(IMongoDatabase dataBase)
         {
-            _subscriptionContext = subscriptionContext;
+            _dataBase = dataBase;
         }
 
         public async Task<long> GetVersionAsync(string domainEventType)
         {
-            var lastProcessedVersion =
-                await _subscriptionContext.ProcessedVersions.FirstOrDefaultAsync(version =>
-                    version.EventType == domainEventType);
+            var mongoCollection = _dataBase.GetCollection<LastProcessedVersionDbo>("LastProcessedVersions");
+            var lastProcessedVersion = (await mongoCollection.FindAsync(version => version.EventType == domainEventType)).FirstOrDefault();
             if (lastProcessedVersion == null) return 0L;
             return lastProcessedVersion.LastVersion;
         }
 
         public async Task SaveVersion(LastProcessedVersion version)
         {
-            await _subscriptionContext.ProcessedVersions
-                .Upsert(new LastProcessedVersionDbo {
-                    EventType = version.EventType,
-                    LastVersion = version.LastVersion})
-                .RunAsync();
+            var mongoCollection = _dataBase.GetCollection<LastProcessedVersionDbo>("LastProcessedVersions");
+
+            var findOneAndReplaceOptions = new FindOneAndReplaceOptions<LastProcessedVersionDbo>();
+            findOneAndReplaceOptions.IsUpsert = true;
+            await mongoCollection.FindOneAndReplaceAsync(IsSameType(version),
+                new LastProcessedVersionDbo
+            {
+                EventType = version.EventType,
+                LastVersion = version.LastVersion
+            }, findOneAndReplaceOptions);
+        }
+
+        private static Expression<Func<LastProcessedVersionDbo, bool>> IsSameType(LastProcessedVersion version)
+        {
+            return e => e.EventType == version.EventType;
         }
     }
 }

@@ -7,6 +7,8 @@ using Microwave.Application;
 using Microwave.Application.Results;
 using Microwave.Domain;
 using Microwave.ObjectPersistences;
+using Mongo2Go;
+using MongoDB.Driver;
 
 namespace Microwave.Queries.UnitTests
 {
@@ -16,15 +18,16 @@ namespace Microwave.Queries.UnitTests
         [TestMethod]
         public async Task UpdateReadmodelHandler()
         {
+            var runner = MongoDbRunner.Start("UpdateReadmodelHandler");
+            var client = new MongoClient(runner.ConnectionString);
+            var database = client.GetDatabase("UpdateReadmodelHandler");
+
             EntityGuid = Guid.NewGuid();
-            var options = new DbContextOptionsBuilder<ReadModelStorageContext>()
-                .UseInMemoryDatabase("UpdateReadmodelHandler")
-                .Options;
 
-            var queryRepository = new ReadModelRepository(new ReadModelStorageContext(options), new ObjectConverter());
+            var queryRepository = new ReadModelRepository(database, new ObjectConverter());
 
-            var readModelHandler = new ReadModelHandler<TestReadModelQuerries>(queryRepository, new VersionRepository(new
-                ReadModelStorageContext(options)), new FeedMock2());
+            var readModelHandler = new ReadModelHandler<TestReadModelQuerries>(queryRepository,
+                new VersionRepository(database), new FeedMock2());
             await readModelHandler.Update();
 
             var result = await queryRepository.Load<TestReadModelQuerries>(EntityGuid);
@@ -36,16 +39,17 @@ namespace Microwave.Queries.UnitTests
         [TestMethod]
         public async Task UpdateModel_TwoEntities()
         {
+            var runner = MongoDbRunner.Start("UpdateModel_TwoEntities");
+            var client = new MongoClient(runner.ConnectionString);
+            var database = client.GetDatabase("UpdateModel_TwoEntities");
+
             EntityGuid = Guid.NewGuid();
             EntityGuid2 = Guid.NewGuid();
-            var options = new DbContextOptionsBuilder<ReadModelStorageContext>()
-                .UseInMemoryDatabase("UpdateModelConcurrencyVersionBug")
-                .Options;
 
-            var queryRepository = new ReadModelRepository(new ReadModelStorageContext(options), new ObjectConverter());
+            var queryRepository = new ReadModelRepository(database, new ObjectConverter());
 
-            var readModelHandler = new ReadModelHandler<TestReadModelQuerries>(queryRepository, new VersionRepository(new
-                ReadModelStorageContext(options)), new FeedMock3());
+            var readModelHandler = new ReadModelHandler<TestReadModelQuerries>(queryRepository,
+                new VersionRepository(database), new FeedMock3());
 
             await readModelHandler.Update();
 
@@ -53,21 +57,22 @@ namespace Microwave.Queries.UnitTests
             var result2 = await queryRepository.Load<TestReadModelQuerries>(EntityGuid2);
             Assert.AreEqual(EntityGuid, result.Value.Id);
             Assert.AreEqual(EntityGuid2, result2.Value.Id);
+            runner.Dispose();
         }
 
         [TestMethod]
         public async Task UpdateModel_EventsPresentThatAreNotHandleble()
         {
+            var runner = MongoDbRunner.Start("UpdateModel_EventsPresentThatAreNotHandleble");
+            var client = new MongoClient(runner.ConnectionString);
+            var database = client.GetDatabase("UpdateModel_EventsPresentThatAreNotHandleble");
+
             EntityGuid = Guid.NewGuid();
             EntityGuid2 = Guid.NewGuid();
-            var options = new DbContextOptionsBuilder<ReadModelStorageContext>()
-                .UseInMemoryDatabase("UpdateModelConcurrencyVersionBug")
-                .Options;
 
-            var queryRepository = new ReadModelRepository(new ReadModelStorageContext(options), new ObjectConverter());
+            var queryRepository = new ReadModelRepository(database, new ObjectConverter());
 
-            var readModelHandler = new ReadModelHandler<TestReadModelQuerries>(queryRepository, new VersionRepository(new
-                ReadModelStorageContext(options)), new FeedMock4());
+            var readModelHandler = new ReadModelHandler<TestReadModelQuerries>(queryRepository, new VersionRepository(database), new FeedMock4());
 
             await readModelHandler.Update();
 
@@ -76,20 +81,24 @@ namespace Microwave.Queries.UnitTests
             Assert.AreEqual(EntityGuid, result.Value.Id);
             var condition = result2.Is<NotFound>();
             Assert.IsTrue(condition);
+            runner.Dispose();
         }
 
         [TestMethod]
         public async Task UpdateModel_EventsNotAppliedStillUpdatesVersion()
         {
+            var runner = MongoDbRunner.Start("LoadAllReadModels");
+            var client = new MongoClient(runner.ConnectionString);
+            var database = client.GetDatabase("LoadAllReadModels");
+
             EntityGuid = Guid.NewGuid();
-            var options = new DbContextOptionsBuilder<ReadModelStorageContext>()
-                .UseInMemoryDatabase("UpdateModelConcurrencyVersionBug")
-                .Options;
 
-            var queryRepository = new ReadModelRepository(new ReadModelStorageContext(options), new ObjectConverter());
+            var queryRepository = new ReadModelRepository(database, new ObjectConverter());
 
-            var readModelHandler = new ReadModelHandler<TestReadModelQuerries_OnlyOneEventAndVersionIsCounted>(queryRepository, new VersionRepository(new
-                ReadModelStorageContext(options)), new FeedMock5());
+            var readModelHandler = new ReadModelHandler<TestReadModelQuerries_OnlyOneEventAndVersionIsCounted>(
+                queryRepository,
+                new VersionRepository(database),
+                new FeedMock5());
 
             await readModelHandler.Update();
 
@@ -97,24 +106,24 @@ namespace Microwave.Queries.UnitTests
             Assert.AreEqual(14, result.Value.Version);
             Assert.AreEqual(null, result.Value.ReadModel.Name);
             Assert.AreEqual(EntityGuid, result.Value.ReadModel.Id);
+            runner.Dispose();
         }
 
         [TestMethod]
         public async Task UpdateModel_TwoParallelReadModelHandler_SerializationBug()
         {
+            var runner = MongoDbRunner.Start("LoadAllReadModels");
+            var client = new MongoClient(runner.ConnectionString);
+            var database = client.GetDatabase("LoadAllReadModels");
+
             EntityGuid = Guid.NewGuid();
             EntityGuid2 = Guid.NewGuid();
-            var options = new DbContextOptionsBuilder<ReadModelStorageContext>()
-                .UseInMemoryDatabase("UpdateModel_TwoParallelReadModelHandler_SerializationBug")
-                .Options;
 
-            var queryRepository = new ReadModelRepository(new ReadModelStorageContext(options), new ObjectConverter());
+            var queryRepository = new ReadModelRepository(database, new ObjectConverter());
 
-            var readModelHandler = new ReadModelHandler<TestReadModelQuerries_TwoParallelFeeds1>(queryRepository, new VersionRepository(new
-                ReadModelStorageContext(options)), new FeedMock6());
+            var readModelHandler = new ReadModelHandler<TestReadModelQuerries_TwoParallelFeeds1>(queryRepository, new VersionRepository(database), new FeedMock6());
 
-            var readModelHandler2 = new ReadModelHandler<TestReadModelQuerries_TwoParallelFeeds2>(queryRepository, new VersionRepository(new
-                ReadModelStorageContext(options)), new FeedMock7());
+            var readModelHandler2 = new ReadModelHandler<TestReadModelQuerries_TwoParallelFeeds2>(queryRepository, new VersionRepository(database), new FeedMock7());
 
             await readModelHandler.Update();
             await readModelHandler2.Update();
@@ -123,6 +132,7 @@ namespace Microwave.Queries.UnitTests
             var result2 = await queryRepository.Load<TestReadModelQuerries_TwoParallelFeeds2>(EntityGuid2);
             Assert.AreEqual(EntityGuid, result.Value.ReadModel.Id);
             Assert.AreEqual(EntityGuid2, result2.Value.ReadModel.Id);
+            runner.Dispose();
         }
 
         [TestMethod]

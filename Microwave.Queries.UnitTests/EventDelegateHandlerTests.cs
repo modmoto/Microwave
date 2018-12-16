@@ -6,6 +6,8 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Application;
 using Microwave.Domain;
 using Microwave.ObjectPersistences;
+using Mongo2Go;
+using MongoDB.Driver;
 using Moq;
 
 namespace Microwave.Queries.UnitTests
@@ -40,6 +42,10 @@ namespace Microwave.Queries.UnitTests
         [TestMethod]
         public async Task MixedEventsInFeed_QuerryRepo()
         {
+            var runner = MongoDbRunner.Start("MixedEventsInFeed_QuerryRepo");
+            var client = new MongoClient(runner.ConnectionString);
+            var database = client.GetDatabase("MixedEventsInFeed_QuerryRepo");
+
             var mock = new Mock<IEventFeed<QueryEventHandler<TestQ, TestEv>>>();
             IEnumerable<DomainEventWrapper> list = new [] { new DomainEventWrapper
                 {
@@ -55,17 +61,14 @@ namespace Microwave.Queries.UnitTests
             versionRepo.Setup(repo => repo.SaveVersion(It.IsAny<LastProcessedVersion>())).Returns(Task.CompletedTask);
             versionRepo.Setup(repo => repo.GetVersionAsync(It.IsAny<string>())).ReturnsAsync(0);
 
-            var options = new DbContextOptionsBuilder<ReadModelStorageContext>()
-                .UseInMemoryDatabase("IdentifiableQuerySaveAndLoad")
-                .Options;
-
-            var queryRepository = new ReadModelRepository(new ReadModelStorageContext(options), new ObjectConverter());
+            var queryRepository = new ReadModelRepository(database, new ObjectConverter());
 
             var eventDelegateHandler = new QueryEventHandler<TestQ, TestEv>(queryRepository, versionRepo.Object, mock.Object);
             await eventDelegateHandler.Update();
 
             var result = await queryRepository.Load<TestQ>();
             Assert.AreEqual(1, result.Value.WasCalled);
+            runner.Dispose();
         }
     }
 

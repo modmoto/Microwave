@@ -23,10 +23,8 @@ namespace Microwave.DependencyInjectionExtensions
             using (var serviceScope = builder.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
             {
                 var eventStoreContext = serviceScope.ServiceProvider.GetService<EventStoreContext>();
-                var queryStorageContext = serviceScope.ServiceProvider.GetService<ReadModelStorageContext>();
 
                 eventStoreContext?.Database.EnsureCreated();
-                queryStorageContext?.Database.EnsureCreated();
 
                 SQLitePCL.raw.SetProvider(new SQLitePCL.SQLite3Provider_sqlite3());
                 SQLitePCL.raw.FreezeProvider();
@@ -53,9 +51,6 @@ namespace Microwave.DependencyInjectionExtensions
         public static IServiceCollection AddMicrowaveQuerries(this IServiceCollection services,
             Assembly assembly, IConfiguration configuration)
         {
-            services.AddDbContext<ReadModelStorageContext>(option =>
-                option.UseSqlite("Data Source=QueryStorageContext.db"));
-
             //WebApi
             services.AddMvcCore(config =>
             {

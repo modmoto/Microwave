@@ -18,6 +18,9 @@
         <Reference Include="Microsoft.EntityFrameworkCore, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60">
             <HintPath>..\..\..\.nuget\packages\microsoft.entityframeworkcore\2.1.1\lib\netstandard2.0\Microsoft.EntityFrameworkCore.dll</HintPath>
         </Reference>
+        <Reference Include="Mongo2Go, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <HintPath>..\..\..\.nuget\packages\mongo2go\2.2.8\lib\netstandard1.6\Mongo2Go.dll</HintPath>
+        </Reference>
     </ItemGroup>
     
     <ItemGroup>

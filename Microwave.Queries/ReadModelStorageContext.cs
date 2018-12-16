@@ -1,24 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.EntityFrameworkCore;
+﻿using MongoDB.Bson.Serialization.Attributes;
 
 namespace Microwave.Queries
 {
-    public sealed class ReadModelStorageContext : DbContext
-    {
-        public DbSet<QueryDbo> Querries { get; set; }
-        public DbSet<IdentifiableQueryDbo> IdentifiableQuerries { get; set; }
-        public DbSet<LastProcessedVersionDbo> ProcessedVersions { get; set; }
-
-        public ReadModelStorageContext(DbContextOptions<ReadModelStorageContext> options) :
-            base(options)
-        {
-        }
-    }
-
     public class IdentifiableQueryDbo
     {
-        [Key, DatabaseGenerated(DatabaseGeneratedOption.None)]
+        [BsonId]
         public string Id { get; set; }
         public string Payload { get; set; }
         public long Version { get; set; }
@@ -27,14 +13,14 @@ namespace Microwave.Queries
 
     public class QueryDbo
     {
-        [Key, DatabaseGenerated(DatabaseGeneratedOption.None)]
+        [BsonId]
         public string Type { get; set; }
         public string Payload { get; set; }
     }
 
     public class LastProcessedVersionDbo
     {
-        [Key, DatabaseGenerated(DatabaseGeneratedOption.None)]
+        [BsonId]
         public string EventType { get; set; }
         public long LastVersion { get; set; }
     }

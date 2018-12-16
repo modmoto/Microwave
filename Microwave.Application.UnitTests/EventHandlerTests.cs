@@ -5,6 +5,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Domain;
 using Microwave.Queries;
+using Mongo2Go;
+using MongoDB.Driver;
 using Moq;
 
 namespace Microwave.Application.UnitTests
@@ -15,11 +17,9 @@ namespace Microwave.Application.UnitTests
         [TestMethod]
         public async Task HandleIsOnlyCalledOnce()
         {
-            var options = new DbContextOptionsBuilder<ReadModelStorageContext>()
-                .UseInMemoryDatabase("HandleIsOnlyCalledOnce")
-                .Options;
-
-            var eventStoreContext = new ReadModelStorageContext(options);
+            var runner = MongoDbRunner.Start("LoadAllReadModels");
+            var client = new MongoClient(runner.ConnectionString);
+            var database = client.GetDatabase("LoadAllReadModels");
 
             var eventFeedMock = new Mock<IEventFeed<AsyncEventHandler<TestEv2>>>();
             var domainEventWrapper = new DomainEventWrapper
@@ -33,7 +33,7 @@ namespace Microwave.Application.UnitTests
             var handleAsync = new Handler1();
             var handleAsync2 = new Handler2();
             var eventDelegateHandler = new AsyncEventHandler<TestEv2>(
-                new VersionRepository(eventStoreContext),
+                new VersionRepository(database),
                 eventFeedMock.Object,
                 new List<IHandleAsync<TestEv2>> {handleAsync, handleAsync2});
 
@@ -42,6 +42,7 @@ namespace Microwave.Application.UnitTests
 
             Assert.AreEqual(1, handleAsync.TimesCalled);
             Assert.AreEqual(1, handleAsync.TimesCalled);
+            runner.Dispose();
         }
     }
 
