@@ -15,7 +15,7 @@ namespace Microwave.Queries
         private readonly IMongoDatabase _database;
         private readonly IObjectConverter _converter;
 
-        public ReadModelRepository(IMongoDatabase database, ObjectConverter converter)
+        public ReadModelRepository(IMongoDatabase database, IObjectConverter converter)
         {
             _database = database;
             _converter = converter;

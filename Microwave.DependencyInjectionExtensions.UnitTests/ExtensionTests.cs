@@ -25,7 +25,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
                 .AddJsonFile("appsettings.test.json")
                 .Build();
 
-            var storeDependencies = collection.AddMicrowaveQuerries(typeof(TestEventHandler).Assembly, config);
+            var storeDependencies = collection.AddMicrowaveReadModels(typeof(TestEventHandler).Assembly, config);
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
             var eventDelegateHandlers = buildServiceProvider.GetServices<IAsyncEventHandler>().ToList();
@@ -104,8 +104,8 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
                 .Build();
 
             var storeDependencies = collection
-                .AddMicrowaveQuerries(typeof(TestEventHandler).Assembly, config)
-                .AddMicrowaveQuerries(typeof(TestEventHandler).Assembly, config);
+                .AddMicrowaveReadModels(typeof(TestEventHandler).Assembly, config)
+                .AddMicrowaveReadModels(typeof(TestEventHandler).Assembly, config);
 
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
@@ -143,18 +143,16 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
             var collection = (IServiceCollection) new ServiceCollection();
 
             collection.AddMicrowave(config);
-            collection.AddMicrowaveQuerries(typeof(TestIdQuery).Assembly, config);
+            collection.AddMicrowaveReadModels(typeof(TestIdQuery).Assembly, config);
             var serviceProvider = collection.BuildServiceProvider();
             var applicationBuilder = new ApplicationBuilder(serviceProvider);
 
-            var qeryRepository = serviceProvider.GetService<IReadModelRepository>();
             var eventStore = serviceProvider.GetService<IEventRepository>();
 
             var eventStoreContext = serviceProvider.GetService<EventStoreContext>();
             eventStoreContext.Database.EnsureDeleted();
 
             applicationBuilder.EnsureMicrowaveDatabaseCreated();
-            await qeryRepository.Save(new TestIdQuery());
             await eventStore.AppendAsync(new [] { new TestDomainEvent1(Guid.NewGuid()) }, 0);
         }
     }

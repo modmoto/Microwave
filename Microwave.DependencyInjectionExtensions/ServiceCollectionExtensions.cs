@@ -13,6 +13,7 @@ using Microwave.ObjectPersistences;
 using Microwave.Queries;
 using Microwave.WebApi;
 using Microwave.WebApi.Filters;
+using MongoDB.Driver;
 
 namespace Microwave.DependencyInjectionExtensions
 {
@@ -48,9 +49,16 @@ namespace Microwave.DependencyInjectionExtensions
             return builder;
         }
 
-        public static IServiceCollection AddMicrowaveQuerries(this IServiceCollection services,
+        public static IServiceCollection AddMicrowaveReadModels(this IServiceCollection services,
             Assembly assembly, IConfiguration configuration)
         {
+            services.AddTransient(option =>
+            {
+                var connectionString = configuration.GetConnectionString("ReadModelMongoDb");
+                var client = new MongoClient(connectionString);
+                return client.GetDatabase("ReadModelDb");
+            });
+
             //WebApi
             services.AddMvcCore(config =>
             {
