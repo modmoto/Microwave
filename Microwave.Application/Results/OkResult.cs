@@ -15,7 +15,7 @@
         }
     }
 
-    internal class Ok : ResultStatus
+    public class Ok : ResultStatus
     {
         public override void Check()
         {

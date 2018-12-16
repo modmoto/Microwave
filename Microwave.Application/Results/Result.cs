@@ -19,7 +19,7 @@
             return new OkResult();
         }
 
-        public bool Is<T>() where T : Result
+        public bool Is<T>() where T : ResultStatus
         {
             return typeof(T) == Status.GetType();
         }
@@ -28,11 +28,6 @@
         {
             Status.Check();
         }
-    }
-
-    public abstract class ResultStatus
-    {
-        public abstract void Check();
     }
 
     public abstract class Result<T>
@@ -70,6 +65,4 @@
             return new NotFoundResult<T>(notFoundId);
         }
     }
-
-
 }

@@ -13,16 +13,16 @@ namespace Microwave.Queries
 
     public class ReadModelHandler<T> : IReadModelHandler where T : ReadModel, new()
     {
-        private readonly IQeryRepository _qeryRepository;
+        private readonly IReadModelRepository _readModelRepository;
         private readonly IEventFeed<ReadModelHandler<T>> _eventFeed;
         private readonly IVersionRepository _versionRepository;
 
         public ReadModelHandler(
-            IQeryRepository qeryRepository,
+            IReadModelRepository readModelRepository,
             IVersionRepository versionRepository,
             IEventFeed<ReadModelHandler<T>> eventFeed)
         {
-            _qeryRepository = qeryRepository;
+            _readModelRepository = readModelRepository;
             _versionRepository = versionRepository;
             _eventFeed = eventFeed;
         }
@@ -49,7 +49,7 @@ namespace Microwave.Queries
                 }
                 else
                 {
-                    result = await _qeryRepository.Load<T>(domainEventEntityId);
+                    result = await _readModelRepository.Load<T>(domainEventEntityId);
                 }
 
                 if (result.Is<NotFound>()) continue;
@@ -61,7 +61,7 @@ namespace Microwave.Queries
                 if (latestEventVersion < modelWrapper.Version) latestEventVersion = modelWrapper.Version;
 
                 var readModelWrapper = new ReadModelWrapper<T>(readModel, domainEventEntityId, latestEventVersion);
-                await _qeryRepository.Save(readModelWrapper);
+                await _readModelRepository.Save(readModelWrapper);
                 await _versionRepository
                     .SaveVersion(new LastProcessedVersion(redaModelVersionCounter, latestEvent.Created));
             }

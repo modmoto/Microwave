@@ -5,9 +5,9 @@ namespace Microwave.Queries
 {
     public class VersionRepository : IVersionRepository
     {
-        private readonly QueryStorageContext _subscriptionContext;
+        private readonly ReadModelStorageContext _subscriptionContext;
 
-        public VersionRepository(QueryStorageContext subscriptionContext)
+        public VersionRepository(ReadModelStorageContext subscriptionContext)
         {
             _subscriptionContext = subscriptionContext;
         }

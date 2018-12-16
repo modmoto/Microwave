@@ -4,13 +4,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Microwave.Queries
 {
-    public sealed class QueryStorageContext : DbContext
+    public sealed class ReadModelStorageContext : DbContext
     {
         public DbSet<QueryDbo> Querries { get; set; }
         public DbSet<IdentifiableQueryDbo> IdentifiableQuerries { get; set; }
         public DbSet<LastProcessedVersionDbo> ProcessedVersions { get; set; }
 
-        public QueryStorageContext(DbContextOptions<QueryStorageContext> options) :
+        public ReadModelStorageContext(DbContextOptions<ReadModelStorageContext> options) :
             base(options)
         {
         }

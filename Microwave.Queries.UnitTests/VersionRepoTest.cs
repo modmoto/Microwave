@@ -10,11 +10,11 @@ namespace Microwave.Queries.UnitTests
         [TestMethod]
         public async Task VersionRepo_SaveAndLoad_UpsertOptionTest()
         {
-            var options = new DbContextOptionsBuilder<QueryStorageContext>()
+            var options = new DbContextOptionsBuilder<ReadModelStorageContext>()
                 .UseInMemoryDatabase("VersionRepo_SaveAndLoad_UpsertOptionTest")
                 .Options;
 
-            var queryStorageContext = new QueryStorageContext(options);
+            var queryStorageContext = new ReadModelStorageContext(options);
             queryStorageContext.Database.EnsureDeleted();
             queryStorageContext.Database.EnsureCreated();
             var versionRepository = new VersionRepository(queryStorageContext);
@@ -29,11 +29,11 @@ namespace Microwave.Queries.UnitTests
         [TestMethod]
         public async Task VersionRepo_DuplicateUpdate()
         {
-            var options = new DbContextOptionsBuilder<QueryStorageContext>()
+            var options = new DbContextOptionsBuilder<ReadModelStorageContext>()
                 .UseInMemoryDatabase("VersionRepo_DuplicateUpdate")
                 .Options;
 
-            var versionRepository = new VersionRepository(new QueryStorageContext(options));
+            var versionRepository = new VersionRepository(new ReadModelStorageContext(options));
 
             await versionRepository.SaveVersion(new LastProcessedVersion("Type", 1));
             await versionRepository.SaveVersion(new LastProcessedVersion("Type", 1));

@@ -15,11 +15,11 @@ namespace Microwave.Application.UnitTests
         [TestMethod]
         public async Task HandleIsOnlyCalledOnce()
         {
-            var options = new DbContextOptionsBuilder<QueryStorageContext>()
+            var options = new DbContextOptionsBuilder<ReadModelStorageContext>()
                 .UseInMemoryDatabase("HandleIsOnlyCalledOnce")
                 .Options;
 
-            var eventStoreContext = new QueryStorageContext(options);
+            var eventStoreContext = new ReadModelStorageContext(options);
 
             var eventFeedMock = new Mock<IEventFeed<AsyncEventHandler<TestEv2>>>();
             var domainEventWrapper = new DomainEventWrapper

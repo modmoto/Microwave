@@ -147,11 +147,11 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
             var serviceProvider = collection.BuildServiceProvider();
             var applicationBuilder = new ApplicationBuilder(serviceProvider);
 
-            var qeryRepository = serviceProvider.GetService<IQeryRepository>();
+            var qeryRepository = serviceProvider.GetService<IReadModelRepository>();
             var eventStore = serviceProvider.GetService<IEventRepository>();
 
             var eventStoreContext = serviceProvider.GetService<EventStoreContext>();
-            var queryStorageContext = serviceProvider.GetService<QueryStorageContext>();
+            var queryStorageContext = serviceProvider.GetService<ReadModelStorageContext>();
             eventStoreContext.Database.EnsureDeleted();
             queryStorageContext.Database.EnsureDeleted();
 

@@ -23,7 +23,7 @@ namespace Microwave.DependencyInjectionExtensions
             using (var serviceScope = builder.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
             {
                 var eventStoreContext = serviceScope.ServiceProvider.GetService<EventStoreContext>();
-                var queryStorageContext = serviceScope.ServiceProvider.GetService<QueryStorageContext>();
+                var queryStorageContext = serviceScope.ServiceProvider.GetService<ReadModelStorageContext>();
 
                 eventStoreContext?.Database.EnsureCreated();
                 queryStorageContext?.Database.EnsureCreated();
@@ -53,7 +53,7 @@ namespace Microwave.DependencyInjectionExtensions
         public static IServiceCollection AddMicrowaveQuerries(this IServiceCollection services,
             Assembly assembly, IConfiguration configuration)
         {
-            services.AddDbContext<QueryStorageContext>(option =>
+            services.AddDbContext<ReadModelStorageContext>(option =>
                 option.UseSqlite("Data Source=QueryStorageContext.db"));
 
             //WebApi
@@ -66,7 +66,7 @@ namespace Microwave.DependencyInjectionExtensions
             services.AddTransient<JSonHack>();
             services.AddTransient<IObjectConverter, ObjectConverter>();
             services.AddTransient<IVersionRepository, VersionRepository>();
-            services.AddTransient<IQeryRepository, QueryRepository>();
+            services.AddTransient<IReadModelRepository, ReadModelRepository>();
             services.AddTransient<AsyncEventDelegator>();
             services.AddTransient<IDomainEventFactory, DomainEventFactory>();
             services.AddSingleton<IEventLocationConfig>(new EventLocationConfig(configuration));

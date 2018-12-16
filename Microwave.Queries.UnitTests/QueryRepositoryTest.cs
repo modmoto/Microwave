@@ -15,11 +15,11 @@ namespace Microwave.Queries.UnitTests
         [TestMethod]
         public async Task IdentifiableQuerySaveAndLoad()
         {
-            var options = new DbContextOptionsBuilder<QueryStorageContext>()
+            var options = new DbContextOptionsBuilder<ReadModelStorageContext>()
                 .UseInMemoryDatabase("IdentifiableQuerySaveAndLoad")
                 .Options;
 
-            var queryRepository = new QueryRepository(new QueryStorageContext(options), new ObjectConverter());
+            var queryRepository = new ReadModelRepository(new ReadModelStorageContext(options), new ObjectConverter());
             var guid = Guid.NewGuid();
             var testQuerry = new TestIdQuerry();
             testQuerry.SetVars("Test", guid, new []{ "Jeah", "jeah2"});
@@ -35,11 +35,11 @@ namespace Microwave.Queries.UnitTests
         [TestMethod]
         public async Task InsertQuery()
         {
-            var options = new DbContextOptionsBuilder<QueryStorageContext>()
+            var options = new DbContextOptionsBuilder<ReadModelStorageContext>()
                 .UseInMemoryDatabase("InsertQuery")
                 .Options;
 
-            var queryRepository = new QueryRepository(new QueryStorageContext(options), new ObjectConverter());
+            var queryRepository = new ReadModelRepository(new ReadModelStorageContext(options), new ObjectConverter());
             var testQuery = new TestQuerry { UserName = "Test"};
             await queryRepository.Save(testQuery);
             var query = (await queryRepository.Load<TestQuerry>()).Value;
@@ -50,11 +50,11 @@ namespace Microwave.Queries.UnitTests
         [TestMethod]
         public async Task GetQuery_WrongType()
         {
-            var options = new DbContextOptionsBuilder<QueryStorageContext>()
+            var options = new DbContextOptionsBuilder<ReadModelStorageContext>()
                 .UseInMemoryDatabase("GetQuery_WrongType")
                 .Options;
 
-            var queryStorageContext = new QueryStorageContext(options);
+            var queryStorageContext = new ReadModelStorageContext(options);
             var identifiableQueryDbo = new IdentifiableQueryDbo
             {
                 Id = "6695a111-9aee-44e1-b7cc-94ec5ab5e81b",
@@ -64,7 +64,7 @@ namespace Microwave.Queries.UnitTests
             };
             queryStorageContext.IdentifiableQuerries.Add(identifiableQueryDbo);
             await queryStorageContext.SaveChangesAsync();
-            var queryRepository = new QueryRepository(queryStorageContext, new ObjectConverter());
+            var queryRepository = new ReadModelRepository(queryStorageContext, new ObjectConverter());
 
             var result = await queryRepository.Load<TestIdQuerry>(new Guid("6695a111-9aee-44e1-b7cc-94ec5ab5e81b"));
 
@@ -74,11 +74,11 @@ namespace Microwave.Queries.UnitTests
         [TestMethod]
         public async Task InsertQuery_ConcurrencyProblem()
         {
-            var options = new DbContextOptionsBuilder<QueryStorageContext>()
+            var options = new DbContextOptionsBuilder<ReadModelStorageContext>()
                 .UseInMemoryDatabase("InsertQuery_ConcurrencyProblem")
                 .Options;
 
-            var queryRepository = new QueryRepository(new QueryStorageContext(options), new ObjectConverter());
+            var queryRepository = new ReadModelRepository(new ReadModelStorageContext(options), new ObjectConverter());
             var testQuery = new TestQuerry { UserName = "Test1"};
             var testQuery2 = new TestQuerry { UserName = "Test2"};
             var save = queryRepository.Save(testQuery);
@@ -90,11 +90,11 @@ namespace Microwave.Queries.UnitTests
         [TestMethod]
         public async Task InsertIDQuery_ConcurrencyProblem()
         {
-            var options = new DbContextOptionsBuilder<QueryStorageContext>()
+            var options = new DbContextOptionsBuilder<ReadModelStorageContext>()
                 .UseInMemoryDatabase("InsertIDQuery_ConcurrencyProblem")
                 .Options;
 
-            var queryRepository = new QueryRepository(new QueryStorageContext(options), new ObjectConverter());
+            var queryRepository = new ReadModelRepository(new ReadModelStorageContext(options), new ObjectConverter());
             Guid guid = Guid.NewGuid();
             var testQuery = new TestIdQuerry();
             testQuery.SetVars("Test1", guid, new []{ "Jeah", "jeah2"});
@@ -104,25 +104,51 @@ namespace Microwave.Queries.UnitTests
             var save = queryRepository.Save(new ReadModelWrapper<TestIdQuerry>(testQuery, guid, 1));
             var save2 = queryRepository.Save(new ReadModelWrapper<TestIdQuerry>(testQuery2, guid, 2));
 
-            await Task.WhenAll(new List<Task> { save, save2 });
+            await Task.WhenAll(new List<Task<Result>> { save, save2 });
 
-            var result = await queryRepository.Load<TestIdQuerry>(guid);
-            Assert.AreEqual(2, result.Value.Version);
+            var resultOfLoad = await queryRepository.Load<TestIdQuerry>(guid);
+            Assert.AreEqual(2, resultOfLoad.Value.Version);
         }
 
         [TestMethod]
         public async Task UpdateQuery()
         {
-            var options = new DbContextOptionsBuilder<QueryStorageContext>()
+            var options = new DbContextOptionsBuilder<ReadModelStorageContext>()
                 .UseInMemoryDatabase("UpdateQuery")
                 .Options;
 
-            var queryRepository = new QueryRepository(new QueryStorageContext(options), new ObjectConverter());
+            var queryRepository = new ReadModelRepository(new ReadModelStorageContext(options), new ObjectConverter());
             await queryRepository.Save(new TestQuerry { UserName = "Test"});
             await queryRepository.Save(new TestQuerry { UserName = "NewName"});
             var query = (await queryRepository.Load<TestQuerry>()).Value;
 
             Assert.AreEqual("NewName", query.UserName);
+        }
+
+        [TestMethod]
+        public async Task LoadAllReadModels()
+        {
+            var options = new DbContextOptionsBuilder<ReadModelStorageContext>()
+                .UseInMemoryDatabase("UpdateQuery")
+                .Options;
+
+            var queryRepository = new ReadModelRepository(new ReadModelStorageContext(options), new ObjectConverter());
+            Guid guid = Guid.NewGuid();
+            Guid guid2 = Guid.NewGuid();
+            var testQuery = new TestIdQuerry();
+            testQuery.SetVars("Test1", guid, new []{ "Jeah", "jeah2"});
+            var testQuery2 = new TestIdQuerry();
+            testQuery2.SetVars("Test2", guid2, new []{ "Jeah", "jeah2"});
+
+            await queryRepository.Save(new ReadModelWrapper<TestIdQuerry>(testQuery, guid, 1));
+            await queryRepository.Save(new ReadModelWrapper<TestIdQuerry>(testQuery2, guid2, 1));
+
+            var loadAll = await queryRepository.LoadAll<TestIdQuerry>();
+            var readModelWrappers = loadAll.Value.ToList();
+
+            Assert.AreEqual(2, readModelWrappers.Count);
+            Assert.AreEqual(testQuery.UserName, readModelWrappers[0].ReadModel.UserName);
+            Assert.AreEqual(testQuery2.UserName, readModelWrappers[1].ReadModel.UserName);
         }
     }
 

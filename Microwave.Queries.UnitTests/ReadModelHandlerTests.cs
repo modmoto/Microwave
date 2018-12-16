@@ -17,14 +17,14 @@ namespace Microwave.Queries.UnitTests
         public async Task UpdateReadmodelHandler()
         {
             EntityGuid = Guid.NewGuid();
-            var options = new DbContextOptionsBuilder<QueryStorageContext>()
+            var options = new DbContextOptionsBuilder<ReadModelStorageContext>()
                 .UseInMemoryDatabase("UpdateReadmodelHandler")
                 .Options;
 
-            var queryRepository = new QueryRepository(new QueryStorageContext(options), new ObjectConverter());
+            var queryRepository = new ReadModelRepository(new ReadModelStorageContext(options), new ObjectConverter());
 
             var readModelHandler = new ReadModelHandler<TestReadModelQuerries>(queryRepository, new VersionRepository(new
-                QueryStorageContext(options)), new FeedMock2());
+                ReadModelStorageContext(options)), new FeedMock2());
             await readModelHandler.Update();
 
             var result = await queryRepository.Load<TestReadModelQuerries>(EntityGuid);
@@ -38,14 +38,14 @@ namespace Microwave.Queries.UnitTests
         {
             EntityGuid = Guid.NewGuid();
             EntityGuid2 = Guid.NewGuid();
-            var options = new DbContextOptionsBuilder<QueryStorageContext>()
+            var options = new DbContextOptionsBuilder<ReadModelStorageContext>()
                 .UseInMemoryDatabase("UpdateModelConcurrencyVersionBug")
                 .Options;
 
-            var queryRepository = new QueryRepository(new QueryStorageContext(options), new ObjectConverter());
+            var queryRepository = new ReadModelRepository(new ReadModelStorageContext(options), new ObjectConverter());
 
             var readModelHandler = new ReadModelHandler<TestReadModelQuerries>(queryRepository, new VersionRepository(new
-                QueryStorageContext(options)), new FeedMock3());
+                ReadModelStorageContext(options)), new FeedMock3());
 
             await readModelHandler.Update();
 
@@ -60,14 +60,14 @@ namespace Microwave.Queries.UnitTests
         {
             EntityGuid = Guid.NewGuid();
             EntityGuid2 = Guid.NewGuid();
-            var options = new DbContextOptionsBuilder<QueryStorageContext>()
+            var options = new DbContextOptionsBuilder<ReadModelStorageContext>()
                 .UseInMemoryDatabase("UpdateModelConcurrencyVersionBug")
                 .Options;
 
-            var queryRepository = new QueryRepository(new QueryStorageContext(options), new ObjectConverter());
+            var queryRepository = new ReadModelRepository(new ReadModelStorageContext(options), new ObjectConverter());
 
             var readModelHandler = new ReadModelHandler<TestReadModelQuerries>(queryRepository, new VersionRepository(new
-                QueryStorageContext(options)), new FeedMock4());
+                ReadModelStorageContext(options)), new FeedMock4());
 
             await readModelHandler.Update();
 
@@ -82,14 +82,14 @@ namespace Microwave.Queries.UnitTests
         public async Task UpdateModel_EventsNotAppliedStillUpdatesVersion()
         {
             EntityGuid = Guid.NewGuid();
-            var options = new DbContextOptionsBuilder<QueryStorageContext>()
+            var options = new DbContextOptionsBuilder<ReadModelStorageContext>()
                 .UseInMemoryDatabase("UpdateModelConcurrencyVersionBug")
                 .Options;
 
-            var queryRepository = new QueryRepository(new QueryStorageContext(options), new ObjectConverter());
+            var queryRepository = new ReadModelRepository(new ReadModelStorageContext(options), new ObjectConverter());
 
             var readModelHandler = new ReadModelHandler<TestReadModelQuerries_OnlyOneEventAndVersionIsCounted>(queryRepository, new VersionRepository(new
-                QueryStorageContext(options)), new FeedMock5());
+                ReadModelStorageContext(options)), new FeedMock5());
 
             await readModelHandler.Update();
 
@@ -104,17 +104,17 @@ namespace Microwave.Queries.UnitTests
         {
             EntityGuid = Guid.NewGuid();
             EntityGuid2 = Guid.NewGuid();
-            var options = new DbContextOptionsBuilder<QueryStorageContext>()
+            var options = new DbContextOptionsBuilder<ReadModelStorageContext>()
                 .UseInMemoryDatabase("UpdateModel_TwoParallelReadModelHandler_SerializationBug")
                 .Options;
 
-            var queryRepository = new QueryRepository(new QueryStorageContext(options), new ObjectConverter());
+            var queryRepository = new ReadModelRepository(new ReadModelStorageContext(options), new ObjectConverter());
 
             var readModelHandler = new ReadModelHandler<TestReadModelQuerries_TwoParallelFeeds1>(queryRepository, new VersionRepository(new
-                QueryStorageContext(options)), new FeedMock6());
+                ReadModelStorageContext(options)), new FeedMock6());
 
             var readModelHandler2 = new ReadModelHandler<TestReadModelQuerries_TwoParallelFeeds2>(queryRepository, new VersionRepository(new
-                QueryStorageContext(options)), new FeedMock7());
+                ReadModelStorageContext(options)), new FeedMock7());
 
             await readModelHandler.Update();
             await readModelHandler2.Update();

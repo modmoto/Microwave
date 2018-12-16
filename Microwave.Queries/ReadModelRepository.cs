@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microwave.Application;
@@ -6,12 +8,12 @@ using Microwave.Application.Results;
 
 namespace Microwave.Queries
 {
-    public class QueryRepository : IQeryRepository
+    public class ReadModelRepository : IReadModelRepository
     {
-        private readonly QueryStorageContext _context;
+        private readonly ReadModelStorageContext _context;
         private readonly IObjectConverter _converter;
 
-        public QueryRepository(QueryStorageContext context, IObjectConverter converter)
+        public ReadModelRepository(ReadModelStorageContext context, IObjectConverter converter)
         {
             _context = context;
             _converter = converter;
@@ -33,6 +35,14 @@ namespace Microwave.Queries
             var deserialize = _converter.Deserialize<T>(querry.Payload);
             var wrapper = new ReadModelWrapper<T>(deserialize, id, querry.Version);
             return Result<ReadModelWrapper<T>>.Ok(wrapper);
+        }
+
+        public Task<Result<IEnumerable<ReadModelWrapper<T>>>> LoadAll<T>() where T : ReadModel
+        {
+            var querries = _context.IdentifiableQuerries.Where(q => q.QueryType == typeof(T).Name);
+            var readModelWrappers = querries.Select(q =>
+                new ReadModelWrapper<T>(_converter.Deserialize<T>(q.Payload), new Guid(q.Id), q.Version));
+            return Task.FromResult(Result<IEnumerable<ReadModelWrapper<T>>>.Ok(readModelWrappers));
         }
 
         public async Task<Result> Save(Query query)

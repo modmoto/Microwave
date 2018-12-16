@@ -7,16 +7,16 @@ namespace Microwave.Queries
 {
     public class QueryEventHandler<TQuerry, TEvent> : IQueryEventHandler where TQuerry : Query, new() where TEvent : IDomainEvent
     {
-        private readonly IQeryRepository _qeryRepository;
+        private readonly IReadModelRepository _readModelRepository;
         private readonly IEventFeed<QueryEventHandler<TQuerry, TEvent>> _eventFeed;
         private readonly IVersionRepository _versionRepository;
 
         public QueryEventHandler(
-            IQeryRepository qeryRepository,
+            IReadModelRepository readModelRepository,
             IVersionRepository versionRepository,
             IEventFeed<QueryEventHandler<TQuerry, TEvent>> eventFeed)
         {
-            _qeryRepository = qeryRepository;
+            _readModelRepository = readModelRepository;
             _versionRepository = versionRepository;
             _eventFeed = eventFeed;
         }
@@ -29,7 +29,7 @@ namespace Microwave.Queries
             var domainEvents = latestEvents.ToList();
             if (!domainEvents.Any()) return;
 
-            var querry = await _qeryRepository.Load<TQuerry>();
+            var querry = await _readModelRepository.Load<TQuerry>();
             if (querry.Is<NotFound>()) querry = Result<TQuerry>.Ok(new TQuerry());
             var querryValue = querry.Value;
             foreach (var latestEvent in domainEvents)
@@ -38,7 +38,7 @@ namespace Microwave.Queries
                 await _versionRepository.SaveVersion(new LastProcessedVersion(domainEventType, latestEvent.Created));
             }
 
-            await _qeryRepository.Save(querryValue);
+            await _readModelRepository.Save(querryValue);
         }
     }
 }
