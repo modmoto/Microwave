@@ -31,8 +31,17 @@ namespace Microwave.EventStores
 
     public class DomainEventDbo
     {
-        [BsonId]
         public DomainEventKey Key { get; set; }
+
+        [BsonId]
+        public string KeyHack {
+            get => $"{Key.EntityId}_{Key.Version}";
+            set => Key = new DomainEventKey
+            {
+                EntityId = value.Split('_')[0],
+                Version = long.Parse(value.Split('_')[1])
+            };
+        }
         public string Payload { get; set; }
         public long Created { get; set; }
         public string EventType { get; set; }

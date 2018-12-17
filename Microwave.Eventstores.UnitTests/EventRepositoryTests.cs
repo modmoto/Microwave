@@ -307,6 +307,7 @@ namespace Microwave.Eventstores.UnitTests
             var runner = MongoDbRunner.Start("AddEvents_RunTypeProjection");
             var client = new MongoClient(runner.ConnectionString);
             var database = client.GetDatabase("AddEvents_RunTypeProjection");
+            client.DropDatabase("AddEvents_RunTypeProjection");
 
             var eventRepository = new EventRepository(database, new DomainEventDeserializer(new JSonHack()), new ObjectConverter());
 
@@ -323,7 +324,6 @@ namespace Microwave.Eventstores.UnitTests
             Assert.AreEqual(newGuid, result.Value.ToList()[0].DomainEvent.EntityId);
             Assert.AreEqual(typeof(TestEvent1), result.Value.ToList()[0].DomainEvent.GetType());
 
-            client.DropDatabase("AddEvents_RunTypeProjection");
             runner.Dispose();
         }
 
