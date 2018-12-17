@@ -20,7 +20,7 @@ namespace Microwave.Eventstores.UnitTests
             var runner = MongoDbRunner.Start("SnapshotRealized");
             var client = new MongoClient(runner.ConnectionString);
             var database = client.GetDatabase("SnapshotRealized");
-            await client.DropDatabaseAsync("SnapshotRealized");
+            client.DropDatabase("SnapshotRealized");
             var mongoCollection = database.GetCollection<SnapShotDbo>("SnapShotDbos");
 
             var repo = new EventRepository(new EventDatabase(database),new DomainEventDeserializer(new JSonHack()), new ObjectConverter());

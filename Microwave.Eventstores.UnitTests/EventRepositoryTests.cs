@@ -22,7 +22,7 @@ namespace Microwave.Eventstores.UnitTests
             var runner = MongoDbRunner.Start("AddAndLoadEvents");
             var client = new MongoClient(runner.ConnectionString);
             var database = client.GetDatabase("AddAndLoadEvents");
-            await client.DropDatabaseAsync("AddAndLoadEvents");
+            client.DropDatabase("AddAndLoadEvents");
 
             var eventRepository = new EventRepository(new EventDatabase(database), new DomainEventDeserializer(new JSonHack()), new ObjectConverter());
 
@@ -65,7 +65,7 @@ namespace Microwave.Eventstores.UnitTests
             Assert.AreEqual(2, loadEventsByEntity.Value.ToList()[1].Version);
             Assert.AreEqual(newGuid, loadEventsByEntity.Value.ToList()[0].DomainEvent.EntityId);
 
-            await client.DropDatabaseAsync("LoadDomainEvents_IdAndStuffIsSetCorreclty");
+            client.DropDatabase("LoadDomainEvents_IdAndStuffIsSetCorreclty");
             runner.Dispose();
         }
 
@@ -75,7 +75,7 @@ namespace Microwave.Eventstores.UnitTests
             var runner = MongoDbRunner.Start("AddAndLoadEventsConcurrent");
             var client = new MongoClient(runner.ConnectionString);
             var database = client.GetDatabase("AddAndLoadEventsConcurrent");
-            await client.DropDatabaseAsync("AddAndLoadEventsConcurrent");
+            client.DropDatabase("AddAndLoadEventsConcurrent");
 
             var eventRepository = new EventRepository(new EventDatabase(database),new DomainEventDeserializer(new JSonHack()), new ObjectConverter());
 
@@ -94,7 +94,7 @@ namespace Microwave.Eventstores.UnitTests
             var loadEvents = await eventRepository.LoadEvents();
             Assert.AreEqual(2, loadEvents.Value.Count());
 
-            await client.DropDatabaseAsync("AddAndLoadEventsConcurrent");
+            client.DropDatabase("AddAndLoadEventsConcurrent");
             runner.Dispose();
         }
 
@@ -110,7 +110,7 @@ namespace Microwave.Eventstores.UnitTests
             var appendAsync = await eventRepository.AppendAsync(new List<IDomainEvent>(), 0);
             appendAsync.Check();
 
-            await client.DropDatabaseAsync("AddEmptyEventListt");
+            client.DropDatabase("AddEmptyEventListt");
             runner.Dispose();
         }
 
@@ -120,7 +120,7 @@ namespace Microwave.Eventstores.UnitTests
             var runner = MongoDbRunner.Start("Context_DoubleKeyException");
             var client = new MongoClient(runner.ConnectionString);
             var database = client.GetDatabase("Context_DoubleKeyException");
-            await client.DropDatabaseAsync("Context_DoubleKeyException");
+            client.DropDatabase("Context_DoubleKeyException");
 
             var entityId = Guid.NewGuid().ToString();
             var domainEventDbo = new DomainEventDbo
@@ -154,7 +154,7 @@ namespace Microwave.Eventstores.UnitTests
             var runner = MongoDbRunner.Start("AddAndLoadEventsByTimeStamp");
             var client = new MongoClient(runner.ConnectionString);
             var database = client.GetDatabase("AddAndLoadEventsByTimeStamp");
-            await client.DropDatabaseAsync("AddAndLoadEventsByTimeStamp");
+            client.DropDatabase("AddAndLoadEventsByTimeStamp");
 
             var eventRepository = new EventRepository(new EventDatabase(database),new DomainEventDeserializer(new JSonHack()), new ObjectConverter());
 
@@ -177,7 +177,7 @@ namespace Microwave.Eventstores.UnitTests
             var runner = MongoDbRunner.Start("AddEvents_FirstEventAfterCreationHasWrongRowVersionBug");
             var client = new MongoClient(runner.ConnectionString);
             var database = client.GetDatabase("AddEvents_FirstEventAfterCreationHasWrongRowVersionBug");
-            await client.DropDatabaseAsync("AddEvents_FirstEventAfterCreationHasWrongRowVersionBug");
+            client.DropDatabase("AddEvents_FirstEventAfterCreationHasWrongRowVersionBug");
 
             var eventRepository = new EventRepository(new EventDatabase(database),new DomainEventDeserializer(new JSonHack()), new ObjectConverter());
 
@@ -212,7 +212,7 @@ namespace Microwave.Eventstores.UnitTests
 
             Assert.IsTrue(result.Is<ConcurrencyError>());
 
-            await client.DropDatabaseAsync("AddEvents_VersionTooHigh");
+            client.DropDatabase("AddEvents_VersionTooHigh");
             runner.Dispose();
         }
 
@@ -231,7 +231,7 @@ namespace Microwave.Eventstores.UnitTests
             var result = await eventRepository.AppendAsync(events, 5);
             Assert.IsTrue(result.Is<ConcurrencyError>());
 
-            await client.DropDatabaseAsync("AddEvents_VersionWayTooHigh");
+            client.DropDatabase("AddEvents_VersionWayTooHigh");
             runner.Dispose();
         }
 
@@ -241,7 +241,7 @@ namespace Microwave.Eventstores.UnitTests
             var runner = MongoDbRunner.Start("AddAndLoadEventsByTimeStamp_SavedAsType");
             var client = new MongoClient(runner.ConnectionString);
             var database = client.GetDatabase("AddAndLoadEventsByTimeStamp_SavedAsType");
-            await client.DropDatabaseAsync("AddAndLoadEventsByTimeStamp_SavedAsType");
+            client.DropDatabase("AddAndLoadEventsByTimeStamp_SavedAsType");
 
             var eventRepository = new EventRepository(new EventDatabase(database),new DomainEventDeserializer(new JSonHack()), new ObjectConverter());
 
@@ -276,7 +276,7 @@ namespace Microwave.Eventstores.UnitTests
 
             Assert.AreEqual(domainEvent.EntityId, testEvent1.EntityId);
 
-            await client.DropDatabaseAsync("AddEvents_IdSet");
+            client.DropDatabase("AddEvents_IdSet");
             runner.Dispose();
         }
 
@@ -297,7 +297,7 @@ namespace Microwave.Eventstores.UnitTests
 
             Assert.AreEqual(domainEvent.EntityId, testEvent1.EntityId);
 
-            await client.DropDatabaseAsync("AddEvents_IdOfTypeSet");
+            client.DropDatabase("AddEvents_IdOfTypeSet");
             runner.Dispose();
         }
 
@@ -307,7 +307,7 @@ namespace Microwave.Eventstores.UnitTests
             var runner = MongoDbRunner.Start("AddEvents_RunTypeProjection");
             var client = new MongoClient(runner.ConnectionString);
             var database = client.GetDatabase("AddEvents_RunTypeProjection");
-            await client.DropDatabaseAsync("AddEvents_RunTypeProjection");
+            client.DropDatabase("AddEvents_RunTypeProjection");
 
             var eventRepository = new EventRepository(new EventDatabase(database),new DomainEventDeserializer(new JSonHack()), new ObjectConverter());
 

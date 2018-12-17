@@ -21,7 +21,7 @@ namespace Microwave.Eventstores.UnitTests
             var runner = MongoDbRunner.Start("LoadAndSaveSnapshotWithGuidList");
             var client = new MongoClient(runner.ConnectionString);
             var database = client.GetDatabase("LoadAndSaveSnapshotWithGuidList");
-            await client.DropDatabaseAsync("LoadAndSaveSnapshotWithGuidList");
+            client.DropDatabase("LoadAndSaveSnapshotWithGuidList");
 
             var repo = new SnapShotRepository(new EventDatabase(database), new ObjectConverter());
             var userSnapshot = new UserSnapshot();

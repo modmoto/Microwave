@@ -68,7 +68,7 @@ namespace Microwave.Queries.UnitTests
             var result = await queryRepository.Load<TestQ>();
             Assert.AreEqual(1, result.Value.WasCalled);
 
-            await client.DropDatabaseAsync("MixedEventsInFeed_QuerryRepo");
+            client.DropDatabase("MixedEventsInFeed_QuerryRepo");
             runner.Dispose();
         }
     }

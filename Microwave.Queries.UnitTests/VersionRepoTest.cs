@@ -23,7 +23,7 @@ namespace Microwave.Queries.UnitTests
             var count = await versionRepository.GetVersionAsync("Type");
             Assert.AreEqual(1, count);
 
-            await client.DropDatabaseAsync("VersionRepo_DuplicateUpdate");
+            client.DropDatabase("VersionRepo_DuplicateUpdate");
             runner.Dispose();
         }
     }

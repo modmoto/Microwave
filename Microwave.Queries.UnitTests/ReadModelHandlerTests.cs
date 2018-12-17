@@ -34,7 +34,7 @@ namespace Microwave.Queries.UnitTests
             Assert.AreEqual(14, result.Value.Version);
             Assert.AreEqual("testName", result.Value.ReadModel.Name);
 
-            await client.DropDatabaseAsync("UpdateReadmodelHandler");
+            client.DropDatabase("UpdateReadmodelHandler");
             runner.Dispose();
         }
 
@@ -60,7 +60,7 @@ namespace Microwave.Queries.UnitTests
             Assert.AreEqual(EntityGuid, result.Value.Id);
             Assert.AreEqual(EntityGuid2, result2.Value.Id);
 
-            await client.DropDatabaseAsync("UpdateModel_TwoEntities");
+            client.DropDatabase("UpdateModel_TwoEntities");
             runner.Dispose();
         }
 
@@ -86,7 +86,7 @@ namespace Microwave.Queries.UnitTests
             var condition = result2.Is<NotFound>();
             Assert.IsTrue(condition);
 
-            await client.DropDatabaseAsync("UpdateModel_EventsPresentThatAreNotHandleble");
+            client.DropDatabase("UpdateModel_EventsPresentThatAreNotHandleble");
             runner.Dispose();
         }
 
@@ -113,7 +113,7 @@ namespace Microwave.Queries.UnitTests
             Assert.AreEqual(null, result.Value.ReadModel.Name);
             Assert.AreEqual(EntityGuid, result.Value.ReadModel.Id);
 
-            await client.DropDatabaseAsync("UpdateModel_EventsNotAppliedStillUpdatesVersion");
+            client.DropDatabase("UpdateModel_EventsNotAppliedStillUpdatesVersion");
             runner.Dispose();
         }
 
@@ -141,7 +141,7 @@ namespace Microwave.Queries.UnitTests
             Assert.AreEqual(EntityGuid, result.Value.ReadModel.Id);
             Assert.AreEqual(EntityGuid2, result2.Value.ReadModel.Id);
 
-            await client.DropDatabaseAsync("UpdateModel_TwoParallelReadModelHandler_SerializationBug");
+            client.DropDatabase("UpdateModel_TwoParallelReadModelHandler_SerializationBug");
             runner.Dispose();
         }
 
