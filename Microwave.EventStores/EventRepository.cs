@@ -112,7 +112,7 @@ namespace Microwave.EventStores
             {
                 await mongoCollection.InsertManyAsync(domainEventDbos);
             }
-            catch (MongoWriteException)
+            catch (MongoBulkWriteException)
             {
                 var asyncCursor = await mongoCollection.FindAsync(e => e.Key.EntityId == events.First().EntityId.ToString());
                 var domainEventDbo = await asyncCursor.ToListAsync();
