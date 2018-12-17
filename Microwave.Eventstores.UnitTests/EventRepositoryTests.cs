@@ -22,6 +22,7 @@ namespace Microwave.Eventstores.UnitTests
             var runner = MongoDbRunner.Start("AddAndLoadEvents");
             var client = new MongoClient(runner.ConnectionString);
             var database = client.GetDatabase("AddAndLoadEvents");
+            client.DropDatabase("AddAndLoadEvents");
 
             var eventRepository = new EventRepository(database, new DomainEventDeserializer(new JSonHack()), new ObjectConverter());
 
@@ -36,7 +37,6 @@ namespace Microwave.Eventstores.UnitTests
             Assert.AreEqual(newGuid, loadEventsByEntity.Value.ToList()[0].DomainEvent.EntityId);
             Assert.AreEqual(2, loadEventsByEntity.Value.ToList()[1].Version);
 
-            client.DropDatabase("AddAndLoadEvents");
             runner.Dispose();
         }
 
@@ -94,6 +94,7 @@ namespace Microwave.Eventstores.UnitTests
             var loadEvents = await eventRepository.LoadEvents();
             Assert.AreEqual(2, loadEvents.Value.Count());
 
+            client.DropDatabase("AddAndLoadEventsConcurrent");
             runner.Dispose();
         }
 
