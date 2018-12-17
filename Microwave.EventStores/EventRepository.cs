@@ -91,6 +91,15 @@ namespace Microwave.EventStores
             if (!events.Any()) return Result.Ok();
 
             var entityVersionTemp = entityVersion;
+
+            var mongoCollection = _database.GetCollection<DomainEventDbo>("DomainEventDbos");
+            var entityId = events.First().EntityId.ToString();
+
+            var cursor = await mongoCollection.FindAsync(v => v.Key.EntityId == entityId);
+            var eventDbos = await cursor.ToListAsync();
+            var lastVersion = eventDbos.LastOrDefault()?.Key.Version ?? 0;
+            if (lastVersion < entityVersion) return Result.ConcurrencyResult(entityVersion, lastVersion);
+
             var domainEventDbos = events.Select(domainEvent =>
             {
                 return new DomainEventDbo
@@ -102,11 +111,9 @@ namespace Microwave.EventStores
                         Version = ++entityVersionTemp,
                         EntityId = domainEvent.EntityId.ToString()
                     },
-                    EventType = domainEvent.GetType().Name,
+                    EventType = domainEvent.GetType().Name
                 };
             }).ToList();
-
-            var mongoCollection = _database.GetCollection<DomainEventDbo>("DomainEventDbos");
 
             try
             {
@@ -114,9 +121,7 @@ namespace Microwave.EventStores
             }
             catch (MongoBulkWriteException)
             {
-                var asyncCursor = await mongoCollection.FindAsync(e => e.Key.EntityId == events.First().EntityId.ToString());
-                var domainEventDbo = await asyncCursor.ToListAsync();
-                return Result.ConcurrencyResult(entityVersion, domainEventDbo.Last().Key.Version);
+                return Result.ConcurrencyResult(entityVersion, eventDbos.Last().Key.Version);
             }
             return Result.Ok();
         }

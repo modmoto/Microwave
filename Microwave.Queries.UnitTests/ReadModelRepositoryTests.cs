@@ -151,6 +151,7 @@ namespace Microwave.Queries.UnitTests
             var runner = MongoDbRunner.Start("LoadAllReadModels");
             var client = new MongoClient(runner.ConnectionString);
             var database = client.GetDatabase("LoadAllReadModels");
+            client.DropDatabase("LoadAllReadModels");
 
             var queryRepository = new ReadModelRepository(database, new ObjectConverter());
             Guid guid = Guid.NewGuid();
@@ -170,7 +171,6 @@ namespace Microwave.Queries.UnitTests
             Assert.AreEqual(testQuery.UserName, readModelWrappers[0].ReadModel.UserName);
             Assert.AreEqual(testQuery2.UserName, readModelWrappers[1].ReadModel.UserName);
 
-            client.DropDatabase("LoadAllReadModels");
             runner.Dispose();
         }
     }
