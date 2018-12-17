@@ -42,7 +42,7 @@ namespace Microwave.Application.UnitTests
             Assert.AreEqual(1, handleAsync.TimesCalled);
             Assert.AreEqual(1, handleAsync.TimesCalled);
 
-            client.DropDatabase("HandleIsOnlyCalledOnce");
+            await client.DropDatabaseAsync("HandleIsOnlyCalledOnce");
             runner.Dispose();
         }
     }

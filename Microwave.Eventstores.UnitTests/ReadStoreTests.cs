@@ -133,7 +133,7 @@ namespace Microwave.Eventstores.UnitTests
             Assert.AreEqual(entityStreamTestEvent.EntityId, eventsSince.Value.Single().DomainEvent.EntityId);
             Assert.AreNotEqual(entityStreamTestEvent.EntityId, Guid.Empty);
 
-            client.DropDatabase("Entitystream_LoadEventsSince_IdNotDefault");
+            await client.DropDatabaseAsync("Entitystream_LoadEventsSince_IdNotDefault");
             runner.Dispose();
         }
     }
