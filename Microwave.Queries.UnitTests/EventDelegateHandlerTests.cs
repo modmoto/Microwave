@@ -44,6 +44,7 @@ namespace Microwave.Queries.UnitTests
             var runner = MongoDbRunner.Start("MixedEventsInFeed_QuerryRepo");
             var client = new MongoClient(runner.ConnectionString);
             var database = client.GetDatabase("MixedEventsInFeed_QuerryRepo");
+            client.DropDatabase("MixedEventsInFeed_QuerryRepo");
 
             var mock = new Mock<IEventFeed<QueryEventHandler<TestQ, TestEv>>>();
             IEnumerable<DomainEventWrapper> list = new [] { new DomainEventWrapper
@@ -68,7 +69,6 @@ namespace Microwave.Queries.UnitTests
             var result = await queryRepository.Load<TestQ>();
             Assert.AreEqual(1, result.Value.WasCalled);
 
-            client.DropDatabase("MixedEventsInFeed_QuerryRepo");
             runner.Dispose();
         }
     }

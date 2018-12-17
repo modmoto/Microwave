@@ -20,6 +20,7 @@ namespace Microwave.Queries.UnitTests
             var runner = MongoDbRunner.Start("UpdateReadmodelHandler");
             var client = new MongoClient(runner.ConnectionString);
             var database = client.GetDatabase("UpdateReadmodelHandler");
+            client.DropDatabase("UpdateReadmodelHandler");
 
             EntityGuid = Guid.NewGuid();
 
@@ -34,7 +35,6 @@ namespace Microwave.Queries.UnitTests
             Assert.AreEqual(14, result.Value.Version);
             Assert.AreEqual("testName", result.Value.ReadModel.Name);
 
-            client.DropDatabase("UpdateReadmodelHandler");
             runner.Dispose();
         }
 
@@ -44,6 +44,7 @@ namespace Microwave.Queries.UnitTests
             var runner = MongoDbRunner.Start("UpdateModel_TwoEntities");
             var client = new MongoClient(runner.ConnectionString);
             var database = client.GetDatabase("UpdateModel_TwoEntities");
+            client.DropDatabase("UpdateModel_TwoEntities");
 
             EntityGuid = Guid.NewGuid();
             EntityGuid2 = Guid.NewGuid();
@@ -60,7 +61,6 @@ namespace Microwave.Queries.UnitTests
             Assert.AreEqual(EntityGuid, result.Value.Id);
             Assert.AreEqual(EntityGuid2, result2.Value.Id);
 
-            client.DropDatabase("UpdateModel_TwoEntities");
             runner.Dispose();
         }
 
@@ -70,6 +70,7 @@ namespace Microwave.Queries.UnitTests
             var runner = MongoDbRunner.Start("UpdateModel_EventsPresentThatAreNotHandleble");
             var client = new MongoClient(runner.ConnectionString);
             var database = client.GetDatabase("UpdateModel_EventsPresentThatAreNotHandleble");
+            client.DropDatabase("UpdateModel_EventsPresentThatAreNotHandleble");
 
             EntityGuid = Guid.NewGuid();
             EntityGuid2 = Guid.NewGuid();
@@ -86,7 +87,6 @@ namespace Microwave.Queries.UnitTests
             var condition = result2.Is<NotFound>();
             Assert.IsTrue(condition);
 
-            client.DropDatabase("UpdateModel_EventsPresentThatAreNotHandleble");
             runner.Dispose();
         }
 
@@ -96,6 +96,7 @@ namespace Microwave.Queries.UnitTests
             var runner = MongoDbRunner.Start("UpdateModel_EventsNotAppliedStillUpdatesVersion");
             var client = new MongoClient(runner.ConnectionString);
             var database = client.GetDatabase("UpdateModel_EventsNotAppliedStillUpdatesVersion");
+            client.DropDatabase("UpdateModel_EventsNotAppliedStillUpdatesVersion");
 
             EntityGuid = Guid.NewGuid();
 
@@ -113,7 +114,6 @@ namespace Microwave.Queries.UnitTests
             Assert.AreEqual(null, result.Value.ReadModel.Name);
             Assert.AreEqual(EntityGuid, result.Value.ReadModel.Id);
 
-            client.DropDatabase("UpdateModel_EventsNotAppliedStillUpdatesVersion");
             runner.Dispose();
         }
 
@@ -123,6 +123,7 @@ namespace Microwave.Queries.UnitTests
             var runner = MongoDbRunner.Start("UpdateModel_TwoParallelReadModelHandler_SerializationBug");
             var client = new MongoClient(runner.ConnectionString);
             var database = client.GetDatabase("UpdateModel_TwoParallelReadModelHandler_SerializationBug");
+            client.DropDatabase("UpdateModel_TwoParallelReadModelHandler_SerializationBug");
 
             EntityGuid = Guid.NewGuid();
             EntityGuid2 = Guid.NewGuid();
@@ -141,7 +142,6 @@ namespace Microwave.Queries.UnitTests
             Assert.AreEqual(EntityGuid, result.Value.ReadModel.Id);
             Assert.AreEqual(EntityGuid2, result2.Value.ReadModel.Id);
 
-            client.DropDatabase("UpdateModel_TwoParallelReadModelHandler_SerializationBug");
             runner.Dispose();
         }
 

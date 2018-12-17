@@ -19,6 +19,7 @@ namespace Microwave.Queries.UnitTests
             var runner = MongoDbRunner.Start("IdentifiableQuerySaveAndLoad");
             var client = new MongoClient(runner.ConnectionString);
             var database = client.GetDatabase("IdentifiableQuerySaveAndLoad");
+            client.DropDatabase("IdentifiableQuerySaveAndLoad");
 
             var queryRepository = new ReadModelRepository(new ReadModelDatabase(database), new ObjectConverter());
 
@@ -33,7 +34,6 @@ namespace Microwave.Queries.UnitTests
             Assert.AreEqual("Test", querry1.ReadModel.UserName);
             Assert.AreEqual("Jeah", querry1.ReadModel.Strings.First());
 
-            client.DropDatabase("IdentifiableQuerySaveAndLoad");
             runner.Dispose();
         }
 
@@ -43,6 +43,7 @@ namespace Microwave.Queries.UnitTests
             var runner = MongoDbRunner.Start("InsertQuery");
             var client = new MongoClient(runner.ConnectionString);
             var database = client.GetDatabase("InsertQuery");
+            client.DropDatabase("InsertQuery");
 
             var queryRepository = new ReadModelRepository(new ReadModelDatabase(database), new ObjectConverter());
             var testQuery = new TestQuerry { UserName = "Test"};
@@ -51,7 +52,6 @@ namespace Microwave.Queries.UnitTests
 
             Assert.AreEqual("Test", query.UserName);
 
-            client.DropDatabase("InsertQuery");
             runner.Dispose();
         }
 
@@ -78,7 +78,6 @@ namespace Microwave.Queries.UnitTests
 
             Assert.IsTrue(result.Is<NotFound>());
 
-            client.DropDatabase("GetQuery_WrongType");
             runner.Dispose();
         }
 
@@ -88,6 +87,7 @@ namespace Microwave.Queries.UnitTests
             var runner = MongoDbRunner.Start("InsertQuery_ConcurrencyProblem");
             var client = new MongoClient(runner.ConnectionString);
             var database = client.GetDatabase("InsertQuery_ConcurrencyProblem");
+            client.DropDatabase("InsertQuery_ConcurrencyProblem");
 
             var queryRepository = new ReadModelRepository(new ReadModelDatabase(database), new ObjectConverter());
             var testQuery = new TestQuerry { UserName = "Test1"};
@@ -97,7 +97,6 @@ namespace Microwave.Queries.UnitTests
 
             await Task.WhenAll(new List<Task> { save, save2});
 
-            client.DropDatabase("InsertQuery_ConcurrencyProblem");
             runner.Dispose();
         }
 
@@ -133,6 +132,7 @@ namespace Microwave.Queries.UnitTests
             var runner = MongoDbRunner.Start("UpdateQuery");
             var client = new MongoClient(runner.ConnectionString);
             var database = client.GetDatabase("UpdateQuery");
+            client.DropDatabase("UpdateQuery");
 
             var queryRepository = new ReadModelRepository(new ReadModelDatabase(database), new ObjectConverter());
             await queryRepository.Save(new TestQuerry { UserName = "Test"});
@@ -141,7 +141,6 @@ namespace Microwave.Queries.UnitTests
 
             Assert.AreEqual("NewName", query.UserName);
 
-            client.DropDatabase("UpdateQuery");
             runner.Dispose();
         }
 

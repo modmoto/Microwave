@@ -120,7 +120,7 @@ namespace Microwave.Eventstores.UnitTests
             var runner = MongoDbRunner.Start("Entitystream_LoadEventsSince_IdNotDefault");
             var client = new MongoClient(runner.ConnectionString);
             var database = client.GetDatabase("Entitystream_LoadEventsSince_IdNotDefault");
-
+            client.DropDatabase("Entitystream_LoadEventsSince_IdNotDefault");
 
             var entityStreamRepository =
                 new EventRepository(new EventDatabase(database),new DomainEventDeserializer(new JSonHack()), new ObjectConverter());
@@ -133,7 +133,6 @@ namespace Microwave.Eventstores.UnitTests
             Assert.AreEqual(entityStreamTestEvent.EntityId, eventsSince.Value.Single().DomainEvent.EntityId);
             Assert.AreNotEqual(entityStreamTestEvent.EntityId, Guid.Empty);
 
-            client.DropDatabase("Entitystream_LoadEventsSince_IdNotDefault");
             runner.Dispose();
         }
     }
