@@ -15,7 +15,7 @@ namespace Microwave.Queries.UnitTests
             var client = new MongoClient(runner.ConnectionString);
             var database = client.GetDatabase("VersionRepo_DuplicateUpdate");
 
-            var versionRepository = new VersionRepository(database);
+            var versionRepository = new VersionRepository(new ReadModelDatabase(database));
 
             await versionRepository.SaveVersion(new LastProcessedVersion("Type", 1));
             await versionRepository.SaveVersion(new LastProcessedVersion("Type", 1));

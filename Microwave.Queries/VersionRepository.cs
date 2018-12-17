@@ -9,9 +9,9 @@ namespace Microwave.Queries
     {
         private readonly IMongoDatabase _dataBase;
 
-        public VersionRepository(IMongoDatabase dataBase)
+        public VersionRepository(ReadModelDatabase dataBase)
         {
-            _dataBase = dataBase;
+            _dataBase = dataBase.Database;
         }
 
         public async Task<long> GetVersionAsync(string domainEventType)

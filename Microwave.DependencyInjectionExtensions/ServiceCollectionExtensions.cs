@@ -38,9 +38,9 @@ namespace Microwave.DependencyInjectionExtensions
         {
             services.AddTransient(option =>
             {
-                var connectionString = configuration.GetConnectionString("ReadModelMongoDb");
+                var connectionString = configuration.GetConnectionString("MicrowaveReadModelDb");
                 var client = new MongoClient(connectionString);
-                return client.GetDatabase("MicrowaveDb");
+                return new ReadModelDatabase(client.GetDatabase("MicrowaveReadModelDb"));
             });
 
             //WebApi
@@ -71,9 +71,9 @@ namespace Microwave.DependencyInjectionExtensions
         {
             services.AddTransient(option =>
             {
-                var connectionString = configuration.GetConnectionString("ReadModelMongoDb");
+                var connectionString = configuration.GetConnectionString("MicrowaveWriteModelDb");
                 var client = new MongoClient(connectionString);
-                return client.GetDatabase("MicrowaveDb");
+                return new EventDatabase(client.GetDatabase("MicrowaveWriteModelDb"));
             });
 
             services.AddTransient<DomainEventController>();

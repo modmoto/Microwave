@@ -26,7 +26,7 @@ namespace Microwave.Queries.UnitTests
             var queryRepository = new ReadModelRepository(new ReadModelDatabase(database), new ObjectConverter());
 
             var readModelHandler = new ReadModelHandler<TestReadModelQuerries>(queryRepository,
-                new VersionRepository(database), new FeedMock2());
+                new VersionRepository(new ReadModelDatabase(database)), new FeedMock2());
             await readModelHandler.Update();
 
             var result = await queryRepository.Load<TestReadModelQuerries>(EntityGuid);
@@ -51,7 +51,7 @@ namespace Microwave.Queries.UnitTests
             var queryRepository = new ReadModelRepository(new ReadModelDatabase(database), new ObjectConverter());
 
             var readModelHandler = new ReadModelHandler<TestReadModelQuerries>(queryRepository,
-                new VersionRepository(database), new FeedMock3());
+                new VersionRepository(new ReadModelDatabase(database)), new FeedMock3());
 
             await readModelHandler.Update();
 
@@ -76,7 +76,7 @@ namespace Microwave.Queries.UnitTests
 
             var queryRepository = new ReadModelRepository(new ReadModelDatabase(database), new ObjectConverter());
 
-            var readModelHandler = new ReadModelHandler<TestReadModelQuerries>(queryRepository, new VersionRepository(database), new FeedMock4());
+            var readModelHandler = new ReadModelHandler<TestReadModelQuerries>(queryRepository, new VersionRepository(new ReadModelDatabase(database)), new FeedMock4());
 
             await readModelHandler.Update();
 
@@ -103,7 +103,7 @@ namespace Microwave.Queries.UnitTests
 
             var readModelHandler = new ReadModelHandler<TestReadModelQuerries_OnlyOneEventAndVersionIsCounted>(
                 queryRepository,
-                new VersionRepository(database),
+                new VersionRepository(new ReadModelDatabase(database)),
                 new FeedMock5());
 
             await readModelHandler.Update();
@@ -129,9 +129,9 @@ namespace Microwave.Queries.UnitTests
 
             var queryRepository = new ReadModelRepository(new ReadModelDatabase(database), new ObjectConverter());
 
-            var readModelHandler = new ReadModelHandler<TestReadModelQuerries_TwoParallelFeeds1>(queryRepository, new VersionRepository(database), new FeedMock6());
+            var readModelHandler = new ReadModelHandler<TestReadModelQuerries_TwoParallelFeeds1>(queryRepository, new VersionRepository(new ReadModelDatabase(database)), new FeedMock6());
 
-            var readModelHandler2 = new ReadModelHandler<TestReadModelQuerries_TwoParallelFeeds2>(queryRepository, new VersionRepository(database), new FeedMock7());
+            var readModelHandler2 = new ReadModelHandler<TestReadModelQuerries_TwoParallelFeeds2>(queryRepository, new VersionRepository(new ReadModelDatabase(database)), new FeedMock7());
 
             await readModelHandler.Update();
             await readModelHandler2.Update();

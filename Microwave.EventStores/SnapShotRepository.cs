@@ -12,9 +12,9 @@ namespace Microwave.EventStores
         private readonly IMongoDatabase _context;
         private readonly IObjectConverter _converter;
 
-        public SnapShotRepository(IMongoDatabase context, IObjectConverter converter)
+        public SnapShotRepository(EventDatabase context, IObjectConverter converter)
         {
-            _context = context;
+            _context = context.Database;
             _converter = converter;
         }
 
