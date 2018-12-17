@@ -1,16 +1,18 @@
 ﻿using System;
+using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
 using Microwave.Application;
+using MongoDB.Driver;
 
 namespace Microwave.EventStores
 {
     public class SnapShotRepository : ISnapShotRepository
     {
-        private readonly EventStoreContext _context;
+        private readonly IMongoDatabase _context;
         private readonly IObjectConverter _converter;
 
-        public SnapShotRepository(EventStoreContext context, IObjectConverter converter)
+        public SnapShotRepository(IMongoDatabase context, IObjectConverter converter)
         {
             _context = context;
             _converter = converter;
@@ -18,7 +20,9 @@ namespace Microwave.EventStores
 
         public async Task<SnapShotResult<T>> LoadSnapShot<T>(Guid entityId) where T : new()
         {
-            var snapShot = await _context.SnapShots.FindAsync(entityId.ToString());
+            var mongoCollection = _context.GetCollection<SnapShotDbo>("SnapShotDbos");
+            var snapShot = (await (await mongoCollection.FindAsync(entityId.ToString())).ToListAsync()).FirstOrDefault();
+
             if (snapShot == null) return new DefaultSnapshot<T>();
             var data = _converter.Deserialize<T>(snapShot.Payload);
             return new SnapShotResult<T>(data, snapShot.Version);
@@ -26,13 +30,18 @@ namespace Microwave.EventStores
 
         public async Task SaveSnapShot<T>(T snapShot, Guid entityId, long version)
         {
-            await _context.SnapShots.Upsert(new SnapShotDbo
+            var mongoCollection = _context.GetCollection<SnapShotDbo>("SnapShotDbos");
+
+            var findOneAndReplaceOptions = new FindOneAndReplaceOptions<SnapShotDbo>();
+            findOneAndReplaceOptions.IsUpsert = true;
+            await mongoCollection.FindOneAndReplaceAsync(
+                (Expression<Func<SnapShotDbo, bool>>) (e => e.EntityId == entityId.ToString()),
+                new SnapShotDbo
                 {
                     EntityId = entityId.ToString(),
-                    Payload = _converter.Serialize(snapShot),
-                    Version = version
-                })
-                .RunAsync();
+                    Version = version,
+                    Payload = _converter.Serialize(snapShot)
+                }, findOneAndReplaceOptions);
         }
     }
 

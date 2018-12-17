@@ -3,11 +3,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Domain;
 using Microwave.EventStores;
 using Microwave.ObjectPersistences;
+using Mongo2Go;
+using MongoDB.Driver;
 
 namespace Microwave.Eventstores.UnitTests
 {
@@ -17,12 +18,12 @@ namespace Microwave.Eventstores.UnitTests
         [TestMethod]
         public async Task LoadAndSaveSnapshotWithGuidList()
         {
-            var options = new DbContextOptionsBuilder<EventStoreContext>()
-                .UseInMemoryDatabase("LoadAndSaveSnapshotWithGuidList")
-                .Options;
+            var runner = MongoDbRunner.Start("LoadAndSaveSnapshotWithGuidList");
+            var client = new MongoClient(runner.ConnectionString);
+            var database = client.GetDatabase("LoadAndSaveSnapshotWithGuidList");
+            client.DropDatabase("LoadAndSaveSnapshotWithGuidList");
 
-            var eventStoreContext = new EventStoreContext(options);
-            var repo = new SnapShotRepository(eventStoreContext, new ObjectConverter());
+            var repo = new SnapShotRepository(database, new ObjectConverter());
             var userSnapshot = new UserSnapshot();
 
             var entityId = Guid.NewGuid();

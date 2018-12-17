@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Application.Exceptions;
 using Microwave.Application.Results;
@@ -120,6 +119,7 @@ namespace Microwave.Eventstores.UnitTests
             var runner = MongoDbRunner.Start("Context_DoubleKeyException");
             var client = new MongoClient(runner.ConnectionString);
             var database = client.GetDatabase("Context_DoubleKeyException");
+            client.DropDatabase("Context_DoubleKeyException");
 
             var entityId = Guid.NewGuid().ToString();
             var domainEventDbo = new DomainEventDbo
@@ -144,7 +144,6 @@ namespace Microwave.Eventstores.UnitTests
             await mongoCollection.InsertOneAsync(domainEventDbo);
             await Assert.ThrowsExceptionAsync<MongoWriteException>(async () => await mongoCollection.InsertOneAsync(domainEventDbo2));
 
-            client.DropDatabase("Context_DoubleKeyException");
             runner.Dispose();
         }
 
@@ -154,6 +153,7 @@ namespace Microwave.Eventstores.UnitTests
             var runner = MongoDbRunner.Start("AddAndLoadEventsByTimeStamp");
             var client = new MongoClient(runner.ConnectionString);
             var database = client.GetDatabase("AddAndLoadEventsByTimeStamp");
+            client.DropDatabase("AddAndLoadEventsByTimeStamp");
 
             var eventRepository = new EventRepository(database, new DomainEventDeserializer(new JSonHack()), new ObjectConverter());
 
@@ -167,7 +167,6 @@ namespace Microwave.Eventstores.UnitTests
             Assert.AreEqual(1, result.Value.ToList()[0].Version);
             Assert.AreEqual(newGuid, result.Value.ToList()[0].DomainEvent.EntityId);
 
-            client.DropDatabase("AddAndLoadEventsByTimeStapmp");
             runner.Dispose();
         }
 
@@ -177,6 +176,7 @@ namespace Microwave.Eventstores.UnitTests
             var runner = MongoDbRunner.Start("AddEvents_FirstEventAfterCreationHasWrongRowVersionBug");
             var client = new MongoClient(runner.ConnectionString);
             var database = client.GetDatabase("AddEvents_FirstEventAfterCreationHasWrongRowVersionBug");
+            client.DropDatabase("AddEvents_FirstEventAfterCreationHasWrongRowVersionBug");
 
             var eventRepository = new EventRepository(database, new DomainEventDeserializer(new JSonHack()), new ObjectConverter());
 
@@ -192,7 +192,6 @@ namespace Microwave.Eventstores.UnitTests
             Assert.AreEqual(3, result.Value.ToList()[2].Version);
             Assert.AreEqual(newGuid, result.Value.ToList()[0].DomainEvent.EntityId);
 
-            client.DropDatabase("AddEvents_FirstEventAfterCreationHasWrongRowVersionBug");
             runner.Dispose();
         }
 
@@ -241,6 +240,7 @@ namespace Microwave.Eventstores.UnitTests
             var runner = MongoDbRunner.Start("AddAndLoadEventsByTimeStamp_SavedAsType");
             var client = new MongoClient(runner.ConnectionString);
             var database = client.GetDatabase("AddAndLoadEventsByTimeStamp_SavedAsType");
+            client.DropDatabase("AddAndLoadEventsByTimeStapmp_SavedAsType");
 
             var eventRepository = new EventRepository(database, new DomainEventDeserializer(new JSonHack()), new ObjectConverter());
 
@@ -255,7 +255,6 @@ namespace Microwave.Eventstores.UnitTests
             Assert.AreEqual(newGuid, result.Value.ToList()[0].DomainEvent.EntityId);
             Assert.AreEqual(typeof(TestEvent1), result.Value.ToList()[0].DomainEvent.GetType());
 
-            client.DropDatabase("AddAndLoadEventsByTimeStapmp_SavedAsType");
             runner.Dispose();
         }
 

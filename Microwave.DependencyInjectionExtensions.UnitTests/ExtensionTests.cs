@@ -2,7 +2,6 @@ using System;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder.Internal;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -130,31 +129,6 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
 
             var store = buildServiceProvider.GetServices<IEventStore>().FirstOrDefault();
             Assert.IsNotNull(store);
-        }
-
-        // this is to check if the upsert hack is working. It will throw an error if you remove the hack lines on creation
-        [Ignore]
-        [TestMethod]
-        public async Task BuildDatabaseAndCheckUpsertIsWorking()
-        {
-            var config = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.test.json")
-                .Build();
-
-            var collection = (IServiceCollection) new ServiceCollection();
-
-            collection.AddMicrowave(config);
-            collection.AddMicrowaveReadModels(typeof(TestIdQuery).Assembly, config);
-            var serviceProvider = collection.BuildServiceProvider();
-            var applicationBuilder = new ApplicationBuilder(serviceProvider);
-
-            var eventStore = serviceProvider.GetService<IEventRepository>();
-
-            var eventStoreContext = serviceProvider.GetService<EventStoreContext>();
-            eventStoreContext.Database.EnsureDeleted();
-
-            applicationBuilder.EnsureMicrowaveDatabaseCreated();
-            await eventStore.AppendAsync(new [] { new TestDomainEvent1(Guid.NewGuid()) }, 0);
         }
     }
 

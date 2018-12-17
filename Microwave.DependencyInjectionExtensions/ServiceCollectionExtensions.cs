@@ -3,7 +3,6 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microwave.Application;
@@ -19,21 +18,6 @@ namespace Microwave.DependencyInjectionExtensions
 {
     public static class ServiceCollectionExtensions
     {
-        public static IApplicationBuilder EnsureMicrowaveDatabaseCreated(this IApplicationBuilder builder)
-        {
-            using (var serviceScope = builder.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
-            {
-                var eventStoreContext = serviceScope.ServiceProvider.GetService<EventStoreContext>();
-
-                eventStoreContext?.Database.EnsureCreated();
-
-                SQLitePCL.raw.SetProvider(new SQLitePCL.SQLite3Provider_sqlite3());
-                SQLitePCL.raw.FreezeProvider();
-            }
-
-            return builder;
-        }
-
         public static IApplicationBuilder RunMicrowaveQueries(this IApplicationBuilder builder)
         {
             var serviceScope = builder.ApplicationServices.CreateScope();
@@ -99,8 +83,6 @@ namespace Microwave.DependencyInjectionExtensions
 
             services.AddTransient<IEventStore, EventStore>();
             services.AddTransient<IObjectConverter, ObjectConverter>();
-            services.AddDbContext<EventStoreContext>(option =>
-                option.UseSqlite("Data Source=EventStoreContext.db"));
             services.AddTransient<IEventRepository, EventRepository>();
             services.AddTransient<ISnapShotRepository, SnapShotRepository>();
 

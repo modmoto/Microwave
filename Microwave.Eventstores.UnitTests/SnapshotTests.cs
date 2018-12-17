@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Domain;
 using Microwave.EventStores;
@@ -17,17 +17,13 @@ namespace Microwave.Eventstores.UnitTests
         [TestMethod]
         public async Task SnapshotRealized()
         {
-            var options = new DbContextOptionsBuilder<EventStoreContext>()
-                .UseInMemoryDatabase("SnapshotRealized")
-                .Options;
-
             var runner = MongoDbRunner.Start("SnapshotRealized");
             var client = new MongoClient(runner.ConnectionString);
             var database = client.GetDatabase("SnapshotRealized");
+            var mongoCollection = database.GetCollection<SnapShotDbo>("SnapShotDbos");
 
-            var eventStoreContext = new EventStoreContext(options);
             var repo = new EventRepository(database, new DomainEventDeserializer(new JSonHack()), new ObjectConverter());
-            var eventStore = new EventStore(repo, new SnapShotRepository(eventStoreContext, new ObjectConverter()));
+            var eventStore = new EventStore(repo, new SnapShotRepository(database , new ObjectConverter()));
 
             var entityId = Guid.NewGuid();
             await eventStore.AppendAsync(new List<IDomainEvent>
@@ -38,7 +34,7 @@ namespace Microwave.Eventstores.UnitTests
 
             await eventStore.LoadAsync<User>(entityId);
 
-            var snapShotDboOld = await eventStoreContext.SnapShots.FindAsync(entityId.ToString());
+            var snapShotDboOld = (await mongoCollection.FindAsync(entityId.ToString())).ToList().FirstOrDefault();
 
             Assert.IsNull(snapShotDboOld);
 
@@ -56,7 +52,7 @@ namespace Microwave.Eventstores.UnitTests
             Assert.AreEqual("PeterNeu", user.Name);
             Assert.AreEqual(entityId, user.Id);
 
-            var snapShotDbo = await eventStoreContext.SnapShots.FindAsync(entityId.ToString());
+            var snapShotDbo = (await mongoCollection.FindAsync(entityId.ToString())).ToList().First();
 
             Assert.AreEqual(4, snapShotDbo.Version);
             Assert.AreEqual(entityId.ToString(), snapShotDbo.EntityId);
