@@ -240,7 +240,7 @@ namespace Microwave.Eventstores.UnitTests
             var runner = MongoDbRunner.Start("AddAndLoadEventsByTimeStamp_SavedAsType");
             var client = new MongoClient(runner.ConnectionString);
             var database = client.GetDatabase("AddAndLoadEventsByTimeStamp_SavedAsType");
-            client.DropDatabase("AddAndLoadEventsByTimeStapmp_SavedAsType");
+            client.DropDatabase("AddAndLoadEventsByTimeStamp_SavedAsType");
 
             var eventRepository = new EventRepository(database, new DomainEventDeserializer(new JSonHack()), new ObjectConverter());
 

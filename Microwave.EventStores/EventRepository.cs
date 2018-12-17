@@ -121,7 +121,7 @@ namespace Microwave.EventStores
             }
             catch (MongoBulkWriteException)
             {
-                return Result.ConcurrencyResult(entityVersion, eventDbos.Last().Key.Version);
+                return Result.ConcurrencyResult(entityVersion, eventDbos.Last()?.Key.Version ?? 0);
             }
             return Result.Ok();
         }
