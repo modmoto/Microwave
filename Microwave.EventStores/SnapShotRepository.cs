@@ -21,7 +21,8 @@ namespace Microwave.EventStores
         public async Task<SnapShotResult<T>> LoadSnapShot<T>(Guid entityId) where T : new()
         {
             var mongoCollection = _context.GetCollection<SnapShotDbo>("SnapShotDbos");
-            var snapShot = (await (await mongoCollection.FindAsync(entityId.ToString())).ToListAsync()).FirstOrDefault();
+            var asyncCursor = await mongoCollection.FindAsync(r => r.EntityId == entityId.ToString());
+            var snapShot = asyncCursor.ToList().FirstOrDefault();
 
             if (snapShot == null) return new DefaultSnapshot<T>();
             var data = _converter.Deserialize<T>(snapShot.Payload);

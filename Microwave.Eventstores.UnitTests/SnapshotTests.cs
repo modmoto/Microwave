@@ -20,6 +20,7 @@ namespace Microwave.Eventstores.UnitTests
             var runner = MongoDbRunner.Start("SnapshotRealized");
             var client = new MongoClient(runner.ConnectionString);
             var database = client.GetDatabase("SnapshotRealized");
+            client.DropDatabase("SnapshotRealized");
             var mongoCollection = database.GetCollection<SnapShotDbo>("SnapShotDbos");
 
             var repo = new EventRepository(database, new DomainEventDeserializer(new JSonHack()), new ObjectConverter());
@@ -34,7 +35,7 @@ namespace Microwave.Eventstores.UnitTests
 
             await eventStore.LoadAsync<User>(entityId);
 
-            var snapShotDboOld = (await mongoCollection.FindAsync(entityId.ToString())).ToList().FirstOrDefault();
+            var snapShotDboOld = (await mongoCollection.FindAsync(e => e.EntityId == entityId.ToString())).ToList().FirstOrDefault();
 
             Assert.IsNull(snapShotDboOld);
 
@@ -52,7 +53,7 @@ namespace Microwave.Eventstores.UnitTests
             Assert.AreEqual("PeterNeu", user.Name);
             Assert.AreEqual(entityId, user.Id);
 
-            var snapShotDbo = (await mongoCollection.FindAsync(entityId.ToString())).ToList().First();
+            var snapShotDbo = (await mongoCollection.FindAsync(e => e.EntityId == entityId.ToString())).ToList().First();
 
             Assert.AreEqual(4, snapShotDbo.Version);
             Assert.AreEqual(entityId.ToString(), snapShotDbo.EntityId);
@@ -62,7 +63,6 @@ namespace Microwave.Eventstores.UnitTests
             Assert.AreEqual("PeterNeu", userSnapShot.Name);
             Assert.AreEqual(entityId, userSnapShot.Id);
 
-            client.DropDatabase("SnapshotRealized");
             runner.Dispose();
         }
     }
