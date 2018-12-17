@@ -107,6 +107,7 @@ namespace Microwave.Queries.UnitTests
             var runner = MongoDbRunner.Start("InsertIDQuery_ConcurrencyProblem");
             var client = new MongoClient(runner.ConnectionString);
             var database = client.GetDatabase("InsertIDQuery_ConcurrencyProblem");
+            client.DropDatabase("InsertIDQuery_ConcurrencyProblem");
 
             var queryRepository = new ReadModelRepository(new ReadModelDatabase(database), new ObjectConverter());
             Guid guid = Guid.NewGuid();
@@ -123,7 +124,6 @@ namespace Microwave.Queries.UnitTests
             var resultOfLoad = await queryRepository.Load<TestReadModel>(guid);
             Assert.AreEqual(2, resultOfLoad.Value.Version);
 
-            client.DropDatabase("InsertIDQuery_ConcurrencyProblem");
             runner.Dispose();
         }
 
