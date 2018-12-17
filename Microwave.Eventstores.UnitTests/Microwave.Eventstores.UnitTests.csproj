@@ -13,7 +13,6 @@
         <PackageReference Include="MSTest.TestAdapter" Version="1.4.0" />
         <PackageReference Include="MSTest.TestFramework" Version="1.4.0" />
         <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.2.0" />
-        <PackageReference Include="NunitXml.TestLogger" Version="2.1.36" />
     </ItemGroup>
     <ItemGroup>
       <ProjectReference Include="..\Microwave.Domain\Microwave.Domain.csproj" />
