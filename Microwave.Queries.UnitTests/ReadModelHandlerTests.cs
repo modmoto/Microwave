@@ -23,7 +23,7 @@ namespace Microwave.Queries.UnitTests
 
             EntityGuid = Guid.NewGuid();
 
-            var queryRepository = new ReadModelRepository(database, new ObjectConverter());
+            var queryRepository = new ReadModelRepository(new ReadModelDatabase(database), new ObjectConverter());
 
             var readModelHandler = new ReadModelHandler<TestReadModelQuerries>(queryRepository,
                 new VersionRepository(database), new FeedMock2());
@@ -48,7 +48,7 @@ namespace Microwave.Queries.UnitTests
             EntityGuid = Guid.NewGuid();
             EntityGuid2 = Guid.NewGuid();
 
-            var queryRepository = new ReadModelRepository(database, new ObjectConverter());
+            var queryRepository = new ReadModelRepository(new ReadModelDatabase(database), new ObjectConverter());
 
             var readModelHandler = new ReadModelHandler<TestReadModelQuerries>(queryRepository,
                 new VersionRepository(database), new FeedMock3());
@@ -74,7 +74,7 @@ namespace Microwave.Queries.UnitTests
             EntityGuid = Guid.NewGuid();
             EntityGuid2 = Guid.NewGuid();
 
-            var queryRepository = new ReadModelRepository(database, new ObjectConverter());
+            var queryRepository = new ReadModelRepository(new ReadModelDatabase(database), new ObjectConverter());
 
             var readModelHandler = new ReadModelHandler<TestReadModelQuerries>(queryRepository, new VersionRepository(database), new FeedMock4());
 
@@ -99,7 +99,7 @@ namespace Microwave.Queries.UnitTests
 
             EntityGuid = Guid.NewGuid();
 
-            var queryRepository = new ReadModelRepository(database, new ObjectConverter());
+            var queryRepository = new ReadModelRepository(new ReadModelDatabase(database), new ObjectConverter());
 
             var readModelHandler = new ReadModelHandler<TestReadModelQuerries_OnlyOneEventAndVersionIsCounted>(
                 queryRepository,
@@ -127,7 +127,7 @@ namespace Microwave.Queries.UnitTests
             EntityGuid = Guid.NewGuid();
             EntityGuid2 = Guid.NewGuid();
 
-            var queryRepository = new ReadModelRepository(database, new ObjectConverter());
+            var queryRepository = new ReadModelRepository(new ReadModelDatabase(database), new ObjectConverter());
 
             var readModelHandler = new ReadModelHandler<TestReadModelQuerries_TwoParallelFeeds1>(queryRepository, new VersionRepository(database), new FeedMock6());
 

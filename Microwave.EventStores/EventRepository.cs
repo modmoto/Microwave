@@ -18,12 +18,12 @@ namespace Microwave.EventStores
         private readonly IObjectConverter _converter;
 
         public EventRepository(
-            IMongoDatabase database,
+            EventDatabase database,
             DomainEventDeserializer domainEventConverter,
             IObjectConverter converter)
         {
             _domainEventConverter = domainEventConverter;
-            _database = database;
+            _database = database.Database;
             _converter = converter;
         }
 

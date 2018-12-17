@@ -24,7 +24,7 @@ namespace Microwave.Eventstores.UnitTests
             var database = client.GetDatabase("AddAndLoadEvents");
             client.DropDatabase("AddAndLoadEvents");
 
-            var eventRepository = new EventRepository(database, new DomainEventDeserializer(new JSonHack()), new ObjectConverter());
+            var eventRepository = new EventRepository(new EventDatabase(database), new DomainEventDeserializer(new JSonHack()), new ObjectConverter());
 
             var newGuid = Guid.NewGuid();
             var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid)};
@@ -47,7 +47,7 @@ namespace Microwave.Eventstores.UnitTests
             var client = new MongoClient(runner.ConnectionString);
             var database = client.GetDatabase("LoadDomainEvents_IdAndStuffIsSetCorreclty");
 
-            var eventRepository = new EventRepository(database, new DomainEventDeserializer(new JSonHack()), new ObjectConverter());
+            var eventRepository = new EventRepository(new EventDatabase(database),new DomainEventDeserializer(new JSonHack()), new ObjectConverter());
 
             var newGuid = Guid.NewGuid();
             var testEvent1 = new TestEvent1(newGuid);
@@ -77,7 +77,7 @@ namespace Microwave.Eventstores.UnitTests
             var database = client.GetDatabase("AddAndLoadEventsConcurrent");
             client.DropDatabase("AddAndLoadEventsConcurrent");
 
-            var eventRepository = new EventRepository(database, new DomainEventDeserializer(new JSonHack()), new ObjectConverter());
+            var eventRepository = new EventRepository(new EventDatabase(database),new DomainEventDeserializer(new JSonHack()), new ObjectConverter());
 
             var newGuid = Guid.NewGuid();
             var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid)};
@@ -105,7 +105,7 @@ namespace Microwave.Eventstores.UnitTests
             var client = new MongoClient(runner.ConnectionString);
             var database = client.GetDatabase("AddEmptyEventListt");
 
-            var eventRepository = new EventRepository(database, new DomainEventDeserializer(new JSonHack()), new ObjectConverter());
+            var eventRepository = new EventRepository(new EventDatabase(database),new DomainEventDeserializer(new JSonHack()), new ObjectConverter());
 
             var appendAsync = await eventRepository.AppendAsync(new List<IDomainEvent>(), 0);
             appendAsync.Check();
@@ -156,7 +156,7 @@ namespace Microwave.Eventstores.UnitTests
             var database = client.GetDatabase("AddAndLoadEventsByTimeStamp");
             client.DropDatabase("AddAndLoadEventsByTimeStamp");
 
-            var eventRepository = new EventRepository(database, new DomainEventDeserializer(new JSonHack()), new ObjectConverter());
+            var eventRepository = new EventRepository(new EventDatabase(database),new DomainEventDeserializer(new JSonHack()), new ObjectConverter());
 
             var newGuid = Guid.NewGuid();
             var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid), new TestEvent1(newGuid), new TestEvent2(newGuid)};
@@ -179,7 +179,7 @@ namespace Microwave.Eventstores.UnitTests
             var database = client.GetDatabase("AddEvents_FirstEventAfterCreationHasWrongRowVersionBug");
             client.DropDatabase("AddEvents_FirstEventAfterCreationHasWrongRowVersionBug");
 
-            var eventRepository = new EventRepository(database, new DomainEventDeserializer(new JSonHack()), new ObjectConverter());
+            var eventRepository = new EventRepository(new EventDatabase(database),new DomainEventDeserializer(new JSonHack()), new ObjectConverter());
 
             var newGuid = Guid.NewGuid();
             var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid), new TestEvent1(newGuid), new TestEvent2(newGuid)};
@@ -203,7 +203,7 @@ namespace Microwave.Eventstores.UnitTests
             var client = new MongoClient(runner.ConnectionString);
             var database = client.GetDatabase("AddEvents_VersionTooHigh");
 
-            var eventRepository = new EventRepository(database, new DomainEventDeserializer(new JSonHack()), new ObjectConverter());
+            var eventRepository = new EventRepository(new EventDatabase(database),new DomainEventDeserializer(new JSonHack()), new ObjectConverter());
 
             var newGuid = Guid.NewGuid();
             var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid), new TestEvent1(newGuid), new TestEvent2(newGuid)};
@@ -223,7 +223,7 @@ namespace Microwave.Eventstores.UnitTests
             var client = new MongoClient(runner.ConnectionString);
             var database = client.GetDatabase("AddEvents_VersionWayTooHigh");
 
-            var eventRepository = new EventRepository(database, new DomainEventDeserializer(new JSonHack()), new ObjectConverter());
+            var eventRepository = new EventRepository(new EventDatabase(database),new DomainEventDeserializer(new JSonHack()), new ObjectConverter());
 
             var newGuid = Guid.NewGuid();
             var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid), new TestEvent1(newGuid), new TestEvent2(newGuid)};
@@ -243,7 +243,7 @@ namespace Microwave.Eventstores.UnitTests
             var database = client.GetDatabase("AddAndLoadEventsByTimeStamp_SavedAsType");
             client.DropDatabase("AddAndLoadEventsByTimeStamp_SavedAsType");
 
-            var eventRepository = new EventRepository(database, new DomainEventDeserializer(new JSonHack()), new ObjectConverter());
+            var eventRepository = new EventRepository(new EventDatabase(database),new DomainEventDeserializer(new JSonHack()), new ObjectConverter());
 
             var newGuid = Guid.NewGuid();
             var domainEvent = new TestEvent1(newGuid);
@@ -266,7 +266,7 @@ namespace Microwave.Eventstores.UnitTests
             var client = new MongoClient(runner.ConnectionString);
             var database = client.GetDatabase("AddEvents_IdSet");
 
-            var eventRepository = new EventRepository(database, new DomainEventDeserializer(new JSonHack()), new ObjectConverter());
+            var eventRepository = new EventRepository(new EventDatabase(database),new DomainEventDeserializer(new JSonHack()), new ObjectConverter());
 
             var testEvent1 = new TestEvent1(Guid.NewGuid());
             await eventRepository.AppendAsync(new[] {testEvent1}, 0);
@@ -287,7 +287,7 @@ namespace Microwave.Eventstores.UnitTests
             var client = new MongoClient(runner.ConnectionString);
             var database = client.GetDatabase("AddEvents_IdOfTypeSet");
 
-            var eventRepository = new EventRepository(database, new DomainEventDeserializer(new JSonHack()), new ObjectConverter());
+            var eventRepository = new EventRepository(new EventDatabase(database),new DomainEventDeserializer(new JSonHack()), new ObjectConverter());
 
             var testEvent1 = new TestEvent1(Guid.NewGuid());
             await eventRepository.AppendAsync(new List<IDomainEvent> { testEvent1 }, 0);
@@ -309,7 +309,7 @@ namespace Microwave.Eventstores.UnitTests
             var database = client.GetDatabase("AddEvents_RunTypeProjection");
             client.DropDatabase("AddEvents_RunTypeProjection");
 
-            var eventRepository = new EventRepository(database, new DomainEventDeserializer(new JSonHack()), new ObjectConverter());
+            var eventRepository = new EventRepository(new EventDatabase(database),new DomainEventDeserializer(new JSonHack()), new ObjectConverter());
 
             var newGuid = Guid.NewGuid();
             var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid), new TestEvent1(newGuid), new TestEvent2(newGuid)};

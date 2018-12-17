@@ -23,7 +23,7 @@ namespace Microwave.Eventstores.UnitTests
             client.DropDatabase("SnapshotRealized");
             var mongoCollection = database.GetCollection<SnapShotDbo>("SnapShotDbos");
 
-            var repo = new EventRepository(database, new DomainEventDeserializer(new JSonHack()), new ObjectConverter());
+            var repo = new EventRepository(new EventDatabase(database),new DomainEventDeserializer(new JSonHack()), new ObjectConverter());
             var eventStore = new EventStore(repo, new SnapShotRepository(database , new ObjectConverter()));
 
             var entityId = Guid.NewGuid();

@@ -123,7 +123,7 @@ namespace Microwave.Eventstores.UnitTests
 
 
             var entityStreamRepository =
-                new EventRepository(database, new DomainEventDeserializer(new JSonHack()), new ObjectConverter());
+                new EventRepository(new EventDatabase(database),new DomainEventDeserializer(new JSonHack()), new ObjectConverter());
 
             var entityStreamTestEvent = new TestEv(Guid.NewGuid());
             await entityStreamRepository.AppendAsync(new[] {entityStreamTestEvent}, 0);

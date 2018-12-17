@@ -60,7 +60,7 @@ namespace Microwave.Queries.UnitTests
             versionRepo.Setup(repo => repo.SaveVersion(It.IsAny<LastProcessedVersion>())).Returns(Task.CompletedTask);
             versionRepo.Setup(repo => repo.GetVersionAsync(It.IsAny<string>())).ReturnsAsync(0);
 
-            var queryRepository = new ReadModelRepository(database, new ObjectConverter());
+            var queryRepository = new ReadModelRepository(new ReadModelDatabase(database), new ObjectConverter());
 
             var eventDelegateHandler = new QueryEventHandler<TestQ, TestEv>(queryRepository, versionRepo.Object, mock.Object);
             await eventDelegateHandler.Update();

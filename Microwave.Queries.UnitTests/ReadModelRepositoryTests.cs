@@ -20,7 +20,7 @@ namespace Microwave.Queries.UnitTests
             var client = new MongoClient(runner.ConnectionString);
             var database = client.GetDatabase("IdentifiableQuerySaveAndLoad");
 
-            var queryRepository = new ReadModelRepository(database, new ObjectConverter());
+            var queryRepository = new ReadModelRepository(new ReadModelDatabase(database), new ObjectConverter());
 
             var guid = Guid.NewGuid();
             var testQuerry = new TestReadModel();
@@ -44,7 +44,7 @@ namespace Microwave.Queries.UnitTests
             var client = new MongoClient(runner.ConnectionString);
             var database = client.GetDatabase("InsertQuery");
 
-            var queryRepository = new ReadModelRepository(database, new ObjectConverter());
+            var queryRepository = new ReadModelRepository(new ReadModelDatabase(database), new ObjectConverter());
             var testQuery = new TestQuerry { UserName = "Test"};
             await queryRepository.Save(testQuery);
             var query = (await queryRepository.Load<TestQuerry>()).Value;
@@ -72,7 +72,7 @@ namespace Microwave.Queries.UnitTests
                     "{\"$type\":\"Microwave.Queries.UnitTests.TestQuerry, Microwave.Queries.UnitTests\",\"UserName\":\"Test\"}",
                 QueryType = "TestQuerry"
             });
-            var queryRepository = new ReadModelRepository(database, new ObjectConverter());
+            var queryRepository = new ReadModelRepository(new ReadModelDatabase(database), new ObjectConverter());
 
             var result = await queryRepository.Load<TestReadModel>(new Guid("6695a111-9aee-44e1-b7cc-94ec5ab5e81b"));
 
@@ -89,7 +89,7 @@ namespace Microwave.Queries.UnitTests
             var client = new MongoClient(runner.ConnectionString);
             var database = client.GetDatabase("InsertQuery_ConcurrencyProblem");
 
-            var queryRepository = new ReadModelRepository(database, new ObjectConverter());
+            var queryRepository = new ReadModelRepository(new ReadModelDatabase(database), new ObjectConverter());
             var testQuery = new TestQuerry { UserName = "Test1"};
             var testQuery2 = new TestQuerry { UserName = "Test2"};
             var save = queryRepository.Save(testQuery);
@@ -108,7 +108,7 @@ namespace Microwave.Queries.UnitTests
             var client = new MongoClient(runner.ConnectionString);
             var database = client.GetDatabase("InsertIDQuery_ConcurrencyProblem");
 
-            var queryRepository = new ReadModelRepository(database, new ObjectConverter());
+            var queryRepository = new ReadModelRepository(new ReadModelDatabase(database), new ObjectConverter());
             Guid guid = Guid.NewGuid();
             var testQuery = new TestReadModel();
             testQuery.SetVars("Test1", guid, new []{ "Jeah", "jeah2"});
@@ -134,7 +134,7 @@ namespace Microwave.Queries.UnitTests
             var client = new MongoClient(runner.ConnectionString);
             var database = client.GetDatabase("UpdateQuery");
 
-            var queryRepository = new ReadModelRepository(database, new ObjectConverter());
+            var queryRepository = new ReadModelRepository(new ReadModelDatabase(database), new ObjectConverter());
             await queryRepository.Save(new TestQuerry { UserName = "Test"});
             await queryRepository.Save(new TestQuerry { UserName = "NewName"});
             var query = (await queryRepository.Load<TestQuerry>()).Value;
@@ -153,7 +153,7 @@ namespace Microwave.Queries.UnitTests
             var database = client.GetDatabase("LoadAllReadModels");
             client.DropDatabase("LoadAllReadModels");
 
-            var queryRepository = new ReadModelRepository(database, new ObjectConverter());
+            var queryRepository = new ReadModelRepository(new ReadModelDatabase(database), new ObjectConverter());
             Guid guid = Guid.NewGuid();
             Guid guid2 = Guid.NewGuid();
             var testQuery = new TestReadModel();
