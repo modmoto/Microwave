@@ -7,6 +7,8 @@ using Microwave.Application.Results;
 using Microwave.Domain;
 using Microwave.EventStores;
 using Microwave.Queries;
+using Mongo2Go;
+using MongoDB.Driver;
 using Moq;
 
 namespace Microwave.Eventstores.UnitTests
@@ -78,6 +80,27 @@ namespace Microwave.Eventstores.UnitTests
 
             Assert.AreEqual(Guid.Empty, loadAsync.Entity.Id);
         }
+
+        [TestMethod]
+        public async Task IntegrationWithRepo()
+        {
+            var runner = MongoDbRunner.Start("IntegrationWithRepo");
+            var client = new MongoClient(runner.ConnectionString);
+            var database = client.GetDatabase("IntegrationWithRepo");
+            client.DropDatabase("IntegrationWithRepo");
+
+            var snapShotRepo = new Mock<ISnapShotRepository>();
+            snapShotRepo.Setup(re => re.LoadSnapShot<TestEntity>(It.IsAny<Guid>()))
+                .ReturnsAsync(new DefaultSnapshot<TestEntity>());
+            var entityId = Guid.NewGuid();
+            var eventStore = new EventStore(new EventRepository(new EventDatabase(database)), snapShotRepo.Object);
+
+            await eventStore.AppendAsync(new List<IDomainEvent> {new TestEventEventStore(entityId, "Test")}, 0);
+            var loadAsync = await eventStore.LoadAsync<TestEntity>(entityId);
+
+            Assert.AreEqual(entityId, loadAsync.Entity.Id);
+            Assert.AreEqual("Test", loadAsync.Entity.Name);
+        }
     }
 
     public class TestEntity_WrongIApply : Entity
@@ -109,18 +132,22 @@ namespace Microwave.Eventstores.UnitTests
         public void Apply(TestEventEventStore domainEvent)
         {
             Id = domainEvent.EntityId;
+            Name = domainEvent.Name;
         }
 
         public Guid Id { get; private set; }
+        public string Name { get; set; }
     }
 
     public class TestEventEventStore : IDomainEvent
     {
-        public TestEventEventStore(Guid entityId)
+        public TestEventEventStore(Guid entityId, string name = null)
         {
             EntityId = entityId;
+            Name = name;
         }
 
         public Guid EntityId { get; }
+        public string Name { get; }
     }
 }
