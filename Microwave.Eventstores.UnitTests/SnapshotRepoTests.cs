@@ -23,7 +23,7 @@ namespace Microwave.Eventstores.UnitTests
             var database = client.GetDatabase("LoadAndSaveSnapshotWithGuidList");
             client.DropDatabase("LoadAndSaveSnapshotWithGuidList");
 
-            var repo = new SnapShotRepository(new EventDatabase(database), new ObjectConverter());
+            var repo = new SnapShotRepository(new EventDatabase(database));
             var userSnapshot = new UserSnapshot();
 
             var entityId = Guid.NewGuid();

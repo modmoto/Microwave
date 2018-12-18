@@ -3,11 +3,11 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace Microwave.EventStores
 {
-    public class SnapShotDbo
+    public class SnapShotDbo<T>
     {
         [BsonId]
         public string EntityId { get; set; }
-        public string Payload { get; set; }
+        public T Payload { get; set; }
         public long Version { get; set; }
     }
 
