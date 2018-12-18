@@ -31,6 +31,7 @@ build_script:
 - dotnet build
 
 test_script:
+- dotnet test
 #- dotnet test --test-adapter-path:. --logger:Appveyor
 #- OpenCover.Console.exe -register:user -target:"C:/Program Files/dotnet/dotnet.exe" -targetargs:test -output:"coverage.xml" -oldstyle
 #- choco install "msbuild-sonarqube-runner" -y
