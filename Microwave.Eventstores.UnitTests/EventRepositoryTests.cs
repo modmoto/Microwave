@@ -7,7 +7,6 @@ using Microwave.Application.Exceptions;
 using Microwave.Application.Results;
 using Microwave.Domain;
 using Microwave.EventStores;
-using Microwave.ObjectPersistences;
 using Mongo2Go;
 using MongoDB.Driver;
 

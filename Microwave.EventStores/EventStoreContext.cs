@@ -1,5 +1,4 @@
-﻿using System;
-using Microwave.Domain;
+﻿using Microwave.Domain;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace Microwave.EventStores
