@@ -21,10 +21,10 @@ namespace Microwave.Eventstores.UnitTests
             var client = new MongoClient(runner.ConnectionString);
             var database = client.GetDatabase("SnapshotRealized");
             client.DropDatabase("SnapshotRealized");
-            var mongoCollection = database.GetCollection<SnapShotDbo<User>>("SnapShotDbos");
+            var mongoCollection = database.GetCollection<SnapShotDbo>("SnapShotDbos");
 
-            var repo = new EventRepository(new EventDatabase(database));
-            var eventStore = new EventStore(repo, new SnapShotRepository(new EventDatabase(database)));
+            var repo = new EventRepository(new EventDatabase(database),new DomainEventDeserializer(new JSonHack()), new ObjectConverter());
+            var eventStore = new EventStore(repo, new SnapShotRepository(new EventDatabase(database), new ObjectConverter()));
 
             var entityId = Guid.NewGuid();
             await eventStore.AppendAsync(new List<IDomainEvent>
@@ -57,7 +57,7 @@ namespace Microwave.Eventstores.UnitTests
 
             Assert.AreEqual(4, snapShotDbo.Version);
             Assert.AreEqual(entityId.ToString(), snapShotDbo.EntityId);
-            var userSnapShot = snapShotDbo.Payload;
+            var userSnapShot = new ObjectConverter().Deserialize<User>(snapShotDbo.Payload);
 
             Assert.AreEqual(14, userSnapShot.Age);
             Assert.AreEqual("PeterNeu", userSnapShot.Name);

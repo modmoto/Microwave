@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microwave.Application;
 using Microwave.Application.Results;
 using Microwave.Domain;
+using Microwave.ObjectPersistences;
 using Microwave.Queries;
 using MongoDB.Driver;
 
@@ -12,11 +13,18 @@ namespace Microwave.EventStores
 {
     public class EventRepository : IEventRepository
     {
+        private readonly DomainEventDeserializer _domainEventConverter;
         private readonly IMongoDatabase _database;
+        private readonly IObjectConverter _converter;
 
-        public EventRepository(EventDatabase database)
+        public EventRepository(
+            EventDatabase database,
+            DomainEventDeserializer domainEventConverter,
+            IObjectConverter converter)
         {
+            _domainEventConverter = domainEventConverter;
             _database = database.Database;
+            _converter = converter;
         }
 
         public async Task<Result<IEnumerable<DomainEventWrapper>>> LoadEventsByEntity(Guid entityId, long from = 0)
@@ -31,7 +39,7 @@ namespace Microwave.EventStores
                 {
                     Created = dbo.Created,
                     Version = dbo.Key.Version,
-                    DomainEvent = dbo.Payload
+                    DomainEvent = _domainEventConverter.Deserialize(dbo.Payload)
                 };
             });
 
@@ -46,11 +54,12 @@ namespace Microwave.EventStores
 
             var domainEvents = domainEventDbos.Select(dbo =>
             {
+                var domainEvent = _domainEventConverter.Deserialize(dbo.Payload);
                 return new DomainEventWrapper
                 {
                     Created = dbo.Created,
                     Version = dbo.Key.Version,
-                    DomainEvent = dbo.Payload
+                    DomainEvent = domainEvent
                 };
             });
 
@@ -70,58 +79,53 @@ namespace Microwave.EventStores
                 {
                     Created = dbo.Created,
                     Version = dbo.Key.Version,
-                    DomainEvent = dbo.Payload
+                    DomainEvent = _domainEventConverter.Deserialize(dbo.Payload)
                 };
             });
             return Result<IEnumerable<DomainEventWrapper>>.Ok(domainEvents);
         }
 
-        public async Task<Result> AppendAsync(IEnumerable<IDomainEvent> domainEvents, long currenEntityVersion)
+        public async Task<Result> AppendAsync(IEnumerable<IDomainEvent> domainEvents, long entityVersion)
         {
             var events = domainEvents.ToList();
             if (!events.Any()) return Result.Ok();
 
+            var entityVersionTemp = entityVersion;
+
+            var mongoCollection = _database.GetCollection<DomainEventDbo>("DomainEventDbos");
             var entityId = events.First().EntityId.ToString();
-            var versionTemp = currenEntityVersion;
-            var lastVersion = await GetLastVersion(entityId);
-            if (lastVersion < currenEntityVersion) return Result.ConcurrencyResult(currenEntityVersion, lastVersion);
+
+            var cursor = await mongoCollection.FindAsync(v => v.Key.EntityId == entityId);
+            var eventDbos = await cursor.ToListAsync();
+            var lastVersion = eventDbos.LastOrDefault()?.Key.Version ?? 0;
+            if (lastVersion < entityVersion) return Result.ConcurrencyResult(entityVersion, lastVersion);
 
             var domainEventDbos = events.Select(domainEvent =>
             {
                 return new DomainEventDbo
                 {
-                    Payload = domainEvent,
+                    Payload = _converter.Serialize(domainEvent),
                     Created = DateTime.UtcNow.Ticks,
                     Key = new DomainEventKey
                     {
-                        Version = ++versionTemp,
+                        Version = ++entityVersionTemp,
                         EntityId = domainEvent.EntityId.ToString()
                     },
                     EventType = domainEvent.GetType().Name
                 };
             }).ToList();
 
-            var mongoCollection = _database.GetCollection<DomainEventDbo>("DomainEventDbos");
             try
             {
                 await mongoCollection.InsertManyAsync(domainEventDbos);
             }
             catch (MongoBulkWriteException)
             {
-                var cursorReloaded = await mongoCollection.FindAsync(v => v.Key.EntityId == entityId);
-                var eventDbosReloaded = await cursorReloaded.ToListAsync();
-                return Result.ConcurrencyResult(currenEntityVersion, eventDbosReloaded.LastOrDefault()?.Key.Version ?? 0);
+                var cursor2 = await mongoCollection.FindAsync(v => v.Key.EntityId == entityId);
+                var eventDbos2 = await cursor2.ToListAsync();
+                return Result.ConcurrencyResult(entityVersion, eventDbos2.LastOrDefault()?.Key.Version ?? 0);
             }
             return Result.Ok();
-        }
-
-        private async Task<long> GetLastVersion(string entityId)
-        {
-            var mongoCollection = _database.GetCollection<DomainEventDbo>("DomainEventDbos");
-            var cursor = await mongoCollection.FindAsync(v => v.Key.EntityId == entityId);
-            var eventDbos = await cursor.ToListAsync();
-            var lastVersion = eventDbos.LastOrDefault()?.Key.Version ?? 0;
-            return lastVersion;
         }
     }
 }

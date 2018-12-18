@@ -51,6 +51,7 @@ namespace Microwave.DependencyInjectionExtensions
 
             services.AddTransient<DomainEventWrapperListDeserializer>();
             services.AddTransient<JSonHack>();
+            services.AddTransient<IObjectConverter, ObjectConverter>();
             services.AddTransient<IVersionRepository, VersionRepository>();
             services.AddTransient<IReadModelRepository, ReadModelRepository>();
             services.AddTransient<AsyncEventDelegator>();
@@ -77,9 +78,11 @@ namespace Microwave.DependencyInjectionExtensions
 
             services.AddTransient<DomainEventController>();
             services.AddTransient<JSonHack>();
+            services.AddTransient<DomainEventDeserializer>();
             services.AddTransient<DomainEventWrapperListDeserializer>();
 
             services.AddTransient<IEventStore, EventStore>();
+            services.AddTransient<IObjectConverter, ObjectConverter>();
             services.AddTransient<IEventRepository, EventRepository>();
             services.AddTransient<ISnapShotRepository, SnapShotRepository>();
 
