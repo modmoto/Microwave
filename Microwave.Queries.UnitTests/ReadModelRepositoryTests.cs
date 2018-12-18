@@ -21,7 +21,7 @@ namespace Microwave.Queries.UnitTests
             var database = client.GetDatabase("IdentifiableQuerySaveAndLoad");
             client.DropDatabase("IdentifiableQuerySaveAndLoad");
 
-            var queryRepository = new ReadModelRepository(new ReadModelDatabase(database), new ObjectConverter());
+            var queryRepository = new ReadModelRepository(new ReadModelDatabase(database));
 
             var guid = Guid.NewGuid();
             var testQuerry = new TestReadModel();
@@ -45,38 +45,12 @@ namespace Microwave.Queries.UnitTests
             var database = client.GetDatabase("InsertQuery");
             client.DropDatabase("InsertQuery");
 
-            var queryRepository = new ReadModelRepository(new ReadModelDatabase(database), new ObjectConverter());
+            var queryRepository = new ReadModelRepository(new ReadModelDatabase(database));
             var testQuery = new TestQuerry { UserName = "Test"};
             await queryRepository.Save(testQuery);
             var query = (await queryRepository.Load<TestQuerry>()).Value;
 
             Assert.AreEqual("Test", query.UserName);
-
-            runner.Dispose();
-        }
-
-        [TestMethod]
-        public async Task GetQuery_WrongType()
-        {
-            var runner = MongoDbRunner.Start("GetQuery_WrongType");
-            var client = new MongoClient(runner.ConnectionString);
-            var database = client.GetDatabase("GetQuery_WrongType");
-            client.DropDatabase("GetQuery_WrongType");
-
-            var mongoCollection = database.GetCollection<IdentifiableQueryDbo>("IdentifiableQueryDbos");
-            await mongoCollection.InsertOneAsync(new IdentifiableQueryDbo
-            {
-                Id = "6695a111-9aee-44e1-b7cc-94ec5ab5e81b",
-                Version = 0,
-                Payload =
-                    "{\"$type\":\"Microwave.Queries.UnitTests.TestQuerry, Microwave.Queries.UnitTests\",\"UserName\":\"Test\"}",
-                QueryType = "TestQuerry"
-            });
-            var queryRepository = new ReadModelRepository(new ReadModelDatabase(database), new ObjectConverter());
-
-            var result = await queryRepository.Load<TestReadModel>(new Guid("6695a111-9aee-44e1-b7cc-94ec5ab5e81b"));
-
-            Assert.IsTrue(result.Is<NotFound>());
 
             runner.Dispose();
         }
@@ -89,7 +63,7 @@ namespace Microwave.Queries.UnitTests
             var database = client.GetDatabase("InsertQuery_ConcurrencyProblem");
             client.DropDatabase("InsertQuery_ConcurrencyProblem");
 
-            var queryRepository = new ReadModelRepository(new ReadModelDatabase(database), new ObjectConverter());
+            var queryRepository = new ReadModelRepository(new ReadModelDatabase(database));
             var testQuery = new TestQuerry { UserName = "Test1"};
             var testQuery2 = new TestQuerry { UserName = "Test2"};
             var save = queryRepository.Save(testQuery);
@@ -108,7 +82,7 @@ namespace Microwave.Queries.UnitTests
             var database = client.GetDatabase("InsertIDQuery_ConcurrencyProblem");
             client.DropDatabase("InsertIDQuery_ConcurrencyProblem");
 
-            var queryRepository = new ReadModelRepository(new ReadModelDatabase(database), new ObjectConverter());
+            var queryRepository = new ReadModelRepository(new ReadModelDatabase(database));
             Guid guid = Guid.NewGuid();
             var testQuery = new TestReadModel();
             testQuery.SetVars("Test1", guid, new []{ "Jeah", "jeah2"});
@@ -134,7 +108,7 @@ namespace Microwave.Queries.UnitTests
             var database = client.GetDatabase("UpdateQuery");
             client.DropDatabase("UpdateQuery");
 
-            var queryRepository = new ReadModelRepository(new ReadModelDatabase(database), new ObjectConverter());
+            var queryRepository = new ReadModelRepository(new ReadModelDatabase(database));
             await queryRepository.Save(new TestQuerry { UserName = "Test"});
             await queryRepository.Save(new TestQuerry { UserName = "NewName"});
             var query = (await queryRepository.Load<TestQuerry>()).Value;
@@ -152,7 +126,7 @@ namespace Microwave.Queries.UnitTests
             var database = client.GetDatabase("LoadAllReadModels");
             client.DropDatabase("LoadAllReadModels");
 
-            var queryRepository = new ReadModelRepository(new ReadModelDatabase(database), new ObjectConverter());
+            var queryRepository = new ReadModelRepository(new ReadModelDatabase(database));
             Guid guid = Guid.NewGuid();
             Guid guid2 = Guid.NewGuid();
             var testQuery = new TestReadModel();

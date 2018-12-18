@@ -2,20 +2,20 @@
 
 namespace Microwave.Queries
 {
-    public class IdentifiableQueryDbo
+    public class IdentifiableQueryDbo<T>
     {
         [BsonId]
         public string Id { get; set; }
-        public string Payload { get; set; }
+        public T Payload { get; set; }
         public long Version { get; set; }
         public string QueryType { get; set; }
     }
 
-    public class QueryDbo
+    public class QueryDbo<T>
     {
         [BsonId]
         public string Type { get; set; }
-        public string Payload { get; set; }
+        public T Payload { get; set; }
     }
 
     public class LastProcessedVersionDbo
