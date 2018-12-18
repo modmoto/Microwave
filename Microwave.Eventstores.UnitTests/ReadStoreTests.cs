@@ -33,18 +33,6 @@ namespace Microwave.Eventstores.UnitTests
         }
 
         [TestMethod]
-        public void TestDeserializationOfIdInInterface_DifferentParameterName()
-        {
-            var objectConverter = new ObjectConverter();
-            var domainEvent = new TestEv_DifferentParamName(Guid.NewGuid(), "testString");
-            var serialize = objectConverter.Serialize(domainEvent);
-            var deserialize = (TestEv_DifferentParamName) new DomainEventDeserializer(new JSonHack()).Deserialize(serialize);
-            Assert.AreEqual(deserialize.EntityId, domainEvent.EntityId);
-            Assert.AreEqual(deserialize.SecondProp, "testString");
-            Assert.AreNotEqual(deserialize.EntityId, Guid.Empty);
-        }
-
-        [TestMethod]
         public void TestDeserializationOfIdInInterface_DifferentParameterNameList()
         {
             var domainEvent = new TestEv_DifferentParamName(new Guid("48eb878a-4483-40d9-bf4f-36c85ba5f803"), "testString");
@@ -122,8 +110,7 @@ namespace Microwave.Eventstores.UnitTests
             var database = client.GetDatabase("Entitystream_LoadEventsSince_IdNotDefault");
             client.DropDatabase("Entitystream_LoadEventsSince_IdNotDefault");
 
-            var entityStreamRepository =
-                new EventRepository(new EventDatabase(database),new DomainEventDeserializer(new JSonHack()), new ObjectConverter());
+            var entityStreamRepository = new EventRepository(new EventDatabase(database));
 
             var entityStreamTestEvent = new TestEv(Guid.NewGuid());
             await entityStreamRepository.AppendAsync(new[] {entityStreamTestEvent}, 0);

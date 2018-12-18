@@ -1,4 +1,5 @@
 ﻿using System;
+using Microwave.Domain;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace Microwave.EventStores
@@ -24,7 +25,7 @@ namespace Microwave.EventStores
                 Version = long.Parse(value.Split('_')[1])
             };
         }
-        public string Payload { get; set; }
+        public IDomainEvent Payload { get; set; }
         public long Created { get; set; }
         public string EventType { get; set; }
     }

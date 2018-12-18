@@ -78,7 +78,6 @@ namespace Microwave.DependencyInjectionExtensions
 
             services.AddTransient<DomainEventController>();
             services.AddTransient<JSonHack>();
-            services.AddTransient<DomainEventDeserializer>();
             services.AddTransient<DomainEventWrapperListDeserializer>();
 
             services.AddTransient<IEventStore, EventStore>();

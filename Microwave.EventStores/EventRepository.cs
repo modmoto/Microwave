@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Microwave.Application;
 using Microwave.Application.Results;
 using Microwave.Domain;
-using Microwave.ObjectPersistences;
 using Microwave.Queries;
 using MongoDB.Driver;
 
@@ -13,18 +12,11 @@ namespace Microwave.EventStores
 {
     public class EventRepository : IEventRepository
     {
-        private readonly DomainEventDeserializer _domainEventConverter;
         private readonly IMongoDatabase _database;
-        private readonly IObjectConverter _converter;
 
-        public EventRepository(
-            EventDatabase database,
-            DomainEventDeserializer domainEventConverter,
-            IObjectConverter converter)
+        public EventRepository(EventDatabase database)
         {
-            _domainEventConverter = domainEventConverter;
             _database = database.Database;
-            _converter = converter;
         }
 
         public async Task<Result<IEnumerable<DomainEventWrapper>>> LoadEventsByEntity(Guid entityId, long from = 0)
@@ -39,7 +31,7 @@ namespace Microwave.EventStores
                 {
                     Created = dbo.Created,
                     Version = dbo.Key.Version,
-                    DomainEvent = _domainEventConverter.Deserialize(dbo.Payload)
+                    DomainEvent = dbo.Payload
                 };
             });
 
@@ -54,12 +46,11 @@ namespace Microwave.EventStores
 
             var domainEvents = domainEventDbos.Select(dbo =>
             {
-                var domainEvent = _domainEventConverter.Deserialize(dbo.Payload);
                 return new DomainEventWrapper
                 {
                     Created = dbo.Created,
                     Version = dbo.Key.Version,
-                    DomainEvent = domainEvent
+                    DomainEvent = dbo.Payload
                 };
             });
 
@@ -79,7 +70,7 @@ namespace Microwave.EventStores
                 {
                     Created = dbo.Created,
                     Version = dbo.Key.Version,
-                    DomainEvent = _domainEventConverter.Deserialize(dbo.Payload)
+                    DomainEvent = dbo.Payload
                 };
             });
             return Result<IEnumerable<DomainEventWrapper>>.Ok(domainEvents);
@@ -104,7 +95,7 @@ namespace Microwave.EventStores
             {
                 return new DomainEventDbo
                 {
-                    Payload = _converter.Serialize(domainEvent),
+                    Payload = domainEvent,
                     Created = DateTime.UtcNow.Ticks,
                     Key = new DomainEventKey
                     {
