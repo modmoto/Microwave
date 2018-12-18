@@ -1,13 +1,13 @@
-﻿using System;
+﻿using Microwave.Domain;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace Microwave.EventStores
 {
-    public class SnapShotDbo
+    public class SnapShotDbo<T>
     {
         [BsonId]
         public string EntityId { get; set; }
-        public string Payload { get; set; }
+        public T Payload { get; set; }
         public long Version { get; set; }
     }
 
@@ -24,7 +24,7 @@ namespace Microwave.EventStores
                 Version = long.Parse(value.Split('_')[1])
             };
         }
-        public string Payload { get; set; }
+        public IDomainEvent Payload { get; set; }
         public long Created { get; set; }
         public string EventType { get; set; }
     }

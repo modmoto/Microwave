@@ -22,29 +22,6 @@ namespace Microwave.Eventstores.UnitTests
         });
 
         [TestMethod]
-        public void TestDeserializationOfIdInInterface()
-        {
-            var objectConverter = new ObjectConverter();
-            var domainEvent = new TestEv(Guid.NewGuid());
-            var serialize = objectConverter.Serialize(domainEvent);
-            var deserialize = objectConverter.Deserialize<IDomainEvent>(serialize);
-            Assert.AreEqual(deserialize.EntityId, domainEvent.EntityId);
-            Assert.AreNotEqual(deserialize.EntityId, Guid.Empty);
-        }
-
-        [TestMethod]
-        public void TestDeserializationOfIdInInterface_DifferentParameterName()
-        {
-            var objectConverter = new ObjectConverter();
-            var domainEvent = new TestEv_DifferentParamName(Guid.NewGuid(), "testString");
-            var serialize = objectConverter.Serialize(domainEvent);
-            var deserialize = (TestEv_DifferentParamName) new DomainEventDeserializer(new JSonHack()).Deserialize(serialize);
-            Assert.AreEqual(deserialize.EntityId, domainEvent.EntityId);
-            Assert.AreEqual(deserialize.SecondProp, "testString");
-            Assert.AreNotEqual(deserialize.EntityId, Guid.Empty);
-        }
-
-        [TestMethod]
         public void TestDeserializationOfIdInInterface_DifferentParameterNameList()
         {
             var domainEvent = new TestEv_DifferentParamName(new Guid("48eb878a-4483-40d9-bf4f-36c85ba5f803"), "testString");
@@ -92,27 +69,7 @@ namespace Microwave.Eventstores.UnitTests
             Assert.AreNotEqual(deserialize2.EntityId, Guid.Empty);
         }
 
-        // This is not supported and might never be
-        [TestMethod]
-        public void TestDeserializationOfIdInInterface_OwnBackingField()
-        {
-            var objectConverter = new ObjectConverter();
-            var domainEvent = new TestEv_CustomBackingField(Guid.NewGuid());
-            var serialize = objectConverter.Serialize(domainEvent);
-            var deserialize = objectConverter.Deserialize<IDomainEvent>(serialize);
-            Assert.AreEqual(deserialize.EntityId, Guid.Empty);
-        }
 
-        [TestMethod]
-        public void TestDeserializationOfIdInInterface_GetAutoProperty()
-        {
-            var objectConverter = new ObjectConverter();
-            var domainEvent = new TestEv_AutoProperty(Guid.NewGuid());
-            var serialize = objectConverter.Serialize(domainEvent);
-            var deserialize = objectConverter.Deserialize<IDomainEvent>(serialize);
-            Assert.AreEqual(deserialize.EntityId, new Guid("84e5447a-0a28-4fe1-af5a-11dd6a43d3dd"));
-            Assert.AreNotEqual(deserialize.EntityId, Guid.Empty);
-        }
 
         [TestMethod]
         public async Task Entitystream_LoadEventsSince_IdNotDefault()
@@ -122,8 +79,7 @@ namespace Microwave.Eventstores.UnitTests
             var database = client.GetDatabase("Entitystream_LoadEventsSince_IdNotDefault");
             client.DropDatabase("Entitystream_LoadEventsSince_IdNotDefault");
 
-            var entityStreamRepository =
-                new EventRepository(new EventDatabase(database),new DomainEventDeserializer(new JSonHack()), new ObjectConverter());
+            var entityStreamRepository = new EventRepository(new EventDatabase(database));
 
             var entityStreamTestEvent = new TestEv(Guid.NewGuid());
             await entityStreamRepository.AppendAsync(new[] {entityStreamTestEvent}, 0);
@@ -158,26 +114,5 @@ namespace Microwave.Eventstores.UnitTests
         public string SecondProp { get; }
 
         public Guid EntityId { get; }
-    }
-
-    public class TestEv_CustomBackingField : IDomainEvent
-    {
-        private readonly Guid _entityIdBackingFieldWeird;
-
-        public TestEv_CustomBackingField(Guid NOTentityId)
-        {
-            _entityIdBackingFieldWeird = NOTentityId;
-        }
-
-        public Guid EntityId => _entityIdBackingFieldWeird;
-    }
-
-    public class TestEv_AutoProperty : IDomainEvent
-    {
-        public TestEv_AutoProperty(Guid NOTentityId)
-        {
-        }
-
-        public Guid EntityId => new Guid("84e5447a-0a28-4fe1-af5a-11dd6a43d3dd");
     }
 }
