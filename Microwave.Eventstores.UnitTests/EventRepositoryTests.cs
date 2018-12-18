@@ -26,14 +26,16 @@ namespace Microwave.Eventstores.UnitTests
             var eventRepository = new EventRepository(new EventDatabase(database));
 
             var newGuid = Guid.NewGuid();
-            var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid)};
+            var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid), new TestEvent3(newGuid, "TestName")};
             var res = await eventRepository.AppendAsync(events, 0);
             res.Check();
 
             var loadEventsByEntity = await eventRepository.LoadEventsByEntity(newGuid);
-            Assert.AreEqual(2, loadEventsByEntity.Value.Count());
+            Assert.AreEqual(3, loadEventsByEntity.Value.Count());
             Assert.AreEqual(1, loadEventsByEntity.Value.ToList()[0].Version);
-            Assert.AreEqual(newGuid, loadEventsByEntity.Value.ToList()[0].DomainEvent.EntityId);
+            var domainEvent = (TestEvent3) loadEventsByEntity.Value.ToList()[2].DomainEvent;
+            Assert.AreEqual(newGuid, domainEvent.EntityId);
+            Assert.AreEqual("TestName", domainEvent.Name);
             Assert.AreEqual(2, loadEventsByEntity.Value.ToList()[1].Version);
 
             runner.Dispose();
@@ -108,6 +110,26 @@ namespace Microwave.Eventstores.UnitTests
             var appendAsync = await eventRepository.AppendAsync(new List<IDomainEvent>(), 0);
             appendAsync.Check();
 
+            runner.Dispose();
+        }
+
+        [TestMethod]
+        public async Task LoadEventsByTypeAsync()
+        {
+            var runner = MongoDbRunner.Start("LoadEventsByTypeAsync");
+            var client = new MongoClient(runner.ConnectionString);
+            var database = client.GetDatabase("LoadEventsByTypeAsync");
+            client.DropDatabase("LoadEventsByTypeAsync");
+
+            var eventRepository = new EventRepository(new EventDatabase(database));
+
+            var newGuid = Guid.NewGuid();
+            var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid), new TestEvent2(newGuid)};
+
+            await eventRepository.AppendAsync(events, 0);
+            var eventsLoaded = await eventRepository.LoadEventsByTypeAsync(typeof(TestEvent2).Name, 0);
+
+            Assert.AreEqual(2, eventsLoaded.Value.Count());
             runner.Dispose();
         }
 
@@ -351,5 +373,17 @@ namespace Microwave.Eventstores.UnitTests
         }
 
         public Guid EntityId { get; }
+    }
+
+    public class TestEvent3 : IDomainEvent
+    {
+        public TestEvent3(Guid entityId, string name)
+        {
+            EntityId = entityId;
+            Name = name;
+        }
+
+        public Guid EntityId { get; }
+        public string Name { get; }
     }
 }
