@@ -5,7 +5,6 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Application;
 using Microwave.Application.Results;
 using Microwave.Domain;
-using Microwave.ObjectPersistences;
 using Mongo2Go;
 using MongoDB.Driver;
 

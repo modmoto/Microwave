@@ -2,7 +2,7 @@
 
 namespace Microwave.Queries
 {
-    public class IdentifiableQueryDbo<T>
+    public class ReadModelDbo<T>
     {
         [BsonId]
         public string Id { get; set; }
