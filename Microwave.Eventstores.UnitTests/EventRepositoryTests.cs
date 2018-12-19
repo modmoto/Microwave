@@ -41,6 +41,28 @@ namespace Microwave.Eventstores.UnitTests
             runner.Dispose();
         }
 
+        // this is because of mongodb, constructor has to be named the same
+        [TestMethod]
+        public async Task AddAndLoadEvents_ParamCalledWrong()
+        {
+            var runner = MongoDbRunner.Start("AddAndLoadEvents_ParamCalledWrong");
+            var client = new MongoClient(runner.ConnectionString);
+            var database = client.GetDatabase("AddAndLoadEvents_ParamCalledWrong");
+            client.DropDatabase("AddAndLoadEvents_ParamCalledWrong");
+
+            var eventRepository = new EventRepository(new EventDatabase(database));
+
+            var newGuid = Guid.NewGuid();
+            var events = new List<IDomainEvent> { new TestEvent_ParameterCalledWrong(newGuid)};
+            await eventRepository.AppendAsync(events, 0);
+
+            var loadEventsByEntity = await eventRepository.LoadEventsByEntity(newGuid);
+            Assert.AreEqual(1, loadEventsByEntity.Value.Count());
+            Assert.AreEqual(new Guid(), loadEventsByEntity.Value.ToList()[0].DomainEvent.EntityId);
+
+            runner.Dispose();
+        }
+
         [TestMethod]
         public async Task LoadDomainEvents_IdAndStuffIsSetCorreclty()
         {
@@ -360,6 +382,16 @@ namespace Microwave.Eventstores.UnitTests
         public TestEvent1(Guid entityId)
         {
             EntityId = entityId;
+        }
+
+        public Guid EntityId { get; }
+    }
+
+    public class TestEvent_ParameterCalledWrong : IDomainEvent
+    {
+        public TestEvent_ParameterCalledWrong(Guid notCalledEntityId)
+        {
+            EntityId = notCalledEntityId;
         }
 
         public Guid EntityId { get; }
