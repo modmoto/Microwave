@@ -30,6 +30,9 @@ environment:
 build_script:
 - dotnet build
 
+test_script:
+- dotnet test
+
 artifacts:
 - path: '**\*.nupkg'
 
