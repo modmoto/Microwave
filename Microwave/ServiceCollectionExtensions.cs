@@ -104,6 +104,7 @@ namespace Microwave
             foreach (var domainEventType in domainEventTypes)
             {
                 eventRegistration.Add(domainEventType.Name, domainEventType);
+                BsonClassMap.RegisterClassMap(new BsonClassMap(domainEventType));
             }
             services.AddSingleton(eventRegistration);
             return services;
