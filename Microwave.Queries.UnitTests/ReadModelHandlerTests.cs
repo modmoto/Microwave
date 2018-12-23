@@ -6,6 +6,7 @@ using Microwave.Application;
 using Microwave.Application.Results;
 using Microwave.Domain;
 using Mongo2Go;
+using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
 
 namespace Microwave.Queries.UnitTests
@@ -139,7 +140,7 @@ namespace Microwave.Queries.UnitTests
             var result = await queryRepository.Load<TestReadModelQuerries_TwoParallelFeeds1>(EntityGuid);
             var result2 = await queryRepository.Load<TestReadModelQuerries_TwoParallelFeeds2>(EntityGuid2);
             Assert.AreEqual(EntityGuid, result.Value.ReadModel.Id);
-            Assert.AreEqual(EntityGuid2, result2.Value.ReadModel.Id);
+            Assert.AreEqual(EntityGuid2, result2.Value.ReadModel.IdTotallyDifferenzt);
 
             runner.Dispose();
         }
@@ -270,10 +271,10 @@ namespace Microwave.Queries.UnitTests
     {
         public void Handle(TestEvnt2 domainEvent)
         {
-            Id = domainEvent.EntityId;
+            IdTotallyDifferenzt = domainEvent.EntityId;
         }
 
-        public Guid Id { get; set; }
+        public Guid IdTotallyDifferenzt { get; set; }
     }
 
     public class FeedMock3 : IEventFeed<ReadModelHandler<TestReadModelQuerries>>

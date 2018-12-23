@@ -145,6 +145,28 @@ namespace Microwave.Queries.UnitTests
 
             runner.Dispose();
         }
+
+        [TestMethod]
+        public async Task LoadTwoTypesOfReadModels_Bug()
+        {
+            var runner = MongoDbRunner.Start("LoadTwoTypesOfReadModels_Bug");
+            var client = new MongoClient(runner.ConnectionString);
+            var database = client.GetDatabase("LoadTwoTypesOfReadModels_Bug");
+            client.DropDatabase("LoadTwoTypesOfReadModels_Bug");
+
+            var queryRepository = new ReadModelRepository(new ReadModelDatabase(database));
+            Guid guid2 = Guid.NewGuid();
+            var testQuery2 = new TestReadModel2();
+            testQuery2.SetVars("Test2", guid2, new []{ "Jeah", "jeah2"});
+
+            await queryRepository.Save(new ReadModelWrapper<TestReadModel2>(testQuery2, guid2, 1));
+
+            var loadAll2 = await queryRepository.Load<TestReadModel>(guid2);
+
+            Assert.IsTrue(loadAll2.Is<NotFound>());
+
+            runner.Dispose();
+        }
     }
 
     public class TestQuerry : Query
@@ -161,6 +183,18 @@ namespace Microwave.Queries.UnitTests
         {
             UserName = test;
             Strings = str;
+        }
+    }
+
+    public class TestReadModel2 : ReadModel
+    {
+        public string UserNameAllDifferent { get; private set; }
+        public IEnumerable<string> StringsAllDifferent { get; private set; } = new List<string>();
+
+        public void SetVars(string test, Guid guid, IEnumerable<string> str)
+        {
+            UserNameAllDifferent = test;
+            StringsAllDifferent = str;
         }
     }
 }

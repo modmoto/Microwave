@@ -31,9 +31,9 @@ namespace Microwave.Queries
         public async Task<Result<ReadModelWrapper<T>>> Load<T>(Guid id) where T : ReadModel
         {
             var mongoCollection = _database.GetCollection<ReadModelDbo<T>>(_readModelCollectionName);
-            var asyncCursor = await mongoCollection.FindAsync(dbo => dbo.Id == id.ToString());
+            var asyncCursor = await mongoCollection.FindAsync(dbo =>  dbo.QueryType == typeof(T).Name && dbo.Id == id.ToString());
             var identifiableQueryDbo = asyncCursor.FirstOrDefault();
-            if (identifiableQueryDbo == null || identifiableQueryDbo.QueryType != typeof(T).Name) return Result<ReadModelWrapper<T>>.NotFound(id.ToString());
+            if (identifiableQueryDbo == null) return Result<ReadModelWrapper<T>>.NotFound(id.ToString());
             var wrapper = new ReadModelWrapper<T>(identifiableQueryDbo.Payload, id, identifiableQueryDbo.Version);
             return Result<ReadModelWrapper<T>>.Ok(wrapper);
         }
