@@ -19,9 +19,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microwave.Queries.UnitTests
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microwave.WebApi", "Microwave.WebApi\Microwave.WebApi.csproj", "{4110C154-DF57-445A-93EE-10D5FB4CD16C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microwave.DependencyInjectionExtensions", "Microwave.DependencyInjectionExtensions\Microwave.DependencyInjectionExtensions.csproj", "{FA64444E-B6E5-49F4-8915-45D50B1F83DA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microwave", "Microwave\Microwave.csproj", "{FA64444E-B6E5-49F4-8915-45D50B1F83DA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microwave.DependencyInjectionExtensions.UnitTests", "Microwave.DependencyInjectionExtensions.UnitTests\Microwave.DependencyInjectionExtensions.UnitTests.csproj", "{6DE4BD27-1E59-43F3-AF52-5925CEA1E9CA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microwave.UnitTests", "Microwave.UnitTests\Microwave.UnitTests.csproj", "{6DE4BD27-1E59-43F3-AF52-5925CEA1E9CA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microwave.Domain.UnitTests", "Microwave.Domain.UnitTests\Microwave.Domain.UnitTests.csproj", "{306D2634-E1A9-4C72-AEA5-AEB9FA26110F}"
 EndProject
