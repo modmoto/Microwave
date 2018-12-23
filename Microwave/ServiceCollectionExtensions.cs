@@ -92,7 +92,7 @@ namespace Microwave
                 config.Filters.Add(new ConcurrencyViolatedFilter());
             });
 
-            //services.RegisterBsonClassMaps(domainEventAssembly);
+            services.RegisterBsonClassMaps(domainEventAssembly);
 
             return services;
         }
