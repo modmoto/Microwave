@@ -25,7 +25,6 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
                 .AddJsonFile("appsettings.test.json")
                 .Build();
 
-
             var storeDependencies = collection.AddMicrowaveReadModels(typeof(TestEventHandler).Assembly, config);
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
