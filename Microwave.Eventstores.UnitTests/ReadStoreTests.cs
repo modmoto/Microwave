@@ -5,12 +5,11 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Domain;
 using Microwave.EventStores;
 using Microwave.ObjectPersistences;
-using MongoDB.Driver;
 
 namespace Microwave.Eventstores.UnitTests
 {
     [TestClass]
-    public class ReadStoreTests
+    public class ReadStoreTests : IntegrationTests
     {
         private readonly DomainEventFactory _domainEventFactory = new DomainEventFactory(new EventRegistration
         {
@@ -73,11 +72,7 @@ namespace Microwave.Eventstores.UnitTests
         [TestMethod]
         public async Task Entitystream_LoadEventsSince_IdNotDefault()
         {
-            var client = new MongoClient("mongodb://localhost:27017");
-            var database = client.GetDatabase("Entitystream_LoadEventsSince_IdNotDefault");
-            client.DropDatabase("Entitystream_LoadEventsSince_IdNotDefault");
-
-            var entityStreamRepository = new EventRepository(new EventDatabase(database));
+            var entityStreamRepository = new EventRepository(new EventDatabase(Database));
 
             var entityStreamTestEvent = new TestEv(Guid.NewGuid());
             await entityStreamRepository.AppendAsync(new[] {entityStreamTestEvent}, 0);

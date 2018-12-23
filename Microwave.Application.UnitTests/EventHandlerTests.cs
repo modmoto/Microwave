@@ -16,7 +16,7 @@ namespace Microwave.Application.UnitTests
         public async Task HandleIsOnlyCalledOnce()
         {
             var client = new MongoClient("mongodb://localhost:27017");
-            var database = client.GetDatabase("HandleIsOnlyCalledOnce");
+            var database = client.GetDatabase("IntegrationTest");
 
             var eventFeedMock = new Mock<IEventFeed<AsyncEventHandler<TestEv2>>>();
             var domainEventWrapper = new DomainEventWrapper
@@ -40,7 +40,7 @@ namespace Microwave.Application.UnitTests
             Assert.AreEqual(1, handleAsync.TimesCalled);
             Assert.AreEqual(1, handleAsync.TimesCalled);
 
-            client.DropDatabase("HandleIsOnlyCalledOnce");
+            client.DropDatabase("IntegrationTest");
         }
     }
 

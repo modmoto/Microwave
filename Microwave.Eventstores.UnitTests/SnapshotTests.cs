@@ -10,18 +10,14 @@ using MongoDB.Driver;
 namespace Microwave.Eventstores.UnitTests
 {
     [TestClass]
-    public class SnapshotTests
+    public class SnapshotTests  : IntegrationTests
     {
         [TestMethod]
         public async Task SnapshotRealized()
-        {
-            var client = new MongoClient("mongodb://localhost:27017");
-            var database = client.GetDatabase("SnapshotRealized");
-            client.DropDatabase("SnapshotRealized");
-            var mongoCollection = database.GetCollection<SnapShotDbo<User>>("SnapShotDbos");
+        {            var mongoCollection = Database.GetCollection<SnapShotDbo<User>>("SnapShotDbos");
 
-            var repo = new EventRepository(new EventDatabase(database));
-            var eventStore = new EventStore(repo, new SnapShotRepository(new EventDatabase(database)));
+            var repo = new EventRepository(new EventDatabase(Database));
+            var eventStore = new EventStore(repo, new SnapShotRepository(new EventDatabase(Database)));
 
             var entityId = Guid.NewGuid();
             await eventStore.AppendAsync(new List<IDomainEvent>

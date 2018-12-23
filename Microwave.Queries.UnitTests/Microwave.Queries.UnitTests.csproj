@@ -16,6 +16,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Microwave.DependencyInjectionExtensions\Microwave.DependencyInjectionExtensions.csproj" />
+      <ProjectReference Include="..\Microwave.Eventstores.UnitTests\Microwave.Eventstores.UnitTests.csproj" />
       <ProjectReference Include="..\Microwave.EventStores\Microwave.EventStores.csproj" />
       <ProjectReference Include="..\Microwave.ObjectPersistences\Microwave.ObjectPersistences.csproj" />
       <ProjectReference Include="..\Microwave.Queries\Microwave.Queries.csproj" />

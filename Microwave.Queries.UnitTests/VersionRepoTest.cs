@@ -1,20 +1,16 @@
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using MongoDB.Driver;
+using Microwave.Eventstores.UnitTests;
 
 namespace Microwave.Queries.UnitTests
 {
     [TestClass]
-    public class VersionRepoTest
+    public class VersionRepoTest : IntegrationTests
     {
         [TestMethod]
         public async Task VersionRepo_DuplicateUpdate()
         {
-            var client = new MongoClient("mongodb://localhost:27017");
-            var database = client.GetDatabase("VersionRepo_DuplicateUpdate");
-            client.DropDatabase("VersionRepo_DuplicateUpdate");
-
-            var versionRepository = new VersionRepository(new ReadModelDatabase(database));
+            var versionRepository = new VersionRepository(new ReadModelDatabase(Database));
 
             await versionRepository.SaveVersion(new LastProcessedVersion("Type", 1));
             await versionRepository.SaveVersion(new LastProcessedVersion("Type", 1));

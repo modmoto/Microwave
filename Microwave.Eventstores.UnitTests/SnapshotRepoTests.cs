@@ -5,21 +5,16 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Domain;
 using Microwave.EventStores;
-using MongoDB.Driver;
 
 namespace Microwave.Eventstores.UnitTests
 {
     [TestClass]
-    public class SnapshotRepoTests
+    public class SnapshotRepoTests : IntegrationTests
     {
         [TestMethod]
         public async Task LoadAndSaveSnapshotWithGuidList()
         {
-            var client = new MongoClient("mongodb://localhost:27017");
-            var database = client.GetDatabase("LoadAndSaveSnapshotWithGuidList");
-            client.DropDatabase("LoadAndSaveSnapshotWithGuidList");
-
-            var repo = new SnapShotRepository(new EventDatabase(database));
+            var repo = new SnapShotRepository(new EventDatabase(Database));
             var userSnapshot = new UserSnapshot();
 
             var entityId = Guid.NewGuid();

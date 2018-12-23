@@ -4,13 +4,13 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Application;
 using Microwave.Domain;
-using MongoDB.Driver;
+using Microwave.Eventstores.UnitTests;
 using Moq;
 
 namespace Microwave.Queries.UnitTests
 {
     [TestClass]
-    public class EventDelegateHandlerTests
+    public class EventDelegateHandlerTests : IntegrationTests
     {
         [TestMethod]
         public async Task MixedEventsInFeed()
@@ -39,10 +39,6 @@ namespace Microwave.Queries.UnitTests
         [TestMethod]
         public async Task MixedEventsInFeed_QuerryRepo()
         {
-            var client = new MongoClient("mongodb://localhost:27017");
-            var database = client.GetDatabase("MixedEventsInFeed_QuerryRepo");
-            client.DropDatabase("MixedEventsInFeed_QuerryRepo");
-
             var mock = new Mock<IEventFeed<QueryEventHandler<TestQ, TestEv>>>();
             IEnumerable<DomainEventWrapper> list = new [] { new DomainEventWrapper
                 {
@@ -58,7 +54,7 @@ namespace Microwave.Queries.UnitTests
             versionRepo.Setup(repo => repo.SaveVersion(It.IsAny<LastProcessedVersion>())).Returns(Task.CompletedTask);
             versionRepo.Setup(repo => repo.GetVersionAsync(It.IsAny<string>())).ReturnsAsync(0);
 
-            var queryRepository = new ReadModelRepository(new ReadModelDatabase(database));
+            var queryRepository = new ReadModelRepository(new ReadModelDatabase(Database));
 
             var eventDelegateHandler = new QueryEventHandler<TestQ, TestEv>(queryRepository, versionRepo.Object, mock.Object);
             await eventDelegateHandler.Update();

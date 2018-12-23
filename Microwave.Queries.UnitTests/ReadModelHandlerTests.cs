@@ -5,26 +5,22 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Application;
 using Microwave.Application.Results;
 using Microwave.Domain;
-using MongoDB.Driver;
+using Microwave.Eventstores.UnitTests;
 
 namespace Microwave.Queries.UnitTests
 {
     [TestClass]
-    public class ReadModelHandlerTests
+    public class ReadModelHandlerTests : IntegrationTests
     {
         [TestMethod]
         public async Task UpdateReadmodelHandler()
         {
-            var client = new MongoClient("mongodb://localhost:27017");
-            var database = client.GetDatabase("UpdateReadmodelHandler");
-            client.DropDatabase("UpdateReadmodelHandler");
-
             EntityGuid = Guid.NewGuid();
 
-            var queryRepository = new ReadModelRepository(new ReadModelDatabase(database));
+            var queryRepository = new ReadModelRepository(new ReadModelDatabase(Database));
 
             var readModelHandler = new ReadModelHandler<TestReadModelQuerries>(queryRepository,
-                new VersionRepository(new ReadModelDatabase(database)), new FeedMock2());
+                new VersionRepository(new ReadModelDatabase(Database)), new FeedMock2());
             await readModelHandler.Update();
 
             var result = await queryRepository.Load<TestReadModelQuerries>(EntityGuid);
@@ -36,17 +32,13 @@ namespace Microwave.Queries.UnitTests
         [TestMethod]
         public async Task UpdateModel_TwoEntities()
         {
-            var client = new MongoClient("mongodb://localhost:27017");
-            var database = client.GetDatabase("UpdateModel_TwoEntities");
-            client.DropDatabase("UpdateModel_TwoEntities");
-
             EntityGuid = Guid.NewGuid();
             EntityGuid2 = Guid.NewGuid();
 
-            var queryRepository = new ReadModelRepository(new ReadModelDatabase(database));
+            var queryRepository = new ReadModelRepository(new ReadModelDatabase(Database));
 
             var readModelHandler = new ReadModelHandler<TestReadModelQuerries>(queryRepository,
-                new VersionRepository(new ReadModelDatabase(database)), new FeedMock3());
+                new VersionRepository(new ReadModelDatabase(Database)), new FeedMock3());
 
             await readModelHandler.Update();
 
@@ -59,16 +51,12 @@ namespace Microwave.Queries.UnitTests
         [TestMethod]
         public async Task UpdateModel_EventsPresentThatAreNotHandleble()
         {
-            var client = new MongoClient("mongodb://localhost:27017");
-            var database = client.GetDatabase("UpdateModel_EventsPresentThatAreNotHandleble");
-            client.DropDatabase("UpdateModel_EventsPresentThatAreNotHandleble");
-
             EntityGuid = Guid.NewGuid();
             EntityGuid2 = Guid.NewGuid();
 
-            var queryRepository = new ReadModelRepository(new ReadModelDatabase(database));
+            var queryRepository = new ReadModelRepository(new ReadModelDatabase(Database));
 
-            var readModelHandler = new ReadModelHandler<TestReadModelQuerries>(queryRepository, new VersionRepository(new ReadModelDatabase(database)), new FeedMock4());
+            var readModelHandler = new ReadModelHandler<TestReadModelQuerries>(queryRepository, new VersionRepository(new ReadModelDatabase(Database)), new FeedMock4());
 
             await readModelHandler.Update();
 
@@ -82,17 +70,13 @@ namespace Microwave.Queries.UnitTests
         [TestMethod]
         public async Task UpdateModel_EventsNotAppliedStillUpdatesVersion()
         {
-            var client = new MongoClient("mongodb://localhost:27017");
-            var database = client.GetDatabase("UpdateModel_EventsNotAppliedStillUpdatesVersion");
-            client.DropDatabase("UpdateModel_EventsNotAppliedStillUpdatesVersion");
-
             EntityGuid = Guid.NewGuid();
 
-            var queryRepository = new ReadModelRepository(new ReadModelDatabase(database));
+            var queryRepository = new ReadModelRepository(new ReadModelDatabase(Database));
 
             var readModelHandler = new ReadModelHandler<TestReadModelQuerries_OnlyOneEventAndVersionIsCounted>(
                 queryRepository,
-                new VersionRepository(new ReadModelDatabase(database)),
+                new VersionRepository(new ReadModelDatabase(Database)),
                 new FeedMock5());
 
             await readModelHandler.Update();
@@ -106,18 +90,14 @@ namespace Microwave.Queries.UnitTests
         [TestMethod]
         public async Task UpdateModel_TwoParallelReadModelHandler_SerializationBug()
         {
-            var client = new MongoClient("mongodb://localhost:27017");
-            var database = client.GetDatabase("UpdateModel_TwoParallelReadModelHandler_SerializationBug");
-            client.DropDatabase("UpdateModel_TwoParallelReadModelHandler_SerializationBug");
-
             EntityGuid = Guid.NewGuid();
             EntityGuid2 = Guid.NewGuid();
 
-            var queryRepository = new ReadModelRepository(new ReadModelDatabase(database));
+            var queryRepository = new ReadModelRepository(new ReadModelDatabase(Database));
 
-            var readModelHandler = new ReadModelHandler<TestReadModelQuerries_TwoParallelFeeds1>(queryRepository, new VersionRepository(new ReadModelDatabase(database)), new FeedMock6());
+            var readModelHandler = new ReadModelHandler<TestReadModelQuerries_TwoParallelFeeds1>(queryRepository, new VersionRepository(new ReadModelDatabase(Database)), new FeedMock6());
 
-            var readModelHandler2 = new ReadModelHandler<TestReadModelQuerries_TwoParallelFeeds2>(queryRepository, new VersionRepository(new ReadModelDatabase(database)), new FeedMock7());
+            var readModelHandler2 = new ReadModelHandler<TestReadModelQuerries_TwoParallelFeeds2>(queryRepository, new VersionRepository(new ReadModelDatabase(Database)), new FeedMock7());
 
             await readModelHandler.Update();
             await readModelHandler2.Update();

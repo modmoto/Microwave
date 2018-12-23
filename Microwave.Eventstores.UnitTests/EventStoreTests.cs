@@ -7,13 +7,12 @@ using Microwave.Application.Results;
 using Microwave.Domain;
 using Microwave.EventStores;
 using Microwave.Queries;
-using MongoDB.Driver;
 using Moq;
 
 namespace Microwave.Eventstores.UnitTests
 {
     [TestClass]
-    public class EventStoreTests
+    public class EventStoreTests : IntegrationTests
     {
         [TestMethod]
         public async Task ApplyMethod_HappyPath()
@@ -83,15 +82,11 @@ namespace Microwave.Eventstores.UnitTests
         [TestMethod]
         public async Task IntegrationWithRepo()
         {
-            var client = new MongoClient("mongodb://localhost:27017");
-            var database = client.GetDatabase("IntegrationWithRepo");
-            client.DropDatabase("IntegrationWithRepo");
-
             var snapShotRepo = new Mock<ISnapShotRepository>();
             snapShotRepo.Setup(re => re.LoadSnapShot<TestEntity>(It.IsAny<Guid>()))
                 .ReturnsAsync(new DefaultSnapshot<TestEntity>());
             var entityId = Guid.NewGuid();
-            var eventStore = new EventStore(new EventRepository(new EventDatabase(database)), snapShotRepo.Object);
+            var eventStore = new EventStore(new EventRepository(new EventDatabase(Database)), snapShotRepo.Object);
 
             await eventStore.AppendAsync(new List<IDomainEvent> {new TestEventEventStore(entityId, "Test")}, 0);
             var loadAsync = await eventStore.LoadAsync<TestEntity>(entityId);
