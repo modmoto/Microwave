@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Domain;
 using Microwave.EventStores;
-using Mongo2Go;
 using MongoDB.Driver;
 
 namespace Microwave.Eventstores.UnitTests
@@ -16,8 +15,7 @@ namespace Microwave.Eventstores.UnitTests
         [TestMethod]
         public async Task SnapshotRealized()
         {
-            var runner = MongoDbRunner.Start("SnapshotRealized");
-            var client = new MongoClient(runner.ConnectionString);
+            var client = new MongoClient("mongodb://localhost:27017");
             var database = client.GetDatabase("SnapshotRealized");
             client.DropDatabase("SnapshotRealized");
             var mongoCollection = database.GetCollection<SnapShotDbo<User>>("SnapShotDbos");
@@ -61,8 +59,6 @@ namespace Microwave.Eventstores.UnitTests
             Assert.AreEqual(14, userSnapShot.Age);
             Assert.AreEqual("PeterNeu", userSnapShot.Name);
             Assert.AreEqual(entityId, userSnapShot.Id);
-
-            runner.Dispose();
         }
     }
 

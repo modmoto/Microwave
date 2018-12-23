@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Domain;
 using Microwave.EventStores;
-using Mongo2Go;
 using MongoDB.Driver;
 
 namespace Microwave.Eventstores.UnitTests
@@ -17,8 +16,7 @@ namespace Microwave.Eventstores.UnitTests
         [TestMethod]
         public async Task TestDeserializationOfIdInInterface_OwnBackingField()
         {
-            var runner = MongoDbRunner.Start("TestDeserializationOfIdInInterface_OwnBackingField");
-            var client = new MongoClient(runner.ConnectionString);
+            var client = new MongoClient("mongodb://localhost:27017");
             var database = client.GetDatabase("TestDeserializationOfIdInInterface_OwnBackingField");
             client.DropDatabase("TestDeserializationOfIdInInterface_OwnBackingField");
 
@@ -33,8 +31,7 @@ namespace Microwave.Eventstores.UnitTests
         [TestMethod]
         public async Task TestDeserializationOfIdInInterface_GetAutoProperty()
         {
-            var runner = MongoDbRunner.Start("TestDeserializationOfIdInInterface_GetAutoProperty");
-            var client = new MongoClient(runner.ConnectionString);
+            var client = new MongoClient("mongodb://localhost:27017");
             var database = client.GetDatabase("TestDeserializationOfIdInInterface_GetAutoProperty");
             client.DropDatabase("TestDeserializationOfIdInInterface_GetAutoProperty");
 
@@ -50,8 +47,7 @@ namespace Microwave.Eventstores.UnitTests
         [TestMethod]
         public async Task TestDeserializationOfIdInInterface()
         {
-            var runner = MongoDbRunner.Start("TestDeserializationOfIdInInterface");
-            var client = new MongoClient(runner.ConnectionString);
+            var client = new MongoClient("mongodb://localhost:27017");
             var database = client.GetDatabase("TestDeserializationOfIdInInterface");
             client.DropDatabase("TestDeserializationOfIdInInterface");
 

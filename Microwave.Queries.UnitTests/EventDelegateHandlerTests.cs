@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Application;
 using Microwave.Domain;
-using Mongo2Go;
 using MongoDB.Driver;
 using Moq;
 
@@ -40,8 +39,7 @@ namespace Microwave.Queries.UnitTests
         [TestMethod]
         public async Task MixedEventsInFeed_QuerryRepo()
         {
-            var runner = MongoDbRunner.Start("MixedEventsInFeed_QuerryRepo");
-            var client = new MongoClient(runner.ConnectionString);
+            var client = new MongoClient("mongodb://localhost:27017");
             var database = client.GetDatabase("MixedEventsInFeed_QuerryRepo");
             client.DropDatabase("MixedEventsInFeed_QuerryRepo");
 
@@ -67,8 +65,6 @@ namespace Microwave.Queries.UnitTests
 
             var result = await queryRepository.Load<TestQ>();
             Assert.AreEqual(1, result.Value.WasCalled);
-
-            runner.Dispose();
         }
     }
 

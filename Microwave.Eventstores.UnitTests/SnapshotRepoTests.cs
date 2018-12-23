@@ -1,4 +1,3 @@
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,7 +5,6 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Domain;
 using Microwave.EventStores;
-using Mongo2Go;
 using MongoDB.Driver;
 
 namespace Microwave.Eventstores.UnitTests
@@ -17,8 +15,7 @@ namespace Microwave.Eventstores.UnitTests
         [TestMethod]
         public async Task LoadAndSaveSnapshotWithGuidList()
         {
-            var runner = MongoDbRunner.Start("LoadAndSaveSnapshotWithGuidList");
-            var client = new MongoClient(runner.ConnectionString);
+            var client = new MongoClient("mongodb://localhost:27017");
             var database = client.GetDatabase("LoadAndSaveSnapshotWithGuidList");
             client.DropDatabase("LoadAndSaveSnapshotWithGuidList");
 

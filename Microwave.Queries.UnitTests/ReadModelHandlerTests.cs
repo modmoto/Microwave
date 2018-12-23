@@ -5,8 +5,6 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Application;
 using Microwave.Application.Results;
 using Microwave.Domain;
-using Mongo2Go;
-using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
 
 namespace Microwave.Queries.UnitTests
@@ -17,8 +15,7 @@ namespace Microwave.Queries.UnitTests
         [TestMethod]
         public async Task UpdateReadmodelHandler()
         {
-            var runner = MongoDbRunner.Start("UpdateReadmodelHandler");
-            var client = new MongoClient(runner.ConnectionString);
+            var client = new MongoClient("mongodb://localhost:27017");
             var database = client.GetDatabase("UpdateReadmodelHandler");
             client.DropDatabase("UpdateReadmodelHandler");
 
@@ -34,15 +31,12 @@ namespace Microwave.Queries.UnitTests
             Assert.AreEqual(EntityGuid, result.Value.Id);
             Assert.AreEqual(14, result.Value.Version);
             Assert.AreEqual("testName", result.Value.ReadModel.Name);
-
-            runner.Dispose();
         }
 
         [TestMethod]
         public async Task UpdateModel_TwoEntities()
         {
-            var runner = MongoDbRunner.Start("UpdateModel_TwoEntities");
-            var client = new MongoClient(runner.ConnectionString);
+            var client = new MongoClient("mongodb://localhost:27017");
             var database = client.GetDatabase("UpdateModel_TwoEntities");
             client.DropDatabase("UpdateModel_TwoEntities");
 
@@ -60,15 +54,12 @@ namespace Microwave.Queries.UnitTests
             var result2 = await queryRepository.Load<TestReadModelQuerries>(EntityGuid2);
             Assert.AreEqual(EntityGuid, result.Value.Id);
             Assert.AreEqual(EntityGuid2, result2.Value.Id);
-
-            runner.Dispose();
         }
 
         [TestMethod]
         public async Task UpdateModel_EventsPresentThatAreNotHandleble()
         {
-            var runner = MongoDbRunner.Start("UpdateModel_EventsPresentThatAreNotHandleble");
-            var client = new MongoClient(runner.ConnectionString);
+            var client = new MongoClient("mongodb://localhost:27017");
             var database = client.GetDatabase("UpdateModel_EventsPresentThatAreNotHandleble");
             client.DropDatabase("UpdateModel_EventsPresentThatAreNotHandleble");
 
@@ -86,15 +77,12 @@ namespace Microwave.Queries.UnitTests
             Assert.AreEqual(EntityGuid, result.Value.Id);
             var condition = result2.Is<NotFound>();
             Assert.IsTrue(condition);
-
-            runner.Dispose();
         }
 
         [TestMethod]
         public async Task UpdateModel_EventsNotAppliedStillUpdatesVersion()
         {
-            var runner = MongoDbRunner.Start("UpdateModel_EventsNotAppliedStillUpdatesVersion");
-            var client = new MongoClient(runner.ConnectionString);
+            var client = new MongoClient("mongodb://localhost:27017");
             var database = client.GetDatabase("UpdateModel_EventsNotAppliedStillUpdatesVersion");
             client.DropDatabase("UpdateModel_EventsNotAppliedStillUpdatesVersion");
 
@@ -113,15 +101,12 @@ namespace Microwave.Queries.UnitTests
             Assert.AreEqual(14, result.Value.Version);
             Assert.AreEqual(null, result.Value.ReadModel.Name);
             Assert.AreEqual(EntityGuid, result.Value.ReadModel.Id);
-
-            runner.Dispose();
         }
 
         [TestMethod]
         public async Task UpdateModel_TwoParallelReadModelHandler_SerializationBug()
         {
-            var runner = MongoDbRunner.Start("UpdateModel_TwoParallelReadModelHandler_SerializationBug");
-            var client = new MongoClient(runner.ConnectionString);
+            var client = new MongoClient("mongodb://localhost:27017");
             var database = client.GetDatabase("UpdateModel_TwoParallelReadModelHandler_SerializationBug");
             client.DropDatabase("UpdateModel_TwoParallelReadModelHandler_SerializationBug");
 
@@ -141,8 +126,6 @@ namespace Microwave.Queries.UnitTests
             var result2 = await queryRepository.Load<TestReadModelQuerries_TwoParallelFeeds2>(EntityGuid2);
             Assert.AreEqual(EntityGuid, result.Value.ReadModel.Id);
             Assert.AreEqual(EntityGuid2, result2.Value.ReadModel.IdTotallyDifferenzt);
-
-            runner.Dispose();
         }
 
         [TestMethod]

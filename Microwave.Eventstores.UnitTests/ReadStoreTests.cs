@@ -5,7 +5,6 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Domain;
 using Microwave.EventStores;
 using Microwave.ObjectPersistences;
-using Mongo2Go;
 using MongoDB.Driver;
 
 namespace Microwave.Eventstores.UnitTests
@@ -74,8 +73,7 @@ namespace Microwave.Eventstores.UnitTests
         [TestMethod]
         public async Task Entitystream_LoadEventsSince_IdNotDefault()
         {
-            var runner = MongoDbRunner.Start("Entitystream_LoadEventsSince_IdNotDefault");
-            var client = new MongoClient(runner.ConnectionString);
+            var client = new MongoClient("mongodb://localhost:27017");
             var database = client.GetDatabase("Entitystream_LoadEventsSince_IdNotDefault");
             client.DropDatabase("Entitystream_LoadEventsSince_IdNotDefault");
 
@@ -88,8 +86,6 @@ namespace Microwave.Eventstores.UnitTests
 
             Assert.AreEqual(entityStreamTestEvent.EntityId, eventsSince.Value.Single().DomainEvent.EntityId);
             Assert.AreNotEqual(entityStreamTestEvent.EntityId, Guid.Empty);
-
-            runner.Dispose();
         }
     }
 

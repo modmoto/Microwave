@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Application.Results;
-using Mongo2Go;
 using MongoDB.Driver;
 
 namespace Microwave.Queries.UnitTests
@@ -15,8 +14,7 @@ namespace Microwave.Queries.UnitTests
         [TestMethod]
         public async Task IdentifiableQuerySaveAndLoad()
         {
-            var runner = MongoDbRunner.Start("IdentifiableQuerySaveAndLoad");
-            var client = new MongoClient(runner.ConnectionString);
+            var client = new MongoClient("mongodb://localhost:27017");
             var database = client.GetDatabase("IdentifiableQuerySaveAndLoad");
             client.DropDatabase("IdentifiableQuerySaveAndLoad");
 
@@ -32,15 +30,12 @@ namespace Microwave.Queries.UnitTests
             Assert.AreEqual(guid, querry1.Id);
             Assert.AreEqual("Test", querry1.ReadModel.UserName);
             Assert.AreEqual("Jeah", querry1.ReadModel.Strings.First());
-
-            runner.Dispose();
         }
 
         [TestMethod]
         public async Task InsertQuery()
         {
-            var runner = MongoDbRunner.Start("InsertQuery");
-            var client = new MongoClient(runner.ConnectionString);
+            var client = new MongoClient("mongodb://localhost:27017");
             var database = client.GetDatabase("InsertQuery");
             client.DropDatabase("InsertQuery");
 
@@ -50,15 +45,12 @@ namespace Microwave.Queries.UnitTests
             var query = (await queryRepository.Load<TestQuerry>()).Value;
 
             Assert.AreEqual("Test", query.UserName);
-
-            runner.Dispose();
         }
 
         [TestMethod]
         public async Task InsertQuery_ConcurrencyProblem()
         {
-            var runner = MongoDbRunner.Start("InsertQuery_ConcurrencyProblem");
-            var client = new MongoClient(runner.ConnectionString);
+            var client = new MongoClient("mongodb://localhost:27017");
             var database = client.GetDatabase("InsertQuery_ConcurrencyProblem");
             client.DropDatabase("InsertQuery_ConcurrencyProblem");
 
@@ -69,15 +61,12 @@ namespace Microwave.Queries.UnitTests
             var save2 = queryRepository.Save(testQuery2);
 
             await Task.WhenAll(new List<Task> { save, save2});
-
-            runner.Dispose();
         }
 
         [TestMethod]
         public async Task InsertIDQuery_ConcurrencyProblem()
         {
-            var runner = MongoDbRunner.Start("InsertIDQuery_ConcurrencyProblem");
-            var client = new MongoClient(runner.ConnectionString);
+            var client = new MongoClient("mongodb://localhost:27017");
             var database = client.GetDatabase("InsertIDQuery_ConcurrencyProblem");
             client.DropDatabase("InsertIDQuery_ConcurrencyProblem");
 
@@ -95,15 +84,12 @@ namespace Microwave.Queries.UnitTests
 
             var resultOfLoad = await queryRepository.Load<TestReadModel>(guid);
             Assert.AreEqual(2, resultOfLoad.Value.Version);
-
-            runner.Dispose();
         }
 
         [TestMethod]
         public async Task UpdateQuery()
         {
-            var runner = MongoDbRunner.Start("UpdateQuery");
-            var client = new MongoClient(runner.ConnectionString);
+            var client = new MongoClient("mongodb://localhost:27017");
             var database = client.GetDatabase("UpdateQuery");
             client.DropDatabase("UpdateQuery");
 
@@ -113,15 +99,12 @@ namespace Microwave.Queries.UnitTests
             var query = (await queryRepository.Load<TestQuerry>()).Value;
 
             Assert.AreEqual("NewName", query.UserName);
-
-            runner.Dispose();
         }
 
         [TestMethod]
         public async Task LoadAllReadModels()
         {
-            var runner = MongoDbRunner.Start("LoadAllReadModels");
-            var client = new MongoClient(runner.ConnectionString);
+            var client = new MongoClient("mongodb://localhost:27017");
             var database = client.GetDatabase("LoadAllReadModels");
             client.DropDatabase("LoadAllReadModels");
 
@@ -142,15 +125,12 @@ namespace Microwave.Queries.UnitTests
             Assert.AreEqual(2, readModelWrappers.Count);
             Assert.AreEqual(testQuery.UserName, readModelWrappers[0].ReadModel.UserName);
             Assert.AreEqual(testQuery2.UserName, readModelWrappers[1].ReadModel.UserName);
-
-            runner.Dispose();
         }
 
         [TestMethod]
         public async Task LoadTwoTypesOfReadModels_Bug()
         {
-            var runner = MongoDbRunner.Start("LoadTwoTypesOfReadModels_Bug");
-            var client = new MongoClient(runner.ConnectionString);
+            var client = new MongoClient("mongodb://localhost:27017");
             var database = client.GetDatabase("LoadTwoTypesOfReadModels_Bug");
             client.DropDatabase("LoadTwoTypesOfReadModels_Bug");
 
@@ -164,8 +144,6 @@ namespace Microwave.Queries.UnitTests
             var loadAll2 = await queryRepository.Load<TestReadModel>(guid2);
 
             Assert.IsTrue(loadAll2.Is<NotFound>());
-
-            runner.Dispose();
         }
     }
 

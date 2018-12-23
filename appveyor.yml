@@ -13,6 +13,9 @@ dotnet_csproj:
   file_version: '{version}'
   informational_version: '{version}'
 
+services:
+- mongodb
+
 init:
 - git config --global core.autocrlf false
 
@@ -29,6 +32,9 @@ environment:
 
 build_script:
 - dotnet build
+
+test_script:
+- dotnet test
 
 artifacts:
 - path: '**\*.nupkg'

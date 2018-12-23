@@ -7,7 +7,6 @@ using Microwave.Application.Results;
 using Microwave.Domain;
 using Microwave.EventStores;
 using Microwave.Queries;
-using Mongo2Go;
 using MongoDB.Driver;
 using Moq;
 
@@ -84,8 +83,7 @@ namespace Microwave.Eventstores.UnitTests
         [TestMethod]
         public async Task IntegrationWithRepo()
         {
-            var runner = MongoDbRunner.Start("IntegrationWithRepo");
-            var client = new MongoClient(runner.ConnectionString);
+            var client = new MongoClient("mongodb://localhost:27017");
             var database = client.GetDatabase("IntegrationWithRepo");
             client.DropDatabase("IntegrationWithRepo");
 
