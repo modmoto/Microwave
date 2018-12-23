@@ -92,7 +92,7 @@ namespace Microwave
                 config.Filters.Add(new ConcurrencyViolatedFilter());
             });
 
-            services.RegisterBsonClassMaps(domainEventAssembly);
+            //services.RegisterBsonClassMaps(domainEventAssembly);
 
             return services;
         }
@@ -114,13 +114,11 @@ namespace Microwave
             var registerClassMapMethod = typeof(BsonClassMap).GetMethods().Single(m => m.Name == nameof(BsonClassMap
             .RegisterClassMap) && m.IsGenericMethod && m.GetParameters().Length == 0);
             var domainEventTypes = assembly.GetTypes().Where(ev => ev.GetInterfaces().Contains(typeof(IDomainEvent)));
-            var eventRegistration = new EventRegistration();
             foreach (var domainEventType in domainEventTypes)
             {
                 var makeGenericMethod = registerClassMapMethod.MakeGenericMethod(domainEventType);
                 makeGenericMethod.Invoke(null, null);
             }
-            services.AddSingleton(eventRegistration);
             return services;
         }
 
