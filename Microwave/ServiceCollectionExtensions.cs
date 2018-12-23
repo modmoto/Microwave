@@ -11,6 +11,7 @@ using Microwave.ObjectPersistences;
 using Microwave.Queries;
 using Microwave.WebApi;
 using Microwave.WebApi.Filters;
+using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
 
 namespace Microwave
@@ -100,6 +101,7 @@ namespace Microwave
             foreach (var domainEventType in domainEventTypes)
             {
                 eventRegistration.Add(domainEventType.Name, domainEventType);
+                BsonClassMap.LookupClassMap(domainEventType);
             }
             services.AddSingleton(eventRegistration);
             return services;
