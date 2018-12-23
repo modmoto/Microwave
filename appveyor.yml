@@ -43,11 +43,5 @@ test_script:
 artifacts:
 - path: '**\*.nupkg'
 
-deploy:
-- provider: NuGet
-  symbol_server: https://ci.appveyor.com/nuget/lauchi-jwih9ne6cq4t/api/v2/package
-  api_key: e7jrjjfqck2ajelalqvp5sl6
-  artifact: /.*\.symbols\.nupkg/
-
 after_build:
 - ps: Get-ChildItem .**\*.nupkg | % { Push-AppveyorArtifact $_.FullName -FileName $_.Name }
