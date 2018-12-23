@@ -2,7 +2,7 @@ using System;
 using Microsoft.Extensions.Configuration;
 using Microwave.Queries;
 
-namespace Microwave.DependencyInjectionExtensions
+namespace Microwave
 {
     public class EventLocationConfig : IEventLocationConfig
     {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microwave.Queries;
 
-namespace Microwave.DependencyInjectionExtensions
+namespace Microwave
 {
     // TODO remove this hack with actors or something (Task will break on exceptions)
     public class AsyncEventDelegator

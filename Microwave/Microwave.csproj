@@ -4,7 +4,7 @@
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageVersion>0.4.8</PackageVersion>
     <DebugType>full</DebugType>
-    <RootNamespace>Microwave.DependencyInjectionExtensions</RootNamespace>
+    <RootNamespace>Microwave</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.AspNetCore.Http.Abstractions, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60">

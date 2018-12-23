@@ -13,7 +13,7 @@ using Microwave.WebApi;
 using Microwave.WebApi.Filters;
 using MongoDB.Driver;
 
-namespace Microwave.DependencyInjectionExtensions
+namespace Microwave
 {
     public static class ServiceCollectionExtensions
     {
