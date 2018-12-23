@@ -34,7 +34,7 @@ namespace Microwave
         }
 
         public static IServiceCollection AddMicrowaveReadModels(this IServiceCollection services,
-            Assembly assembly, IConfiguration configuration)
+            Assembly readModelAssembly, IConfiguration configuration)
         {
             services.AddTransient(option =>
             {
@@ -57,16 +57,17 @@ namespace Microwave
             services.AddTransient<IDomainEventFactory, DomainEventFactory>();
             services.AddSingleton<IEventLocationConfig>(new EventLocationConfig(configuration));
 
-            services.AddQuerryHandling(assembly);
-            services.AddEventDelegateHandling(assembly);
-            services.AddReadmodelHandling(assembly);
+            services.AddQuerryHandling(readModelAssembly);
+            services.AddEventDelegateHandling(readModelAssembly);
+            services.AddReadmodelHandling(readModelAssembly);
 
-            services.AddDomainEventRegistration(assembly);
+            services.AddDomainEventRegistration(readModelAssembly);
 
             return services;
         }
 
-        public static IServiceCollection AddMicrowave(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddMicrowave(this IServiceCollection services,
+            Assembly domainEventAssembly, IConfiguration configuration)
         {
             services.AddTransient(option =>
             {
@@ -91,6 +92,8 @@ namespace Microwave
                 config.Filters.Add(new ConcurrencyViolatedFilter());
             });
 
+            services.RegisterBsonClassMaps(domainEventAssembly);
+
             return services;
         }
 
@@ -101,6 +104,17 @@ namespace Microwave
             foreach (var domainEventType in domainEventTypes)
             {
                 eventRegistration.Add(domainEventType.Name, domainEventType);
+            }
+            services.AddSingleton(eventRegistration);
+            return services;
+        }
+
+        private static IServiceCollection RegisterBsonClassMaps(this IServiceCollection services, Assembly assembly)
+        {
+            var domainEventTypes = assembly.GetTypes().Where(ev => ev.GetInterfaces().Contains(typeof(IDomainEvent)));
+            var eventRegistration = new EventRegistration();
+            foreach (var domainEventType in domainEventTypes)
+            {
                 BsonClassMap.RegisterClassMap(new BsonClassMap(domainEventType));
             }
             services.AddSingleton(eventRegistration);

@@ -90,9 +90,13 @@ namespace Microwave.Eventstores.UnitTests
 
             await eventStore.AppendAsync(new List<IDomainEvent> {new TestEventEventStore(entityId, "Test")}, 0);
             var loadAsync = await eventStore.LoadAsync<TestEntity>(entityId);
+            var loadAsync2 = await eventStore.LoadAsync<TestEntity>(entityId);
 
             Assert.AreEqual(entityId, loadAsync.Entity.Id);
             Assert.AreEqual("Test", loadAsync.Entity.Name);
+
+            Assert.AreEqual(entityId, loadAsync2.Entity.Id);
+            Assert.AreEqual("Test", loadAsync2.Entity.Name);
         }
     }
 

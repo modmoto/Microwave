@@ -93,10 +93,6 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
             Assert.AreEqual(eventRegister[nameof(TestDomainEvent1)], typeof(TestDomainEvent1));
             Assert.AreEqual(eventRegister[nameof(TestDomainEvent2)], typeof(TestDomainEvent2));
             Assert.AreEqual(eventRegister[nameof(TestDomainEvent3)], typeof(TestDomainEvent3));
-
-            Assert.IsTrue(BsonClassMap.IsClassMapRegistered(typeof(TestDomainEvent1)));
-            Assert.IsTrue(BsonClassMap.IsClassMapRegistered(typeof(TestDomainEvent2)));
-            Assert.IsTrue(BsonClassMap.IsClassMapRegistered(typeof(TestDomainEvent3)));
         }
 
         [TestMethod]
@@ -128,12 +124,16 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
 
             var collection = (IServiceCollection) new ServiceCollection();
 
-            var storeDependencies = collection.AddMicrowave(config);
+            var storeDependencies = collection.AddMicrowave(typeof(TestDomainEvent1).Assembly, config);
 
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
             var store = buildServiceProvider.GetServices<IEventStore>().FirstOrDefault();
             Assert.IsNotNull(store);
+
+            Assert.IsTrue(BsonClassMap.IsClassMapRegistered(typeof(TestDomainEvent1)));
+            Assert.IsTrue(BsonClassMap.IsClassMapRegistered(typeof(TestDomainEvent2)));
+            Assert.IsTrue(BsonClassMap.IsClassMapRegistered(typeof(TestDomainEvent3)));
         }
     }
 
