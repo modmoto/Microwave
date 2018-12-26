@@ -31,7 +31,7 @@ namespace Microwave.Domain
             Id = id;
         }
 
-        public static StringIdentity Create(string id)
+        public new static StringIdentity Create(string id)
         {
             return new StringIdentity(id);
         }
