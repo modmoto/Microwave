@@ -11,9 +11,19 @@ namespace Microwave.Domain
     {
         public string Id { get; protected set; }
 
+        public static bool operator== (Identity id1, Identity id2)
+        {
+            return (id1?.Id ?? string.Empty) == (id2?.Id ?? string.Empty);
+        }
+
+        public static bool operator!= (Identity id1, Identity id2)
+        {
+            return id1?.Equals(id2) == false;
+        }
+
         public bool Equals(Identity other)
         {
-            return string.Equals(Id, other.Id);
+            return String.Equals(Id, other?.Id);
         }
 
         public static Identity Create(string entityId)

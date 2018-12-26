@@ -67,7 +67,7 @@ namespace Microwave.Eventstores.UnitTests
             Assert.AreNotEqual(0, loadEventsByEntity.Value.ToList()[1].Created);
             Assert.AreEqual(1, loadEventsByEntity.Value.ToList()[0].Version);
             Assert.AreEqual(2, loadEventsByEntity.Value.ToList()[1].Version);
-            Assert.IsTrue(newGuid.Equals(loadEventsByEntity.Value.ToList()[0].DomainEvent.EntityId));
+            Assert.IsTrue(newGuid == loadEventsByEntity.Value.ToList()[0].DomainEvent.EntityId);
         }
 
         [TestMethod]
@@ -242,7 +242,7 @@ namespace Microwave.Eventstores.UnitTests
             var result = await eventRepository.LoadEventsByTypeAsync(testEvent1.GetType().Name, 0);
             var domainEvent = result.Value.Single().DomainEvent;
 
-            Assert.IsTrue(domainEvent.EntityId.Equals(testEvent1.EntityId));
+            Assert.IsTrue(domainEvent.EntityId == testEvent1.EntityId);
         }
 
         [TestMethod]

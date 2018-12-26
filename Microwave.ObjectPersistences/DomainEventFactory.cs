@@ -61,7 +61,8 @@ namespace Microwave.ObjectPersistences
             var jToken = jObject.GetValue(nameof(Identity.Id), StringComparison.Ordinal);
             if (jToken == null) jToken = jObject.GetValue("id", StringComparison.Ordinal);
             var id = jToken.Value<string>();
-            return Identity.Create(id);
+            var identity = Identity.Create(id);
+            return identity;
         }
 
         public override bool CanWrite => false;
