@@ -8,7 +8,7 @@ namespace Microwave.Domain
         Identity EntityId { get; }
     }
 
-    public abstract class Identity : IEquatable<Identity>, IEqualityComparer<Identity>
+    public abstract class Identity : IEquatable<Identity>
     {
         public string Id { get; protected set; }
 
@@ -40,21 +40,11 @@ namespace Microwave.Domain
             return StringIdentity.Create(entityId);
         }
 
-        public bool Equals(Identity other)
+        public virtual bool Equals(Identity other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
             return string.Equals(Id, other.Id);
-        }
-
-        public bool Equals(Identity x, Identity y)
-        {
-            return x?.Equals(y) == true;
-        }
-
-        public int GetHashCode(Identity obj)
-        {
-            return obj.GetHashCode();
         }
     }
 
