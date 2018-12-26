@@ -27,7 +27,7 @@ namespace Microwave.ObjectPersistences
             for (int i = 0; i < eventWrappers.Count; i++)
             {
                 var domainEventWrapper = eventWrappers[i];
-                if (domainEventWrapper.DomainEvent.EntityId?.Id == domainEventWrapper.DomainEvent.EntityId?.DefaultValue)
+                if (domainEventWrapper.DomainEvent.EntityId == null)
                 {
                     var jTokenDomainEvent = jobjectList[i].GetValue(nameof(domainEventWrapper.DomainEvent),
                         StringComparison.OrdinalIgnoreCase).ToObject<JObject>();

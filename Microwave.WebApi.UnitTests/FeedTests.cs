@@ -22,7 +22,7 @@ namespace Microwave.WebApi.UnitTests
         {
             var mockHttp = new MockHttpMessageHandler();
             mockHttp.When("http://localost:5000/api/DomainEvents/?timeStamp=0")
-                .Respond("application/json", "[{ \"domainEventType\": \"UNKNOWN_TYPE\",\"version\": 12, \"created\": 14, \"domainEvent\": {\"EntityId\" : {\"Id\": \"5a8b63c8-0f7f-4de7-a9e5-b6b377aa2180\" }}}, { \"domainEventType\": \"TestEv\",\"version\": 12, \"created\": 14, \"domainEvent\": {\"EntityId\" : {\"Id\": \"5a8b63c8-0f7f-4de7-a9e5-b6b377aa2180\" } }}]");
+                .Respond("application/json", "[{ \"domainEventType\": \"UNKNOWN_TYPE\",\"version\": 12, \"created\": 14, \"domainEvent\": {\"EntityId\" : {\"Id\": \"5a8b63c8-0f7f-4de7-a9e5-b6b377aa2180\", \"DefaultValue\": \"\" }}}, { \"domainEventType\": \"TestEv\",\"version\": 12, \"created\": 14, \"domainEvent\": {\"EntityId\" : {\"Id\": \"5a8b63c8-0f7f-4de7-a9e5-b6b377aa2180\" } }}]");
 
             var domainOverallEventClient = new DomainEventClient<ReadModelHandler<TestReadModel>>(mockHttp);
             domainOverallEventClient.BaseAddress = new Uri("http://localost:5000/api/DomainEvents/");

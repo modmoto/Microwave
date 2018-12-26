@@ -9,7 +9,6 @@ namespace Microwave.Domain
 
     public abstract class Identity
     {
-        public abstract string DefaultValue { get; }
         public string Id { get; protected set; }
 
         public bool Equals(Identity other)
@@ -32,8 +31,6 @@ namespace Microwave.Domain
             Id = id;
         }
 
-        public override string DefaultValue => string.Empty;
-
         public static StringIdentity Create(string id)
         {
             return new StringIdentity(id);
@@ -46,8 +43,6 @@ namespace Microwave.Domain
         {
             Id = id;
         }
-
-        public override string DefaultValue => Guid.Empty.ToString();
 
         public static GuidIdentity Create(Guid id)
         {
