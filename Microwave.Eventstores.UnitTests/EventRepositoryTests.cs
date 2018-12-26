@@ -7,7 +7,6 @@ using Microwave.Application.Exceptions;
 using Microwave.Application.Results;
 using Microwave.Domain;
 using Microwave.EventStores;
-using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
 
 namespace Microwave.Eventstores.UnitTests

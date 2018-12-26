@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Reflection;
 using Microwave.Domain;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace Microwave.ObjectPersistences

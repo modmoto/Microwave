@@ -57,8 +57,8 @@ namespace Microwave.ObjectPersistences
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
-            JObject jo = JObject.Load(reader);
-            var id = (string)jo[nameof(Identity.Id)];
+            JObject jObject = JObject.Load(reader);
+            var id = jObject.GetValue(nameof(Identity.Id), StringComparison.Ordinal).Value<string>();
             return Identity.Create(id);
         }
 
