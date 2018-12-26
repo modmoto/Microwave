@@ -12,12 +12,14 @@ namespace Microwave.Queries
     public class ReadModelRepository : IReadModelRepository
     {
         private readonly IMongoDatabase _database;
-        private readonly string _queryCollectionName = "QueryDbos";
-        private readonly string _readModelCollectionName = "ReadModelDbos";
+        private readonly string _queryCollectionName;
+        private readonly string _readModelCollectionName;
 
         public ReadModelRepository(ReadModelDatabase database)
         {
             _database = database.Database;
+            _queryCollectionName = database.QueryCollectionName;
+            _readModelCollectionName = database.ReadModelCollectionName;
         }
 
         public async Task<Result<T>> Load<T>() where T : Query

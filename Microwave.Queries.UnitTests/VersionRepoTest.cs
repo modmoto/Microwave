@@ -10,7 +10,7 @@ namespace Microwave.Queries.UnitTests
         [TestMethod]
         public async Task VersionRepo_DuplicateUpdate()
         {
-            var versionRepository = new VersionRepository(new ReadModelDatabase(Database));
+            var versionRepository = new VersionRepository(ReadModelDatabase);
 
             await versionRepository.SaveVersion(new LastProcessedVersion("Type", 1));
             await versionRepository.SaveVersion(new LastProcessedVersion("Type", 1));

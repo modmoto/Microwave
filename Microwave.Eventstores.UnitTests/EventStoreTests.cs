@@ -86,7 +86,7 @@ namespace Microwave.Eventstores.UnitTests
             snapShotRepo.Setup(re => re.LoadSnapShot<TestEntity>(It.IsAny<Identity>()))
                 .ReturnsAsync(new DefaultSnapshot<TestEntity>());
             var entityId = GuidIdentity.Create(Guid.NewGuid());
-            var eventStore = new EventStore(new EventRepository(new EventDatabase(Database)), snapShotRepo.Object);
+            var eventStore = new EventStore(new EventRepository(EventDatabase), snapShotRepo.Object);
 
             await eventStore.AppendAsync(new List<IDomainEvent> {new TestEventEventStore(entityId, "Test")}, 0);
             var loadAsync = await eventStore.LoadAsync<TestEntity>(entityId);

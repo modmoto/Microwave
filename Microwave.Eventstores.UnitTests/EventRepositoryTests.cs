@@ -17,7 +17,7 @@ namespace Microwave.Eventstores.UnitTests
         [TestMethod]
         public async Task AddAndLoadEvents()
         {
-            var eventRepository = new EventRepository(new EventDatabase(Database));
+            var eventRepository = new EventRepository(EventDatabase);
 
             var newGuid = GuidIdentity.Create(Guid.NewGuid());
             var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid), new TestEvent3(newGuid, "TestName")};
@@ -37,7 +37,7 @@ namespace Microwave.Eventstores.UnitTests
         [TestMethod]
         public async Task AddAndLoadEvents_ParamCalledWrong()
         {
-            var eventRepository = new EventRepository(new EventDatabase(Database));
+            var eventRepository = new EventRepository(EventDatabase);
 
             var newGuid = GuidIdentity.Create(Guid.NewGuid());
             var events = new List<IDomainEvent> { new TestEvent_ParameterCalledWrong(newGuid)};
@@ -51,7 +51,7 @@ namespace Microwave.Eventstores.UnitTests
         [TestMethod]
         public async Task LoadDomainEvents_IdAndStuffIsSetCorreclty()
         {
-            var eventRepository = new EventRepository(new EventDatabase(Database));
+            var eventRepository = new EventRepository(EventDatabase);
 
             var newGuid = GuidIdentity.Create(Guid.NewGuid());
             var testEvent1 = new TestEvent1(newGuid);
@@ -73,7 +73,7 @@ namespace Microwave.Eventstores.UnitTests
         [TestMethod]
         public async Task AddAndLoadEventsConcurrent()
         {
-            var eventRepository = new EventRepository(new EventDatabase(Database));
+            var eventRepository = new EventRepository(EventDatabase);
 
             var newGuid = GuidIdentity.Create(Guid.NewGuid());
             var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid)};
@@ -94,7 +94,7 @@ namespace Microwave.Eventstores.UnitTests
         [TestMethod]
         public async Task AddEmptyEventListt()
         {
-            var eventRepository = new EventRepository(new EventDatabase(Database));
+            var eventRepository = new EventRepository(EventDatabase);
 
             var appendAsync = await eventRepository.AppendAsync(new List<IDomainEvent>(), 0);
             appendAsync.Check();
@@ -103,7 +103,7 @@ namespace Microwave.Eventstores.UnitTests
         [TestMethod]
         public async Task LoadEventsByTypeAsync()
         {
-            var eventRepository = new EventRepository(new EventDatabase(Database));
+            var eventRepository = new EventRepository(EventDatabase);
 
             var newGuid = GuidIdentity.Create(Guid.NewGuid());
             var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid), new TestEvent2(newGuid)};
@@ -136,7 +136,7 @@ namespace Microwave.Eventstores.UnitTests
                 }
             };
 
-            var mongoCollection = Database.GetCollection<DomainEventDbo>("DomainEventDbos");
+            var mongoCollection = EventDatabase.Database.GetCollection<DomainEventDbo>(EventDatabase.EventCollectionName);
             await mongoCollection.InsertOneAsync(domainEventDbo);
             await Assert.ThrowsExceptionAsync<MongoWriteException>(async () => await mongoCollection.InsertOneAsync(domainEventDbo2));
         }
@@ -144,7 +144,7 @@ namespace Microwave.Eventstores.UnitTests
         [TestMethod]
         public async Task AddAndLoadEventsByTimeStamp()
         {
-            var eventRepository = new EventRepository(new EventDatabase(Database));
+            var eventRepository = new EventRepository(EventDatabase);
 
             var newGuid = GuidIdentity.Create(Guid.NewGuid());
             var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid), new TestEvent1(newGuid), new TestEvent2(newGuid)};
@@ -160,7 +160,7 @@ namespace Microwave.Eventstores.UnitTests
         [TestMethod]
         public async Task AddEvents_FirstEventAfterCreationHasWrongRowVersionBug()
         {
-            var eventRepository = new EventRepository(new EventDatabase(Database));
+            var eventRepository = new EventRepository(EventDatabase);
 
             var newGuid = GuidIdentity.Create(Guid.NewGuid());
             var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid), new TestEvent1(newGuid), new TestEvent2(newGuid)};
@@ -178,7 +178,7 @@ namespace Microwave.Eventstores.UnitTests
         [TestMethod]
         public async Task AddEvents_VersionTooHigh()
         {
-            var eventRepository = new EventRepository(new EventDatabase(Database));
+            var eventRepository = new EventRepository(EventDatabase);
 
             var newGuid = GuidIdentity.Create(Guid.NewGuid());
             var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid), new TestEvent1(newGuid), new TestEvent2(newGuid)};
@@ -191,7 +191,7 @@ namespace Microwave.Eventstores.UnitTests
         [TestMethod]
         public async Task AddEvents_VersionWayTooHigh()
         {
-            var eventRepository = new EventRepository(new EventDatabase(Database));
+            var eventRepository = new EventRepository(EventDatabase);
 
             var newGuid = GuidIdentity.Create(Guid.NewGuid());
             var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid), new TestEvent1(newGuid), new TestEvent2(newGuid)};
@@ -203,7 +203,7 @@ namespace Microwave.Eventstores.UnitTests
         [TestMethod]
         public async Task AddAndLoadEventsByTimeStamp_SavedAsType()
         {
-            var eventRepository = new EventRepository(new EventDatabase(Database));
+            var eventRepository = new EventRepository(EventDatabase);
 
             var newGuid = GuidIdentity.Create(Guid.NewGuid());
             var domainEvent = new TestEvent1(newGuid);
@@ -220,7 +220,7 @@ namespace Microwave.Eventstores.UnitTests
         [TestMethod]
         public async Task AddEvents_IdSet()
         {
-            var eventRepository = new EventRepository(new EventDatabase(Database));
+            var eventRepository = new EventRepository(EventDatabase);
 
             var testEvent1 = new TestEvent1(GuidIdentity.Create(Guid.NewGuid()));
             await eventRepository.AppendAsync(new[] {testEvent1}, 0);
@@ -234,7 +234,7 @@ namespace Microwave.Eventstores.UnitTests
         [TestMethod]
         public async Task AddEvents_IdOfTypeSet()
         {
-            var eventRepository = new EventRepository(new EventDatabase(Database));
+            var eventRepository = new EventRepository(EventDatabase);
 
             var testEvent1 = new TestEvent1(GuidIdentity.Create(Guid.NewGuid()));
             await eventRepository.AppendAsync(new List<IDomainEvent> { testEvent1 }, 0);
@@ -248,7 +248,7 @@ namespace Microwave.Eventstores.UnitTests
         [TestMethod]
         public async Task AddEvents_RunTypeProjection()
         {
-            var eventRepository = new EventRepository(new EventDatabase(Database));
+            var eventRepository = new EventRepository(EventDatabase);
 
             var newGuid = GuidIdentity.Create(Guid.NewGuid());
             var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid), new TestEvent1(newGuid), new TestEvent2(newGuid)};

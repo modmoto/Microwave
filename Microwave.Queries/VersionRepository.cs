@@ -8,15 +8,17 @@ namespace Microwave.Queries
     public class VersionRepository : IVersionRepository
     {
         private readonly IMongoDatabase _dataBase;
+        private readonly string _lastProcessedVersions;
 
         public VersionRepository(ReadModelDatabase dataBase)
         {
             _dataBase = dataBase.Database;
+            _lastProcessedVersions = dataBase.LastProcessedVersionCollectionName;
         }
 
         public async Task<long> GetVersionAsync(string domainEventType)
         {
-            var mongoCollection = _dataBase.GetCollection<LastProcessedVersionDbo>("LastProcessedVersions");
+            var mongoCollection = _dataBase.GetCollection<LastProcessedVersionDbo>(_lastProcessedVersions);
             var lastProcessedVersion = (await mongoCollection.FindAsync(version => version.EventType == domainEventType)).FirstOrDefault();
             if (lastProcessedVersion == null) return 0L;
             return lastProcessedVersion.LastVersion;
@@ -24,7 +26,7 @@ namespace Microwave.Queries
 
         public async Task SaveVersion(LastProcessedVersion version)
         {
-            var mongoCollection = _dataBase.GetCollection<LastProcessedVersionDbo>("LastProcessedVersions");
+            var mongoCollection = _dataBase.GetCollection<LastProcessedVersionDbo>(_lastProcessedVersions);
 
             var findOneAndReplaceOptions = new FindOneAndReplaceOptions<LastProcessedVersionDbo>();
             findOneAndReplaceOptions.IsUpsert = true;

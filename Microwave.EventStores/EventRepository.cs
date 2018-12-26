@@ -13,15 +13,17 @@ namespace Microwave.EventStores
     public class EventRepository : IEventRepository
     {
         private readonly IMongoDatabase _database;
+        private readonly string _eventCollectionName;
 
         public EventRepository(EventDatabase database)
         {
             _database = database.Database;
+            _eventCollectionName = database.EventCollectionName;
         }
 
         public async Task<Result<IEnumerable<DomainEventWrapper>>> LoadEventsByEntity(Identity entityId, long from = 0)
         {
-            var mongoCollection = _database.GetCollection<DomainEventDbo>("DomainEventDbos");
+            var mongoCollection = _database.GetCollection<DomainEventDbo>(_eventCollectionName);
             var domainEventDbos = (await mongoCollection.FindAsync(ev => ev.Key.EntityId == entityId.Id && ev.Key.Version > from)).ToList();
             if (!domainEventDbos.Any()) return Result<IEnumerable<DomainEventWrapper>>.NotFound(entityId.ToString());
 
@@ -40,7 +42,7 @@ namespace Microwave.EventStores
 
         public async Task<Result<IEnumerable<DomainEventWrapper>>> LoadEvents(long tickSince = 0)
         {
-            var mongoCollection = _database.GetCollection<DomainEventDbo>("DomainEventDbos");
+            var mongoCollection = _database.GetCollection<DomainEventDbo>(_eventCollectionName);
             var domainEventDbos = (await mongoCollection.FindAsync(ev => ev.Created > tickSince)).ToList();
             if (!domainEventDbos.Any()) return Result<IEnumerable<DomainEventWrapper>>.Ok(new List<DomainEventWrapper>());
 
@@ -59,7 +61,7 @@ namespace Microwave.EventStores
 
         public async Task<Result<IEnumerable<DomainEventWrapper>>> LoadEventsByTypeAsync(string eventType, long version)
         {
-            var mongoCollection = _database.GetCollection<DomainEventDbo>("DomainEventDbos");
+            var mongoCollection = _database.GetCollection<DomainEventDbo>(_eventCollectionName);
             var domainEventTypeDbos = (await mongoCollection.FindAsync(ev => ev.EventType == eventType && ev.Created > version)).ToList();
 
             if (!domainEventTypeDbos.Any()) return Result<IEnumerable<DomainEventWrapper>>.Ok(new List<DomainEventWrapper>());
@@ -101,7 +103,7 @@ namespace Microwave.EventStores
                 };
             }).ToList();
 
-            var mongoCollection = _database.GetCollection<DomainEventDbo>("DomainEventDbos");
+            var mongoCollection = _database.GetCollection<DomainEventDbo>(_eventCollectionName);
             try
             {
                 await mongoCollection.InsertManyAsync(domainEventDbos);
@@ -117,7 +119,7 @@ namespace Microwave.EventStores
 
         private async Task<long> GetLastVersion(string entityId)
         {
-            var mongoCollection = _database.GetCollection<DomainEventDbo>("DomainEventDbos");
+            var mongoCollection = _database.GetCollection<DomainEventDbo>(_eventCollectionName);
             var cursor = await mongoCollection.FindAsync(v => v.Key.EntityId == entityId);
             var eventDbos = await cursor.ToListAsync();
             var lastVersion = eventDbos.LastOrDefault()?.Key.Version ?? 0;

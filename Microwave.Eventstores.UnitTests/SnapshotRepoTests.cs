@@ -14,7 +14,7 @@ namespace Microwave.Eventstores.UnitTests
         [TestMethod]
         public async Task LoadAndSaveSnapshotWithGuidList()
         {
-            var repo = new SnapShotRepository(new EventDatabase(Database));
+            var repo = new SnapShotRepository(EventDatabase);
             var userSnapshot = new UserSnapshot();
 
             var entityId = GuidIdentity.Create(Guid.NewGuid());

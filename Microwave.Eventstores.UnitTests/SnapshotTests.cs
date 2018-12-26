@@ -15,10 +15,10 @@ namespace Microwave.Eventstores.UnitTests
         [TestMethod]
         public async Task SnapshotRealized()
         {
-            var mongoCollection = Database.GetCollection<SnapShotDbo<User>>("SnapShotDbos");
+            var mongoCollection = EventDatabase.Database.GetCollection<SnapShotDbo<User>>(EventDatabase.SnapshotCollectionName);
 
-            var repo = new EventRepository(new EventDatabase(Database));
-            var eventStore = new EventStore(repo, new SnapShotRepository(new EventDatabase(Database)));
+            var repo = new EventRepository(EventDatabase);
+            var eventStore = new EventStore(repo, new SnapShotRepository(EventDatabase));
 
             var entityId = GuidIdentity.Create(Guid.NewGuid());
             await eventStore.AppendAsync(new List<IDomainEvent>

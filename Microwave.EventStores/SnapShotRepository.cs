@@ -10,15 +10,17 @@ namespace Microwave.EventStores
     public class SnapShotRepository : ISnapShotRepository
     {
         private readonly IMongoDatabase _context;
+        private readonly string _snapShotCollectionName;
 
         public SnapShotRepository(EventDatabase context)
         {
             _context = context.Database;
+            _snapShotCollectionName = context.SnapshotCollectionName;
         }
 
         public async Task<SnapShotResult<T>> LoadSnapShot<T>(Identity entityId) where T : new()
         {
-            var mongoCollection = _context.GetCollection<SnapShotDbo<T>>("SnapShotDbos");
+            var mongoCollection = _context.GetCollection<SnapShotDbo<T>>(_snapShotCollectionName);
             var asyncCursor = await mongoCollection.FindAsync(r => r.EntityId == entityId.Id);
             var snapShot = asyncCursor.ToList().FirstOrDefault();
 
@@ -28,7 +30,7 @@ namespace Microwave.EventStores
 
         public async Task SaveSnapShot<T>(T snapShot, Identity entityId, long version)
         {
-            var mongoCollection = _context.GetCollection<SnapShotDbo<T>>("SnapShotDbos");
+            var mongoCollection = _context.GetCollection<SnapShotDbo<T>>(_snapShotCollectionName);
 
             var findOneAndReplaceOptions = new FindOneAndReplaceOptions<SnapShotDbo<T>>();
             findOneAndReplaceOptions.IsUpsert = true;
