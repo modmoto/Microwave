@@ -22,6 +22,12 @@ namespace Microwave.Domain
             return id1?.Equals(id2) == false;
         }
 
+        public override bool Equals(Object obj)
+        {
+            var identity = obj as Identity;
+            return Equals(identity);
+        }
+
         public override int GetHashCode()
         {
             return Id != null ? Id.GetHashCode() : 0;
