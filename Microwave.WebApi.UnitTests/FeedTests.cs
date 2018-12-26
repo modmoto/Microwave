@@ -22,7 +22,7 @@ namespace Microwave.WebApi.UnitTests
         {
             var mockHttp = new MockHttpMessageHandler();
             mockHttp.When("http://localost:5000/api/DomainEvents/?timeStamp=0")
-                .Respond("application/json", "[{ \"domainEventType\": \"UNKNOWN_TYPE\",\"version\": 12, \"created\": 14, \"domainEvent\": {\"EntityId\" : \"5a8b63c8-0f7f-4de7-a9e5-b6b377aa2180\" }}, { \"domainEventType\": \"TestEv\",\"version\": 12, \"created\": 14, \"domainEvent\": {\"EntityId\" : \"5a8b63c8-0f7f-4de7-a9e5-b6b377aa2180\" }}]");
+                .Respond("application/json", "[{ \"domainEventType\": \"UNKNOWN_TYPE\",\"version\": 12, \"created\": 14, \"domainEvent\": {\"EntityId\" : {\"Id\": \"5a8b63c8-0f7f-4de7-a9e5-b6b377aa2180\" }}}, { \"domainEventType\": \"TestEv\",\"version\": 12, \"created\": 14, \"domainEvent\": {\"EntityId\" : {\"Id\": \"5a8b63c8-0f7f-4de7-a9e5-b6b377aa2180\" } }}]");
 
             var domainOverallEventClient = new DomainEventClient<ReadModelHandler<TestReadModel>>(mockHttp);
             domainOverallEventClient.BaseAddress = new Uri("http://localost:5000/api/DomainEvents/");
@@ -33,7 +33,8 @@ namespace Microwave.WebApi.UnitTests
             var domainEvents = await readModelFeed.GetEventsAsync(0);
             var domainEventWrappers = domainEvents.ToList();
             Assert.AreEqual(1, domainEventWrappers.Count);
-            Assert.AreEqual(new Guid("5a8b63c8-0f7f-4de7-a9e5-b6b377aa2180"), domainEventWrappers[0].DomainEvent.EntityId);
+            Assert.AreEqual(new Guid("5a8b63c8-0f7f-4de7-a9e5-b6b377aa2180").ToString(), domainEventWrappers[0].DomainEvent
+                .EntityId.Id);
         }
     }
 
@@ -44,16 +45,16 @@ namespace Microwave.WebApi.UnitTests
             Id = ev.EntityId;
         }
 
-        public Guid Id { get; set; }
+        public Identity Id { get; set; }
     }
 
     public class TestEv : IDomainEvent
     {
-        public TestEv(Guid entityId)
+        public TestEv(GuidIdentity entityId)
         {
             EntityId = entityId;
         }
 
-        public Guid EntityId { get; }
+        public Identity EntityId { get; }
     }
 }

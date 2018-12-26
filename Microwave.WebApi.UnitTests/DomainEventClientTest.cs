@@ -38,7 +38,7 @@ namespace Microwave.WebApi.UnitTests
 
     public class Ev2 : IDomainEvent
     {
-        public Guid EntityId { get; }
+        public Identity EntityId { get; }
     }
 
     public class IdQuery : ReadModel
@@ -47,7 +47,7 @@ namespace Microwave.WebApi.UnitTests
 
     public class Ev1 : IDomainEvent
     {
-        public Guid EntityId { get; }
+        public Identity EntityId { get; }
     }
 
     public class Q1 : Query

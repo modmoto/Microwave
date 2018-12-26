@@ -18,17 +18,17 @@ namespace Microwave.Eventstores.UnitTests
         public async Task ApplyMethod_HappyPath()
         {
             var snapShotRepo = new Mock<ISnapShotRepository>();
-            snapShotRepo.Setup(re => re.LoadSnapShot<TestEntity>(It.IsAny<Guid>()))
+            snapShotRepo.Setup(re => re.LoadSnapShot<TestEntity>(It.IsAny<Identity>()))
                 .ReturnsAsync(new DefaultSnapshot<TestEntity>());
 
             var entityStremRepo = new Mock<IEventRepository>();
-            var entityId = Guid.NewGuid();
+            var entityId = GuidIdentity.Create(Guid.NewGuid());
             var testEventEventStore = new TestEventEventStore(entityId);
             var domainEventWrapper = new DomainEventWrapper
             {
                 DomainEvent  = testEventEventStore
             };
-            entityStremRepo.Setup(ev => ev.LoadEventsByEntity(It.IsAny<Guid>(), It.IsAny<long>()))
+            entityStremRepo.Setup(ev => ev.LoadEventsByEntity(It.IsAny<Identity>(), It.IsAny<long>()))
                 .ReturnsAsync( Result<IEnumerable<DomainEventWrapper>>.Ok( new[] { domainEventWrapper }));
             var eventStore = new EventStore(entityStremRepo.Object, snapShotRepo.Object);
             var loadAsync = await eventStore.LoadAsync<TestEntity>(entityId);
@@ -40,17 +40,17 @@ namespace Microwave.Eventstores.UnitTests
         public async Task ApplyMethod_NoIfDeclared()
         {
             var snapShotRepo = new Mock<ISnapShotRepository>();
-            snapShotRepo.Setup(re => re.LoadSnapShot<TestEntity_NoIApply>(It.IsAny<Guid>()))
+            snapShotRepo.Setup(re => re.LoadSnapShot<TestEntity_NoIApply>(It.IsAny<Identity>()))
                 .ReturnsAsync(new DefaultSnapshot<TestEntity_NoIApply>());
 
             var entityStremRepo = new Mock<IEventRepository>();
-            var entityId = Guid.NewGuid();
+            var entityId = GuidIdentity.Create(Guid.NewGuid());
             var testEventEventStore = new TestEventEventStore(entityId);
             var domainEventWrapper = new DomainEventWrapper
             {
                 DomainEvent  = testEventEventStore
             };
-            entityStremRepo.Setup(ev => ev.LoadEventsByEntity(It.IsAny<Guid>(), It.IsAny<long>()))
+            entityStremRepo.Setup(ev => ev.LoadEventsByEntity(It.IsAny<Identity>(), It.IsAny<long>()))
                 .ReturnsAsync( Result<IEnumerable<DomainEventWrapper>>.Ok( new[] { domainEventWrapper }));
             var eventStore = new EventStore(entityStremRepo.Object, snapShotRepo.Object);
             var loadAsync = await eventStore.LoadAsync<TestEntity_NoIApply>(entityId);
@@ -63,15 +63,15 @@ namespace Microwave.Eventstores.UnitTests
         {
             var entityStremRepo = new Mock<IEventRepository>();
             var snapShotRepo = new Mock<ISnapShotRepository>();
-            snapShotRepo.Setup(re => re.LoadSnapShot<TestEntity_NoIApply>(It.IsAny<Guid>()))
+            snapShotRepo.Setup(re => re.LoadSnapShot<TestEntity_NoIApply>(It.IsAny<Identity>()))
                 .ReturnsAsync(new DefaultSnapshot<TestEntity_NoIApply>());
-            var entityId = Guid.NewGuid();
+            var entityId = GuidIdentity.Create(Guid.NewGuid());
             var testEventEventStore = new TestEventEventStore(entityId);
             var domainEventWrapper = new DomainEventWrapper
             {
                 DomainEvent  = testEventEventStore
             };
-            entityStremRepo.Setup(ev => ev.LoadEventsByEntity(It.IsAny<Guid>(), It.IsAny<long>()))
+            entityStremRepo.Setup(ev => ev.LoadEventsByEntity(It.IsAny<Identity>(), It.IsAny<long>()))
                 .ReturnsAsync( Result<IEnumerable<DomainEventWrapper>>.Ok( new[] { domainEventWrapper }));
             var eventStore = new EventStore(entityStremRepo.Object, snapShotRepo.Object);
             var loadAsync = await eventStore.LoadAsync<TestEntity_NoIApply>(entityId);
@@ -83,26 +83,26 @@ namespace Microwave.Eventstores.UnitTests
         public async Task IntegrationWithRepo()
         {
             var snapShotRepo = new Mock<ISnapShotRepository>();
-            snapShotRepo.Setup(re => re.LoadSnapShot<TestEntity>(It.IsAny<Guid>()))
+            snapShotRepo.Setup(re => re.LoadSnapShot<TestEntity>(It.IsAny<Identity>()))
                 .ReturnsAsync(new DefaultSnapshot<TestEntity>());
-            var entityId = Guid.NewGuid();
+            var entityId = GuidIdentity.Create(Guid.NewGuid());
             var eventStore = new EventStore(new EventRepository(new EventDatabase(Database)), snapShotRepo.Object);
 
             await eventStore.AppendAsync(new List<IDomainEvent> {new TestEventEventStore(entityId, "Test")}, 0);
             var loadAsync = await eventStore.LoadAsync<TestEntity>(entityId);
             var loadAsync2 = await eventStore.LoadAsync<TestEntity>(entityId);
 
-            Assert.AreEqual(entityId, loadAsync.Entity.Id);
+            Assert.IsTrue(entityId.Equals(loadAsync.Entity.Id));
             Assert.AreEqual("Test", loadAsync.Entity.Name);
 
-            Assert.AreEqual(entityId, loadAsync2.Entity.Id);
+            Assert.IsTrue(entityId.Equals(loadAsync2.Entity.Id));
             Assert.AreEqual("Test", loadAsync2.Entity.Name);
         }
     }
 
     public class TestEntity_WrongIApply : Entity
     {
-        public Guid Id { get; private set; }
+        public Identity Id { get; private set; }
         public void Apply(WrongEvent domainEvent)
         {
             Id = domainEvent.EntityId;
@@ -111,12 +111,12 @@ namespace Microwave.Eventstores.UnitTests
 
     public class WrongEvent : IDomainEvent
     {
-        public WrongEvent(Guid entityId)
+        public WrongEvent(Identity entityId)
         {
             EntityId = entityId;
         }
 
-        public Guid EntityId { get; }
+        public Identity EntityId { get; }
     }
 
     public class TestEntity_NoIApply : Entity
@@ -132,19 +132,19 @@ namespace Microwave.Eventstores.UnitTests
             Name = domainEvent.Name;
         }
 
-        public Guid Id { get; private set; }
+        public Identity Id { get; private set; }
         public string Name { get; set; }
     }
 
     public class TestEventEventStore : IDomainEvent
     {
-        public TestEventEventStore(Guid entityId, string name = null)
+        public TestEventEventStore(Identity entityId, string name = null)
         {
             EntityId = entityId;
             Name = name;
         }
 
-        public Guid EntityId { get; }
+        public Identity EntityId { get; }
         public string Name { get; }
     }
 }

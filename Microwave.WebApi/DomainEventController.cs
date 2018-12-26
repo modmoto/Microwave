@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microwave.Domain;
 using Microwave.Queries;
 
 namespace Microwave.WebApi
@@ -23,9 +24,10 @@ namespace Microwave.WebApi
         }
 
         [HttpGet("EntityStreams/{entityId}")]
-        public async Task<ActionResult> GetDomainEventsByEntityIdType(Guid entityId, [FromQuery] long version)
+        public async Task<ActionResult> GetDomainEventsByEntityIdType(string entityId, [FromQuery] long version)
         {
-            var result = await _eventRepository.LoadEventsByEntity(entityId, version);
+            var id = Identity.Create(entityId);
+            var result = await _eventRepository.LoadEventsByEntity(id, version);
             return Ok(result.Value);
         }
 

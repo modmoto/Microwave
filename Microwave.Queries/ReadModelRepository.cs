@@ -4,6 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microwave.Application.Results;
+using Microwave.Domain;
 using MongoDB.Driver;
 
 namespace Microwave.Queries
@@ -28,12 +29,12 @@ namespace Microwave.Queries
             return Result<T>.Ok(query.Payload);
         }
 
-        public async Task<Result<ReadModelWrapper<T>>> Load<T>(Guid id) where T : ReadModel
+        public async Task<Result<ReadModelWrapper<T>>> Load<T>(Identity id) where T : ReadModel
         {
             var mongoCollection = _database.GetCollection<ReadModelDbo<T>>(_readModelCollectionName);
-            var asyncCursor = await mongoCollection.FindAsync(dbo =>  dbo.QueryType == typeof(T).Name && dbo.Id == id.ToString());
+            var asyncCursor = await mongoCollection.FindAsync(dbo =>  dbo.QueryType == typeof(T).Name && dbo.Id == id.Id);
             var identifiableQueryDbo = asyncCursor.FirstOrDefault();
-            if (identifiableQueryDbo == null) return Result<ReadModelWrapper<T>>.NotFound(id.ToString());
+            if (identifiableQueryDbo == null) return Result<ReadModelWrapper<T>>.NotFound(id.Id);
             var wrapper = new ReadModelWrapper<T>(identifiableQueryDbo.Payload, id, identifiableQueryDbo.Version);
             return Result<ReadModelWrapper<T>>.Ok(wrapper);
         }
@@ -43,7 +44,7 @@ namespace Microwave.Queries
             var mongoCollection = _database.GetCollection<ReadModelDbo<T>>(_readModelCollectionName);
             var querries = (await mongoCollection.FindAsync(q => q.QueryType == typeof(T).Name)).ToList();
             var readModelWrappers = querries.Select(q =>
-                new ReadModelWrapper<T>(q.Payload, new Guid(q.Id), q.Version));
+                new ReadModelWrapper<T>(q.Payload, Identity.Create(q.Id), q.Version));
             return Result<IEnumerable<ReadModelWrapper<T>>>.Ok(readModelWrappers);
         }
 
@@ -72,10 +73,10 @@ namespace Microwave.Queries
             var findOneAndReplaceOptions = new FindOneAndReplaceOptions<ReadModelDbo<T>>();
             findOneAndReplaceOptions.IsUpsert = true;
             await mongoCollection.FindOneAndReplaceAsync(
-                (Expression<Func<ReadModelDbo<T>, bool>>) (e => e.Id == readModelWrapper.Id.ToString()),
+                (Expression<Func<ReadModelDbo<T>, bool>>) (e => e.Id == readModelWrapper.Id.Id),
                 new ReadModelDbo<T>
                 {
-                    Id = readModelWrapper.Id.ToString(),
+                    Id = readModelWrapper.Id.Id,
                     Version = readModelWrapper.Version,
                     QueryType = readModelWrapper.ReadModel.GetType().Name,
                     Payload = readModelWrapper.ReadModel

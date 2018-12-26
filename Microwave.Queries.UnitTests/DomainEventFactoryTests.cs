@@ -18,7 +18,7 @@ namespace Microwave.Queries.UnitTests
             {
                 Version = 12,
                 Created = 1234,
-                DomainEvent = new Event1(Guid.NewGuid(), "Name")
+                DomainEvent = new Event1(GuidIdentity.Create(Guid.NewGuid()), "Name")
             }};
 
             var serializeObject = JsonConvert.SerializeObject(domainEventWrapper);
@@ -28,7 +28,7 @@ namespace Microwave.Queries.UnitTests
             var domainEventWrappers = ev.ToList();
             var wrapperActual = domainEventWrappers.Single();
             var wrapperExpected = domainEventWrapper.Single();
-            Assert.AreEqual(wrapperExpected.DomainEvent.EntityId, wrapperActual.DomainEvent.EntityId);
+            Assert.AreEqual(wrapperExpected.DomainEvent.EntityId.Id, wrapperActual.DomainEvent.EntityId.Id);
             Assert.AreEqual(wrapperExpected.Version, wrapperActual.Version);
             Assert.AreEqual(wrapperExpected.Created, wrapperActual.Created);
             Assert.AreEqual(((Event1) wrapperExpected.DomainEvent).Name, ((Event1)wrapperActual.DomainEvent).Name);
@@ -41,7 +41,7 @@ namespace Microwave.Queries.UnitTests
             {
                 Version = 12,
                 Created = 1234,
-                DomainEvent = new Event1(Guid.NewGuid(), "Name")
+                DomainEvent = new Event1(GuidIdentity.Create(Guid.NewGuid()), "Name")
             }};
 
             var serializeObject = JsonConvert.SerializeObject(domainEventWrapper);
@@ -55,10 +55,10 @@ namespace Microwave.Queries.UnitTests
 
     public class Event1 : IDomainEvent
     {
-        public Guid EntityId { get; }
+        public Identity EntityId { get; }
         public string Name { get; }
 
-        public Event1(Guid entityId, string name)
+        public Event1(GuidIdentity entityId, string name)
         {
             EntityId = entityId;
             Name = name;

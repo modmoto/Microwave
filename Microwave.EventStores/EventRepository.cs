@@ -19,10 +19,10 @@ namespace Microwave.EventStores
             _database = database.Database;
         }
 
-        public async Task<Result<IEnumerable<DomainEventWrapper>>> LoadEventsByEntity(Guid entityId, long from = 0)
+        public async Task<Result<IEnumerable<DomainEventWrapper>>> LoadEventsByEntity(Identity entityId, long from = 0)
         {
             var mongoCollection = _database.GetCollection<DomainEventDbo>("DomainEventDbos");
-            var domainEventDbos = (await mongoCollection.FindAsync(ev => ev.Key.EntityId == entityId.ToString() && ev.Key.Version > from)).ToList();
+            var domainEventDbos = (await mongoCollection.FindAsync(ev => ev.Key.EntityId == entityId.Id && ev.Key.Version > from)).ToList();
             if (!domainEventDbos.Any()) return Result<IEnumerable<DomainEventWrapper>>.NotFound(entityId.ToString());
 
             var domainEvents = domainEventDbos.Select(dbo =>
@@ -81,7 +81,7 @@ namespace Microwave.EventStores
             var events = domainEvents.ToList();
             if (!events.Any()) return Result.Ok();
 
-            var entityId = events.First().EntityId.ToString();
+            var entityId = events.First().EntityId.Id;
             var versionTemp = currenEntityVersion;
             var lastVersion = await GetLastVersion(entityId);
             if (lastVersion < currenEntityVersion) return Result.ConcurrencyResult(currenEntityVersion, lastVersion);
@@ -95,7 +95,7 @@ namespace Microwave.EventStores
                     Key = new DomainEventKey
                     {
                         Version = ++versionTemp,
-                        EntityId = domainEvent.EntityId.ToString()
+                        EntityId = domainEvent.EntityId.Id
                     },
                     EventType = domainEvent.GetType().Name
                 };

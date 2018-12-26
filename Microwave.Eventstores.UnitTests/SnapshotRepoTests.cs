@@ -17,7 +17,7 @@ namespace Microwave.Eventstores.UnitTests
             var repo = new SnapShotRepository(new EventDatabase(Database));
             var userSnapshot = new UserSnapshot();
 
-            var entityId = Guid.NewGuid();
+            var entityId = GuidIdentity.Create(Guid.NewGuid());
             var newGuid = Guid.NewGuid();
 
             userSnapshot.SetId(entityId);
@@ -28,7 +28,7 @@ namespace Microwave.Eventstores.UnitTests
             var snapShotResult = await repo.LoadSnapShot<UserSnapshot>(entityId);
 
             var entityGuids = snapShotResult.Entity.Guids.ToList();
-            Assert.AreEqual(entityId, snapShotResult.Entity.Id);
+            Assert.AreEqual(entityId.Id, snapShotResult.Entity.Id.Id);
             Assert.AreEqual(2, entityGuids.Count);
             Assert.AreEqual(newGuid, entityGuids[0]);
             Assert.AreEqual(newGuid, entityGuids[1]);
@@ -38,7 +38,7 @@ namespace Microwave.Eventstores.UnitTests
     [SnapShotAfter(3)]
     public class UserSnapshot : Entity
     {
-        public Guid Id { get; private set; }
+        public Identity Id { get; private set; }
 
         public IEnumerable<Guid> Guids { get; private set; } = new List<Guid>();
 
@@ -47,7 +47,7 @@ namespace Microwave.Eventstores.UnitTests
             Guids = Guids.Append(guid);
         }
 
-        public void SetId(Guid guid)
+        public void SetId(Identity guid)
         {
             Id = guid;
         }

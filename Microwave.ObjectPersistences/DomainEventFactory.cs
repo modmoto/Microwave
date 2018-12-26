@@ -23,6 +23,8 @@ namespace Microwave.ObjectPersistences
 
         public IEnumerable<DomainEventWrapper> Deserialize(string serializeObject)
         {
+            JsonSerializer serializer = new JsonSerializer();
+            serializer.Converters.Add(new IdentityConverter());
             var jArray = JsonConvert.DeserializeObject<JArray>(serializeObject);
             foreach (var jToken in jArray)
             {
@@ -33,7 +35,7 @@ namespace Microwave.ObjectPersistences
                 var version = jObject.GetValue(nameof(DomainEventWrapper.Version), StringComparison.OrdinalIgnoreCase).Value<long>();
                 var created = jObject.GetValue(nameof(DomainEventWrapper.Created), StringComparison.OrdinalIgnoreCase).Value<long>();
                 var domainEventJObject = jObject.GetValue(nameof(DomainEventWrapper.DomainEvent), StringComparison.OrdinalIgnoreCase);
-                var domainevent = (IDomainEvent) domainEventJObject.ToObject(type);
+                var domainevent = (IDomainEvent) domainEventJObject.ToObject(type, serializer);
 
                 yield return new DomainEventWrapper
                 {
@@ -42,6 +44,28 @@ namespace Microwave.ObjectPersistences
                     DomainEvent = domainevent
                 };
             }
+        }
+    }
+
+    class IdentityConverter : JsonConverter
+    {
+        public override bool CanConvert(Type objectType)
+        {
+            return objectType == typeof(GuidIdentity) || objectType == typeof(StringIdentity) || objectType == typeof
+            (Identity);
+        }
+
+        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        {
+            JObject jo = JObject.Load(reader);
+            var id = (string)jo[nameof(Identity.Id)];
+            return Identity.Create(id);
+        }
+
+        public override bool CanWrite => false;
+
+        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+        {
         }
     }
 }

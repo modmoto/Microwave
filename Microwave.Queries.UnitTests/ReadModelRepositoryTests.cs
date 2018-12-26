@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Application.Results;
+using Microwave.Domain;
 using Microwave.Eventstores.UnitTests;
 
 namespace Microwave.Queries.UnitTests
@@ -16,9 +17,9 @@ namespace Microwave.Queries.UnitTests
         {
             var queryRepository = new ReadModelRepository(new ReadModelDatabase(Database));
 
-            var guid = Guid.NewGuid();
+            var guid = GuidIdentity.Create(Guid.NewGuid());
             var testQuerry = new TestReadModel();
-            testQuerry.SetVars("Test", guid, new[] {"Jeah", "jeah2"});
+            testQuerry.SetVars("Test", new[] {"Jeah", "jeah2"});
             await queryRepository.Save(new ReadModelWrapper<TestReadModel>(testQuerry, guid, 1));
 
             var querry1 = (await queryRepository.Load<TestReadModel>(guid)).Value;
@@ -55,11 +56,11 @@ namespace Microwave.Queries.UnitTests
         public async Task InsertIDQuery_ConcurrencyProblem()
         {
             var queryRepository = new ReadModelRepository(new ReadModelDatabase(Database));
-            Guid guid = Guid.NewGuid();
+            var guid = GuidIdentity.Create(Guid.NewGuid());
             var testQuery = new TestReadModel();
-            testQuery.SetVars("Test1", guid, new []{ "Jeah", "jeah2"});
+            testQuery.SetVars("Test1", new []{ "Jeah", "jeah2"});
             var testQuery2 = new TestReadModel();
-            testQuery2.SetVars("Test2", guid, new []{ "Jeah", "jeah2"});
+            testQuery2.SetVars("Test2", new []{ "Jeah", "jeah2"});
 
             var save = queryRepository.Save(new ReadModelWrapper<TestReadModel>(testQuery, guid, 1));
             var save2 = queryRepository.Save(new ReadModelWrapper<TestReadModel>(testQuery2, guid, 2));
@@ -85,12 +86,12 @@ namespace Microwave.Queries.UnitTests
         public async Task LoadAllReadModels()
         {
             var queryRepository = new ReadModelRepository(new ReadModelDatabase(Database));
-            Guid guid = Guid.NewGuid();
-            Guid guid2 = Guid.NewGuid();
+            var guid = GuidIdentity.Create(Guid.NewGuid());
+            var guid2 =GuidIdentity.Create(Guid.NewGuid());
             var testQuery = new TestReadModel();
-            testQuery.SetVars("Test1", guid, new []{ "Jeah", "jeah2"});
+            testQuery.SetVars("Test1", new []{ "Jeah", "jeah2"});
             var testQuery2 = new TestReadModel();
-            testQuery2.SetVars("Test2", guid2, new []{ "Jeah", "jeah2"});
+            testQuery2.SetVars("Test2", new []{ "Jeah", "jeah2"});
 
             await queryRepository.Save(new ReadModelWrapper<TestReadModel>(testQuery, guid, 1));
             await queryRepository.Save(new ReadModelWrapper<TestReadModel>(testQuery2, guid2, 1));
@@ -107,9 +108,9 @@ namespace Microwave.Queries.UnitTests
         public async Task LoadTwoTypesOfReadModels_Bug()
         {
             var queryRepository = new ReadModelRepository(new ReadModelDatabase(Database));
-            Guid guid2 = Guid.NewGuid();
+            var guid2 = GuidIdentity.Create(Guid.NewGuid());
             var testQuery2 = new TestReadModel2();
-            testQuery2.SetVars("Test2", guid2, new []{ "Jeah", "jeah2"});
+            testQuery2.SetVars("Test2", new []{ "Jeah", "jeah2"});
 
             await queryRepository.Save(new ReadModelWrapper<TestReadModel2>(testQuery2, guid2, 1));
 
@@ -129,7 +130,7 @@ namespace Microwave.Queries.UnitTests
         public string UserName { get; private set; }
         public IEnumerable<string> Strings { get; private set; } = new List<string>();
 
-        public void SetVars(string test, Guid guid, IEnumerable<string> str)
+        public void SetVars(string test, IEnumerable<string> str)
         {
             UserName = test;
             Strings = str;
@@ -141,7 +142,7 @@ namespace Microwave.Queries.UnitTests
         public string UserNameAllDifferent { get; private set; }
         public IEnumerable<string> StringsAllDifferent { get; private set; } = new List<string>();
 
-        public void SetVars(string test, Guid guid, IEnumerable<string> str)
+        public void SetVars(string test, IEnumerable<string> str)
         {
             UserNameAllDifferent = test;
             StringsAllDifferent = str;

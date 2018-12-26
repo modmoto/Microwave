@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using Microwave.Domain;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace Microwave.ObjectPersistences
@@ -12,8 +13,8 @@ namespace Microwave.ObjectPersistences
             var field = domainEvent.GetType().GetField($"<{nameof(IDomainEvent.EntityId)}>k__BackingField",
                 BindingFlags.NonPublic | BindingFlags.Instance);
             var jToken = domainEventJobject.GetValue(nameof(IDomainEvent.EntityId), StringComparison.OrdinalIgnoreCase);
-            var entityId = (Guid) jToken;
-            field?.SetValue(domainEvent, entityId);
+            var id = (string)jToken[nameof(Identity.Id)];
+            field?.SetValue(domainEvent, Identity.Create(id));
         }
     }
 }
