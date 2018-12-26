@@ -136,7 +136,7 @@ namespace Microwave.Eventstores.UnitTests
                 }
             };
 
-            var mongoCollection = EventDatabase.Database.GetCollection<DomainEventDbo>(EventDatabase.EventCollectionName);
+            var mongoCollection = EventDatabase.Database.GetCollection<DomainEventDbo>("DomainEventDbos");
             await mongoCollection.InsertOneAsync(domainEventDbo);
             await Assert.ThrowsExceptionAsync<MongoWriteException>(async () => await mongoCollection.InsertOneAsync(domainEventDbo2));
         }

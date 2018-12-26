@@ -13,12 +13,11 @@ namespace Microwave.EventStores
     public class EventRepository : IEventRepository
     {
         private readonly IMongoDatabase _database;
-        private readonly string _eventCollectionName;
+        private readonly string _eventCollectionName = "DomainEventDbos";
 
         public EventRepository(EventDatabase database)
         {
             _database = database.Database;
-            _eventCollectionName = database.EventCollectionName;
         }
 
         public async Task<Result<IEnumerable<DomainEventWrapper>>> LoadEventsByEntity(Identity entityId, long from = 0)

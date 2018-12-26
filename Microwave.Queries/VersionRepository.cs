@@ -8,12 +8,11 @@ namespace Microwave.Queries
     public class VersionRepository : IVersionRepository
     {
         private readonly IMongoDatabase _dataBase;
-        private readonly string _lastProcessedVersions;
+        private readonly string _lastProcessedVersions = "LastProcessedVersions";
 
         public VersionRepository(ReadModelDatabase dataBase)
         {
             _dataBase = dataBase.Database;
-            _lastProcessedVersions = dataBase.LastProcessedVersionCollectionName;
         }
 
         public async Task<long> GetVersionAsync(string domainEventType)

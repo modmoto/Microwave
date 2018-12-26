@@ -10,12 +10,11 @@ namespace Microwave.EventStores
     public class SnapShotRepository : ISnapShotRepository
     {
         private readonly IMongoDatabase _context;
-        private readonly string _snapShotCollectionName;
+        private readonly string _snapShotCollectionName = "SnapShotDbos";
 
         public SnapShotRepository(EventDatabase context)
         {
             _context = context.Database;
-            _snapShotCollectionName = context.SnapshotCollectionName;
         }
 
         public async Task<SnapShotResult<T>> LoadSnapShot<T>(Identity entityId) where T : new()

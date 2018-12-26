@@ -2,6 +2,7 @@ using System;
 using Microsoft.Extensions.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Domain;
+using Microwave.EventStores;
 using Microwave.Queries;
 
 namespace Microwave.DependencyInjectionExtensions.UnitTests
@@ -63,6 +64,28 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
                 .Build();
             var confiNew = new EventLocationConfig(config);
             Assert.AreEqual("http://localhost:5000/Api/DomainEvents", confiNew.GetLocationForReadModel(typeof(TestReadModel).Name).ToString());
+        }
+
+        [TestMethod]
+        public void ConfigTest_ReadModelDbConnection()
+        {
+            var config = new ConfigurationBuilder()
+                .AddJsonFile("appsettings_own_connectionstring.test.json")
+                .Build();
+            var confiNew = new EventDatabase(config);
+
+            Assert.AreEqual("OwnDbName", confiNew.Database.DatabaseNamespace.DatabaseName);
+        }
+
+        [TestMethod]
+        public void ConfigTest_ReadModelDbConnection_Default()
+        {
+            var config = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.test.json")
+                .Build();
+            var confiNew = new EventDatabase(config);
+
+            Assert.AreEqual("MicrowaveWriteModelDb", confiNew.Database.DatabaseNamespace.DatabaseName);
         }
     }
 

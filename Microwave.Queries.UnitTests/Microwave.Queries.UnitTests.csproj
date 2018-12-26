@@ -23,4 +23,11 @@
       <ProjectReference Include="..\Microwave\Microwave.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Content Include="appsettings.test.json">
+        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
+
 </Project>

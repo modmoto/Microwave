@@ -15,7 +15,7 @@ namespace Microwave.Eventstores.UnitTests
         [TestMethod]
         public async Task SnapshotRealized()
         {
-            var mongoCollection = EventDatabase.Database.GetCollection<SnapShotDbo<User>>(EventDatabase.SnapshotCollectionName);
+            var mongoCollection = EventDatabase.Database.GetCollection<SnapShotDbo<User>>("SnapShotDbos");
 
             var repo = new EventRepository(EventDatabase);
             var eventStore = new EventStore(repo, new SnapShotRepository(EventDatabase));

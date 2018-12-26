@@ -1,24 +1,19 @@
-﻿using MongoDB.Driver;
+﻿using Microsoft.Extensions.Configuration;
+using MongoDB.Driver;
 
 namespace Microwave.Queries
 {
     public class ReadModelDatabase
     {
         public IMongoDatabase Database { get; }
-        public string ReadModelCollectionName { get; }
-        public string QueryCollectionName { get; }
-        public string LastProcessedVersionCollectionName { get; }
-
-        public ReadModelDatabase(
-            IMongoDatabase database,
-            string readModelCollectionName = "ReadModelDbos",
-            string queryCollectionName = "QueryDbos",
-            string lastProcessedVersionCollectionName = "LastProcessedVersions")
+        public ReadModelDatabase(IConfiguration config)
         {
-            Database = database;
-            ReadModelCollectionName = readModelCollectionName;
-            QueryCollectionName = queryCollectionName;
-            LastProcessedVersionCollectionName = lastProcessedVersionCollectionName;
+            var writeModelDbSection = config.GetSection("ReadModelDatabase");
+            var connectionString = writeModelDbSection["ConnectionString"] ?? "mongodb://localhost:27017/";
+            var client = new MongoClient(connectionString);
+
+            var dbName = writeModelDbSection["DatabaseName"] ?? "MicrowaveReadModelDb";
+            Database = client.GetDatabase(dbName);
         }
     }
 }

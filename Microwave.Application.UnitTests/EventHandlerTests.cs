@@ -1,7 +1,9 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Domain;
+using Microwave.Eventstores.UnitTests;
 using Microwave.Queries;
 using MongoDB.Driver;
 using Moq;
@@ -9,14 +11,11 @@ using Moq;
 namespace Microwave.Application.UnitTests
 {
     [TestClass]
-    public class EventHandlerTests
+    public class EventHandlerTests : IntegrationTests
     {
         [TestMethod]
         public async Task HandleIsOnlyCalledOnce()
         {
-            var client = new MongoClient("mongodb://localhost:27017");
-            var database = client.GetDatabase("IntegrationTest");
-
             var eventFeedMock = new Mock<IEventFeed<AsyncEventHandler<TestEv2>>>();
             var domainEventWrapper = new DomainEventWrapper
             {
@@ -29,7 +28,7 @@ namespace Microwave.Application.UnitTests
             var handleAsync = new Handler1();
             var handleAsync2 = new Handler2();
             var eventDelegateHandler = new AsyncEventHandler<TestEv2>(
-                new VersionRepository(new ReadModelDatabase(database)),
+                new VersionRepository(ReadModelDatabase),
                 eventFeedMock.Object,
                 new List<IHandleAsync<TestEv2>> {handleAsync, handleAsync2});
 
@@ -39,7 +38,7 @@ namespace Microwave.Application.UnitTests
             Assert.AreEqual(1, handleAsync.TimesCalled);
             Assert.AreEqual(1, handleAsync.TimesCalled);
 
-            client.DropDatabase("IntegrationTest");
+            ReadModelDatabase.Database.Client.DropDatabase("IntegrationTest");
         }
     }
 

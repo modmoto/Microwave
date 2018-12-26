@@ -1,21 +1,19 @@
-﻿using MongoDB.Driver;
+﻿using Microsoft.Extensions.Configuration;
+using MongoDB.Driver;
 
 namespace Microwave.EventStores
 {
     public class EventDatabase
     {
         public IMongoDatabase Database { get; }
-        public string EventCollectionName { get; }
-        public string SnapshotCollectionName { get; }
-
-        public EventDatabase(
-            IMongoDatabase database,
-            string eventCollectionName = "DomainEventDbos",
-            string snapshotCollectionName = "SnapshotDbos")
+        public EventDatabase(IConfiguration config)
         {
-            Database = database;
-            EventCollectionName = eventCollectionName;
-            SnapshotCollectionName = snapshotCollectionName;
+            var writeModelDbSection = config.GetSection("WriteModelDatabase");
+            var connectionString = writeModelDbSection["ConnectionString"] ?? "mongodb://localhost:27017/";
+            var client = new MongoClient(connectionString);
+
+            var dbName = writeModelDbSection["DatabaseName"] ?? "MicrowaveWriteModelDb";
+            Database = client.GetDatabase(dbName);
         }
     }
 }
