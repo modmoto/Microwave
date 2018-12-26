@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Application;
@@ -35,6 +36,25 @@ namespace Microwave.Queries.UnitTests
         }
 
         [TestMethod]
+        public void ParseDomainEventWrapper_StringKey()
+        {
+            var domainEventWrapper = new [] { new DomainEventWrapper
+            {
+                Version = 12,
+                Created = 1234,
+                DomainEvent = new Event2(StringIdentity.Create("luls"), "Name")
+            }};
+
+            var serializeObject = JsonConvert.SerializeObject(domainEventWrapper);
+            var eventTypeRegistration = new EventRegistration { { nameof(Event2), typeof(Event2) } };
+            var domainEventFactory = new DomainEventFactory(eventTypeRegistration);
+            var domainEventWrappers = domainEventFactory.Deserialize(serializeObject).ToList();
+            var wrapperActual = domainEventWrappers.Single();
+
+            Assert.AreEqual("luls", wrapperActual.DomainEvent.EntityId.Id);
+        }
+
+        [TestMethod]
         public void ParseDomainEventWrapper_NoKeyInRegistration()
         {
             var domainEventWrapper = new [] { new DomainEventWrapper
@@ -59,6 +79,18 @@ namespace Microwave.Queries.UnitTests
         public string Name { get; }
 
         public Event1(GuidIdentity entityId, string name)
+        {
+            EntityId = entityId;
+            Name = name;
+        }
+    }
+
+    public class Event2 : IDomainEvent
+    {
+        public Identity EntityId { get; }
+        public string Name { get; }
+
+        public Event2(StringIdentity entityId, string name)
         {
             EntityId = entityId;
             Name = name;
