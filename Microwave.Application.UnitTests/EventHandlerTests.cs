@@ -1,11 +1,9 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Domain;
 using Microwave.Eventstores.UnitTests;
 using Microwave.Queries;
-using MongoDB.Driver;
 using Moq;
 
 namespace Microwave.Application.UnitTests

@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Microwave.Application;
 using Microwave.Application.Results;
 using Microwave.Domain;
-using Microwave.Queries;
 using MongoDB.Driver;
 
 namespace Microwave.EventStores

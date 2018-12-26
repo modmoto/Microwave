@@ -12,7 +12,6 @@ using Microwave.Queries;
 using Microwave.WebApi;
 using Microwave.WebApi.Filters;
 using MongoDB.Bson.Serialization;
-using MongoDB.Driver;
 
 namespace Microwave
 {

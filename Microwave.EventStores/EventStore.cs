@@ -4,7 +4,6 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Microwave.Domain;
-using Microwave.Queries;
 
 namespace Microwave.EventStores
 {
