@@ -12,6 +12,7 @@ namespace Microwave.Domain.UnitTests
             var stringIdentity2 = StringIdentity.Create("jeah");
 
             Assert.IsTrue(stringIdentity == stringIdentity2);
+            Assert.IsTrue(stringIdentity.Equals(stringIdentity2));
         }
 
         [TestMethod]
@@ -21,6 +22,7 @@ namespace Microwave.Domain.UnitTests
             var stringIdentity2 = StringIdentity.Create("jeahNichtGleich");
 
             Assert.IsFalse(stringIdentity == stringIdentity2);
+            Assert.IsFalse(stringIdentity.Equals(stringIdentity2));
         }
 
         [TestMethod]
@@ -29,6 +31,7 @@ namespace Microwave.Domain.UnitTests
             var stringIdentity = StringIdentity.Create("jeah");
 
             Assert.IsFalse(stringIdentity == null);
+            Assert.IsFalse(stringIdentity.Equals(null));
         }
 
         [TestMethod]
