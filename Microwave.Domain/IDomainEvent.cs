@@ -40,6 +40,11 @@ namespace Microwave.Domain
             return StringIdentity.Create(entityId);
         }
 
+        public static Identity Create(Guid entityId)
+        {
+            return GuidIdentity.Create(entityId);
+        }
+
         public virtual bool Equals(Identity other)
         {
             if (ReferenceEquals(null, other)) return false;
