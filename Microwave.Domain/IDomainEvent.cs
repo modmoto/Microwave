@@ -72,7 +72,7 @@ namespace Microwave.Domain
             Id = id;
         }
 
-        public static GuidIdentity Create(Guid id)
+        public new static GuidIdentity Create(Guid id)
         {
             return new GuidIdentity(id.ToString());
         }
