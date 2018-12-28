@@ -7,6 +7,7 @@ using Microwave.Application.Exceptions;
 using Microwave.Application.Results;
 using Microwave.Domain;
 using Microwave.EventStores;
+using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
 
 namespace Microwave.Eventstores.UnitTests
@@ -18,6 +19,19 @@ namespace Microwave.Eventstores.UnitTests
         public async Task AddAndLoadEvents()
         {
             var eventRepository = new EventRepository(EventDatabase);
+
+            BsonClassMap.RegisterClassMap<TestEvent1>(c =>
+            {
+                c.MapCreator(ev1 => new TestEvent1(GuidIdentity.Create(new Guid(ev1.EntityId.Id))));
+                c.MapProperty(ev1 => ev1.EntityId);
+            });
+
+            BsonClassMap.RegisterClassMap<TestEvent3>(c =>
+            {
+                c.MapCreator(ev1 => new TestEvent3(GuidIdentity.Create(new Guid(ev1.EntityId.Id)), ev1.Name));
+                c.MapProperty(ev1 => ev1.EntityId);
+                c.MapProperty(ev1 => ev1.Name);
+            });
 
             var newGuid = GuidIdentity.Create(Guid.NewGuid());
             var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid), new TestEvent3(newGuid, "TestName")};
@@ -275,7 +289,7 @@ namespace Microwave.Eventstores.UnitTests
 
     public class TestEvent1 : IDomainEvent
     {
-        public TestEvent1(Identity entityId)
+        public TestEvent1(GuidIdentity entityId)
         {
             EntityId = entityId;
         }
@@ -305,7 +319,7 @@ namespace Microwave.Eventstores.UnitTests
 
     public class TestEvent3 : IDomainEvent
     {
-        public TestEvent3(Identity entityId, string name)
+        public TestEvent3(GuidIdentity entityId, string name)
         {
             EntityId = entityId;
             Name = name;
