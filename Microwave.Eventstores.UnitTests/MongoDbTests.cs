@@ -15,7 +15,7 @@ namespace Microwave.Eventstores.UnitTests
         [TestMethod]
         public async Task TestDeserializationOfIdInInterface_OwnBackingField()
         {
-            var entityStreamRepository = new EventRepository(EventDatabase);
+            var entityStreamRepository = new EventRepository(EventDatabase, new VersionCache());
             var domainEvent = new TestEv_CustomBackingField(GuidIdentity.Create(Guid.NewGuid()));
 
             await entityStreamRepository.AppendAsync(new List<IDomainEvent> {domainEvent}, 0);
@@ -26,7 +26,7 @@ namespace Microwave.Eventstores.UnitTests
         [TestMethod]
         public async Task TestDeserializationOfIdInInterface_GetAutoProperty()
         {
-            var entityStreamRepository = new EventRepository(EventDatabase);
+            var entityStreamRepository = new EventRepository(EventDatabase, new VersionCache());
 
             var domainEvent = new TestEv_AutoProperty(GuidIdentity.Create(Guid.NewGuid()));
             await entityStreamRepository.AppendAsync(new List<IDomainEvent> {domainEvent}, 0);
@@ -38,7 +38,7 @@ namespace Microwave.Eventstores.UnitTests
         [TestMethod]
         public async Task TestDeserializationOfIdInInterface()
         {
-            var entityStreamRepository = new EventRepository(EventDatabase);
+            var entityStreamRepository = new EventRepository(EventDatabase, new VersionCache());
 
             var domainEvent = new TestEv2(GuidIdentity.Create(Guid.NewGuid()));
             await entityStreamRepository.AppendAsync(new List<IDomainEvent> {domainEvent}, 0);

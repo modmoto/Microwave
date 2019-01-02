@@ -77,6 +77,7 @@ namespace Microwave
 
             services.AddTransient<IEventStore, EventStore>();
             services.AddTransient<IEventRepository, EventRepository>();
+            services.AddSingleton<VersionCache>();
             services.AddTransient<ISnapShotRepository, SnapShotRepository>();
 
             //WebApi
