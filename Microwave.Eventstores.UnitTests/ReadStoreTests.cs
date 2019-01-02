@@ -71,7 +71,7 @@ namespace Microwave.Eventstores.UnitTests
         [TestMethod]
         public async Task Entitystream_LoadEventsSince_IdNotDefault()
         {
-            var entityStreamRepository = new EventRepository(EventDatabase, new VersionCache());
+            var entityStreamRepository = new EventRepository(EventDatabase, new VersionCache(EventDatabase));
 
             var entityStreamTestEvent = new TestEv3(GuidIdentity.Create(Guid.NewGuid()));
             await entityStreamRepository.AppendAsync(new[] {entityStreamTestEvent}, 0);

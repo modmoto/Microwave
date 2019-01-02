@@ -17,7 +17,7 @@ namespace Microwave.Eventstores.UnitTests
         {
             var mongoCollection = EventDatabase.Database.GetCollection<SnapShotDbo<User>>("SnapShotDbos");
 
-            var repo = new EventRepository(EventDatabase, new VersionCache());
+            var repo = new EventRepository(EventDatabase, new VersionCache(EventDatabase));
             var eventStore = new EventStore(repo, new SnapShotRepository(EventDatabase));
 
             var entityId = GuidIdentity.Create(Guid.NewGuid());

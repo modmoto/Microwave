@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Microwave.Domain;
 
-namespace Microwave.EventStores
+namespace Microwave.EventStores.Ports
 {
     public interface IEventStore
     {

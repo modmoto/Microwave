@@ -3,6 +3,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microwave.Domain;
+using Microwave.EventStores.Ports;
 using MongoDB.Driver;
 
 namespace Microwave.EventStores

@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microwave.Domain;
 using Microwave.EventStores;
+using Microwave.EventStores.Ports;
 using Microwave.ObjectPersistences;
 using Microwave.Queries;
 using Microwave.WebApi;
@@ -77,7 +78,7 @@ namespace Microwave
 
             services.AddTransient<IEventStore, EventStore>();
             services.AddTransient<IEventRepository, EventRepository>();
-            services.AddSingleton<VersionCache>();
+            services.AddSingleton<IVersionCache, VersionCache>();
             services.AddTransient<ISnapShotRepository, SnapShotRepository>();
 
             //WebApi
