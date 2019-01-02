@@ -20,19 +20,6 @@ namespace Microwave.Eventstores.UnitTests
         {
             var eventRepository = new EventRepository(EventDatabase);
 
-            BsonClassMap.RegisterClassMap<TestEvent1>(c =>
-            {
-                c.MapCreator(ev1 => new TestEvent1(GuidIdentity.Create(new Guid(ev1.EntityId.Id))));
-                c.MapProperty(ev1 => ev1.EntityId);
-            });
-
-            BsonClassMap.RegisterClassMap<TestEvent3>(c =>
-            {
-                c.MapCreator(ev1 => new TestEvent3(GuidIdentity.Create(new Guid(ev1.EntityId.Id)), ev1.Name));
-                c.MapProperty(ev1 => ev1.EntityId);
-                c.MapProperty(ev1 => ev1.Name);
-            });
-
             var newGuid = GuidIdentity.Create(Guid.NewGuid());
             var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid), new TestEvent3(newGuid, "TestName")};
             var res = await eventRepository.AppendAsync(events, 0);
@@ -45,6 +32,22 @@ namespace Microwave.Eventstores.UnitTests
             Assert.AreEqual(newGuid.Id, domainEvent.EntityId.Id);
             Assert.AreEqual("TestName", domainEvent.Name);
             Assert.AreEqual(2, loadEventsByEntity.Value.ToList()[1].Version);
+        }
+
+        [TestMethod]
+        public async Task AddAndLoadEvents_Twice()
+        {
+            var eventRepository = new EventRepository(EventDatabase);
+
+            var newGuid = GuidIdentity.Create(Guid.NewGuid());
+            var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid), new TestEvent3(newGuid, "TestName")};
+            var res = await eventRepository.AppendAsync(events, 0);
+            var res2 = await eventRepository.AppendAsync(events, 3);
+            res.Check();
+            res2.Check();
+
+            var loadEventsByEntity = await eventRepository.LoadEventsByEntity(newGuid);
+            Assert.AreEqual(6, loadEventsByEntity.Value.Count());
         }
 
         // this is because of mongodb, constructor has to be named the same
@@ -103,6 +106,25 @@ namespace Microwave.Eventstores.UnitTests
 
             var loadEvents = await eventRepository.LoadEvents();
             Assert.AreEqual(2, loadEvents.Value.Count());
+        }
+
+        [TestMethod]
+        public async Task AddAndLoadEventsConcurrent_AddAfterwardsAgain()
+        {
+            var eventRepository = new EventRepository(EventDatabase);
+
+            var newGuid = GuidIdentity.Create(Guid.NewGuid());
+            var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid)};
+            var events2 = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid)};
+
+            var t1 = eventRepository.AppendAsync(events, 0);
+            var t2 = eventRepository.AppendAsync(events2, 0);
+
+            await Task.WhenAll(t1, t2);
+
+            var res = await eventRepository.AppendAsync(events2, 2);
+
+            Assert.IsTrue(res.Is<Ok>());
         }
 
         [TestMethod]
@@ -289,7 +311,7 @@ namespace Microwave.Eventstores.UnitTests
 
     public class TestEvent1 : IDomainEvent
     {
-        public TestEvent1(GuidIdentity entityId)
+        public TestEvent1(Identity entityId)
         {
             EntityId = entityId;
         }
@@ -319,7 +341,7 @@ namespace Microwave.Eventstores.UnitTests
 
     public class TestEvent3 : IDomainEvent
     {
-        public TestEvent3(GuidIdentity entityId, string name)
+        public TestEvent3(Identity entityId, string name)
         {
             EntityId = entityId;
             Name = name;
