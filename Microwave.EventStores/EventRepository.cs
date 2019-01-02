@@ -86,7 +86,8 @@ namespace Microwave.EventStores
 
             var entityId = events.First().EntityId;
             var versionTemp = currentEntityVersion;
-            var lastVersion = _versions.TryGetValue(entityId, out var version) ? version : 0;
+            var lastVersion = await LastVersion(entityId);
+            _versions[entityId] = versionTemp;
 
             if (lastVersion < currentEntityVersion) return Result.ConcurrencyResult(currentEntityVersion, lastVersion);
 
@@ -105,21 +106,38 @@ namespace Microwave.EventStores
                 };
             }).ToList();
 
-            var mongoCollection = _database.GetCollection<DomainEventDbo>(_eventCollectionName);
             try
             {
-                await mongoCollection.InsertManyAsync(domainEventDbos);
+                await _database.GetCollection<DomainEventDbo>(_eventCollectionName).InsertManyAsync(domainEventDbos);
                 _versions[entityId] = versionTemp;
             }
             catch (MongoBulkWriteException)
             {
-                var cursorReloaded = await mongoCollection.FindAsync(v => v.Key.EntityId == entityId.Id);
-                var eventDbosReloaded = await cursorReloaded.ToListAsync();
-                var actualVersion = eventDbosReloaded.LastOrDefault()?.Key.Version ?? 0;
+                var actualVersion = await GetVersionFromDb(entityId);
                 _versions[entityId] = actualVersion;
                 return Result.ConcurrencyResult(currentEntityVersion, actualVersion);
             }
             return Result.Ok();
+        }
+
+        private async Task<long> GetVersionFromDb(Identity entityId)
+        {
+            var cursorReloaded = await _database.GetCollection<DomainEventDbo>(_eventCollectionName)
+                .FindAsync(v => v.Key.EntityId == entityId.Id);
+            var eventDbosReloaded = await cursorReloaded.ToListAsync();
+            var actualVersion = eventDbosReloaded.LastOrDefault()?.Key.Version ?? 0;
+            return actualVersion;
+        }
+
+        private async Task<long> LastVersion(Identity entityId)
+        {
+            if (!_versions.TryGetValue(entityId, out var version))
+            {
+                var actualVersion = await GetVersionFromDb(entityId);
+                return actualVersion;
+            }
+
+            return version;
         }
     }
 

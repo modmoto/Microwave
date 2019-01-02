@@ -76,5 +76,7 @@ namespace Microwave.Domain
         {
             return new GuidIdentity(id.ToString());
         }
+
+        public Guid Guid => new Guid(Id);
     }
 }

@@ -169,6 +169,41 @@ namespace Microwave.Eventstores.UnitTests
         }
 
         [TestMethod]
+        public async Task AddAndLoadEventsConcurrent_CacheEmpty()
+        {
+            var eventRepository = new EventRepository(EventDatabase, new VersionCache());
+            var eventRepository2 = new EventRepository(EventDatabase, new VersionCache());
+
+            var newGuid = GuidIdentity.Create(Guid.NewGuid());
+            var newGuid2 = GuidIdentity.Create(Guid.NewGuid());
+            var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid)};
+            var events2 = new List<IDomainEvent> { new TestEvent1(newGuid2), new TestEvent2(newGuid2)};
+
+            await eventRepository.AppendAsync(events, 0);
+            await eventRepository2.AppendAsync(events2, 0);
+
+            var result = await eventRepository.LoadEvents();
+            Assert.AreEqual(4, result.Value.Count());
+        }
+
+        [TestMethod]
+        public async Task AddAndLoadEventsConcurrent_CacheEmpty2()
+        {
+            var eventRepository = new EventRepository(EventDatabase, new VersionCache());
+            var eventRepository2 = new EventRepository(EventDatabase, new VersionCache());
+
+            var newGuid = GuidIdentity.Create(Guid.NewGuid());
+            var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid)};
+            var events2 = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid)};
+
+            await eventRepository.AppendAsync(events, 0);
+            await eventRepository2.AppendAsync(events2, 2);
+
+            var result = await eventRepository.LoadEvents();
+            Assert.AreEqual(4, result.Value.Count());
+        }
+
+        [TestMethod]
         public async Task AddEmptyEventList()
         {
             var eventRepository = new EventRepository(EventDatabase, new VersionCache());
