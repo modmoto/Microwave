@@ -64,6 +64,9 @@ namespace Microwave
 
             services.AddDomainEventRegistration(readModelAssembly);
 
+            BsonClassMap.RegisterClassMap<GuidIdentity>();
+            BsonClassMap.RegisterClassMap<StringIdentity>();
+
             return services;
         }
 
@@ -115,6 +118,9 @@ namespace Microwave
 
         private static IServiceCollection RegisterBsonClassMaps(this IServiceCollection services, Assembly assembly)
         {
+            BsonClassMap.RegisterClassMap<GuidIdentity>();
+            BsonClassMap.RegisterClassMap<StringIdentity>();
+
             var registerClassMapMethod = typeof(BsonClassMap).GetMethods().Single(m => m.Name == nameof(BsonClassMap
             .RegisterClassMap) && m.IsGenericMethod && m.GetParameters().Length == 0);
             var domainEventTypes = assembly.GetTypes().Where(ev => ev.GetInterfaces().Contains(typeof(IDomainEvent)));
