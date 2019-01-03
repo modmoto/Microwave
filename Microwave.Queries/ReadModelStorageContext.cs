@@ -8,7 +8,6 @@ namespace Microwave.Queries
         public string Id { get; set; }
         public T Payload { get; set; }
         public long Version { get; set; }
-        public string QueryType { get; set; }
     }
 
     public class QueryDbo<T>
