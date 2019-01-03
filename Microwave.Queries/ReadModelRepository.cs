@@ -25,7 +25,7 @@ namespace Microwave.Queries
             var name = typeof(T).Name;
             var mongoCollection = _database.GetCollection<QueryDbo<T>>(GetQuerryCollectionName<T>());
             var query = (await mongoCollection.FindAsync(dbo => dbo.Type == typeof(T).Name)).FirstOrDefault();
-            if (query == null) return Result<T>.NotFound(name);
+            if (query == null) return Result<T>.NotFound(StringIdentity.Create(name));
             return Result<T>.Ok(query.Payload);
         }
 
@@ -34,7 +34,7 @@ namespace Microwave.Queries
             var mongoCollection = _database.GetCollection<ReadModelDbo<T>>(GetReadModelCollectionName<T>());
             var asyncCursor = await mongoCollection.FindAsync(dbo => dbo.Id == id.Id);
             var identifiableQueryDbo = asyncCursor.FirstOrDefault();
-            if (identifiableQueryDbo == null) return Result<ReadModelWrapper<T>>.NotFound(id.Id);
+            if (identifiableQueryDbo == null) return Result<ReadModelWrapper<T>>.NotFound(id);
             var wrapper = new ReadModelWrapper<T>(identifiableQueryDbo.Payload, id, identifiableQueryDbo.Version);
             return Result<ReadModelWrapper<T>>.Ok(wrapper);
         }

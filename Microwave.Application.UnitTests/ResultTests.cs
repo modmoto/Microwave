@@ -1,6 +1,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Application.Exceptions;
 using Microwave.Application.Results;
+using Microwave.Domain;
 
 namespace Microwave.Application.UnitTests
 {
@@ -10,7 +11,7 @@ namespace Microwave.Application.UnitTests
         [TestMethod]
         public void Result_DoesNotThrowExceptionWithPrimitiveTypes()
         {
-            var notFound = Result<long>.NotFound("123");
+            var notFound = Result<long>.NotFound(StringIdentity.Create("123"));
             Assert.ThrowsException<NotFoundException>(() => notFound.Value);
         }
     }
