@@ -40,8 +40,7 @@ namespace Microwave.EventStores
 
         private bool NeedSnapshot(Type type, long snapShotVersion, long version)
         {
-            var customAttribute = type.GetCustomAttribute(typeof(SnapShotAfterAttribute)) as SnapShotAfterAttribute;
-            if (customAttribute == null) return false;
+            if (!(type.GetCustomAttribute(typeof(SnapShotAfterAttribute)) is SnapShotAfterAttribute customAttribute)) return false;
             return customAttribute.DoesNeedSnapshot(snapShotVersion, version);
         }
     }

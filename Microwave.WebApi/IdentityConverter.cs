@@ -15,9 +15,7 @@ namespace Microwave.WebApi
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
-            var idValue = reader.Value as string;
-
-            if (idValue != null)
+            if (reader.Value is string idValue)
             {
                 return Identity.Create(idValue);
             }

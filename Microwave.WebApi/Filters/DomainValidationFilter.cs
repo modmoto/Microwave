@@ -8,8 +8,7 @@ namespace Microwave.WebApi.Filters
     {
         public void OnException(ExceptionContext context)
         {
-            var domainValidationException = context.Exception as DomainValidationException;
-            if (domainValidationException != null)
+            if (context.Exception is DomainValidationException domainValidationException)
             {
                 var error = new { Description = "Domain Validation Failed", Errors = domainValidationException.DomainErrors };
                 var badRequestResult = new BadRequestObjectResult(error);

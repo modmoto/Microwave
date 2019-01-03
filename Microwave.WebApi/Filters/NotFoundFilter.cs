@@ -8,8 +8,7 @@ namespace Microwave.WebApi.Filters
     {
         public void OnException(ExceptionContext context)
         {
-            var notFoundException = context.Exception as NotFoundException;
-            if (notFoundException != null)
+            if (context.Exception is NotFoundException notFoundException)
             {
                 var error = new { Description = "Entity not found", Detail = notFoundException.Message };
                 var badRequestResult = new NotFoundObjectResult(error);
