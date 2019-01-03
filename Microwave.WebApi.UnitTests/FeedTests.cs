@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Domain;
-using Microwave.ObjectPersistences;
 using Microwave.Queries;
 using RichardSzalay.MockHttp;
 

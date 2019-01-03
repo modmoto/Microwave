@@ -8,7 +8,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microwave.Domain;
 using Microwave.EventStores;
 using Microwave.EventStores.Ports;
-using Microwave.ObjectPersistences;
 using Microwave.Queries;
 using Microwave.WebApi;
 using Microwave.WebApi.Filters;
@@ -45,6 +44,10 @@ namespace Microwave
             services.AddMvcCore(config =>
             {
                 config.Filters.Add(new NotFoundFilter());
+
+                config.OutputFormatters.Insert(0, new IdentityFormatter());
+                config.InputFormatters.Insert(0, new IdentityInputFormatter());
+                config.ModelBinderProviders.Insert(0, new IdentityModelBinderProvider());
             });
 
             services.AddTransient<DomainEventWrapperListDeserializer>();
@@ -87,6 +90,10 @@ namespace Microwave
                 config.Filters.Add(new DomainValidationFilter());
                 config.Filters.Add(new NotFoundFilter());
                 config.Filters.Add(new ConcurrencyViolatedFilter());
+
+                config.OutputFormatters.Insert(0, new IdentityFormatter());
+                config.InputFormatters.Insert(0, new IdentityInputFormatter());
+                config.ModelBinderProviders.Insert(0, new IdentityModelBinderProvider());
             });
 
             services.RegisterBsonClassMaps(domainEventAssembly);

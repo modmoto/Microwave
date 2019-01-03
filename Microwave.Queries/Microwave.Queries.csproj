@@ -11,6 +11,5 @@
     </ItemGroup>
     <ItemGroup>
       <ProjectReference Include="..\Microwave.Application\Microwave.Application.csproj" />
-      <ProjectReference Include="..\Microwave.ObjectPersistences\Microwave.ObjectPersistences.csproj" />
     </ItemGroup>
 </Project>

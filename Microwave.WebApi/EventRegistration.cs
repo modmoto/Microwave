@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 
-namespace Microwave.ObjectPersistences
+namespace Microwave.WebApi
 {
     [Serializable]
     public class EventRegistration : Dictionary<string, Type>

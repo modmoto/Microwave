@@ -4,14 +4,14 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Domain;
 using Microwave.EventStores;
-using Microwave.ObjectPersistences;
+using Microwave.WebApi;
 
 namespace Microwave.Eventstores.UnitTests
 {
     [TestClass]
     public class ReadStoreTests : IntegrationTests
     {
-        private readonly DomainEventFactory _domainEventFactory = new DomainEventFactory(new EventRegistration
+        private readonly IDomainEventFactory _domainEventFactory = new DomainEventFactory(new EventRegistration
         {
             { nameof(TestEv), typeof(TestEv) },
             { nameof(TestEv_AutoProperty), typeof(TestEv_AutoProperty) },

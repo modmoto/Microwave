@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using Microwave.Application;
-using Microwave.ObjectPersistences;
 using Microwave.Queries;
 
 namespace Microwave.WebApi

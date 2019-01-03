@@ -5,7 +5,7 @@ using Microwave.Domain;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace Microwave.ObjectPersistences
+namespace Microwave.WebApi
 {
     public interface IDomainEventFactory
     {
@@ -44,31 +44,6 @@ namespace Microwave.ObjectPersistences
                     DomainEvent = domainevent
                 };
             }
-        }
-    }
-
-    class IdentityConverter : JsonConverter
-    {
-        public override bool CanConvert(Type objectType)
-        {
-            return objectType == typeof(GuidIdentity) || objectType == typeof(StringIdentity) || objectType == typeof
-            (Identity);
-        }
-
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
-        {
-            JObject jObject = JObject.Load(reader);
-            var jToken = jObject.GetValue(nameof(Identity.Id), StringComparison.Ordinal);
-            if (jToken == null) jToken = jObject.GetValue("id", StringComparison.Ordinal);
-            var id = jToken.Value<string>();
-            var identity = Identity.Create(id);
-            return identity;
-        }
-
-        public override bool CanWrite => false;
-
-        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
-        {
         }
     }
 }

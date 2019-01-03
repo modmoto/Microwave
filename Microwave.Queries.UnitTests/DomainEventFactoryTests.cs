@@ -3,7 +3,7 @@ using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Application;
 using Microwave.Domain;
-using Microwave.ObjectPersistences;
+using Microwave.WebApi;
 using Newtonsoft.Json;
 
 namespace Microwave.Queries.UnitTests

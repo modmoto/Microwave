@@ -7,7 +7,6 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Domain;
 using Microwave.EventStores;
 using Microwave.EventStores.Ports;
-using Microwave.ObjectPersistences;
 using Microwave.Queries;
 using Microwave.WebApi;
 using MongoDB.Bson.Serialization;

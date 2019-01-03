@@ -4,7 +4,7 @@ using System.Linq;
 using Microwave.Application;
 using Newtonsoft.Json.Linq;
 
-namespace Microwave.ObjectPersistences
+namespace Microwave.WebApi
 {
     public class DomainEventWrapperListDeserializer
     {
