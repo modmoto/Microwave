@@ -22,9 +22,10 @@ namespace Microwave.WebApi.Filters
             Detail = detail;
         }
 
-        public ProblemDocument(string key, IEnumerable<DomainError> domainErrors)
+        public ProblemDocument(string key, string detail, IEnumerable<DomainError> domainErrors)
         {
             Key = key;
+            Detail = detail;
             DomainErrors =
                 domainErrors.Select(error => new ProblemDocument(error.ErrorType, error.Description));
         }
