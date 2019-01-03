@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microwave.Domain;
 
-namespace Microwave.WebApi
+namespace Microwave.WebApi.IdentityFormatting
 {
 
     public class IdentityModelBinderProvider : IModelBinderProvider

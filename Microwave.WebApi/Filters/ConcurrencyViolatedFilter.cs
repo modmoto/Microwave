@@ -10,7 +10,7 @@ namespace Microwave.WebApi.Filters
         {
             if (context.Exception is ConcurrencyViolatedException concurrencyViolatedException)
             {
-                var error = new { Description = "ConcurrencyViolation", Detail = concurrencyViolatedException.Message };
+                var error = new ProblemDocument("ConcurrencyViolation", concurrencyViolatedException.Message);
                 var conflictResut = new OkObjectResult(error);
                 conflictResut.StatusCode = 409;
                 context.Result = conflictResut;

@@ -3,7 +3,7 @@ using Microwave.Domain;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace Microwave.WebApi
+namespace Microwave.WebApi.IdentityFormatting
 {
     class IdentityConverter : JsonConverter
     {

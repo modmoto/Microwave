@@ -11,6 +11,7 @@ using Microwave.EventStores.Ports;
 using Microwave.Queries;
 using Microwave.WebApi;
 using Microwave.WebApi.Filters;
+using Microwave.WebApi.IdentityFormatting;
 using MongoDB.Bson.Serialization;
 
 namespace Microwave
@@ -45,7 +46,7 @@ namespace Microwave
             {
                 config.Filters.Add(new NotFoundFilter());
 
-                config.OutputFormatters.Insert(0, new IdentityFormatter());
+                config.OutputFormatters.Insert(0, new IdentityOutputFormatter());
                 config.InputFormatters.Insert(0, new IdentityInputFormatter());
                 config.ModelBinderProviders.Insert(0, new IdentityModelBinderProvider());
             });
@@ -94,7 +95,7 @@ namespace Microwave
                 config.Filters.Add(new NotFoundFilter());
                 config.Filters.Add(new ConcurrencyViolatedFilter());
 
-                config.OutputFormatters.Insert(0, new IdentityFormatter());
+                config.OutputFormatters.Insert(0, new IdentityOutputFormatter());
                 config.InputFormatters.Insert(0, new IdentityInputFormatter());
                 config.ModelBinderProviders.Insert(0, new IdentityModelBinderProvider());
             });
