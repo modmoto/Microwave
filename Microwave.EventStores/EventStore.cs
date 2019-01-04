@@ -26,18 +26,18 @@ namespace Microwave.EventStores
             result.Check();
         }
 
-        public async Task<EventstoreResult<T>> LoadAsync<T>(Identity entityId) where T : IApply, new()
+        public async Task<EventStoreResult<T>> LoadAsync<T>(Identity entityId) where T : IApply, new()
         {
             var snapShot = await _snapShotRepository.LoadSnapShot<T>(entityId);
             var entity = snapShot.Entity;
             var result = await _eventRepository.LoadEventsByEntity(entityId, snapShot.Version);
-            if (result.Is<NotFound>()) return EventstoreResult<T>.NotFound(entityId);
+            if (result.Is<NotFound>()) return EventStoreResult<T>.NotFound(entityId);
             var domainEventWrappers = result.Value.ToList();
             entity.Apply(domainEventWrappers.Select(ev => ev.DomainEvent));
             var version = domainEventWrappers.LastOrDefault()?.Version ?? snapShot.Version;
             if (NeedSnapshot(typeof(T), snapShot.Version, version))
                 await _snapShotRepository.SaveSnapShot(entity, entityId, version);
-            return EventstoreResult<T>.Ok(entity, version);
+            return EventStoreResult<T>.Ok(entity, version);
         }
 
         private bool NeedSnapshot(Type type, long snapShotVersion, long version)
