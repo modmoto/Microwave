@@ -22,7 +22,6 @@ init:
 before_build:
 - appveyor-retry dotnet restore -v Minimal
 - choco install opencover.portable
-- choco install codecov
 
 environment:
  matrix:
