@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microwave.Application.Results;
 using Microwave.Domain;
 using Microwave.EventStores;
 using MongoDB.Driver;
@@ -56,6 +57,27 @@ namespace Microwave.Eventstores.UnitTests
             Assert.AreEqual(14, userSnapShot.Age);
             Assert.AreEqual("PeterNeu", userSnapShot.Name);
             Assert.AreEqual(entityId.Id, userSnapShot.Id.Id);
+        }
+
+        [TestMethod]
+        public async Task SnapshotExactlyOnSnapShotTime_DoesNotReturnNotFoundBug()
+        {
+            var repo = new EventRepository(EventDatabase, new VersionCache(EventDatabase));
+            var eventStore = new EventStore(repo, new SnapShotRepository(EventDatabase));
+
+            var entityId = GuidIdentity.Create(Guid.NewGuid());
+            await eventStore.AppendAsync(new List<IDomainEvent>
+            {
+                new Event1(entityId),
+                new Event2(entityId, "Peter"),
+                new Event2(entityId, "Peterneu")
+            }, 0);
+
+            await eventStore.LoadAsync<User>(entityId);
+            var result = await eventStore.LoadAsync<User>(entityId);
+
+            Assert.AreEqual("Peterneu", result.Value.Name);
+            Assert.AreEqual(3, result.Version);
         }
     }
 

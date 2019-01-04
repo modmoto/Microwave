@@ -26,7 +26,12 @@ namespace Microwave.EventStores
         {
             var mongoCollection = _database.GetCollection<DomainEventDbo>(_eventCollectionName);
             var domainEventDbos = (await mongoCollection.FindAsync(ev => ev.Key.EntityId == entityId.Id && ev.Key.Version > from)).ToList();
-            if (!domainEventDbos.Any()) return Result<IEnumerable<DomainEventWrapper>>.NotFound(entityId);
+            if (!domainEventDbos.Any())
+            {
+                var eventDbos = await mongoCollection.Find(ev => ev.Key.EntityId == entityId.Id).FirstOrDefaultAsync();
+                if (eventDbos == null) return Result<IEnumerable<DomainEventWrapper>>.NotFound(entityId);
+                return Result<IEnumerable<DomainEventWrapper>>.Ok(new List<DomainEventWrapper>());
+            }
 
             var domainEvents = domainEventDbos.Select(dbo =>
             {
