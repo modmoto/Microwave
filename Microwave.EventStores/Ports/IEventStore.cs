@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microwave.Application.Exceptions;
+using Microwave.Application.Results;
 using Microwave.Domain;
 
 namespace Microwave.EventStores.Ports
@@ -11,44 +11,40 @@ namespace Microwave.EventStores.Ports
         Task<EventstoreResult<T>> LoadAsync<T>(Identity entityId) where T : IApply, new();
     }
 
-    public class EventstoreResult<T>
+    public class EventstoreResult<T> : Result<T>
     {
-        private readonly T _entity;
-        private readonly long _version;
+        private long _version;
 
-        public EventstoreResult()
+        public long Version
         {
+            get
+            {
+                Status.Check();
+                return _version;
+            }
         }
 
-        public EventstoreResult(long version, T entity)
+        protected EventstoreResult(T value, long version, ResultStatus state) : base(state)
         {
             _version = version;
-            _entity = entity;
+            Value = value;
         }
 
-        public long Version =>
-            this is EventstoreResultNotFound<T> res
-                ? throw new NotFoundException(typeof(T), res.EntityId.Id)
-                : _version;
-
-        public T Entity =>
-            this is EventstoreResultNotFound<T> res
-                ? throw new NotFoundException(typeof(T), res.EntityId.Id)
-                : _entity;
-
-        public static EventstoreResult<T> NotFound(Identity entityId)
+        public static new EventstoreResult<T> NotFound(Identity notFoundId)
         {
-            return new EventstoreResultNotFound<T>(entityId);
+            return new NotFoundEventstoreResult<T>(notFoundId);
+        }
+
+        public static new EventstoreResult<T> Ok(T value, long version)
+        {
+            return new EventstoreResult<T>(value, version, new Ok());
         }
     }
 
-    internal class EventstoreResultNotFound<T> : EventstoreResult<T>
+    public class NotFoundEventstoreResult<T> : EventstoreResult<T>
     {
-        public EventstoreResultNotFound(Identity entityId)
+        public NotFoundEventstoreResult(Identity notFoundId) : base(default(T), 0, new NotFound(typeof(T), notFoundId))
         {
-            EntityId = entityId;
         }
-
-        public Identity EntityId { get; }
     }
 }
