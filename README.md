@@ -57,6 +57,23 @@ app.RunMicrowaveQueries();
 
 Now you should be able to start the services and the read side will update when something on the write side happens, provided you defined some handlers. Of course you can implement the read side on the write side, too.
 
+### Database
+
+Microwave uses mongodb as the database and you have to define the connectionstring in the `appsettings.json` for the service to work. The definition goes like this:
+
+```
+{
+  "WriteModelDatabase": {
+    "ConnectionString" : "mongodb://localhost:815/",
+    "DatabaseName" : "MyWriteDb"                        --> optional, default is "MicrowaveWriteModelDatabase"
+  },
+  "ReadModelDatabase": {
+      "ConnectionString" : "mongodb://localhost:815/",
+      "DatabaseName" : "MyReadDb"                       --> optional, default is "MicrowaveReadModelDatabase"
+    }
+}
+```
+
 # EventStore
 
 The `EventStore` is your persistance layer that offers saving DomainEvents and restoring Entities by EventSourcing. There is a SnapShot function for performance reasons, if you need it. Inject the `IEventStore` into your desired class and use the functions to save and load entities. The Eventstore uses optimistic concurrency so you have to give him the version of the entity that you are trying to save.
