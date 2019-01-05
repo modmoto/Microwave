@@ -4,6 +4,7 @@
 
 - [Overview](#overview)
   - [Installation](#installation)
+    - [Database](#database)
 - [EventStore](#eventstore)
   - [DomainEvents and Identities](#domainevents-and-identities)
   - [IApply/Entities](#iapplyentities)
