@@ -287,8 +287,8 @@ public class CreateUserCommand
 
 // the json object for the command is simply just, likewise it looks like this when returning an object containing an Identity
 // {
-//  "UserId": "MyUserId1"
-//	"Name" : 7,
+//  "UserId": "MyUserId1",
+//  "Name" : 7
 // }
 ```
 
