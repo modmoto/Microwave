@@ -237,13 +237,61 @@ The Locations are optional, if they are not provided, Microwave will try to get 
 
 # Quality of Live Tools
 
-## Exceptions
+## Exceptions and Filters
+
+There a some Exceptions provided, that can return nice Problem Documents when an error occurs. Just throw them, when you see fit and get a propper response. Exceptions are:
+* DomainValidationException
+* NotFoundException
+* ConcurrencyViolatedException
+
+The DomainValidaitionException wants some errors that are being transferred through the wep api
 
 ## Result Objects
 
-## WebApi Filters
+There are result objects, that can be used for repositories or methods on entities to return if something worked or not. The results all have static creation methods and should be self explanatory. Use them to not throw exceptions and have a cleaner programmflow. Resuls are:
+
+* DomainValidationResult (cotains created DomainEvents or Errors)
+* Ok
+* NotFound
+* ConcurrencyViolated
+
+All Microwave classes return ResulObjects that can be used for detecting what worked and what not. There is also a `Is<T>` that tells you the state of the current result, if you need to know.
 
 ## Identity Handling in WebApi
+
+The Identity classes are handled like basic types such as int or string in webApi. Deserializing an Identity will result in a plain string and not an object with an inner Id. Likewise, if you post it to web api, you do not need to construct a object, just send a plain string. Also, you can use it as a parameter in the url, like you would with a guid. This makes the api much more clean. Examples:
+
+```
+[HttpGet("{id}")]
+public async Task<ActionResult> GetUser(StringIdentity id)         // call the get with .../api/MyUserId1
+{
+    var querry = await _queryRepository.Load<UserReadModel>(id);
+    return Ok(querry.Value);
+}
+```
+
+or
+
+```
+[HttpPost("create")]
+public async Task<ActionResult> CreateUser([FromBody] CreateUserCommand command)
+{
+    var teamGuid = await _commandHandler.CreateUser(command);
+    return Created();
+}
+
+public class CreateUserCommand
+{
+    public StringIdentity UserId { get; set; }
+    public string Name { get; set; }
+}
+
+// the json object for the command is simply just, likewise it looks like this when returning an object containing an Identity
+// {
+//  "UserId": "MyUserId1"
+//	"Name" : 7,
+// }
+```
 
 # Known Issues
 
