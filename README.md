@@ -108,7 +108,7 @@ public class User : Entity
 
 public class User2 : IApply
 {
-    public void Apply(IEnumerable<IDomainEvent> domainEvents)
+    public void Apply(IEnumerable<IDomainEvent> domainEvents)  // this here is basically what is done in the Entity class with reflection
     {
         foreach (var domainEvent in domainEvents)
         {
