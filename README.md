@@ -4,12 +4,16 @@
 
 - [Microwave](#microwave)
   - [Overview](#overview)
+    - [Installation](#installation)
   - [EventStore](#eventstore)
-    - [DomainEvents](#domainevents)
-    - [Entities](#entities)
+    - [DomainEvents and Identities](#domainevents-and-identities)
+    - [IApply/Entities](#iapplyentities)
+    - [Snapshots](#snapshots)
   - [Distributed Event Handling](#distributed-event-handling)
-    - [EventHandlers](#eventhandlers)
-    - [ReadModels](#readmodels)
+    - [Reacting to Events happening in the Domain](#reacting-to-events-happening-in-the-domain)
+    - [ReadModels and Querries](#readmodels-and-querries)
+      - [Loading Querries and Readmodels](#loading-querries-and-readmodels)
+    - [Setting up the event source](#setting-up-the-event-source)
   - [WebApi](#webapi)
     - [EventStreams](#eventstreams)
   - [Quality of Live Tools](#quality-of-live-tools)
@@ -17,6 +21,8 @@
     - [Result Objects](#result-objects)
     - [WebApi Filters](#webapi-filters)
     - [Identity Handling in WebApi](#identity-handling-in-webapi)
+  - [Known Issues](#known-issues)
+    - [String and GuidIdentity in Parameters](#string-and-guididentity-in-parameters)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
