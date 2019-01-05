@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Microwave.Domain;
 
 namespace Microwave.Queries
@@ -18,5 +19,6 @@ namespace Microwave.Queries
 
     public abstract class ReadModel: Query
     {
+        public abstract Type GetsCreatedOn { get; }
     }
 }

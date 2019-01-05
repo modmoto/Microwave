@@ -192,10 +192,9 @@ public class UserCounterQuerry : Querry, IHandle<UserCreatedEvent>
 }
 ```
 
-To add a ReadModel inherit from `ReadModel` and also implement `IHandle` accordingly. The only difference is that you have to add an attribute to the ReadModel that says on what DomainEvent Microwave should create this ReadModel. Afte the creation Mircowave tracks the ReadModel and updates it when new events emerge. The Readmodel also has a Version that is being updated alongside with the write side, so you can cal the write side with the eventual consistent version. A ReadModel could look like this:
+To add a ReadModel inherit from `ReadModel` and also implement `IHandle` accordingly. The only difference is that you have to define when Microwave should create this ReadModel by overriding the `GetsCreatedOn` method. After the creation Mircowave tracks the ReadModel and updates it when new events emerge. The Readmodel also has a Version that is being updated alongside with the write side, so you can call the write side with the eventual consistent version. The version is also updated, when the event is not porcessed by the ReadModel. A ReadModel could look like this:
 
 ```
-[CreateReadmodelOn(typeof(UserCreatedEvent))]
 public class UserReadModel : ReadModel, IHandle<UserCreatedEvent>, IHandle<UserChangedNameEvent>
 {
     public void Handle(UserCreatedEvent domainEvent)
@@ -210,6 +209,7 @@ public class UserReadModel : ReadModel, IHandle<UserCreatedEvent>, IHandle<UserC
 
     public Identity Id { get; private set; }
     public string Name { get; private set; }
+    public override Type GetsCreatedOn => typeof(UserCreatedEvent);
 }
 ```
 

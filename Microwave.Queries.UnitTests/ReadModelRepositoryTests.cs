@@ -135,6 +135,8 @@ namespace Microwave.Queries.UnitTests
             UserName = test;
             Strings = str;
         }
+
+        public override Type GetsCreatedOn { get; }
     }
 
     public class TestReadModel2 : ReadModel
@@ -147,5 +149,7 @@ namespace Microwave.Queries.UnitTests
             UserNameAllDifferent = test;
             StringsAllDifferent = str;
         }
+
+        public override Type GetsCreatedOn { get; }
     }
 }

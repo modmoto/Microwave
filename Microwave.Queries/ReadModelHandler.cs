@@ -42,7 +42,7 @@ namespace Microwave.Queries
                 var latestEventVersion = latestEvent.Version;
 
                 Result<ReadModelWrapper<T>> result;
-                if (IsCreationEvent(latestEventDomainEvent))
+                if (new T().GetsCreatedOn == latestEventDomainEvent.GetType())
                 {
                     var wrapper = new ReadModelWrapper<T>(new T(), domainEventEntityId, latestEventVersion);
                     result = Result<ReadModelWrapper<T>>.Ok(wrapper);
@@ -65,13 +65,6 @@ namespace Microwave.Queries
                 await _versionRepository
                     .SaveVersion(new LastProcessedVersion(redaModelVersionCounter, latestEvent.Created));
             }
-        }
-
-        private bool IsCreationEvent(IDomainEvent latestEventDomainEvent)
-        {
-            var eventType = latestEventDomainEvent.GetType();
-            var attribute = typeof(T).GetCustomAttribute(typeof(CreateReadmodelOnAttribute)) as CreateReadmodelOnAttribute;
-            return attribute?.CreationEvent == eventType;
         }
     }
 }

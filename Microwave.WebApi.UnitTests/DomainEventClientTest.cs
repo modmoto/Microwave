@@ -1,3 +1,4 @@
+using System;
 using Microsoft.Extensions.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Domain;
@@ -41,6 +42,7 @@ namespace Microwave.WebApi.UnitTests
 
     public class IdQuery : ReadModel
     {
+        public override Type GetsCreatedOn { get; }
     }
 
     public class Ev1 : IDomainEvent

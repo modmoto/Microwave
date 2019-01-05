@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -144,6 +145,8 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
         public void Handle(TestDomainEvent2 domainEvent)
         {
         }
+
+        public override Type GetsCreatedOn { get; }
     }
 
     public class TestIdQuerySingle : ReadModel, IHandle<TestDomainEvent3>
@@ -151,6 +154,8 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
         public void Handle(TestDomainEvent3 domainEvent)
         {
         }
+
+        public override Type GetsCreatedOn { get; }
     }
 
     public class TestDomainEvent3 : IDomainEvent
@@ -164,6 +169,8 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
         public void Handle(TestDomainEvent1 domainEvent)
         {
         }
+
+        public override Type GetsCreatedOn { get; }
     }
 
     public class TestQuery1 : Query, IHandle<TestDomainEvent1>, IHandle<TestDomainEvent2>

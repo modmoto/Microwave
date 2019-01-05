@@ -108,12 +108,6 @@ namespace Microwave.Queries.UnitTests
             Assert.AreEqual(EntityGuid2.Id, result2.Value.ReadModel.IdTotallyDifferenzt.Id);
         }
 
-        [TestMethod]
-        public void CreatedOnAttribute_Exception()
-        {
-            Assert.ThrowsException<ArgumentException>(() => new CreateReadmodelOnAttribute(typeof(ReadModel)));
-        }
-
         public static GuidIdentity EntityGuid { get; set; }
         public static GuidIdentity EntityGuid2 { get; set; }
 
@@ -135,7 +129,6 @@ namespace Microwave.Queries.UnitTests
         }
     }
 
-    [CreateReadmodelOn(typeof(TestEvnt2))]
     public class TestReadModelQuerries : ReadModel, IHandle<TestEvnt2>, IHandle<TestEvnt1>
     {
         public void Handle(TestEvnt2 domainEvent)
@@ -150,9 +143,9 @@ namespace Microwave.Queries.UnitTests
         }
 
         public string Name { get; set; }
+        public override Type GetsCreatedOn => typeof(TestEvnt2);
     }
 
-    [CreateReadmodelOn(typeof(TestEvnt2))]
     public class TestReadModelQuerries_OnlyOneEventAndVersionIsCounted : ReadModel, IHandle<TestEvnt2>
     {
         public void Handle(TestEvnt2 domainEvent)
@@ -162,6 +155,7 @@ namespace Microwave.Queries.UnitTests
 
         public Identity Id { get; set; }
         public string Name { get; set; }
+        public override Type GetsCreatedOn => typeof(TestEvnt2);
     }
 
     public class FeedMock2 : IEventFeed<ReadModelHandler<TestReadModelQuerries>>
@@ -210,7 +204,6 @@ namespace Microwave.Queries.UnitTests
         }
     }
 
-    [CreateReadmodelOn(typeof(TestEvnt1))]
     public class TestReadModelQuerries_TwoParallelFeeds1 : ReadModel, IHandle<TestEvnt1>
     {
         public void Handle(TestEvnt1 domainEvent)
@@ -219,6 +212,7 @@ namespace Microwave.Queries.UnitTests
         }
 
         public Identity Id { get; set; }
+        public override Type GetsCreatedOn => typeof(TestEvnt1);
     }
 
     public class FeedMock7 : IEventFeed<ReadModelHandler<TestReadModelQuerries_TwoParallelFeeds2>>
@@ -229,7 +223,6 @@ namespace Microwave.Queries.UnitTests
         }
     }
 
-    [CreateReadmodelOn(typeof(TestEvnt2))]
     public class TestReadModelQuerries_TwoParallelFeeds2 : ReadModel, IHandle<TestEvnt2>
     {
         public void Handle(TestEvnt2 domainEvent)
@@ -238,6 +231,7 @@ namespace Microwave.Queries.UnitTests
         }
 
         public Identity IdTotallyDifferenzt { get; set; }
+        public override Type GetsCreatedOn => typeof(TestEvnt2);
     }
 
     public class FeedMock3 : IEventFeed<ReadModelHandler<TestReadModelQuerries>>

@@ -94,6 +94,8 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
         public void Handle(Ev domainEvent)
         {
         }
+
+        public override Type GetsCreatedOn { get; }
     }
 
     public class Ev : IDomainEvent

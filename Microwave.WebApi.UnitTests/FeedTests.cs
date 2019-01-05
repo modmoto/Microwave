@@ -45,6 +45,7 @@ namespace Microwave.WebApi.UnitTests
         }
 
         public Identity Id { get; set; }
+        public override Type GetsCreatedOn { get; }
     }
 
     public class TestEv : IDomainEvent
