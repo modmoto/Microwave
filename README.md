@@ -285,7 +285,7 @@ public class CreateUserCommand
     public string Name { get; set; }
 }
 
-// the json object for the command is simply just, likewise it looks like this when returning an object containing an Identity
+// the json object for the command is simply just this. Likewise it looks like this when returning an object containing an Identity
 // {
 //  "UserId": "MyUserId1",
 //  "Name" : 7
