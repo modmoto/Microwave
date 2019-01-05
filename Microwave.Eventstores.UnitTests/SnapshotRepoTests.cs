@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Domain;
 using Microwave.EventStores;
+using Microwave.EventStores.Ports;
 
 namespace Microwave.Eventstores.UnitTests
 {
@@ -24,7 +25,7 @@ namespace Microwave.Eventstores.UnitTests
             userSnapshot.AddGuid(newGuid);
             userSnapshot.AddGuid(newGuid);
 
-            await repo.SaveSnapShot(userSnapshot, entityId, 0);
+            await repo.SaveSnapShot(new SnapShotWrapper<UserSnapshot>(userSnapshot, entityId, 0));
             var snapShotResult = await repo.LoadSnapShot<UserSnapshot>(entityId);
 
             var entityGuids = snapShotResult.Entity.Guids.ToList();

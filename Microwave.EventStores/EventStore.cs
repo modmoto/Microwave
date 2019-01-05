@@ -36,7 +36,7 @@ namespace Microwave.EventStores
             entity.Apply(domainEventWrappers.Select(ev => ev.DomainEvent));
             var version = domainEventWrappers.LastOrDefault()?.Version ?? snapShot.Version;
             if (NeedSnapshot(typeof(T), snapShot.Version, version))
-                await _snapShotRepository.SaveSnapShot(entity, entityId, version);
+                await _snapShotRepository.SaveSnapShot(new SnapShotWrapper<T>(entity, entityId, version));
             return EventStoreResult<T>.Ok(entity, version);
         }
 

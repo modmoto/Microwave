@@ -1,4 +1,4 @@
-version: '0.7.6.{build}-beta'
+version: '0.7.7.{build}-beta'
 
 branches:
   only:

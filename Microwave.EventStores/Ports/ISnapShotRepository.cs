@@ -6,7 +6,21 @@ namespace Microwave.EventStores.Ports
     public interface ISnapShotRepository
     {
         Task<SnapShotResult<T>> LoadSnapShot<T>(Identity entityId) where T : new();
-        Task SaveSnapShot<T>(T snapShot, Identity entityId, long version);
+        Task SaveSnapShot<T>(SnapShotWrapper<T> snapShot);
+    }
+
+    public class SnapShotWrapper<T>
+    {
+        public SnapShotWrapper(T entity, Identity id, long version)
+        {
+            Entity = entity;
+            Version = version;
+            Id = id;
+        }
+
+        public T Entity { get; }
+        public long Version { get; }
+        public Identity Id { get; }
     }
 
     public class SnapShotResult<T>

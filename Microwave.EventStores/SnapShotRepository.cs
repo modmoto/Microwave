@@ -28,19 +28,19 @@ namespace Microwave.EventStores
             return new SnapShotResult<T>(snapShot.Payload, snapShot.Version);
         }
 
-        public async Task SaveSnapShot<T>(T snapShot, Identity entityId, long version)
+        public async Task SaveSnapShot<T>(SnapShotWrapper<T> snapShot)
         {
             var mongoCollection = _context.GetCollection<SnapShotDbo<T>>(_snapShotCollectionName);
 
             var findOneAndReplaceOptions = new FindOneAndReplaceOptions<SnapShotDbo<T>>();
             findOneAndReplaceOptions.IsUpsert = true;
             await mongoCollection.FindOneAndReplaceAsync(
-                (Expression<Func<SnapShotDbo<T>, bool>>) (e => e.EntityId == entityId.Id),
+                (Expression<Func<SnapShotDbo<T>, bool>>) (e => e.EntityId == snapShot.Id.Id),
                 new SnapShotDbo<T>
                 {
-                    EntityId = entityId.Id,
-                    Version = version,
-                    Payload = snapShot
+                    EntityId = snapShot.Id.Id,
+                    Version = snapShot.Version,
+                    Payload = snapShot.Entity
                 }, findOneAndReplaceOptions);
         }
     }
