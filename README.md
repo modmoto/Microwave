@@ -57,6 +57,8 @@ app.RunMicrowaveQueries();
 
 Now you should be able to start the services and the read side will update when something on the write side happens, provided you defined some handlers. Of course you can implement the read side on the write side, too.
 
+The Packages are also available in smaller chunks, like Microwave.Eventstores, Microwave.Domain, etc. if you want them to be used in other projects, that are not in the Host.
+
 ## Database
 
 Microwave uses mongodb as the database and you have to define the connectionstring in the `appsettings.json` for the service to work. The definition goes like this:
