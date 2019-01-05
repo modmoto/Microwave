@@ -110,7 +110,86 @@ Microwave supports distributed systems and you can subscribe to events from any 
 
 ### Reacting to Events happening in the Domain
 
-### ReadModels
+If you want to react to DomainEvents in your Domain, to trigger other processes, you can do this by implementing the `IHandleAsync` interface in a class. You will have to implement a method that will receive the event as soon as it happens in the Domain. This all happens asynchronouse, so the emitting thread is not blocked by your handling. A handler could look like this:
+
+```
+public class WelcomeMailHandler : IHandleAsync<UserCreatedEvent>
+{
+    private readonly IMailRepository _mailRepository;
+
+    public WelcomeMailHandler(IMailRepository mailRepository)
+    {
+        _mailRepository = mailRepository;
+    }
+
+    public Task HandleAsync(UserCreatedEvent domainEvent)
+    {
+        await _mailRepository.SendWelcomeMail(domainEvent.UserId);
+    }
+}
+```
+
+Using the `IHandleAsync` is usually useful when updating your write or read model when something happens in another entity that you do not want to reference directly.
+
+### ReadModels and Querries
+
+Microwave has ReadModels and Querries that can be used to create a querry service that is independent from the write side and therefore can be run in parallel. There are two main differences between Querries and ReadModels: ReadModels can be retrieved with and Identity and Querries are retrieved by their classname. For example you can have a ReadModel that represents a UserReadModel that can be retrieved by the UserId and a Querry could be the Top 10 Most Active Users in the Domain.
+
+To add a Querry, inherit from `Querry` and implement the `IHandle` Interface to register the Querry to the specific DomainEvent. A Querry could look like this:
+
+```
+public class UserCounterQuerry : Querry, IHandle<UserCreatedEvent>
+{
+    public int Count { get; private set; }
+
+    public void Handle(UserCreatedEvent domainEvent)
+    {
+        Count++;
+    }
+}
+```
+
+To add a ReadModel inherit from `ReadModel` and also implement `IHandle` accordingly. The only difference is that you have to add an attribute to the ReadModel that says on what DomainEvent Microwave should create this ReadModel. Afte the creation Mircowave tracks the ReadModel and updates it when new events emerge. The Readmodel also has a Version that is being updated alongside with the write side, so you can cal the write side with the eventual consistent version. A ReadModel could look like this:
+
+```
+[CreateReadmodelOn(typeof(UserCreatedEvent))]
+public class UserReadModel : ReadModel, IHandle<UserCreatedEvent>, IHandle<UserChangedNameEvent>
+{
+    public void Handle(UserCreatedEvent domainEvent)
+    {
+        Id = domainEvent.EntityId;
+    }
+
+    public void Apply(UserChangedNameEvent domainEvent)
+    {
+        Name = domainEvent.Name;
+    }
+
+    public Identity Id { get; private set; }
+    public string Name { get; private set; }
+}
+```
+
+#### Loading Querries and Readmodels
+To load the Querries and ReadModels there are two Repositories `IQuerryRepository` and `IReadModelRepository` that offer functionality to load and update Querries/Readmodels. You can use them to update Querries or Readmodels inside a IHandleAsync by yourself, if you need to.
+
+### Setting up the event source
+
+The location for Events can be defined in the appsettings.json, so you can quickly move adjust the source for your events if you move entities aroung. For Microwave it does not matter where the events are stored, it always gets the from the webapi provided and applies them to the local handlers or ReadModels. The appsettings has to contain the following definitions:
+
+```
+{
+  "DefaultDomainEventLocation": "http://localhost:5000/",  --> this is mandatory (will throw exception when not present)
+  "DomainEventLocations": {
+    "UserCreatedEvent" : "http://localhost:123/"           --> tells Mircowave to get the event from this location for handlers and Querries
+  },
+  "DomainEventReadModelLocations": {
+    "UserReadModel" : "http://localhost:123/"              --> tells Mircowave to get the all events for the readmodel from this location
+  }
+}
+```
+
+The Locations are optional, if they are not provided, Microwave will try to get the events from the `DefaultDomainEventLocation`
 
 ## WebApi
 
