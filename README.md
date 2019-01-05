@@ -4,7 +4,7 @@
 
 - [Overview](#overview)
   - [Installation](#installation)
-    - [Database](#database)
+  - [Database](#database)
 - [EventStore](#eventstore)
   - [DomainEvents and Identities](#domainevents-and-identities)
   - [IApply/Entities](#iapplyentities)
@@ -58,7 +58,7 @@ app.RunMicrowaveQueries();
 
 Now you should be able to start the services and the read side will update when something on the write side happens, provided you defined some handlers. Of course you can implement the read side on the write side, too.
 
-### Database
+## Database
 
 Microwave uses mongodb as the database and you have to define the connectionstring in the `appsettings.json` for the service to work. The definition goes like this:
 
