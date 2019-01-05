@@ -81,7 +81,7 @@ The `EventStore` is your persistance layer that offers saving DomainEvents and r
 
 ## DomainEvents and Identities
 
-To append DomainEvents to the `EventStore` you have to implement the `IDomainEvent` interface on your DomainEvents. The interface forces you to implement the property `EntityId` so the eventstore can assign the events to the entity. Everything else is up to your choice. The `EventStore` also generates upcounting versions for the DomainEvents. The Identity class is a base class that has two implementations: `StringIdentity` and `GuidIdentity`. You can create them with a string or an guid on the static create method. Equals and == are overwritten so you can use them just like a string or a guid and the eventstore can handle both of them. I found myself using the `StringIdentity` to give an id in a specific scenario more context.
+To append DomainEvents to the `EventStore` you have to implement the `IDomainEvent` interface on your DomainEvents. The interface forces you to implement the property `EntityId` so the eventstore can assign the events to the entity. Everything else is up to your choice. The `EventStore` also generates upcounting versions for the DomainEvents. The Identity class is a base class that has two implementations: `StringIdentity` and `GuidIdentity`. You can create them with a string or an guid on the static create method. Equals and == are overwritten so you can use them just like a string or a guid and the eventstore can handle both of them. As Microwave defines Modelbinders and Formatters for those types, they feel like strings/guid regarding the webapi. For more see the chapters below. I found myself using the `StringIdentity` to give an id in a specific scenario more context.
 
 ## IApply/Entities
 
