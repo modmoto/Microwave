@@ -247,4 +247,33 @@ The Locations are optional, if they are not provided, Microwave will try to get 
 
 # Known Issues
 
-## String and GuidIdentity in Parameters
+## StringIdentity and GuidIdentity in Constructor of DomainEvents
+
+StringIdentity and GuidIdentity can not be passed as concrete Parameter in a DomainEvent, as bson from mongodb does not support it (or I have not found a solution yet). As a workaround, you can use the Identity class itself or make a static create function, to call the constructor type safely.
+
+This works:
+```
+public class UserCreatedEvent : IDomainEvent
+{
+    public UserCreatedEvent(Identity newGuid)
+    {
+        EntityId = newGuid;
+    }
+
+    public Identity EntityId { get; }
+}
+```
+
+This does not:
+
+```
+public class UserCreatedEvent : IDomainEvent
+{
+    public UserCreatedEvent(GuidIdentity newGuid)
+    {
+        EntityId = newGuid;
+    }
+
+    public Identity EntityId { get; }
+}
+```
