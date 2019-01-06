@@ -128,7 +128,7 @@ namespace Microwave.Queries.UnitTests
             var result = await queryRepository.Load<TestReadModel>(guid2);
 
             var notFoundException = Assert.ThrowsException<NotFoundException>(() => result.Value);
-            Assert.IsTrue(notFoundException.Message.StartsWith("Could not find entity TestReadModel"));
+            Assert.IsTrue(notFoundException.Message.StartsWith("Could not find TestReadModel"));
         }
     }
 

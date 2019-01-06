@@ -144,7 +144,7 @@ namespace Microwave.Eventstores.UnitTests
             var result = await eventStore.LoadAsync<TestEntity>(entityId);
             var exception = Assert.ThrowsException<NotFoundException>(() => result.Value);
 
-            Assert.IsTrue(exception.Message.StartsWith("Could not find entity TestEntity"));
+            Assert.IsTrue(exception.Message.StartsWith("Could not find TestEntity"));
 
         }
 

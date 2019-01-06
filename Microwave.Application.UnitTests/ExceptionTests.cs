@@ -15,7 +15,7 @@ namespace Microwave.Application.UnitTests
         {
             var readModelWrapper = new ReadModelWrapper<ReadModelTest>(new ReadModelTest(), GuidIdentity.Create(Guid.NewGuid()), 0);
             var notFoundException = new NotFoundException(readModelWrapper.GetType(), "TheId");
-            Assert.AreEqual("Could not find entity ReadModelTest with ID TheId", notFoundException.Message);
+            Assert.AreEqual("Could not find ReadModelTest with ID TheId", notFoundException.Message);
         }
     }
 

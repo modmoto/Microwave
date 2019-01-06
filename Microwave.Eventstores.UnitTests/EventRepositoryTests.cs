@@ -203,6 +203,44 @@ namespace Microwave.Eventstores.UnitTests
         }
 
         [TestMethod]
+        public async Task LoadEntityId_NotFoundTIsCorrect()
+        {
+            var eventRepository = new EventRepository(EventDatabase, new VersionCache(EventDatabase));
+
+            var entityId = Identity.Create(Guid.NewGuid());
+            var result = await eventRepository.LoadEventsByEntity(entityId);
+
+            var notFoundException = Assert.ThrowsException<NotFoundException>(() => result.Value);
+            Assert.AreEqual($"Could not find DomainEvents with ID {entityId.Id}", notFoundException.Message);
+        }
+
+        [TestMethod]
+        public async Task LoadEntityId_VersionTooHIgh_NotFoundIsOk()
+        {
+            var eventRepository = new EventRepository(EventDatabase, new VersionCache(EventDatabase));
+
+            var entityId = Identity.Create(new Guid());
+            var events = new List<IDomainEvent> { new TestEvent1(entityId), new TestEvent2(entityId)};
+            await eventRepository.AppendAsync(events, 0);
+
+            var result = await eventRepository.LoadEventsByEntity(entityId, 3);
+
+            Assert.IsTrue(result.Is<Ok>());
+            Assert.AreEqual(0, result.Value.Count());
+        }
+
+        [TestMethod]
+        public async Task LoadType_NotFoundTIsCorrect()
+        {
+            var eventRepository = new EventRepository(EventDatabase, new VersionCache(EventDatabase));
+
+            var result = await eventRepository.LoadEventsByTypeAsync("TypeNotInserted");
+
+            var notFoundException = Assert.ThrowsException<NotFoundException>(() => result.Value);
+            Assert.AreEqual("Could not find DomainEvents with ID TypeNotInserted", notFoundException.Message);
+        }
+
+        [TestMethod]
         public async Task AddEmptyEventList()
         {
             var eventRepository = new EventRepository(EventDatabase, new VersionCache(EventDatabase));

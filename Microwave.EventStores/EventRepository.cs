@@ -65,7 +65,7 @@ namespace Microwave.EventStores
             return Result<IEnumerable<DomainEventWrapper>>.Ok(domainEvents);
         }
 
-        public async Task<Result<IEnumerable<DomainEventWrapper>>> LoadEventsByTypeAsync(string eventType, long version)
+        public async Task<Result<IEnumerable<DomainEventWrapper>>> LoadEventsByTypeAsync(string eventType, long version = 0)
         {
             var mongoCollection = _database.GetCollection<DomainEventDbo>(_eventCollectionName);
             var domainEventTypeDbos = (await mongoCollection.FindAsync(ev => ev.EventType == eventType && ev.Created > version)).ToList();

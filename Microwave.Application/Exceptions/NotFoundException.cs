@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Linq;
 using System.Runtime.Serialization;
 
@@ -21,7 +22,15 @@ namespace Microwave.Application.Exceptions
             var typeName = type.Name;
             if (typeName == "ReadModelWrapper`1") typeName = type.GenericTypeArguments.First().Name;
             if (typeName == "EventStoreResult`1") typeName = type.GenericTypeArguments.First().Name;
-            return $"Could not find entity {typeName} with ID {id}";
+            if (typeName == "IEnumerable`1")
+            {
+                var first = type.GenericTypeArguments.First();
+                if (first.Name == "DomainEventWrapper")
+                {
+                    typeName = "DomainEvents";
+                }
+            }
+            return $"Could not find {typeName} with ID {id}";
         }
     }
 }
