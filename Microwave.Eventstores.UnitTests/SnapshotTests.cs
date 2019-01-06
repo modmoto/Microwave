@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microwave.Application.Results;
 using Microwave.Domain;
 using Microwave.EventStores;
 using MongoDB.Driver;
@@ -43,10 +42,10 @@ namespace Microwave.Eventstores.UnitTests
             var eventstoreResult = await eventStore.LoadAsync<User>(entityId);
 
             var user = eventstoreResult.Value;
-            Assert.AreEqual(4, eventstoreResult.Version);
-            Assert.AreEqual(14, user.Age);
-            Assert.AreEqual("PeterNeu", user.Name);
-            Assert.AreEqual(entityId.Id, user.Id.Id);
+            Assert.AreEqual(4, eventstoreResult.Value.Version);
+            Assert.AreEqual(14, user.Entity.Age);
+            Assert.AreEqual("PeterNeu", user.Entity.Name);
+            Assert.AreEqual(entityId.Id, user.Entity.Id.Id);
 
             var snapShotDbo = (await mongoCollection.FindAsync(e => e.EntityId == entityId.Id)).ToList().First();
 
@@ -76,8 +75,8 @@ namespace Microwave.Eventstores.UnitTests
             await eventStore.LoadAsync<User>(entityId);
             var result = await eventStore.LoadAsync<User>(entityId);
 
-            Assert.AreEqual("Peterneu", result.Value.Name);
-            Assert.AreEqual(3, result.Version);
+            Assert.AreEqual("Peterneu", result.Value.Entity.Name);
+            Assert.AreEqual(3, result.Value.Version);
         }
     }
 

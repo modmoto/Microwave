@@ -49,7 +49,7 @@ namespace Microwave.Queries.UnitTests
             var save = queryRepository.Save(testQuery);
             var save2 = queryRepository.Save(testQuery2);
 
-            await Task.WhenAll(new List<Task> { save, save2});
+            await Task.WhenAll(new List<Task> { save, save2 });
         }
 
         [TestMethod]

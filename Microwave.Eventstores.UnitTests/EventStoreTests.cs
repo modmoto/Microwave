@@ -33,7 +33,7 @@ namespace Microwave.Eventstores.UnitTests
             var eventStore = new EventStore(entityStremRepo.Object, snapShotRepo.Object);
             var loadAsync = await eventStore.LoadAsync<TestEntity>(entityId);
 
-            Assert.AreEqual(entityId, loadAsync.Value.Id);
+            Assert.AreEqual(entityId, loadAsync.Value.Entity.Id);
         }
 
         [TestMethod]
@@ -55,7 +55,7 @@ namespace Microwave.Eventstores.UnitTests
             var eventStore = new EventStore(entityStremRepo.Object, snapShotRepo.Object);
             var loadAsync = await eventStore.LoadAsync<TestEntity_NoIApply>(entityId);
 
-            Assert.AreEqual(Guid.Empty, loadAsync.Value.Id);
+            Assert.AreEqual(Guid.Empty, loadAsync.Value.Entity.Id);
         }
 
         [TestMethod]
@@ -76,7 +76,7 @@ namespace Microwave.Eventstores.UnitTests
             var eventStore = new EventStore(entityStremRepo.Object, snapShotRepo.Object);
             var loadAsync = await eventStore.LoadAsync<TestEntity_NoIApply>(entityId);
 
-            Assert.AreEqual(Guid.Empty, loadAsync.Value.Id);
+            Assert.AreEqual(Guid.Empty, loadAsync.Value.Entity.Id);
         }
 
         [TestMethod]
@@ -92,11 +92,27 @@ namespace Microwave.Eventstores.UnitTests
             var loadAsync = await eventStore.LoadAsync<TestEntity>(entityId);
             var loadAsync2 = await eventStore.LoadAsync<TestEntity>(entityId);
 
-            Assert.IsTrue(entityId.Equals(loadAsync.Value.Id));
-            Assert.AreEqual("Test", loadAsync.Value.Name);
+            Assert.IsTrue(entityId.Equals(loadAsync.Value.Entity.Id));
+            Assert.AreEqual("Test", loadAsync.Value.Entity.Name);
 
-            Assert.IsTrue(entityId.Equals(loadAsync2.Value.Id));
-            Assert.AreEqual("Test", loadAsync2.Value.Name);
+            Assert.IsTrue(entityId.Equals(loadAsync2.Value.Entity.Id));
+            Assert.AreEqual("Test", loadAsync2.Value.Entity.Name);
+        }
+
+        [TestMethod]
+        public async Task DifferentIdsInEventsDefined()
+        {
+            var snapShotRepo = new Mock<ISnapShotRepository>();
+            snapShotRepo.Setup(re => re.LoadSnapShot<TestEntity>(It.IsAny<Identity>()))
+                .ReturnsAsync(new DefaultSnapshot<TestEntity>());
+            var entityId = GuidIdentity.Create(Guid.NewGuid());
+            var entityId2 = GuidIdentity.Create(Guid.NewGuid());
+            var eventStore = new EventStore(new EventRepository(EventDatabase, new VersionCache(EventDatabase)), snapShotRepo.Object);
+
+            await Assert.ThrowsExceptionAsync<DifferentIdsException>(async () => await eventStore.AppendAsync(new
+            List<IDomainEvent> {new
+            TestEventEventStore(entityId, "Test"), new
+                TestEventEventStore(entityId2, "Test")}, 0));
         }
 
         [TestMethod]

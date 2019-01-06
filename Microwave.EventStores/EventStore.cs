@@ -20,30 +20,40 @@ namespace Microwave.EventStores
             _snapShotRepository = snapShotRepository;
         }
 
-        public async Task AppendAsync(IEnumerable<IDomainEvent> domainEvents, long entityVersion)
+        public async Task<Result> AppendAsync(IEnumerable<IDomainEvent> domainEvents, long entityVersion)
         {
-            var result = await _eventRepository.AppendAsync(domainEvents, entityVersion);
-            result.Check();
+            var events = domainEvents.ToList();
+            var differentIds = events.GroupBy(de => de.EntityId).ToList();
+            if (differentIds.Count > 1) throw new DifferentIdsException(differentIds.Select(g => g.Key));
+            var result = await _eventRepository.AppendAsync(events, entityVersion);
+            return result;
         }
 
-        public async Task<EventStoreResult<T>> LoadAsync<T>(Identity entityId) where T : IApply, new()
+        public async Task<Result<EventStoreResult<T>>> LoadAsync<T>(Identity entityId) where T : IApply, new()
         {
             var snapShot = await _snapShotRepository.LoadSnapShot<T>(entityId);
             var entity = snapShot.Entity;
             var result = await _eventRepository.LoadEventsByEntity(entityId, snapShot.Version);
-            if (result.Is<NotFound>()) return EventStoreResult<T>.NotFound(entityId);
+            if (result.Is<NotFound>()) return Result<EventStoreResult<T>>.NotFound(entityId);
             var domainEventWrappers = result.Value.ToList();
             entity.Apply(domainEventWrappers.Select(ev => ev.DomainEvent));
             var version = domainEventWrappers.LastOrDefault()?.Version ?? snapShot.Version;
             if (NeedSnapshot(typeof(T), snapShot.Version, version))
                 await _snapShotRepository.SaveSnapShot(new SnapShotWrapper<T>(entity, entityId, version));
-            return EventStoreResult<T>.Ok(entity, version);
+            return Result<EventStoreResult<T>>.Ok(new EventStoreResult<T>(entity, version));
         }
 
         private bool NeedSnapshot(Type type, long snapShotVersion, long version)
         {
             if (!(type.GetCustomAttribute(typeof(SnapShotAfterAttribute)) is SnapShotAfterAttribute customAttribute)) return false;
             return customAttribute.DoesNeedSnapshot(snapShotVersion, version);
+        }
+    }
+
+    public class DifferentIdsException : Exception
+    {
+        public DifferentIdsException(IEnumerable<Identity> identities) : base($"Not able to write to different streams in one turn, write them separatly: {string.Join(",", identities)} Ids to differe")
+        {
         }
     }
 }
