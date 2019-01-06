@@ -20,7 +20,7 @@ namespace Microwave.Application.Exceptions
         {
             var typeName = type.Name;
             if (typeName == "ReadModelWrapper`1") typeName = type.GenericTypeArguments.First().Name;
-            if (typeName == "EventstoreResult`1") typeName = type.GenericTypeArguments.First().Name;
+            if (typeName == "EventStoreResult`1") typeName = type.GenericTypeArguments.First().Name;
             return $"Could not find entity {typeName} with ID {id}";
         }
     }

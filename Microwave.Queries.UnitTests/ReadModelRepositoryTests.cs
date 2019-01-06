@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microwave.Application.Exceptions;
 using Microwave.Application.Results;
 using Microwave.Domain;
 using Microwave.Eventstores.UnitTests;
@@ -117,6 +118,17 @@ namespace Microwave.Queries.UnitTests
             var loadAll2 = await queryRepository.Load<TestReadModel>(guid2);
 
             Assert.IsTrue(loadAll2.Is<NotFound>());
+        }
+
+        [TestMethod]
+        public async Task ReadModelNotFoundEceptionHasCorrectT()
+        {
+            var queryRepository = new ReadModelRepository(ReadModelDatabase);
+            var guid2 = GuidIdentity.Create(Guid.NewGuid());
+            var result = await queryRepository.Load<TestReadModel>(guid2);
+
+            var notFoundException = Assert.ThrowsException<NotFoundException>(() => result.Value);
+            Assert.IsTrue(notFoundException.Message.StartsWith("Could not find entity TestReadModel"));
         }
     }
 

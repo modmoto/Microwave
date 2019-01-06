@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Application;
+using Microwave.Application.Exceptions;
 using Microwave.Application.Results;
 using Microwave.Domain;
 using Microwave.EventStores;
@@ -113,6 +114,22 @@ namespace Microwave.Eventstores.UnitTests
             List<IDomainEvent> {new
             TestEventEventStore(entityId, "Test"), new
                 TestEventEventStore(entityId2, "Test")}, 0));
+        }
+
+        [TestMethod]
+        public async Task NotFoundExceptionIsWithCorrectT()
+        {
+            var snapShotRepo = new Mock<ISnapShotRepository>();
+            snapShotRepo.Setup(re => re.LoadSnapShot<TestEntity>(It.IsAny<Identity>()))
+                .ReturnsAsync(new DefaultSnapshot<TestEntity>());
+            var entityId = GuidIdentity.Create(Guid.NewGuid());
+            var eventStore = new EventStore(new EventRepository(EventDatabase, new VersionCache(EventDatabase)), snapShotRepo.Object);
+
+            var result = await eventStore.LoadAsync<TestEntity>(entityId);
+            var exception = Assert.ThrowsException<NotFoundException>(() => result.Value);
+
+            Assert.IsTrue(exception.Message.StartsWith("Could not find entity TestEntity"));
+
         }
 
         [TestMethod]
