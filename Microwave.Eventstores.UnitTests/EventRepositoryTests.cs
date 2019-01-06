@@ -230,6 +230,22 @@ namespace Microwave.Eventstores.UnitTests
         }
 
         [TestMethod]
+        public async Task LoadType_VersionTooHIgh_NotFoundIsOk()
+        {
+            var eventRepository = new EventRepository(EventDatabase, new VersionCache(EventDatabase));
+
+            var entityId = Identity.Create(new Guid());
+            var events = new List<IDomainEvent> { new TestEvent1(entityId), new TestEvent2(entityId)};
+            await eventRepository.AppendAsync(events, 0);
+
+            var result = await eventRepository.LoadEventsByTypeAsync(nameof(TestEvent1), DateTimeOffset.Now.AddDays
+            (1).Ticks);
+
+            Assert.IsTrue(result.Is<Ok>());
+            Assert.AreEqual(0, result.Value.Count());
+        }
+
+        [TestMethod]
         public async Task LoadType_NotFoundTIsCorrect()
         {
             var eventRepository = new EventRepository(EventDatabase, new VersionCache(EventDatabase));
