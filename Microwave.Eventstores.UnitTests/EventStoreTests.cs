@@ -101,6 +101,22 @@ namespace Microwave.Eventstores.UnitTests
         }
 
         [TestMethod]
+        public async Task IntegrationWithRepo_AddSingleEvent()
+        {
+            var snapShotRepo = new Mock<ISnapShotRepository>();
+            snapShotRepo.Setup(re => re.LoadSnapShot<TestEntity>(It.IsAny<Identity>()))
+                .ReturnsAsync(new DefaultSnapshot<TestEntity>());
+            var entityId = GuidIdentity.Create(Guid.NewGuid());
+            var eventStore = new EventStore(new EventRepository(EventDatabase, new VersionCache(EventDatabase)), snapShotRepo.Object);
+
+            await eventStore.AppendAsync(new TestEventEventStore(entityId, "Test"), 0);
+            var loadAsync = await eventStore.LoadAsync<TestEntity>(entityId);
+
+            Assert.IsTrue(entityId.Equals(loadAsync.Value.Entity.Id));
+            Assert.AreEqual("Test", loadAsync.Value.Entity.Name);
+        }
+
+        [TestMethod]
         public async Task DifferentIdsInEventsDefined()
         {
             var snapShotRepo = new Mock<ISnapShotRepository>();
