@@ -41,16 +41,7 @@ namespace Microwave
                 return new ReadModelDatabase(configuration);
             });
 
-            //WebApi
-            services.AddMvcCore(config =>
-            {
-                config.Filters.Add(new NotFoundFilter());
-
-                config.OutputFormatters.Insert(0, new NewtonsoftOutputFormatter());
-                config.InputFormatters.Insert(0, new NewtonsoftInputFormatter());
-                config.ModelBinderProviders.Insert(0, new IdentityModelBinderProvider());
-                config.ModelBinderProviders.Insert(0, new DateTimeOffsetBinderProvider());
-            });
+            services.AddMicrowaveMvcExtensions();
 
             services.AddTransient<DomainEventWrapperListDeserializer>();
             services.AddTransient<JSonHack>();
@@ -89,17 +80,7 @@ namespace Microwave
             services.AddSingleton<IVersionCache, VersionCache>();
             services.AddTransient<ISnapShotRepository, SnapShotRepository>();
 
-            //WebApi
-            services.AddMvcCore(config =>
-            {
-                config.Filters.Add(new DomainValidationFilter());
-                config.Filters.Add(new NotFoundFilter());
-                config.Filters.Add(new ConcurrencyViolatedFilter());
-
-                config.OutputFormatters.Insert(0, new NewtonsoftOutputFormatter());
-                config.InputFormatters.Insert(0, new NewtonsoftInputFormatter());
-                config.ModelBinderProviders.Insert(0, new IdentityModelBinderProvider());
-            });
+            services.AddMicrowaveMvcExtensions();
 
             services.RegisterBsonClassMaps(domainEventAssembly);
 
@@ -115,6 +96,22 @@ namespace Microwave
                 eventRegistration.Add(domainEventType.Name, domainEventType);
             }
             services.AddSingleton(eventRegistration);
+            return services;
+        }
+
+        private static IServiceCollection AddMicrowaveMvcExtensions(this IServiceCollection services)
+        {
+            services.AddMvcCore(config =>
+            {
+                config.Filters.Add(new DomainValidationFilter());
+                config.Filters.Add(new NotFoundFilter());
+                config.Filters.Add(new ConcurrencyViolatedFilter());
+
+                config.OutputFormatters.Insert(0, new NewtonsoftOutputFormatter());
+                config.InputFormatters.Insert(0, new NewtonsoftInputFormatter());
+                config.ModelBinderProviders.Insert(0, new IdentityModelBinderProvider());
+                config.ModelBinderProviders.Insert(0, new DateTimeOffsetBinderProvider());
+            });
             return services;
         }
 
