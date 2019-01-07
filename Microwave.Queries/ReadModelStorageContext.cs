@@ -1,4 +1,5 @@
-﻿using MongoDB.Bson.Serialization.Attributes;
+﻿using System;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace Microwave.Queries
 {
@@ -21,6 +22,6 @@ namespace Microwave.Queries
     {
         [BsonId]
         public string EventType { get; set; }
-        public long LastVersion { get; set; }
+        public DateTimeOffset LastVersion { get; set; }
     }
 }

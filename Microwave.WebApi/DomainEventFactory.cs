@@ -34,7 +34,8 @@ namespace Microwave.WebApi
                 if (!_eventTypeRegistration.ContainsKey(value)) continue;
                 var type = _eventTypeRegistration[value];
                 var version = jObject.GetValue(nameof(DomainEventWrapper.Version), StringComparison.OrdinalIgnoreCase).Value<long>();
-                var created = jObject.GetValue(nameof(DomainEventWrapper.Created), StringComparison.OrdinalIgnoreCase).Value<long>();
+                var created = (DateTimeOffset) jObject.GetValue(nameof(DomainEventWrapper.Created), StringComparison
+                .OrdinalIgnoreCase);
                 var domainEventJObject = jObject.GetValue(nameof(DomainEventWrapper.DomainEvent), StringComparison.OrdinalIgnoreCase);
                 var domainevent = (IDomainEvent) domainEventJObject.ToObject(type, serializer);
 

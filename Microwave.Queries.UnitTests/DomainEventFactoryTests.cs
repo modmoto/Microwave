@@ -17,7 +17,7 @@ namespace Microwave.Queries.UnitTests
             var domainEventWrapper = new [] { new DomainEventWrapper
             {
                 Version = 12,
-                Created = 1234,
+                Created = DateTimeOffset.Now,
                 DomainEvent = new Event1(GuidIdentity.Create(Guid.NewGuid()), "Name")
             }};
 
@@ -37,10 +37,11 @@ namespace Microwave.Queries.UnitTests
         [TestMethod]
         public void ParseDomainEventWrapper_StringKey()
         {
+            var dateTimeOffset = DateTimeOffset.Now;
             var domainEventWrapper = new [] { new DomainEventWrapper
             {
                 Version = 12,
-                Created = 1234,
+                Created = dateTimeOffset,
                 DomainEvent = new Event2(StringIdentity.Create("luls"), "Name")
             }};
 
@@ -59,7 +60,7 @@ namespace Microwave.Queries.UnitTests
             var domainEventWrapper = new [] { new DomainEventWrapper
             {
                 Version = 12,
-                Created = 1234,
+                Created = DateTimeOffset.Now,
                 DomainEvent = new Event1(GuidIdentity.Create(Guid.NewGuid()), "Name")
             }};
 

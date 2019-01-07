@@ -1,10 +1,10 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Domain;
 using Microwave.Eventstores.UnitTests;
 using Microwave.Queries;
-using Moq;
 
 namespace Microwave.Application.UnitTests
 {
@@ -14,31 +14,47 @@ namespace Microwave.Application.UnitTests
         [TestMethod]
         public async Task HandleIsOnlyCalledOnce()
         {
-            var eventFeedMock = new Mock<IEventFeed<AsyncEventHandler<TestEv2>>>();
+            var dateTimeOffset = DateTimeOffset.Now;
             var domainEventWrapper = new DomainEventWrapper
             {
-                Created = 12,
+                Created = dateTimeOffset,
                 DomainEvent = new TestEv2()
             };
-
-            eventFeedMock.Setup(feed => feed.GetEventsAsync(0)).ReturnsAsync(new[] { domainEventWrapper });
 
             var handleAsync = new Handler1();
             var handleAsync2 = new Handler2();
             var eventDelegateHandler = new AsyncEventHandler<TestEv2>(
                 new VersionRepository(ReadModelDatabase),
-                eventFeedMock.Object,
+                new EventFeedMock(dateTimeOffset, domainEventWrapper),
                 new List<IHandleAsync<TestEv2>> {handleAsync, handleAsync2});
 
             await eventDelegateHandler.Update();
             await eventDelegateHandler.Update();
 
             Assert.AreEqual(1, handleAsync.TimesCalled);
-            Assert.AreEqual(1, handleAsync.TimesCalled);
-
-            ReadModelDatabase.Database.Client.DropDatabase("IntegrationTest");
+            Assert.AreEqual(1, handleAsync2.TimesCalled);
         }
     }
+
+    public class EventFeedMock : IEventFeed<AsyncEventHandler<TestEv2>>
+    {
+        private readonly DateTimeOffset _dateTimeOffset;
+        private readonly DomainEventWrapper _domainEventWrapper;
+
+        public EventFeedMock(DateTimeOffset dateTimeOffset, DomainEventWrapper domainEventWrapper)
+        {
+            _dateTimeOffset = dateTimeOffset;
+            _domainEventWrapper = domainEventWrapper;
+        }
+
+        public async Task<IEnumerable<DomainEventWrapper>> GetEventsAsync(DateTimeOffset since = default(DateTimeOffset))
+        {
+            if (since < _dateTimeOffset)
+                return new List<DomainEventWrapper> {_domainEventWrapper};
+            return new List<DomainEventWrapper>();
+        }
+    }
+
 
     public class Handler1 : IHandleAsync<TestEv2>
     {

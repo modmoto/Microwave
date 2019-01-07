@@ -49,6 +49,7 @@ namespace Microwave
                 config.OutputFormatters.Insert(0, new IdentityOutputFormatter());
                 config.InputFormatters.Insert(0, new IdentityInputFormatter());
                 config.ModelBinderProviders.Insert(0, new IdentityModelBinderProvider());
+                config.ModelBinderProviders.Insert(0, new DateTimeOffsetBinderProvider());
             });
 
             services.AddTransient<DomainEventWrapperListDeserializer>();

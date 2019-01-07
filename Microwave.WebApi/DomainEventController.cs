@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microwave.Domain;
 using Microwave.EventStores.Ports;
@@ -16,7 +17,7 @@ namespace Microwave.WebApi
         }
 
         [HttpGet("DomainEventTypeStreams/{eventType}")]
-        public async Task<ActionResult> GetDomainEventsByType(string eventType, [FromQuery] long timeStamp)
+        public async Task<ActionResult> GetDomainEventsByType(string eventType, [FromQuery] DateTimeOffset timeStamp)
         {
             var result = await _eventRepository.LoadEventsByTypeAsync(eventType, timeStamp);
             return Ok(result.Value);
@@ -31,7 +32,7 @@ namespace Microwave.WebApi
         }
 
         [HttpGet("DomainEvents")]
-        public async Task<ActionResult> GetAllDomainEvents([FromQuery] long timeStamp)
+        public async Task<ActionResult> GetAllDomainEvents([FromQuery] DateTimeOffset timeStamp)
         {
             var result = await _eventRepository.LoadEvents(timeStamp);
             return Ok(result.Value);

@@ -160,7 +160,7 @@ namespace Microwave.Queries.UnitTests
 
     public class FeedMock2 : IEventFeed<ReadModelHandler<TestReadModelQuerries>>
     {
-        public Task<IEnumerable<DomainEventWrapper>> GetEventsAsync(long lastVersion)
+        public Task<IEnumerable<DomainEventWrapper>> GetEventsAsync(DateTimeOffset since = default(DateTimeOffset))
         {
             var domainEventWrapper = new DomainEventWrapper
             {
@@ -179,7 +179,7 @@ namespace Microwave.Queries.UnitTests
 
     public class FeedMock5 : IEventFeed<ReadModelHandler<TestReadModelQuerries_OnlyOneEventAndVersionIsCounted>>
     {
-        public Task<IEnumerable<DomainEventWrapper>> GetEventsAsync(long lastVersion)
+        public Task<IEnumerable<DomainEventWrapper>> GetEventsAsync(DateTimeOffset since = default(DateTimeOffset))
         {
             var domainEventWrapper = new DomainEventWrapper
             {
@@ -198,7 +198,7 @@ namespace Microwave.Queries.UnitTests
 
     public class FeedMock6 : IEventFeed<ReadModelHandler<TestReadModelQuerries_TwoParallelFeeds1>>
     {
-        public Task<IEnumerable<DomainEventWrapper>> GetEventsAsync(long lastVersion)
+        public Task<IEnumerable<DomainEventWrapper>> GetEventsAsync(DateTimeOffset since = default(DateTimeOffset))
         {
             return ReadModelHandlerTests.MakeEvents();
         }
@@ -217,7 +217,7 @@ namespace Microwave.Queries.UnitTests
 
     public class FeedMock7 : IEventFeed<ReadModelHandler<TestReadModelQuerries_TwoParallelFeeds2>>
     {
-        public Task<IEnumerable<DomainEventWrapper>> GetEventsAsync(long lastVersion)
+        public Task<IEnumerable<DomainEventWrapper>> GetEventsAsync(DateTimeOffset since = default(DateTimeOffset))
         {
             return ReadModelHandlerTests.MakeEvents();
         }
@@ -236,7 +236,7 @@ namespace Microwave.Queries.UnitTests
 
     public class FeedMock3 : IEventFeed<ReadModelHandler<TestReadModelQuerries>>
     {
-        public Task<IEnumerable<DomainEventWrapper>> GetEventsAsync(long lastVersion)
+        public Task<IEnumerable<DomainEventWrapper>> GetEventsAsync(DateTimeOffset since = default(DateTimeOffset))
         {
             var domainEventWrapper = new DomainEventWrapper
             {
@@ -255,7 +255,7 @@ namespace Microwave.Queries.UnitTests
 
     public class FeedMock4 : IEventFeed<ReadModelHandler<TestReadModelQuerries>>
     {
-        public Task<IEnumerable<DomainEventWrapper>> GetEventsAsync(long lastVersion)
+        public Task<IEnumerable<DomainEventWrapper>> GetEventsAsync(DateTimeOffset since = default(DateTimeOffset))
         {
             var domainEventWrapper = new DomainEventWrapper
             {
@@ -274,7 +274,7 @@ namespace Microwave.Queries.UnitTests
 
     public class FeedMock1 : IEventFeed<ReadModelHandler<TestReadModelQuerries>>
     {
-        public Task<IEnumerable<DomainEventWrapper>> GetEventsAsync(long lastVersion)
+        public Task<IEnumerable<DomainEventWrapper>> GetEventsAsync(DateTimeOffset since = default(DateTimeOffset))
         {
             var domainEventWrapper = new DomainEventWrapper
             {

@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Eventstores.UnitTests;
@@ -12,11 +13,12 @@ namespace Microwave.Queries.UnitTests
         {
             var versionRepository = new VersionRepository(ReadModelDatabase);
 
-            await versionRepository.SaveVersion(new LastProcessedVersion("Type", 1));
-            await versionRepository.SaveVersion(new LastProcessedVersion("Type", 1));
+            var dateTimeOffset = DateTimeOffset.Now;
+            await versionRepository.SaveVersion(new LastProcessedVersion("Type", dateTimeOffset));
+            await versionRepository.SaveVersion(new LastProcessedVersion("Type", dateTimeOffset));
 
             var count = await versionRepository.GetVersionAsync("Type");
-            Assert.AreEqual(1, count);
+            Assert.AreEqual(dateTimeOffset, count);
          }
     }
 }

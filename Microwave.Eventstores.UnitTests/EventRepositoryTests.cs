@@ -239,7 +239,7 @@ namespace Microwave.Eventstores.UnitTests
             await eventRepository.AppendAsync(events, 0);
 
             var result = await eventRepository.LoadEventsByTypeAsync(nameof(TestEvent1), DateTimeOffset.Now.AddDays
-            (1).Ticks);
+            (1));
 
             Assert.IsTrue(result.Is<Ok>());
             Assert.AreEqual(0, result.Value.Count());
@@ -274,7 +274,7 @@ namespace Microwave.Eventstores.UnitTests
             var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid), new TestEvent2(newGuid)};
 
             await eventRepository.AppendAsync(events, 0);
-            var eventsLoaded = await eventRepository.LoadEventsByTypeAsync(typeof(TestEvent2).Name, 0);
+            var eventsLoaded = await eventRepository.LoadEventsByTypeAsync(typeof(TestEvent2).Name);
 
             Assert.AreEqual(2, eventsLoaded.Value.Count());
         }
@@ -375,7 +375,7 @@ namespace Microwave.Eventstores.UnitTests
 
             await eventRepository.AppendAsync(new List<IDomainEvent> { domainEvent }, 0);
 
-            var result = await eventRepository.LoadEventsByTypeAsync(typeof(TestEvent1).Name, 0);
+            var result = await eventRepository.LoadEventsByTypeAsync(typeof(TestEvent1).Name);
             Assert.AreEqual(1, result.Value.Count());
             Assert.AreEqual(1, result.Value.ToList()[0].Version);
             Assert.AreEqual(newGuid.Id, result.Value.ToList()[0].DomainEvent.EntityId.Id);
@@ -404,7 +404,7 @@ namespace Microwave.Eventstores.UnitTests
             var testEvent1 = new TestEvent1(GuidIdentity.Create(Guid.NewGuid()));
             await eventRepository.AppendAsync(new List<IDomainEvent> { testEvent1 }, 0);
 
-            var result = await eventRepository.LoadEventsByTypeAsync(testEvent1.GetType().Name, 0);
+            var result = await eventRepository.LoadEventsByTypeAsync(testEvent1.GetType().Name);
             var domainEvent = result.Value.Single().DomainEvent;
 
             Assert.IsTrue(domainEvent.EntityId == testEvent1.EntityId);
@@ -420,7 +420,7 @@ namespace Microwave.Eventstores.UnitTests
 
             await eventRepository.AppendAsync(events, 0);
 
-            var result = await eventRepository.LoadEventsByTypeAsync(typeof(TestEvent1).Name, 0);
+            var result = await eventRepository.LoadEventsByTypeAsync(typeof(TestEvent1).Name);
 
             Assert.AreEqual(2, result.Value.Count());
             Assert.AreEqual(1, result.Value.ToList()[0].Version);

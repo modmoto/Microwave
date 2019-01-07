@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
@@ -19,9 +20,11 @@ namespace Microwave.WebApi
             _domainEventClient = domainEventClient;
         }
 
-        public async Task<IEnumerable<DomainEventWrapper>> GetEventsAsync(long lastVersion)
+        public async Task<IEnumerable<DomainEventWrapper>> GetEventsAsync(DateTimeOffset since = default(DateTimeOffset))
         {
-            var response = await _domainEventClient.GetAsync($"?timeStamp={lastVersion}");
+            if (since == default(DateTimeOffset)) since = DateTimeOffset.MinValue;
+            var isoString = since.ToString("o");
+            var response = await _domainEventClient.GetAsync($"?timeStamp={isoString}");
             if (response.StatusCode != HttpStatusCode.OK) return new List<DomainEventWrapper>();
             var content = await response.Content.ReadAsStringAsync();
             var eventsByTypeAsync = _objectConverter.Deserialize(content);

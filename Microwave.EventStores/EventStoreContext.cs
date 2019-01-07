@@ -1,4 +1,5 @@
-﻿using Microwave.Domain;
+﻿using System;
+using Microwave.Domain;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace Microwave.EventStores
@@ -25,7 +26,7 @@ namespace Microwave.EventStores
             };
         }
         public IDomainEvent Payload { get; set; }
-        public long Created { get; set; }
+        public DateTimeOffset Created { get; set; }
         public string EventType { get; set; }
     }
 

@@ -46,8 +46,9 @@ namespace Microwave.EventStores
             return Result<IEnumerable<DomainEventWrapper>>.Ok(domainEvents);
         }
 
-        public async Task<Result<IEnumerable<DomainEventWrapper>>> LoadEvents(long tickSince = 0)
+        public async Task<Result<IEnumerable<DomainEventWrapper>>> LoadEvents(DateTimeOffset tickSince = default(DateTimeOffset))
         {
+            if (tickSince == default(DateTimeOffset)) tickSince = DateTimeOffset.MinValue;
             var mongoCollection = _database.GetCollection<DomainEventDbo>(_eventCollectionName);
             var domainEventDbos = (await mongoCollection.FindAsync(ev => ev.Created > tickSince)).ToList();
             if (!domainEventDbos.Any()) return Result<IEnumerable<DomainEventWrapper>>.Ok(new List<DomainEventWrapper>());
@@ -65,10 +66,11 @@ namespace Microwave.EventStores
             return Result<IEnumerable<DomainEventWrapper>>.Ok(domainEvents);
         }
 
-        public async Task<Result<IEnumerable<DomainEventWrapper>>> LoadEventsByTypeAsync(string eventType, long version = 0)
+        public async Task<Result<IEnumerable<DomainEventWrapper>>> LoadEventsByTypeAsync(string eventType, DateTimeOffset tickSince = default(DateTimeOffset))
         {
+            if (tickSince == default(DateTimeOffset)) tickSince = DateTimeOffset.MinValue;
             var mongoCollection = _database.GetCollection<DomainEventDbo>(_eventCollectionName);
-            var domainEventTypeDbos = (await mongoCollection.FindAsync(ev => ev.EventType == eventType && ev.Created > version)).ToList();
+            var domainEventTypeDbos = (await mongoCollection.FindAsync(ev => ev.EventType == eventType && ev.Created > tickSince)).ToList();
 
             if (!domainEventTypeDbos.Any())
             {
@@ -105,7 +107,7 @@ namespace Microwave.EventStores
                 return new DomainEventDbo
                 {
                     Payload = domainEvent,
-                    Created = DateTime.UtcNow.Ticks,
+                    Created = DateTimeOffset.Now,
                     Key = new DomainEventKey
                     {
                         Version = ++versionTemp,

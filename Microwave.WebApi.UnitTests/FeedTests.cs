@@ -20,8 +20,8 @@ namespace Microwave.WebApi.UnitTests
         public async Task ReadModelFeed()
         {
             var mockHttp = new MockHttpMessageHandler();
-            mockHttp.When("http://localost:5000/api/DomainEvents/?timeStamp=0")
-                .Respond("application/json", "[{ \"domainEventType\": \"UNKNOWN_TYPE\",\"version\": 12, \"created\": 14, \"domainEvent\": {\"EntityId\" : {\"Id\": \"5a8b63c8-0f7f-4de7-a9e5-b6b377aa2180\", \"DefaultValue\": \"\" }}}, { \"domainEventType\": \"TestEv\",\"version\": 12, \"created\": 14, \"domainEvent\": {\"EntityId\" : {\"Id\": \"5a8b63c8-0f7f-4de7-a9e5-b6b377aa2180\" } }}]");
+            mockHttp.When("http://localost:5000/api/DomainEvents/?timeStamp=0001-01-01T00:00:00.0000000+00:00")
+                .Respond("application/json", "[{ \"domainEventType\": \"UNKNOWN_TYPE\",\"version\": 12, \"created\": \"2018-01-07T19:07:21.227631+01:00\", \"domainEvent\": {\"EntityId\" : {\"Id\": \"5a8b63c8-0f7f-4de7-a9e5-b6b377aa2180\", \"DefaultValue\": \"\" }}}, { \"domainEventType\": \"TestEv\",\"version\": 12, \"created\": \"2018-01-07T19:07:31.227631+01:00\", \"domainEvent\": {\"EntityId\" : {\"Id\": \"5a8b63c8-0f7f-4de7-a9e5-b6b377aa2180\" } }}]");
 
             var domainOverallEventClient = new DomainEventClient<ReadModelHandler<TestReadModel>>(mockHttp);
             domainOverallEventClient.BaseAddress = new Uri("http://localost:5000/api/DomainEvents/");
@@ -29,7 +29,7 @@ namespace Microwave.WebApi.UnitTests
             var domainEventFactory = new DomainEventFactory(_eventTypeRegistration);
             var domainEventWrapperListDeserializer = new DomainEventWrapperListDeserializer(new JSonHack(), domainEventFactory);
             var readModelFeed = new EventFeed<ReadModelHandler<TestReadModel>>(domainEventWrapperListDeserializer, domainOverallEventClient);
-            var domainEvents = await readModelFeed.GetEventsAsync(0);
+            var domainEvents = await readModelFeed.GetEventsAsync();
             var domainEventWrappers = domainEvents.ToList();
             Assert.AreEqual(1, domainEventWrappers.Count);
             Assert.AreEqual(new Guid("5a8b63c8-0f7f-4de7-a9e5-b6b377aa2180").ToString(), domainEventWrappers[0].DomainEvent
