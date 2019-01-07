@@ -46,8 +46,8 @@ namespace Microwave
             {
                 config.Filters.Add(new NotFoundFilter());
 
-                config.OutputFormatters.Insert(0, new IdentityOutputFormatter());
-                config.InputFormatters.Insert(0, new IdentityInputFormatter());
+                config.OutputFormatters.Insert(0, new NewtonsoftOutputFormatter());
+                config.InputFormatters.Insert(0, new NewtonsoftInputFormatter());
                 config.ModelBinderProviders.Insert(0, new IdentityModelBinderProvider());
                 config.ModelBinderProviders.Insert(0, new DateTimeOffsetBinderProvider());
             });
@@ -96,8 +96,8 @@ namespace Microwave
                 config.Filters.Add(new NotFoundFilter());
                 config.Filters.Add(new ConcurrencyViolatedFilter());
 
-                config.OutputFormatters.Insert(0, new IdentityOutputFormatter());
-                config.InputFormatters.Insert(0, new IdentityInputFormatter());
+                config.OutputFormatters.Insert(0, new NewtonsoftOutputFormatter());
+                config.InputFormatters.Insert(0, new NewtonsoftInputFormatter());
                 config.ModelBinderProviders.Insert(0, new IdentityModelBinderProvider());
             });
 

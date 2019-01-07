@@ -7,9 +7,9 @@ using Newtonsoft.Json;
 
 namespace Microwave.WebApi.IdentityFormatting
 {
-    public class IdentityInputFormatter : TextInputFormatter
+    public class NewtonsoftInputFormatter : TextInputFormatter
     {
-        public IdentityInputFormatter()
+        public NewtonsoftInputFormatter()
         {
             SupportedMediaTypes.Add(MediaTypeHeaderValue.Parse("application/json"));
 
@@ -22,7 +22,9 @@ namespace Microwave.WebApi.IdentityFormatting
             using (var reader = new StreamReader(context.HttpContext.Request.Body, Encoding.UTF8))
             {
                 string value = reader.ReadToEnd();
-                var deserializeObject = JsonConvert.DeserializeObject(value, context.Metadata.ModelType, new IdentityConverter());
+                var deserializeObject = JsonConvert.DeserializeObject(value, context.Metadata.ModelType,
+                    new IdentityConverter(),
+                    new DateTimeOffsetConverter());
                 return InputFormatterResult.SuccessAsync(deserializeObject);
             }
         }

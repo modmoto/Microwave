@@ -47,7 +47,9 @@ namespace Microwave.Application.UnitTests
             _domainEventWrapper = domainEventWrapper;
         }
 
+#pragma warning disable 1998
         public async Task<IEnumerable<DomainEventWrapper>> GetEventsAsync(DateTimeOffset since = default(DateTimeOffset))
+#pragma warning restore 1998
         {
             if (since < _dateTimeOffset)
                 return new List<DomainEventWrapper> {_domainEventWrapper};

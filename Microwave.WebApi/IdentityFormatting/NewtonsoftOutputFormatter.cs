@@ -7,9 +7,9 @@ using Newtonsoft.Json;
 
 namespace Microwave.WebApi.IdentityFormatting
 {
-    public class IdentityOutputFormatter : TextOutputFormatter
+    public class NewtonsoftOutputFormatter : TextOutputFormatter
     {
-        public IdentityOutputFormatter()
+        public NewtonsoftOutputFormatter()
         {
             SupportedMediaTypes.Add(MediaTypeHeaderValue.Parse("application/json"));
 
@@ -19,7 +19,9 @@ namespace Microwave.WebApi.IdentityFormatting
 
         public override async Task WriteResponseBodyAsync(OutputFormatterWriteContext context, Encoding selectedEncoding)
         {
-            var ser = JsonConvert.SerializeObject(context.Object, new IdentityConverter());
+            var ser = JsonConvert.SerializeObject(context.Object,
+                new IdentityConverter(),
+                new DateTimeOffsetConverter());
             await context.HttpContext.Response.WriteAsync(ser);
         }
     }
