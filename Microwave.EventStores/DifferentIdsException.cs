@@ -5,6 +5,7 @@ using Microwave.Domain;
 
 namespace Microwave.EventStores
 {
+    [Serializable]
     public class DifferentIdsException : Exception
     {
         protected DifferentIdsException(SerializationInfo serializationInfo, StreamingContext streamingContext)

@@ -18,7 +18,7 @@ namespace Microwave.WebApi.ApiFormatting.Identity
         {
             if (reader.Value is string idValue)
             {
-                return Domain.Identity.Create(idValue as string);
+                return Domain.Identity.Create(idValue);
             }
 
             var jObject = JObject.Load(reader);
