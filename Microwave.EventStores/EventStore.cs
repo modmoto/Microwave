@@ -54,11 +54,4 @@ namespace Microwave.EventStores
             return customAttribute.DoesNeedSnapshot(snapShotVersion, version);
         }
     }
-
-    public class DifferentIdsException : Exception
-    {
-        public DifferentIdsException(IEnumerable<Identity> identities) : base($"Not able to write to different streams in one turn, write them separatly: {string.Join(",", identities)} Ids to differe")
-        {
-        }
-    }
 }
