@@ -16,7 +16,15 @@ namespace Microwave.WebApi.ApiFormatting.Identity
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
-           return Domain.Identity.Create(reader.Value as string);
+            if (reader.Value is string idValue)
+            {
+                return Domain.Identity.Create(idValue as string);
+            }
+
+            var jObject = JObject.Load(reader);
+            var identity = jObject.GetValue(nameof(Domain.Identity.Id), StringComparison.OrdinalIgnoreCase).Value<string>();
+
+            return identity != null ? Domain.Identity.Create(identity) : null;
         }
 
         public override bool CanWrite => true;
