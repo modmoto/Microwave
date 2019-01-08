@@ -2,13 +2,13 @@ using System;
 using System.Globalization;
 using Newtonsoft.Json;
 
-namespace Microwave.WebApi.IdentityFormatting
+namespace Microwave.WebApi.ApiFormatting.DateTimeOffset
 {
     public class DateTimeOffsetConverter : JsonConverter
     {
         public override bool CanConvert(Type objectType)
         {
-            return objectType == typeof(DateTimeOffset);
+            return objectType == typeof(System.DateTimeOffset);
         }
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
@@ -16,7 +16,7 @@ namespace Microwave.WebApi.IdentityFormatting
             if (!(reader.Value is string timeString)) return null;
             if (timeString.Contains(" ")) timeString = timeString.Replace(" ", "+");
 
-            if (DateTimeOffset.TryParseExact(timeString, "o", CultureInfo.InvariantCulture,
+            if (System.DateTimeOffset.TryParseExact(timeString, "o", CultureInfo.InvariantCulture,
                 DateTimeStyles.None, out var result))
             {
                 return result;
@@ -29,7 +29,7 @@ namespace Microwave.WebApi.IdentityFormatting
 
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
-            var identity = value as DateTimeOffset?;
+            var identity = value as System.DateTimeOffset?;
             writer.WriteValue(identity?.ToString("o"));
         }
     }

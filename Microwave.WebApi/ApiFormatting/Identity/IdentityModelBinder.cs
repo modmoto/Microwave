@@ -4,14 +4,14 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microwave.Domain;
 
-namespace Microwave.WebApi.IdentityFormatting
+namespace Microwave.WebApi.ApiFormatting.Identity
 {
 
     public class IdentityModelBinderProvider : IModelBinderProvider
     {
         public IModelBinder GetBinder(ModelBinderProviderContext context)
         {
-            if (context.Metadata.ModelType == typeof(Identity) || context.Metadata.ModelType == typeof(StringIdentity) || context.Metadata.ModelType == typeof(GuidIdentity))
+            if (context.Metadata.ModelType == typeof(Domain.Identity) || context.Metadata.ModelType == typeof(StringIdentity) || context.Metadata.ModelType == typeof(GuidIdentity))
                 return new IdentityModelBinder();
 
             return null;
@@ -32,7 +32,7 @@ namespace Microwave.WebApi.IdentityFormatting
                 return Task.CompletedTask;
             }
 
-            var bindingContextModel = Identity.Create(values.SingleOrDefault());
+            var bindingContextModel = Domain.Identity.Create(values.SingleOrDefault());
             bindingContext.Result = ModelBindingResult.Success(bindingContextModel);
 
             return Task.CompletedTask;

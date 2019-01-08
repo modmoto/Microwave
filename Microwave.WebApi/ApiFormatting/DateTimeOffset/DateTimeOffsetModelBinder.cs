@@ -1,17 +1,16 @@
-using System;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
-namespace Microwave.WebApi.IdentityFormatting
+namespace Microwave.WebApi.ApiFormatting.DateTimeOffset
 {
 
     public class DateTimeOffsetBinderProvider : IModelBinderProvider
     {
         public IModelBinder GetBinder(ModelBinderProviderContext context)
         {
-            if (context.Metadata.ModelType == typeof(DateTimeOffset))
+            if (context.Metadata.ModelType == typeof(System.DateTimeOffset))
                 return new DateTimeOffsetBinder();
 
             return null;
@@ -35,7 +34,7 @@ namespace Microwave.WebApi.IdentityFormatting
 
             if (timeString.Contains(" ")) timeString = timeString.Replace(" ", "+");
 
-            if (DateTimeOffset.TryParseExact(timeString, "o", CultureInfo.InvariantCulture,
+            if (System.DateTimeOffset.TryParseExact(timeString, "o", CultureInfo.InvariantCulture,
                 DateTimeStyles.None, out var result))
             {
                 bindingContext.Result = ModelBindingResult.Success(result);

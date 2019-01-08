@@ -3,9 +3,11 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Net.Http.Headers;
+using Microwave.WebApi.ApiFormatting.DateTimeOffset;
+using Microwave.WebApi.ApiFormatting.Identity;
 using Newtonsoft.Json;
 
-namespace Microwave.WebApi.IdentityFormatting
+namespace Microwave.WebApi.ApiFormatting
 {
     public class NewtonsoftOutputFormatter : TextOutputFormatter
     {

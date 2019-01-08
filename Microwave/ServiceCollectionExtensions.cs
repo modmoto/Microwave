@@ -10,8 +10,10 @@ using Microwave.EventStores;
 using Microwave.EventStores.Ports;
 using Microwave.Queries;
 using Microwave.WebApi;
+using Microwave.WebApi.ApiFormatting;
+using Microwave.WebApi.ApiFormatting.DateTimeOffset;
+using Microwave.WebApi.ApiFormatting.Identity;
 using Microwave.WebApi.Filters;
-using Microwave.WebApi.IdentityFormatting;
 using MongoDB.Bson.Serialization;
 
 namespace Microwave
