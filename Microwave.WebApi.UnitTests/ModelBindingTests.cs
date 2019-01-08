@@ -10,7 +10,7 @@ using Moq;
 namespace Microwave.WebApi.UnitTests
 {
     [TestClass]
-    public class FormattingTests
+    public class ModelBindingTests
     {
         [TestMethod]
         public async Task DateTimeOffsetFormatting_HappyPath()
