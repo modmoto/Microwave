@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Application.Exceptions;
 using Microwave.Application.Results;
-using Microwave.Domain;
 using Microwave.Eventstores.UnitTests;
 
 namespace Microwave.Queries.UnitTests

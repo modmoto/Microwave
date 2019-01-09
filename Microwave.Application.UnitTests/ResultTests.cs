@@ -1,7 +1,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Application.Exceptions;
 using Microwave.Application.Results;
-using Microwave.Domain;
 
 namespace Microwave.Application.UnitTests
 {

@@ -2,7 +2,6 @@
 using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Application.Exceptions;
-using Microwave.Domain;
 using Microwave.Queries;
 
 namespace Microwave.Application.UnitTests

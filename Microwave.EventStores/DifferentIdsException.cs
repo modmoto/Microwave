@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
-using Microwave.Domain;
 
 namespace Microwave.EventStores
 {

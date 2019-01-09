@@ -2,9 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microwave.Domain;
 using Microwave.WebApi.ApiFormatting.DateTimeOffset;
-using Microwave.WebApi.ApiFormatting;
 using Moq;
 
 namespace Microwave.WebApi.UnitTests
