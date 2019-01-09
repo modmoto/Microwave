@@ -34,7 +34,7 @@ namespace Microwave.EventStores
             return AppendAsync(new[] {domainEvent}, entityVersion);
         }
 
-        public async Task<Result<EventStoreResult<T>>> LoadAsync<T>(Identity entityId) where T : IApply, new()
+        public async Task<Result<EventStoreResult<T>>> LoadAsync<T>(string entityId) where T : IApply, new()
         {
             var snapShot = await _snapShotRepository.LoadSnapShot<T>(entityId);
             var entity = snapShot.Entity;

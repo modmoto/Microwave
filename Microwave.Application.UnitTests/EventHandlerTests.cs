@@ -82,11 +82,11 @@ namespace Microwave.Application.UnitTests
 
     public class TestEv1 : IDomainEvent
     {
-        public Identity EntityId { get; }
+        public string EntityId { get; }
     }
 
     public class TestEv2 : IDomainEvent
     {
-        public Identity EntityId { get; }
+        public string EntityId { get; }
     }
 }

@@ -19,11 +19,11 @@ namespace Microwave.Queries.UnitTests
             IEnumerable<DomainEventWrapper> list = new [] {
                 new DomainEventWrapper
                 {
-                    DomainEvent = new TestEv(GuidIdentity.Create(Guid.NewGuid()))
+                    DomainEvent = new TestEv(Guid.NewGuid())
                 },
                 new DomainEventWrapper
                 {
-                    DomainEvent = new TestEv2(GuidIdentity.Create(Guid.NewGuid()))
+                    DomainEvent = new TestEv2(Guid.NewGuid())
                 }
             };
             mock.Setup(feed => feed.GetEventsAsync(It.IsAny<DateTimeOffset>())).ReturnsAsync(list);
@@ -42,11 +42,11 @@ namespace Microwave.Queries.UnitTests
             var mock = new Mock<IEventFeed<QueryEventHandler<TestQ, TestEv>>>();
             IEnumerable<DomainEventWrapper> list = new [] { new DomainEventWrapper
                 {
-                    DomainEvent = new TestEv(GuidIdentity.Create(Guid.NewGuid()))
+                    DomainEvent = new TestEv(Guid.NewGuid())
                 },
                 new DomainEventWrapper
                 {
-                    DomainEvent = new TestEv2(GuidIdentity.Create(Guid.NewGuid()))
+                    DomainEvent = new TestEv2(Guid.NewGuid())
                 }
             };
             mock.Setup(feed => feed.GetEventsAsync(It.IsAny<DateTimeOffset>())).ReturnsAsync(list);
@@ -87,21 +87,21 @@ namespace Microwave.Queries.UnitTests
 
     public class TestEv : IDomainEvent
     {
-        public TestEv(GuidIdentity entityId)
+        public TestEv(Guid entityId)
         {
-            EntityId = entityId;
+            EntityId = entityId.ToString();
         }
 
-        public Identity EntityId { get; }
+        public string EntityId { get; }
     }
 
     public class TestEv2 : IDomainEvent
     {
-        public TestEv2(GuidIdentity entityId)
+        public TestEv2(Guid entityId)
         {
-            EntityId = entityId;
+            EntityId = entityId.ToString();
         }
 
-        public Identity EntityId { get; }
+        public string EntityId { get; }
     }
 }

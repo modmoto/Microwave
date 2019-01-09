@@ -18,10 +18,10 @@ namespace Microwave.EventStores
             _context = context.Database;
         }
 
-        public async Task<SnapShotResult<T>> LoadSnapShot<T>(Identity entityId) where T : new()
+        public async Task<SnapShotResult<T>> LoadSnapShot<T>(string entityId) where T : new()
         {
             var mongoCollection = _context.GetCollection<SnapShotDbo<T>>(_snapShotCollectionName);
-            var asyncCursor = await mongoCollection.FindAsync(r => r.EntityId == entityId.Id);
+            var asyncCursor = await mongoCollection.FindAsync(r => r.EntityId == entityId);
             var snapShot = asyncCursor.ToList().FirstOrDefault();
 
             if (snapShot == null) return new DefaultSnapshot<T>();
@@ -35,10 +35,10 @@ namespace Microwave.EventStores
             var findOneAndReplaceOptions = new FindOneAndReplaceOptions<SnapShotDbo<T>>();
             findOneAndReplaceOptions.IsUpsert = true;
             await mongoCollection.FindOneAndReplaceAsync(
-                (Expression<Func<SnapShotDbo<T>, bool>>) (e => e.EntityId == snapShot.Id.Id),
+                (Expression<Func<SnapShotDbo<T>, bool>>) (e => e.EntityId == snapShot.Id),
                 new SnapShotDbo<T>
                 {
-                    EntityId = snapShot.Id.Id,
+                    EntityId = snapShot.Id,
                     Version = snapShot.Version,
                     Payload = snapShot.Entity
                 }, findOneAndReplaceOptions);

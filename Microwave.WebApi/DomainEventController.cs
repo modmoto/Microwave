@@ -26,8 +26,7 @@ namespace Microwave.WebApi
         [HttpGet("EntityStreams/{entityId}")]
         public async Task<ActionResult> GetDomainEventsByEntityIdType(string entityId, [FromQuery] long version)
         {
-            var id = Identity.Create(entityId);
-            var result = await _eventRepository.LoadEventsByEntity(id, version);
+            var result = await _eventRepository.LoadEventsByEntity(entityId, version);
             return Ok(result.Value);
         }
 

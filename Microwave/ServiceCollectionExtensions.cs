@@ -12,7 +12,7 @@ using Microwave.Queries;
 using Microwave.WebApi;
 using Microwave.WebApi.ApiFormatting;
 using Microwave.WebApi.ApiFormatting.DateTimeOffset;
-using Microwave.WebApi.ApiFormatting.Identity;
+using Microwave.WebApi.ApiFormatting;
 using Microwave.WebApi.Filters;
 using MongoDB.Bson.Serialization;
 
@@ -58,9 +58,6 @@ namespace Microwave
             services.AddReadmodelHandling(readModelAssembly);
 
             services.AddDomainEventRegistration(readModelAssembly);
-
-            if (!BsonClassMap.IsClassMapRegistered(typeof(GuidIdentity))) BsonClassMap.RegisterClassMap<GuidIdentity>();
-            if (!BsonClassMap.IsClassMapRegistered(typeof(StringIdentity))) BsonClassMap.RegisterClassMap<StringIdentity>();
 
             return services;
         }
@@ -111,7 +108,6 @@ namespace Microwave
 
                 config.OutputFormatters.Insert(0, new NewtonsoftOutputFormatter());
                 config.InputFormatters.Insert(0, new NewtonsoftInputFormatter());
-                config.ModelBinderProviders.Insert(0, new IdentityModelBinderProvider());
                 config.ModelBinderProviders.Insert(0, new DateTimeOffsetBinderProvider());
             });
             return services;
@@ -119,9 +115,6 @@ namespace Microwave
 
         private static IServiceCollection RegisterBsonClassMaps(this IServiceCollection services, Assembly assembly)
         {
-            if (!BsonClassMap.IsClassMapRegistered(typeof(GuidIdentity))) BsonClassMap.RegisterClassMap<GuidIdentity>();
-            if (!BsonClassMap.IsClassMapRegistered(typeof(StringIdentity))) BsonClassMap.RegisterClassMap<StringIdentity>();
-
             var registerClassMapMethod = typeof(BsonClassMap).GetMethods().Single(m => m.Name == nameof(BsonClassMap
             .RegisterClassMap) && m.IsGenericMethod && m.GetParameters().Length == 0);
             var domainEventTypes = assembly.GetTypes().Where(ev => ev.GetInterfaces().Contains(typeof(IDomainEvent)));

@@ -62,7 +62,7 @@ namespace Microwave.Application.Results
             return typeof(TCheck) == Status.GetType();
         }
 
-        public static Result<T> NotFound(Identity notFoundId)
+        public static Result<T> NotFound(string notFoundId)
         {
             return new NotFoundResult<T>(notFoundId);
         }

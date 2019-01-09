@@ -13,7 +13,7 @@ namespace Microwave.EventStores
         {
         }
 
-        public DifferentIdsException(IEnumerable<Identity> identities) : base($"Not able to write to different streams in one turn, write them separatly: {string.Join(",", identities)} Ids to differe")
+        public DifferentIdsException(IEnumerable<string> identities) : base($"Not able to write to different streams in one turn, write them separatly: {string.Join(",", identities)} Ids to differe")
         {
         }
     }

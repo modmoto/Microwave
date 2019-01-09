@@ -12,8 +12,7 @@ namespace Microwave.WebApi
             var field = domainEvent.GetType().GetField($"<{nameof(IDomainEvent.EntityId)}>k__BackingField",
                 BindingFlags.NonPublic | BindingFlags.Instance);
             var jToken = domainEventJobject.GetValue(nameof(IDomainEvent.EntityId), StringComparison.OrdinalIgnoreCase);
-            var id = (string)jToken[nameof(Identity.Id)];
-            field?.SetValue(domainEvent, Identity.Create(id));
+            field?.SetValue(domainEvent, jToken.ToString());
         }
     }
 }

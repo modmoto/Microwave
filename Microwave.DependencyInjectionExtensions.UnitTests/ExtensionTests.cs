@@ -160,7 +160,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
 
     public class TestDomainEvent3 : IDomainEvent
     {
-        public Identity EntityId { get; }
+        public string EntityId { get; }
         public int Age { get; }
     }
 
@@ -214,25 +214,25 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
 
     public class TestDomainEvent2 : IDomainEvent
     {
-        public TestDomainEvent2(GuidIdentity entityId, string otherName)
+        public TestDomainEvent2(Guid entityId, string otherName)
         {
-            EntityId = entityId;
+            EntityId = entityId.ToString();
             OtherName = otherName;
         }
 
-        public Identity EntityId { get; }
+        public string EntityId { get; }
         public string OtherName { get; }
     }
 
     public class TestDomainEvent1 : IDomainEvent
     {
-        public TestDomainEvent1(GuidIdentity entityId, string name)
+        public TestDomainEvent1(Guid entityId, string name)
         {
-            EntityId = entityId;
+            EntityId = entityId.ToString();
             Name = name;
         }
 
-        public Identity EntityId { get; }
+        public string EntityId { get; }
         public string Name { get; }
     }
 }

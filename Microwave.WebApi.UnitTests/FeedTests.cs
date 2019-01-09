@@ -33,7 +33,7 @@ namespace Microwave.WebApi.UnitTests
             var domainEventWrappers = domainEvents.ToList();
             Assert.AreEqual(1, domainEventWrappers.Count);
             Assert.AreEqual(new Guid("5a8b63c8-0f7f-4de7-a9e5-b6b377aa2180").ToString(), domainEventWrappers[0].DomainEvent
-                .EntityId.Id);
+                .EntityId);
         }
     }
 
@@ -44,17 +44,17 @@ namespace Microwave.WebApi.UnitTests
             Id = ev.EntityId;
         }
 
-        public Identity Id { get; set; }
+        public string Id { get; set; }
         public override Type GetsCreatedOn { get; }
     }
 
     public class TestEv : IDomainEvent
     {
-        public TestEv(GuidIdentity entityId)
+        public TestEv(Guid entityId)
         {
-            EntityId = entityId;
+            EntityId = entityId.ToString();
         }
 
-        public Identity EntityId { get; }
+        public string EntityId { get; }
     }
 }

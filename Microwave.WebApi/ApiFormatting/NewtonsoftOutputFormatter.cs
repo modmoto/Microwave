@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Net.Http.Headers;
 using Microwave.WebApi.ApiFormatting.DateTimeOffset;
-using Microwave.WebApi.ApiFormatting.Identity;
 using Newtonsoft.Json;
 
 namespace Microwave.WebApi.ApiFormatting
@@ -22,7 +21,6 @@ namespace Microwave.WebApi.ApiFormatting
         public override async Task WriteResponseBodyAsync(OutputFormatterWriteContext context, Encoding selectedEncoding)
         {
             var ser = JsonConvert.SerializeObject(context.Object,
-                new IdentityConverter(),
                 new DateTimeOffsetConverter());
             await context.HttpContext.Response.WriteAsync(ser);
         }

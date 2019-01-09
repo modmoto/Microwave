@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using Microwave.Application;
 using Microwave.Domain;
-using Microwave.WebApi.ApiFormatting.Identity;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -25,7 +24,6 @@ namespace Microwave.WebApi
         public IEnumerable<DomainEventWrapper> Deserialize(string serializeObject)
         {
             JsonSerializer serializer = new JsonSerializer();
-            serializer.Converters.Add(new IdentityConverter());
             var jArray = JsonConvert.DeserializeObject<JArray>(serializeObject);
             foreach (var jToken in jArray)
             {
