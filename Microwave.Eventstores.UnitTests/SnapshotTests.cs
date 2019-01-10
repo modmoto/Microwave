@@ -29,7 +29,7 @@ namespace Microwave.Eventstores.UnitTests
 
             await eventStore.LoadAsync<User>(entityId);
 
-            var snapShotDboOld = (await mongoCollection.FindAsync(e => e.EntityId == entityId.ToString())).ToList().FirstOrDefault();
+            var snapShotDboOld = (await mongoCollection.FindAsync(e => e.Id == entityId.ToString())).ToList().FirstOrDefault();
 
             Assert.IsNull(snapShotDboOld);
 
@@ -47,10 +47,10 @@ namespace Microwave.Eventstores.UnitTests
             Assert.AreEqual("PeterNeu", user.Entity.Name);
             Assert.AreEqual(entityId, user.Entity.Id);
 
-            var snapShotDbo = (await mongoCollection.FindAsync(e => e.EntityId == entityId)).ToList().First();
+            var snapShotDbo = (await mongoCollection.FindAsync(e => e.Id == entityId)).ToList().First();
 
             Assert.AreEqual(4, snapShotDbo.Version);
-            Assert.AreEqual(entityId, snapShotDbo.EntityId);
+            Assert.AreEqual(entityId, snapShotDbo.Id);
             var userSnapShot = snapShotDbo.Payload;
 
             Assert.AreEqual(14, userSnapShot.Age);

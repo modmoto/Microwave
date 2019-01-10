@@ -7,7 +7,10 @@ using Microwave.Application.Exceptions;
 using Microwave.Application.Results;
 using Microwave.Domain;
 using Microwave.EventStores;
+using Microwave.EventStores.Ports;
+using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
+using Moq;
 
 namespace Microwave.Eventstores.UnitTests
 {
@@ -429,6 +432,33 @@ namespace Microwave.Eventstores.UnitTests
             Assert.AreEqual(typeof(TestEvent1), result.Value.ToList()[0].DomainEvent.GetType());
         }
 
+        [TestMethod]
+        public async Task AddEvents_ConstructorBsonBug()
+        {
+            BsonClassMap.RegisterClassMap<TestEvent_BsonBug>(c =>
+            {
+                c.MapProperty(d => d.EntityId);
+                c.MapProperty(d => d.Name);
+                c.MapCreator(d => new TestEvent_BsonBug(new Guid(d.EntityId), d.Name));
+            });
+
+            var eventRepository = new EventRepository(EventDatabase, new VersionCache(EventDatabase));
+            var snapShotRepo = new Mock<ISnapShotRepository>();
+            snapShotRepo.Setup(re => re.LoadSnapShot<TestEntity>(It.IsAny<string>()))
+                .ReturnsAsync(new DefaultSnapshot<TestEntity>());
+
+            var eventStore = new EventStore(eventRepository, snapShotRepo.Object);
+
+            var newGuid = Guid.NewGuid();
+
+            await eventStore.AppendAsync(new List<IDomainEvent> { new TestEvent_BsonBug(newGuid, "Simon")}, 0);
+
+            var result = await eventRepository.LoadEvents();
+
+            Assert.AreEqual(1, result.Value.Count());
+            Assert.AreEqual(newGuid.ToString(), result.Value.Single().DomainEvent.EntityId);
+        }
+
         private static void CheckAllResults(Result[] whenAll)
         {
             foreach (var result in whenAll)
@@ -436,6 +466,19 @@ namespace Microwave.Eventstores.UnitTests
                 result.Check();
             }
         }
+    }
+
+    public class TestEvent_BsonBug : IDomainEvent
+    {
+        public string Name { get; }
+
+        public TestEvent_BsonBug(Guid entityId, string name)
+        {
+            Name = name;
+            EntityId = entityId.ToString();
+        }
+
+        public string EntityId { get; }
     }
 
     public class TestEvent1 : IDomainEvent

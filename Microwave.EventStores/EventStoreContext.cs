@@ -1,13 +1,11 @@
 ﻿using System;
 using Microwave.Domain;
-using MongoDB.Bson.Serialization.Attributes;
 
 namespace Microwave.EventStores
 {
     public class SnapShotDbo<T>
     {
-        [BsonId]
-        public string EntityId { get; set; }
+        public string Id { get; set; }
         public T Payload { get; set; }
         public long Version { get; set; }
     }
@@ -16,8 +14,7 @@ namespace Microwave.EventStores
     {
         public DomainEventKey Key { get; set; }
 
-        [BsonId]
-        public string KeyHack {
+        public string Id {
             get => $"{Key.EntityId}_{Key.Version}";
             set => Key = new DomainEventKey
             {
