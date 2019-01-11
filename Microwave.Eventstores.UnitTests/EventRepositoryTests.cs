@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
+using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Application.Exceptions;
@@ -437,9 +439,28 @@ namespace Microwave.Eventstores.UnitTests
         {
             BsonClassMap.RegisterClassMap<TestEvent_BsonBug>(c =>
             {
-                c.MapProperty(d => d.EntityId);
-                c.MapProperty(d => d.Name);
-                c.MapCreator(d => new TestEvent_BsonBug(new Guid(d.EntityId), d.Name));
+                var eventType = typeof(TestEvent_BsonBug);
+                var constructorInfo = eventType.GetConstructors().Single();
+
+                c.MapProperty("EntityId");
+                c.MapProperty("Name");
+
+                var funcType = typeof(Func<,>).MakeGenericType(eventType, eventType);
+                var expressionType = typeof(Expression<>).MakeGenericType(funcType);
+                var genericClassMap = typeof(BsonClassMap<>).MakeGenericType(eventType);
+                var mapCreatorFunction = genericClassMap.GetMethod("MapCreator", new []{ expressionType });
+
+                var lambdaParameter = Expression.Parameter(eventType, "domainEvent");
+                var firstProp = Expression.Property(lambdaParameter, "EntityId");
+                var secondProp = Expression.Property(lambdaParameter, "Name");
+                var constructor = typeof(Guid).GetConstructor(new []{ typeof(string) });
+                var guid = Expression.New(constructor, firstProp);
+                var body = Expression.New(constructorInfo, guid, secondProp);
+
+                var lambda = Expression.Lambda(funcType, body, lambdaParameter);
+
+                mapCreatorFunction.Invoke(c, new []{ lambda });
+
             });
 
             var eventRepository = new EventRepository(EventDatabase, new VersionCache(EventDatabase));
@@ -457,6 +478,17 @@ namespace Microwave.Eventstores.UnitTests
 
             Assert.AreEqual(1, result.Value.Count());
             Assert.AreEqual(newGuid.ToString(), result.Value.Single().DomainEvent.EntityId);
+        }
+
+        private static TestEvent_BsonBug TestEventBsonBug()
+        {
+            return new TestEvent_BsonBug(Guid.Empty, "je");
+        }
+
+        private TEvent Created<TEvent>(TEvent bug)
+        {
+            var testEventBsonBug = new TestEvent_BsonBug(Guid.NewGuid(), "jeah");
+            return default(TEvent);
         }
 
         private static void CheckAllResults(Result[] whenAll)
