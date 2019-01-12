@@ -20,7 +20,7 @@ namespace Microwave.Eventstores.UnitTests
             var repo = new EventRepository(EventDatabase, new VersionCache(EventDatabase));
             var eventStore = new EventStore(repo, new SnapShotRepository(EventDatabase));
 
-            var entityId = Guid.NewGuid().ToString();
+            var entityId = GuidIdentity.Create(Guid.NewGuid());
             await eventStore.AppendAsync(new List<IDomainEvent>
             {
                 new Event1(entityId),
@@ -29,7 +29,8 @@ namespace Microwave.Eventstores.UnitTests
 
             await eventStore.LoadAsync<User>(entityId);
 
-            var snapShotDboOld = (await mongoCollection.FindAsync(e => e.Id == entityId.ToString())).ToList().FirstOrDefault();
+            var snapShotDboOld = (await mongoCollection.FindAsync(e => e.Id == entityId.ToString())).ToList()
+            .FirstOrDefault();
 
             Assert.IsNull(snapShotDboOld);
 
@@ -45,17 +46,17 @@ namespace Microwave.Eventstores.UnitTests
             Assert.AreEqual(4, eventstoreResult.Value.Version);
             Assert.AreEqual(14, user.Entity.Age);
             Assert.AreEqual("PeterNeu", user.Entity.Name);
-            Assert.AreEqual(entityId, user.Entity.Id);
+            Assert.AreEqual(entityId.Id, user.Entity.Id.Id);
 
-            var snapShotDbo = (await mongoCollection.FindAsync(e => e.Id == entityId)).ToList().First();
+            var snapShotDbo = (await mongoCollection.FindAsync(e => e.Id == entityId.Id)).ToList().First();
 
             Assert.AreEqual(4, snapShotDbo.Version);
-            Assert.AreEqual(entityId, snapShotDbo.Id);
+            Assert.AreEqual(entityId.Id, snapShotDbo.Id);
             var userSnapShot = snapShotDbo.Payload;
 
             Assert.AreEqual(14, userSnapShot.Age);
             Assert.AreEqual("PeterNeu", userSnapShot.Name);
-            Assert.AreEqual(entityId, userSnapShot.Id);
+            Assert.AreEqual(entityId.Id, userSnapShot.Id.Id);
         }
 
         [TestMethod]
@@ -64,7 +65,7 @@ namespace Microwave.Eventstores.UnitTests
             var repo = new EventRepository(EventDatabase, new VersionCache(EventDatabase));
             var eventStore = new EventStore(repo, new SnapShotRepository(EventDatabase));
 
-            var entityId = Guid.NewGuid().ToString();
+            var entityId = GuidIdentity.Create(Guid.NewGuid());
             await eventStore.AppendAsync(new List<IDomainEvent>
             {
                 new Event1(entityId),
@@ -85,7 +86,7 @@ namespace Microwave.Eventstores.UnitTests
     {
         public string Name { get; set; }
         public int Age { get; set; }
-        public string Id { get; set; }
+        public Identity Id { get; set; }
 
         public void Apply(Event1 domainEvent)
         {
@@ -105,35 +106,35 @@ namespace Microwave.Eventstores.UnitTests
 
     public class Event1 : IDomainEvent
     {
-        public Event1(string entityId)
+        public Event1(Identity entityId)
         {
             EntityId = entityId;
         }
 
-        public string EntityId { get; }
+        public Identity EntityId { get; }
     }
 
     public class Event2 : IDomainEvent
     {
-        public Event2(string entityId, string name)
+        public Event2(Identity entityId, string name)
         {
             EntityId = entityId;
             Name = name;
         }
 
-        public string EntityId { get; }
+        public Identity EntityId { get; }
         public string Name { get; }
     }
 
     public class Event3 : IDomainEvent
     {
-        public Event3(string entityId, int age)
+        public Event3(Identity entityId, int age)
         {
             EntityId = entityId;
             Age = age;
         }
 
-        public string EntityId { get; }
+        public Identity EntityId { get; }
         public int Age { get; }
     }
 }

@@ -100,6 +100,6 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
 
     public class Ev : IDomainEvent
     {
-        public string EntityId { get; }
+        public Identity EntityId { get; }
     }
 }

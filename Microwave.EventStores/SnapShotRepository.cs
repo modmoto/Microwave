@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using Microwave.Domain;
 using Microwave.EventStores.Ports;
 using MongoDB.Driver;
 
@@ -17,10 +18,10 @@ namespace Microwave.EventStores
             _context = context.Database;
         }
 
-        public async Task<SnapShotResult<T>> LoadSnapShot<T>(string entityId) where T : new()
+        public async Task<SnapShotResult<T>> LoadSnapShot<T>(Identity entityId) where T : new()
         {
             var mongoCollection = _context.GetCollection<SnapShotDbo<T>>(_snapShotCollectionName);
-            var asyncCursor = await mongoCollection.FindAsync(r => r.Id == entityId);
+            var asyncCursor = await mongoCollection.FindAsync(r => r.Id == entityId.Id);
             var snapShot = asyncCursor.ToList().FirstOrDefault();
 
             if (snapShot == null) return new DefaultSnapshot<T>();
@@ -34,10 +35,10 @@ namespace Microwave.EventStores
             var findOneAndReplaceOptions = new FindOneAndReplaceOptions<SnapShotDbo<T>>();
             findOneAndReplaceOptions.IsUpsert = true;
             await mongoCollection.FindOneAndReplaceAsync(
-                (Expression<Func<SnapShotDbo<T>, bool>>) (e => e.Id == snapShot.Id),
+                (Expression<Func<SnapShotDbo<T>, bool>>) (e => e.Id == snapShot.Id.Id),
                 new SnapShotDbo<T>
                 {
-                    Id = snapShot.Id,
+                    Id = snapShot.Id.Id,
                     Version = snapShot.Version,
                     Payload = snapShot.Entity
                 }, findOneAndReplaceOptions);

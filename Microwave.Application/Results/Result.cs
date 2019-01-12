@@ -1,4 +1,6 @@
-﻿namespace Microwave.Application.Results
+﻿using Microwave.Domain;
+
+namespace Microwave.Application.Results
 {
     public abstract class Result
     {
@@ -60,7 +62,7 @@
             return typeof(TCheck) == Status.GetType();
         }
 
-        public static Result<T> NotFound(string notFoundId)
+        public static Result<T> NotFound(Identity notFoundId)
         {
             return new NotFoundResult<T>(notFoundId);
         }

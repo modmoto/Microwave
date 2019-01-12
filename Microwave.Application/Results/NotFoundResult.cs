@@ -1,11 +1,12 @@
 ﻿using System;
 using Microwave.Application.Exceptions;
+using Microwave.Domain;
 
 namespace Microwave.Application.Results
 {
     public class NotFoundResult<T> : Result<T>
     {
-        public NotFoundResult(string notFoundId) : base(new NotFound(typeof(T), notFoundId))
+        public NotFoundResult(Identity notFoundId) : base(new NotFound(typeof(T), notFoundId))
         {
         }
     }
@@ -13,9 +14,9 @@ namespace Microwave.Application.Results
     public class NotFound : ResultStatus
     {
         public Type Type { get; }
-        public string NotFoundId { get; }
+        public Identity NotFoundId { get; }
 
-        public NotFound(Type type, string notFoundId)
+        public NotFound(Type type, Identity notFoundId)
         {
             Type = type;
             NotFoundId = notFoundId;
@@ -23,7 +24,7 @@ namespace Microwave.Application.Results
 
         public override void Check()
         {
-            throw new NotFoundException(Type, NotFoundId);
+            throw new NotFoundException(Type, NotFoundId.Id);
         }
     }
 }

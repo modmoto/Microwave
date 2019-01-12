@@ -16,7 +16,7 @@ namespace Microwave.Eventstores.UnitTests
         public async Task TestDeserializationOfIdInInterface_OwnBackingField()
         {
             var entityStreamRepository = new EventRepository(EventDatabase, new VersionCache(EventDatabase));
-            var domainEvent = new TestEv_CustomBackingField(Guid.NewGuid().ToString());
+            var domainEvent = new TestEv_CustomBackingField(GuidIdentity.Create(Guid.NewGuid()));
 
             await entityStreamRepository.AppendAsync(new List<IDomainEvent> {domainEvent}, 0);
             var deserialize = (await entityStreamRepository.LoadEvents()).Value.Single().DomainEvent;
@@ -28,10 +28,10 @@ namespace Microwave.Eventstores.UnitTests
         {
             var entityStreamRepository = new EventRepository(EventDatabase, new VersionCache(EventDatabase));
 
-            var domainEvent = new TestEv_AutoProperty(Guid.NewGuid().ToString());
+            var domainEvent = new TestEv_AutoProperty(GuidIdentity.Create(Guid.NewGuid()));
             await entityStreamRepository.AppendAsync(new List<IDomainEvent> {domainEvent}, 0);
             var deserialize = (await entityStreamRepository.LoadEvents()).Value.Single().DomainEvent;
-            Assert.AreEqual(deserialize.EntityId, new Guid("84e5447a-0a28-4fe1-af5a-11dd6a43d3dd").ToString());
+            Assert.AreEqual(deserialize.EntityId.Id, new Guid("84e5447a-0a28-4fe1-af5a-11dd6a43d3dd").ToString());
             Assert.AreNotEqual(deserialize.EntityId, Guid.Empty);
         }
 
@@ -40,43 +40,43 @@ namespace Microwave.Eventstores.UnitTests
         {
             var entityStreamRepository = new EventRepository(EventDatabase, new VersionCache(EventDatabase));
 
-            var domainEvent = new TestEv2(Guid.NewGuid().ToString());
+            var domainEvent = new TestEv2(GuidIdentity.Create(Guid.NewGuid()));
             await entityStreamRepository.AppendAsync(new List<IDomainEvent> {domainEvent}, 0);
             var deserialize = (await entityStreamRepository.LoadEvents()).Value.Single().DomainEvent;
 
             Assert.IsTrue(deserialize.EntityId.Equals(domainEvent.EntityId));
-            Assert.AreNotEqual(deserialize.EntityId, Guid.Empty.ToString());
+            Assert.AreNotEqual(deserialize.EntityId.Id, Guid.Empty.ToString());
         }
     }
 
     public class TestEv2 : IDomainEvent
     {
-        public TestEv2(string entityId)
+        public TestEv2(Identity entityId)
         {
             EntityId = entityId;
         }
 
-        public string EntityId { get; }
+        public Identity EntityId { get; }
     }
 
     public class TestEv_CustomBackingField : IDomainEvent
     {
-        private readonly string _entityIdBackingFieldWeird;
+        private readonly Identity _entityIdBackingFieldWeird;
 
-        public TestEv_CustomBackingField(string NOTentityId)
+        public TestEv_CustomBackingField(Identity NOTentityId)
         {
             _entityIdBackingFieldWeird = NOTentityId;
         }
 
-        public string EntityId => _entityIdBackingFieldWeird;
+        public Identity EntityId => _entityIdBackingFieldWeird;
     }
 
     public class TestEv_AutoProperty : IDomainEvent
     {
-        public TestEv_AutoProperty(string NOTentityId)
+        public TestEv_AutoProperty(Identity NOTentityId)
         {
         }
 
-        public string EntityId => new Guid("84e5447a-0a28-4fe1-af5a-11dd6a43d3dd").ToString();
+        public Identity EntityId => GuidIdentity.Create(new Guid("84e5447a-0a28-4fe1-af5a-11dd6a43d3dd"));
     }
 }

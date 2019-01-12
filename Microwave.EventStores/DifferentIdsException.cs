@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+using Microwave.Domain;
 
 namespace Microwave.EventStores
 {
@@ -12,7 +13,7 @@ namespace Microwave.EventStores
         {
         }
 
-        public DifferentIdsException(IEnumerable<string> identities) : base($"Not able to write to different streams in one turn, write them separatly: {string.Join(",", identities)} Ids to differe")
+        public DifferentIdsException(IEnumerable<Identity> identities) : base($"Not able to write to different streams in one turn, write them separatly: {string.Join(",", identities)} Ids to differe")
         {
         }
     }

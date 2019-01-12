@@ -1,17 +1,17 @@
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microwave.Domain;
 
 namespace Microwave.EventStores.Ports
 {
     public interface ISnapShotRepository
     {
-        Task<SnapShotResult<T>> LoadSnapShot<T>(string entityId) where T : new();
+        Task<SnapShotResult<T>> LoadSnapShot<T>(Identity entityId) where T : new();
         Task SaveSnapShot<T>(SnapShotWrapper<T> snapShot);
     }
 
     public class SnapShotWrapper<T>
     {
-        public SnapShotWrapper(T entity, string id, long version)
+        public SnapShotWrapper(T entity, Identity id, long version)
         {
             Entity = entity;
             Version = version;
@@ -20,7 +20,7 @@ namespace Microwave.EventStores.Ports
 
         public T Entity { get; }
         public long Version { get; }
-        public string Id { get; }
+        public Identity Id { get; }
     }
 
     public class SnapShotResult<T>

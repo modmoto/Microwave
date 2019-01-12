@@ -2,6 +2,7 @@
 using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Application.Exceptions;
+using Microwave.Domain;
 using Microwave.Queries;
 
 namespace Microwave.Application.UnitTests
@@ -12,7 +13,7 @@ namespace Microwave.Application.UnitTests
         [TestMethod]
         public void NotFound()
         {
-            var readModelWrapper = new ReadModelWrapper<ReadModelTest>(new ReadModelTest(), Guid.NewGuid().ToString(), 0);
+            var readModelWrapper = new ReadModelWrapper<ReadModelTest>(new ReadModelTest(), GuidIdentity.Create(Guid.NewGuid()), 0);
             var notFoundException = new NotFoundException(readModelWrapper.GetType(), "TheId");
             Assert.AreEqual("Could not find ReadModelTest with ID TheId", notFoundException.Message);
         }
