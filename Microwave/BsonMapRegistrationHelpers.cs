@@ -48,8 +48,14 @@ namespace Microwave
                     else
                     {
                         var parameterName = GetParameterNameForProperty(parameter.Name, eventType.GetProperties());
-                        var propertyExpression = Expression.Property(lambdaParameter, parameterName);
-                        expressions.Add(propertyExpression);
+                        if (parameterName == null)
+                        {
+                            expressions.Add(Expression.Constant(null));
+                        }
+                        else
+                        {
+                            expressions.Add(Expression.Property(lambdaParameter, parameterName));
+                        }
                     }
 
                 var body = Expression.New(constructorInfo, expressions);
@@ -77,7 +83,7 @@ namespace Microwave
 
         private static string GetParameterNameForProperty(string parameterName, PropertyInfo[] properties)
         {
-            return properties.First(p => p.Name.ToLower() == parameterName.ToLower()).Name;
+            return properties.FirstOrDefault(p => p.Name.ToLower() == parameterName.ToLower())?.Name;
         }
 
         private static ConstructorInfo GetConstructorWithMostMatchingParameters(Type eventType)
