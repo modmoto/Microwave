@@ -17,6 +17,7 @@
       <ProjectReference Include="..\Microwave.EventStores\Microwave.EventStores.csproj" />
       <ProjectReference Include="..\Microwave.Queries\Microwave.Queries.csproj" />
       <ProjectReference Include="..\Microwave.WebApi\Microwave.WebApi.csproj" />
+      <ProjectReference Include="..\Microwave\Microwave.csproj" />
     </ItemGroup>
     <ItemGroup>
       <Content Include="appsettings.test.json">
