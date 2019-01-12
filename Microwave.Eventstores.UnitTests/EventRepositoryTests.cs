@@ -445,24 +445,24 @@ namespace Microwave.Eventstores.UnitTests
                 c.MapProperty("EntityId");
                 c.MapProperty("Name");
 
-                var funcType = typeof(Func<,>).MakeGenericType(eventType, eventType);
-                var expressionType = typeof(Expression<>).MakeGenericType(funcType);
-                var genericClassMap = typeof(BsonClassMap<>).MakeGenericType(eventType);
-                var mapCreatorFunction = genericClassMap.GetMethod("MapCreator", new []{ expressionType });
-
                 var lambdaParameter = Expression.Parameter(eventType, "domainEvent");
-                var firstProp = Expression.Property(lambdaParameter, "EntityId");
-                var idOfIdentity = Expression.Property(firstProp, "Id");
                 var secondProp = Expression.Property(lambdaParameter, "Name");
 
+
+                var firstProp = Expression.Property(lambdaParameter, nameof(IDomainEvent.EntityId));
+                var idOfIdentity = Expression.Property(firstProp, nameof(Identity.Id));
                 var identityCreate = typeof(Identity).GetMethod(nameof(Identity.Create), new []{ typeof(string) });
                 var identity = Expression.Call(identityCreate, idOfIdentity);
                 var idConverted = Expression.Convert(identity, typeof(GuidIdentity));
 
                 var body = Expression.New(constructorInfo, idConverted, secondProp);
 
+                var funcType = typeof(Func<,>).MakeGenericType(eventType, eventType);
                 var lambda = Expression.Lambda(funcType, body, lambdaParameter);
 
+                var expressionType = typeof(Expression<>).MakeGenericType(funcType);
+                var genericClassMap = typeof(BsonClassMap<>).MakeGenericType(eventType);
+                var mapCreatorFunction = genericClassMap.GetMethod("MapCreator", new []{ expressionType });
                 mapCreatorFunction.Invoke(c, new []{ lambda });
 
             });
