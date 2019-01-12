@@ -433,29 +433,6 @@ namespace Microwave.Eventstores.UnitTests
             Assert.AreEqual(typeof(TestEvent1), result.Value.ToList()[0].DomainEvent.GetType());
         }
 
-        [TestMethod]
-        public async Task AddEvents_ConstructorBsonBug()
-        {
-            ServiceCollectionExtensions.AddBsonMapFor<TestEvent_BsonBug>();
-
-            var eventRepository = new EventRepository(EventDatabase, new VersionCache(EventDatabase));
-            var snapShotRepo = new Mock<ISnapShotRepository>();
-            snapShotRepo.Setup(re => re.LoadSnapShot<TestEntity>(It.IsAny<Identity>()))
-                .ReturnsAsync(new DefaultSnapshot<TestEntity>());
-
-            var eventStore = new EventStore(eventRepository, snapShotRepo.Object);
-
-            var newGuid = Guid.NewGuid();
-
-            await eventStore.AppendAsync(new List<IDomainEvent> { new TestEvent_BsonBug(GuidIdentity.Create(newGuid), "Simon")},
-             0);
-
-            var result = await eventRepository.LoadEvents();
-
-            Assert.AreEqual(1, result.Value.Count());
-            Assert.AreEqual(newGuid.ToString(), result.Value.Single().DomainEvent.EntityId.Id);
-        }
-
         private static void CheckAllResults(Result[] whenAll)
         {
             foreach (var result in whenAll)
@@ -463,19 +440,6 @@ namespace Microwave.Eventstores.UnitTests
                 result.Check();
             }
         }
-    }
-
-    public class TestEvent_BsonBug : IDomainEvent
-    {
-        public string Name { get; }
-
-        public TestEvent_BsonBug(GuidIdentity entityId, string name)
-        {
-            Name = name;
-            EntityId = entityId;
-        }
-
-        public Identity EntityId { get; }
     }
 
     public class TestEvent1 : IDomainEvent
