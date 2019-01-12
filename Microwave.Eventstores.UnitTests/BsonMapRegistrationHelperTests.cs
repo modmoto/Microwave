@@ -38,6 +38,31 @@ namespace Microwave.Eventstores.UnitTests
         }
 
         [TestMethod]
+        public async Task AddEvents_OneAutoProp()
+        {
+            BsonMapRegistrationHelpers.AddBsonMapFor<TestEvent_BsonBug_AutoProperty>();
+
+            var eventRepository = new EventRepository(EventDatabase, new VersionCache(EventDatabase));
+            var snapShotRepo = new Mock<ISnapShotRepository>();
+            snapShotRepo.Setup(re => re.LoadSnapShot<TestEntity>(It.IsAny<Identity>()))
+                .ReturnsAsync(new DefaultSnapshot<TestEntity>());
+
+            var eventStore = new EventStore(eventRepository, snapShotRepo.Object);
+
+            var newGuid = Guid.NewGuid();
+
+            await eventStore.AppendAsync(new List<IDomainEvent> { new TestEvent_BsonBug_AutoProperty(GuidIdentity.Create(newGuid), "Simon")},
+                0);
+
+            var result = await eventRepository.LoadEvents();
+
+            Assert.AreEqual(1, result.Value.Count());
+            Assert.AreEqual(newGuid.ToString(), result.Value.Single().DomainEvent.EntityId.Id);
+            Assert.AreEqual("Simon", ((TestEvent_BsonBug_AutoProperty)result.Value.Single().DomainEvent).Name);
+            Assert.AreEqual(newGuid.ToString(), ((TestEvent_BsonBug_AutoProperty)result.Value.Single().DomainEvent).EntityIdAsString);
+        }
+
+        [TestMethod]
         public async Task AddEvents_ConstructorBson_UnconventionalOderring()
         {
             BsonMapRegistrationHelpers.AddBsonMapFor<TestEvent_UnconventionalOderring>();
@@ -58,6 +83,43 @@ namespace Microwave.Eventstores.UnitTests
             Assert.AreEqual("whatever", result.Value.Single().DomainEvent.EntityId.Id);
             Assert.AreEqual("Simon", ((TestEvent_UnconventionalOderring)result.Value.Single().DomainEvent).Name);
         }
+
+        [TestMethod]
+        public async Task AddEvents_ConstructorBson_TwoIdentitiesInConstructor()
+        {
+            BsonMapRegistrationHelpers.AddBsonMapFor<TestEvent_TwoIdentitiesInConstructor>();
+
+            var eventRepository = new EventRepository(EventDatabase, new VersionCache(EventDatabase));
+            var snapShotRepo = new Mock<ISnapShotRepository>();
+            snapShotRepo.Setup(re => re.LoadSnapShot<TestEntity>(It.IsAny<Identity>()))
+                .ReturnsAsync(new DefaultSnapshot<TestEntity>());
+
+            var eventStore = new EventStore(eventRepository, snapShotRepo.Object);
+
+            var newGuid = Guid.NewGuid();
+            await eventStore.AppendAsync(new List<IDomainEvent> { new TestEvent_TwoIdentitiesInConstructor(StringIdentity
+            .Create("whatever"), GuidIdentity.Create(newGuid))},
+                0);
+
+            var result = await eventRepository.LoadEvents();
+
+            Assert.AreEqual(1, result.Value.Count());
+            Assert.AreEqual("whatever", result.Value.Single().DomainEvent.EntityId.Id);
+            Assert.AreEqual(newGuid.ToString(), ((TestEvent_TwoIdentitiesInConstructor)result.Value.Single().DomainEvent).GuidIdentity
+            .Id);
+        }
+    }
+
+    public class TestEvent_TwoIdentitiesInConstructor : IDomainEvent
+    {
+        public TestEvent_TwoIdentitiesInConstructor(StringIdentity entityId, GuidIdentity guidIdentity)
+        {
+            EntityId = entityId;
+            GuidIdentity = guidIdentity;
+        }
+
+        public Identity EntityId { get; }
+        public GuidIdentity GuidIdentity { get; }
     }
 
     public class TestEvent_UnconventionalOderring : IDomainEvent
@@ -83,5 +145,19 @@ namespace Microwave.Eventstores.UnitTests
         }
 
         public Identity EntityId { get; }
+    }
+
+    public class TestEvent_BsonBug_AutoProperty : IDomainEvent
+    {
+        public string Name { get; }
+
+        public TestEvent_BsonBug_AutoProperty(GuidIdentity entityId, string name)
+        {
+            Name = name;
+            EntityId = entityId;
+        }
+
+        public Identity EntityId { get; }
+        public string EntityIdAsString => EntityId.Id;
     }
 }

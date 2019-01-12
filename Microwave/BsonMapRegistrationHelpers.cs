@@ -36,9 +36,13 @@ namespace Microwave
 
                 var expressions = new List<Expression>();
                 foreach (var parameter in constructorInfo.GetParameters())
+                {
+                    var parameterName = GetParameterNameForProperty(parameter.Name, eventType.GetProperties());
+                    if (parameterName == null) throw new ArgumentException($"Can not find identically named property for parameter: {parameter.Name}. Rename the parameter to match a Property!");
+
                     if (IsIdentityParameter(parameter))
                     {
-                        var firstProp = Expression.Property(lambdaParameter, nameof(IDomainEvent.EntityId));
+                        var firstProp = Expression.Property(lambdaParameter, parameterName);
                         var idOfIdentity = Expression.Property(firstProp, nameof(Identity.Id));
                         var identityCreate = typeof(Identity).GetMethod(nameof(Identity.Create), new[] {typeof(string)});
                         var identity = Expression.Call(identityCreate, idOfIdentity);
@@ -47,16 +51,10 @@ namespace Microwave
                     }
                     else
                     {
-                        var parameterName = GetParameterNameForProperty(parameter.Name, eventType.GetProperties());
-                        if (parameterName == null)
-                        {
-                            expressions.Add(Expression.Constant(null));
-                        }
-                        else
-                        {
-                            expressions.Add(Expression.Property(lambdaParameter, parameterName));
-                        }
+                        expressions.Add(Expression.Property(lambdaParameter, parameterName));
                     }
+                }
+
 
                 var body = Expression.New(constructorInfo, expressions);
 
