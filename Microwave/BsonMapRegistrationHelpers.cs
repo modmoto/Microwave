@@ -25,7 +25,7 @@ namespace Microwave
 
         public static void AddBsonMapFor<T>() where T : IDomainEvent
         {
-            BsonClassMap.RegisterClassMap<T>(c =>
+            if (!BsonClassMap.IsClassMapRegistered(typeof(T))) BsonClassMap.RegisterClassMap<T>(c =>
             {
                 var eventType = typeof(T);
                 var constructorInfo = GetConstructorWithMostMatchingParameters(eventType);

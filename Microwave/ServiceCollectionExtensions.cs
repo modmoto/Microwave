@@ -86,7 +86,11 @@ namespace Microwave
 
             services.AddMicrowaveMvcExtensions();
 
-            services.RegisterBsonClassMaps(domainEventAssembly);
+            BsonMapRegistrationHelpers.AddBsonMapsForMicrowave(domainEventAssembly);
+
+            if (!BsonClassMap.IsClassMapRegistered(typeof(GuidIdentity))) BsonClassMap.RegisterClassMap<GuidIdentity>();
+            if (!BsonClassMap.IsClassMapRegistered(typeof(StringIdentity))) BsonClassMap.RegisterClassMap<StringIdentity>();
+            IServiceCollection temp = services;
 
             return services;
         }
@@ -116,24 +120,6 @@ namespace Microwave
                 config.ModelBinderProviders.Insert(0, new IdentityModelBinderProvider());
                 config.ModelBinderProviders.Insert(0, new DateTimeOffsetBinderProvider());
             });
-            return services;
-        }
-
-        private static IServiceCollection RegisterBsonClassMaps(this IServiceCollection services, Assembly assembly)
-        {
-            BsonMapRegistrationHelpers.AddBsonMapsForMicrowave(assembly);
-
-            if (!BsonClassMap.IsClassMapRegistered(typeof(GuidIdentity))) BsonClassMap.RegisterClassMap<GuidIdentity>();
-            if (!BsonClassMap.IsClassMapRegistered(typeof(StringIdentity))) BsonClassMap.RegisterClassMap<StringIdentity>();
-
-            var registerClassMapMethod = typeof(BsonClassMap).GetMethods().Single(m => m.Name == nameof(BsonClassMap
-            .RegisterClassMap) && m.IsGenericMethod && m.GetParameters().Length == 0);
-            var domainEventTypes = assembly.GetTypes().Where(ev => ev.GetInterfaces().Contains(typeof(IDomainEvent)));
-            foreach (var domainEventType in domainEventTypes)
-            {
-                var makeGenericMethod = registerClassMapMethod.MakeGenericMethod(domainEventType);
-                makeGenericMethod.Invoke(null, null);
-            }
             return services;
         }
 

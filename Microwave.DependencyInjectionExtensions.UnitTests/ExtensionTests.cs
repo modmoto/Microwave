@@ -160,6 +160,12 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
 
     public class TestDomainEvent3 : IDomainEvent
     {
+        public TestDomainEvent3(Identity entityId, int age)
+        {
+            EntityId = entityId;
+            Age = age;
+        }
+
         public Identity EntityId { get; }
         public int Age { get; }
     }
