@@ -435,7 +435,6 @@ namespace Microwave.Eventstores.UnitTests
         }
 
         [TestMethod]
-        [Ignore]
         public async Task AddEvents_ConstructorBsonBug()
         {
             BsonClassMap.RegisterClassMap<TestEvent_BsonBug>(c =>
@@ -453,10 +452,14 @@ namespace Microwave.Eventstores.UnitTests
 
                 var lambdaParameter = Expression.Parameter(eventType, "domainEvent");
                 var firstProp = Expression.Property(lambdaParameter, "EntityId");
+                var idOfIdentity = Expression.Property(firstProp, "Id");
                 var secondProp = Expression.Property(lambdaParameter, "Name");
-                var constructor = typeof(Guid).GetConstructor(new []{ typeof(string) });
-                var guid = Expression.Constant(Identity.Create(Guid.NewGuid()));
-                var body = Expression.New(constructorInfo, guid, secondProp);
+
+                var identityCreate = typeof(Identity).GetMethod(nameof(Identity.Create), new []{ typeof(string) });
+                var identity = Expression.Call(identityCreate, idOfIdentity);
+                var idConverted = Expression.Convert(identity, typeof(GuidIdentity));
+
+                var body = Expression.New(constructorInfo, idConverted, secondProp);
 
                 var lambda = Expression.Lambda(funcType, body, lambdaParameter);
 
@@ -479,7 +482,7 @@ namespace Microwave.Eventstores.UnitTests
             var result = await eventRepository.LoadEvents();
 
             Assert.AreEqual(1, result.Value.Count());
-            Assert.AreEqual(newGuid.ToString(), result.Value.Single().DomainEvent.EntityId);
+            Assert.AreEqual(newGuid.ToString(), result.Value.Single().DomainEvent.EntityId.Id);
         }
 
         private static void CheckAllResults(Result[] whenAll)
