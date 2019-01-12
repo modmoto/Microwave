@@ -13,14 +13,14 @@ namespace Microwave
         public static void AddBsonMapsForMicrowave(Assembly assembly)
         {
             var domainEventTypes = assembly.GetTypes().Where(ev => ev.GetInterfaces().Contains(typeof(IDomainEvent)));
-            var addBsonMapGeneric = typeof(ServiceCollectionExtensions).GetMethod(nameof(AddBsonMapFor));
+            var addBsonMapGeneric = typeof(BsonMapRegistrationHelpers).GetMethod(nameof(AddBsonMapFor),
+                BindingFlags.Public | BindingFlags.Static);
 
             foreach (var domainEventType in domainEventTypes)
-                if (addBsonMapGeneric != null)
-                {
-                    var addBsonMap = addBsonMapGeneric.MakeGenericMethod(domainEventType);
-                    addBsonMap.Invoke(null, new object[] { });
-                }
+            {
+                var addBsonMap = addBsonMapGeneric.MakeGenericMethod(domainEventType);
+                addBsonMap.Invoke(null, new object[] { });
+            }
         }
 
         public static void AddBsonMapFor<T>() where T : IDomainEvent

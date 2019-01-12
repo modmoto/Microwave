@@ -27,6 +27,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microwave.Application.UnitT
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microwave.WebApi.UnitTests", "Microwave.WebApi.UnitTests\Microwave.WebApi.UnitTests.csproj", "{3622487E-A894-49FD-A8EF-5D11DAA01B62}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microwave.Eventstores.UnitTests.DomainEvents", "Microwave.Eventstores.UnitTests.DomainEvents\Microwave.Eventstores.UnitTests.DomainEvents.csproj", "{AA1064F6-6A41-405B-9AEB-BDFD5670506C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -81,6 +83,10 @@ Global
 		{3622487E-A894-49FD-A8EF-5D11DAA01B62}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3622487E-A894-49FD-A8EF-5D11DAA01B62}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3622487E-A894-49FD-A8EF-5D11DAA01B62}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AA1064F6-6A41-405B-9AEB-BDFD5670506C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AA1064F6-6A41-405B-9AEB-BDFD5670506C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AA1064F6-6A41-405B-9AEB-BDFD5670506C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AA1064F6-6A41-405B-9AEB-BDFD5670506C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
