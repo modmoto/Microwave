@@ -42,7 +42,7 @@ namespace Microwave
                         var idOfIdentity = Expression.Property(firstProp, nameof(Identity.Id));
                         var identityCreate = typeof(Identity).GetMethod(nameof(Identity.Create), new[] {typeof(string)});
                         var identity = Expression.Call(identityCreate, idOfIdentity);
-                        var idConverted = Expression.Convert(identity, typeof(GuidIdentity));
+                        var idConverted = Expression.Convert(identity, parameter.ParameterType);
                         expressions.Add(idConverted);
                     }
                     else
