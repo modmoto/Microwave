@@ -60,6 +60,7 @@ namespace Microwave
 
             services.AddDomainEventRegistration(readModelAssembly);
 
+            BsonMapRegistrationHelpers.AddBsonMapsForMicrowave(readModelAssembly);
             if (!BsonClassMap.IsClassMapRegistered(typeof(GuidIdentity))) BsonClassMap.RegisterClassMap<GuidIdentity>();
             if (!BsonClassMap.IsClassMapRegistered(typeof(StringIdentity))) BsonClassMap.RegisterClassMap<StringIdentity>();
 
@@ -120,6 +121,8 @@ namespace Microwave
 
         private static IServiceCollection RegisterBsonClassMaps(this IServiceCollection services, Assembly assembly)
         {
+            BsonMapRegistrationHelpers.AddBsonMapsForMicrowave(assembly);
+
             if (!BsonClassMap.IsClassMapRegistered(typeof(GuidIdentity))) BsonClassMap.RegisterClassMap<GuidIdentity>();
             if (!BsonClassMap.IsClassMapRegistered(typeof(StringIdentity))) BsonClassMap.RegisterClassMap<StringIdentity>();
 
