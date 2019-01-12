@@ -35,13 +35,15 @@ namespace Microwave
                 var lambdaParameter = Expression.Parameter(eventType, "domainEvent");
 
                 var expressions = new List<Expression>();
+                var entityIdFound = false;
                 foreach (var parameter in constructorInfo.GetParameters())
                 {
                     var parameterName = GetParameterNameForProperty(parameter.Name, eventType.GetProperties());
-                    if (parameterName == null) throw new ArgumentException($"Can not find identically named property for parameter: {parameter.Name}. Rename the parameter to match a Property!");
+                    if (parameterName == null) throw new IllegalDomainEventContructor($"Can not find identically named property for parameter: {parameter.Name} in DomainEvent {typeof(T).Name}. Rename the parameter to match a Property!");
 
                     if (IsIdentityParameter(parameter))
                     {
+                        if (parameter.Name.ToLower() == nameof(IDomainEvent.EntityId).ToLower()) entityIdFound = true;
                         var firstProp = Expression.Property(lambdaParameter, parameterName);
                         var idOfIdentity = Expression.Property(firstProp, nameof(Identity.Id));
                         var identityCreate = typeof(Identity).GetMethod(nameof(Identity.Create), new[] {typeof(string)});
@@ -55,6 +57,7 @@ namespace Microwave
                     }
                 }
 
+                if (!entityIdFound) throw new IllegalDomainEventContructor($"Not parameter with entityId defined in constructor for DomainEvent {typeof(T).Name}. Can not initialize DomainEvent correctly");
 
                 var body = Expression.New(constructorInfo, expressions);
 
@@ -89,6 +92,13 @@ namespace Microwave
             var constructors = eventType.GetConstructors();
             var maxParams = constructors.Max(c => c.GetParameters().Length);
             return constructors.FirstOrDefault(c => c.GetParameters().Length == maxParams);
+        }
+    }
+
+    public class IllegalDomainEventContructor : Exception
+    {
+        public IllegalDomainEventContructor(string message) : base(message)
+        {
         }
     }
 }

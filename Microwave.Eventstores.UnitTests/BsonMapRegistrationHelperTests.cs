@@ -108,6 +108,42 @@ namespace Microwave.Eventstores.UnitTests
             Assert.AreEqual(newGuid.ToString(), ((TestEvent_TwoIdentitiesInConstructor)result.Value.Single().DomainEvent).GuidIdentity
             .Id);
         }
+
+        [TestMethod]
+        public async Task AddEvents_ConstructorBson_NotEntityIdInConstructor()
+        {
+            Assert.ThrowsException<IllegalDomainEventContructor>(() => BsonMapRegistrationHelpers.AddBsonMapFor<TestEvent_NotEntityIdDefined>());
+        }
+
+        [TestMethod]
+        public async Task AddEvents_ConstructorBson_ParamDefinedWrong()
+        {
+            Assert.ThrowsException<IllegalDomainEventContructor>(() => BsonMapRegistrationHelpers.AddBsonMapFor<TestEvent_ParamDefinedWrong>());
+        }
+    }
+
+    public class TestEvent_NotEntityIdDefined : IDomainEvent
+    {
+        public TestEvent_NotEntityIdDefined(StringIdentity create, string name)
+        {
+            EntityId = create;
+            Name = name;
+        }
+
+        public Identity EntityId { get; }
+        public string Name { get; }
+    }
+
+    public class TestEvent_ParamDefinedWrong : IDomainEvent
+    {
+        public TestEvent_ParamDefinedWrong(StringIdentity entityId, string name_NOT_DEFINED_RIGHT)
+        {
+            EntityId = entityId;
+            Name = name_NOT_DEFINED_RIGHT;
+        }
+
+        public Identity EntityId { get; }
+        public string Name { get; }
     }
 
     public class TestEvent_TwoIdentitiesInConstructor : IDomainEvent
@@ -127,9 +163,9 @@ namespace Microwave.Eventstores.UnitTests
         public Identity EntityId { get; }
         public string Name { get; }
 
-        public TestEvent_UnconventionalOderring(string name, StringIdentity identity)
+        public TestEvent_UnconventionalOderring(string name, StringIdentity entityId)
         {
-            EntityId = identity;
+            EntityId = entityId;
             Name = name;
         }
     }
