@@ -18,8 +18,6 @@
   - [Exceptions and Filters](#exceptions-and-filters)
   - [Result Objects](#result-objects)
   - [Identity Handling in WebApi](#identity-handling-in-webapi)
-- [Known Issues](#known-issues)
-  - [StringIdentity and GuidIdentity in Constructor of DomainEvents](#stringidentity-and-guididentity-in-constructor-of-domainevents)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
