@@ -110,15 +110,15 @@ namespace Microwave.Eventstores.UnitTests
         }
 
         [TestMethod]
-        public async Task AddEvents_ConstructorBson_NotEntityIdInConstructor()
+        public void AddEvents_ConstructorBson_NotEntityIdInConstructor()
         {
-            Assert.ThrowsException<IllegalDomainEventContructor>(() => BsonMapRegistrationHelpers.AddBsonMapFor<TestEvent_NotEntityIdDefined>());
+            Assert.ThrowsException<IllegalDomainEventContructorException>(() => BsonMapRegistrationHelpers.AddBsonMapFor<TestEvent_NotEntityIdDefined>());
         }
 
         [TestMethod]
-        public async Task AddEvents_ConstructorBson_ParamDefinedWrong()
+        public void AddEvents_ConstructorBson_ParamDefinedWrong()
         {
-            Assert.ThrowsException<IllegalDomainEventContructor>(() => BsonMapRegistrationHelpers.AddBsonMapFor<TestEvent_ParamDefinedWrong>());
+            Assert.ThrowsException<IllegalDomainEventContructorException>(() => BsonMapRegistrationHelpers.AddBsonMapFor<TestEvent_ParamDefinedWrong>());
         }
     }
 

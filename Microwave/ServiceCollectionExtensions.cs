@@ -90,7 +90,6 @@ namespace Microwave
 
             if (!BsonClassMap.IsClassMapRegistered(typeof(GuidIdentity))) BsonClassMap.RegisterClassMap<GuidIdentity>();
             if (!BsonClassMap.IsClassMapRegistered(typeof(StringIdentity))) BsonClassMap.RegisterClassMap<StringIdentity>();
-            IServiceCollection temp = services;
 
             return services;
         }
