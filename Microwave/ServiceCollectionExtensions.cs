@@ -36,7 +36,8 @@ namespace Microwave
         }
 
         public static IServiceCollection AddMicrowaveReadModels(this IServiceCollection services,
-            Assembly readModelAssembly, IConfiguration configuration)
+            IConfiguration configuration,
+            params Assembly[] readModelAssembly)
         {
             services.AddTransient(option =>
             {
@@ -53,13 +54,16 @@ namespace Microwave
             services.AddTransient<IDomainEventFactory, DomainEventFactory>();
             services.AddSingleton<IEventLocationConfig>(new EventLocationConfig(configuration));
 
-            services.AddQuerryHandling(readModelAssembly);
-            services.AddEventDelegateHandling(readModelAssembly);
-            services.AddReadmodelHandling(readModelAssembly);
+            foreach (var assembly in readModelAssembly)
+            {
+                services.AddQuerryHandling(assembly);
+                services.AddEventDelegateHandling(assembly);
+                services.AddReadmodelHandling(assembly);
 
-            services.AddDomainEventRegistration(readModelAssembly);
+                services.AddDomainEventRegistration(assembly);
+                BsonMapRegistrationHelpers.AddBsonMapsForMicrowave(assembly);
+            }
 
-            BsonMapRegistrationHelpers.AddBsonMapsForMicrowave(readModelAssembly);
             if (!BsonClassMap.IsClassMapRegistered(typeof(GuidIdentity))) BsonClassMap.RegisterClassMap<GuidIdentity>();
             if (!BsonClassMap.IsClassMapRegistered(typeof(StringIdentity))) BsonClassMap.RegisterClassMap<StringIdentity>();
 
@@ -67,7 +71,8 @@ namespace Microwave
         }
 
         public static IServiceCollection AddMicrowave(this IServiceCollection services,
-            Assembly domainEventAssembly, IConfiguration configuration)
+            IConfiguration configuration,
+            params Assembly[] domainEventAssembly)
         {
             services.AddTransient(option =>
             {
@@ -85,7 +90,10 @@ namespace Microwave
 
             services.AddMicrowaveMvcExtensions();
 
-            BsonMapRegistrationHelpers.AddBsonMapsForMicrowave(domainEventAssembly);
+            foreach (var assembly in domainEventAssembly)
+            {
+                BsonMapRegistrationHelpers.AddBsonMapsForMicrowave(assembly);
+            }
 
             if (!BsonClassMap.IsClassMapRegistered(typeof(GuidIdentity))) BsonClassMap.RegisterClassMap<GuidIdentity>();
             if (!BsonClassMap.IsClassMapRegistered(typeof(StringIdentity))) BsonClassMap.RegisterClassMap<StringIdentity>();
@@ -165,7 +173,8 @@ namespace Microwave
             return services;
         }
 
-        private static IServiceCollection AddEventDelegateHandling(this IServiceCollection services, Assembly assembly)
+        private static IServiceCollection AddEventDelegateHandling(this IServiceCollection services, Assembly
+        assembly)
         {
             var addTransient = AddTransient();
             var addTransientSingle = AddTransientSingle();
