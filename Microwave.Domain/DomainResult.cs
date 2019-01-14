@@ -27,14 +27,14 @@ namespace Microwave.Domain
             DomainErrors = domainErrors;
         }
 
-        public static DomainResult Ok(IEnumerable<IDomainEvent> domainEvents)
-        {
-            return new DomainResult(domainEvents, new List<DomainError>());
-        }
-
         public static DomainResult Ok(IDomainEvent domainEvent)
         {
             return new DomainResult(new List<IDomainEvent> { domainEvent }, new List<DomainError>());
+        }
+
+        public static DomainResult Ok(IEnumerable<IDomainEvent> domainEvents)
+        {
+            return new DomainResult(domainEvents, new List<DomainError>());
         }
 
         public static DomainResult Error(DomainError domainDomainError)
