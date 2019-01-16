@@ -10,19 +10,10 @@ namespace Microwave.Domain.UnitTests
         [TestMethod]
         public void ApplyGenericMethod()
         {
-            var testUser = (Entity) new TestUser();
+            var testUser = (Entity) new TestUserNormal();
             var newGuid = GuidIdentity.Create(Guid.NewGuid());
             testUser.Apply(new [] { new TestUserCreatedEvent(newGuid)});
-            Assert.AreEqual(newGuid, ((TestUser)testUser).Id);
-        }
-
-        [TestMethod]
-        public void ApplyGenericMethod_PrivateApply()
-        {
-            var testUser = (Entity) new TestUser_ProtectedApply();
-            var newGuid = GuidIdentity.Create(Guid.NewGuid());
-            testUser.Apply(new [] { new TestUserCreatedEvent(newGuid)});
-            Assert.AreEqual(newGuid, ((TestUser_ProtectedApply) testUser).Id);
+            Assert.AreEqual(newGuid, ((TestUserNormal)testUser).Id);
         }
 
         [TestMethod]
@@ -33,15 +24,6 @@ namespace Microwave.Domain.UnitTests
             var secondGuid = GuidIdentity.Create(Guid.NewGuid());
             testUser.Apply(new List<IDomainEvent> { new TestUserCreatedEvent(newGuid), new TestUserNeverDidThatEvent(secondGuid) });
             Assert.AreEqual(secondGuid, ((TestUser_MultipleApply) testUser).Id);
-        }
-
-        [TestMethod]
-        public void ApplyGenericMethod_ProtectedApply()
-        {
-            var testUser = (Entity) new TestUser_ProtectedApply();
-            var newGuid = GuidIdentity.Create(Guid.NewGuid());
-            testUser.Apply(new [] { new TestUserCreatedEvent(newGuid)});
-            Assert.AreEqual(newGuid, ((TestUser_ProtectedApply) testUser).Id);
         }
 
         [TestMethod]
@@ -59,14 +41,6 @@ namespace Microwave.Domain.UnitTests
             testUser.Apply(new [] { new TestUserCreatedEvent(GuidIdentity.Create(Guid.NewGuid())) } );
             Assert.AreEqual(Guid.Empty, ((TestUserWithNoApplyMethod)testUser).Id);
         }
-
-        [TestMethod]
-        public void ApplyGenericMethod_ApplyMethodWithMultipleApplyParameters()
-        {
-            var testUser = (Entity) new TestUserMultipleNoApplyMethod();
-            testUser.Apply(new [] { new TestUserCreatedEvent(GuidIdentity.Create(Guid.NewGuid())) } );
-            Assert.AreEqual(Guid.Empty, ((TestUserMultipleNoApplyMethod)testUser).Id);
-        }
     }
 
     public class TestUser_PrivateApply : Entity
@@ -79,7 +53,7 @@ namespace Microwave.Domain.UnitTests
         public Identity Id { get; set; }
     }
 
-    public class TestUser_MultipleApply : Entity
+    public class TestUser_MultipleApply : Entity, IApply<TestUserCreatedEvent>, IApply<TestUserNeverDidThatEvent>
     {
         public void Apply(TestUserCreatedEvent domainEvent)
         {
@@ -92,25 +66,6 @@ namespace Microwave.Domain.UnitTests
         }
 
         public Identity Id { get; set; }
-    }
-
-    public class TestUser_ProtectedApply : Entity
-    {
-        protected void Apply(TestUserCreatedEvent domainEvent)
-        {
-            Id = domainEvent.EntityId;
-        }
-
-        public Identity Id { get; set; }
-    }
-
-    internal class TestUserMultipleNoApplyMethod : Entity
-    {
-        public void Apply(TestUserCreatedEvent domainEvent, TestUserNeverDidThatEvent didThatEvent)
-        {
-        }
-
-        public Guid Id { get; set; }
     }
 
     internal class TestUserWithNoApplyMethod : Entity
@@ -143,6 +98,16 @@ namespace Microwave.Domain.UnitTests
     }
 
     internal class TestUser : Entity
+    {
+        public void Apply(TestUserCreatedEvent domainEvent)
+        {
+            Id = domainEvent.EntityId;
+        }
+
+        public Identity Id { get; set; }
+    }
+
+    internal class TestUserNormal : Entity, IApply<TestUserCreatedEvent>
     {
         public void Apply(TestUserCreatedEvent domainEvent)
         {

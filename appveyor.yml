@@ -34,7 +34,7 @@ build_script:
 - dotnet test
 
 test_script:
-- OpenCover.Console.exe -register:user -target:"C:/Program Files/dotnet/dotnet.exe" -targetargs:test -output:"coverage.xml" -filter:"+[*]* -[TestHost.Read]* -[TestHost.Write]*" -oldstyle
+- OpenCover.Console.exe -register:user -target:"C:/Program Files/dotnet/dotnet.exe" -targetargs:test -output:"coverage.xml" -oldstyle
 - choco install "msbuild-sonarqube-runner" -y
 - SonarScanner.MSBuild.exe begin /k:"Lauchi_Microwave" /v:%APPVEYOR_BUILD_VERSION% /d:sonar.organization="lauchi-github" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.opencover.reportsPaths="%CD%\coverage.xml" /d:sonar.login=%sonarCubeToken%
 - MsBuild.exe /t:Rebuild

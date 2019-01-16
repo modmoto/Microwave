@@ -82,7 +82,7 @@ namespace Microwave.Eventstores.UnitTests
     }
 
     [SnapShotAfter(3)]
-    public class User : Entity
+    public class User : Entity, IApply<Event1>, IApply<Event2>, IApply<Event3>
     {
         public string Name { get; set; }
         public int Age { get; set; }

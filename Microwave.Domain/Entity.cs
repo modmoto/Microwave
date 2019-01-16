@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 
 namespace Microwave.Domain
@@ -12,10 +11,16 @@ namespace Microwave.Domain
             {
                 var domainEventType = domainEvent.GetType();
                 var entityType = GetType();
-                var privateAndPublicMethods = entityType.GetMethods(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
-                var applyMethods = privateAndPublicMethods.Where(m => m.Name == nameof(Apply) && m.GetParameters().Length == 1);
-                var correctApplyMethod = applyMethods.FirstOrDefault(method => method.GetParameters().Single().ParameterType == domainEventType);
-                if (correctApplyMethod != null) correctApplyMethod.Invoke(this, new object[] {domainEvent});
+
+                var interfaces = entityType.GetInterfaces();
+                foreach (var iface in interfaces)
+                {
+                    if (!iface.IsGenericType || iface.GetGenericTypeDefinition() != typeof(IApply<>)) continue;
+                    var genericType = iface.GetGenericArguments()[0];
+                    if (genericType != domainEventType) continue;
+                    var correctApplyMethod = iface.GetMethod(nameof(IApply.Apply), BindingFlags.Public | BindingFlags.Instance);
+                    if (correctApplyMethod != null) correctApplyMethod.Invoke(this, new object[] {domainEvent});
+                }
             }
         }
     }

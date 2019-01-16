@@ -188,7 +188,7 @@ namespace Microwave.Eventstores.UnitTests
         public Guid Id { get; private set; }
     }
 
-    public class TestEntity : Entity
+    public class TestEntity : Entity, IApply<TestEventEventStore>
     {
         public void Apply(TestEventEventStore domainEvent)
         {
