@@ -33,8 +33,6 @@ Microwave is a Framework for Eventsourcing and CQRS that lets you implement your
 
 ## Installation
 
-There is a release nuget feed where you can get the release version of Microwave : https://ci.appveyor.com/nuget/microwave-p8dt2iyv8g0c
-
 To install all Microwave dependencies, use this in the startup:
 
 ```
