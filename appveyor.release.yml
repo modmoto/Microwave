@@ -1,4 +1,4 @@
-version: '0.9.3'
+version: '0.9.4'
 
 branches:
   only:
@@ -36,6 +36,6 @@ artifacts:
   - path: '**\*.nupkg'
 
 deploy:
-  - provider: NuGet
-    api_key:
-      secure: aLjY9GTv5b+fU9sbMigo5q4/1Ajpzxcqr7L3l/ZhL18IExpr2MNbh8y+maPRd5Ox
+  provider: NuGet
+  api_key: oy2lythnb47h6pbqfngq6qqwrjzxbvqepcyoyxtg4hd7ze
+  artifact: /.*\.nupkg/
