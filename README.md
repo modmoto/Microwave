@@ -84,10 +84,10 @@ To append DomainEvents to the `EventStore` you have to implement the `IDomainEve
 
 ## IApply/Entities
 
-To Load an entity the Entity has to implement the Interface `IApply` wich takes a list of DomainEvents and forces you to apply them to your entity. There is a class `Entity` that implements the `IApply` method in a way, so the entity applies the DomainEvent to private or public methods that take a single DomainEvent. Reflection is used so you might want to do it on your own, if you run into performance issues. Example:
+To Load an entity the Entity has to implement the Interface `IApply` wich takes a list of DomainEvents and forces you to apply them to your entity. There is a class `Entity` that implements the `IApply` method in a way, so the entity applies the DomainEvent to the Method that has to be implemented with `IApply<T>`. Reflection is used so you might want to do it on your own, if you run into performance issues. Example:
 
 ```
-public class User : Entity
+public class User : Entity, IApply<UserCreatedEvent>, IApply<UserChangedNameEvent>
 {
     public void Apply(UserCreatedEvent domainEvent)
     {
@@ -105,7 +105,7 @@ public class User : Entity
 
 // OR with IApply
 
-public class User2 : IApply
+public class User : IApply
 {
     public void Apply(IEnumerable<IDomainEvent> domainEvents)  // this here is basically what is done in the Entity class with reflection
     {
