@@ -8,6 +8,8 @@ namespace Microwave.WebApi.Filters
     public class ProblemDocument
     {
         public string Key { get; }
+
+        [JsonProperty(NullValueHandling=NullValueHandling.Ignore)]
         public string Detail { get; }
 
         [JsonProperty(NullValueHandling=NullValueHandling.Ignore)]
