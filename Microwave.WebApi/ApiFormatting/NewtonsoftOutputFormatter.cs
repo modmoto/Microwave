@@ -4,7 +4,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Net.Http.Headers;
 using Microwave.WebApi.ApiFormatting.DateTimeOffsets;
+using Microwave.WebApi.ApiFormatting.DomainErrors;
 using Microwave.WebApi.ApiFormatting.Identities;
+using Microwave.WebApi.ApiFormatting.ReadModels;
 using Newtonsoft.Json;
 
 namespace Microwave.WebApi.ApiFormatting
@@ -23,7 +25,9 @@ namespace Microwave.WebApi.ApiFormatting
         {
             var ser = JsonConvert.SerializeObject(context.Object,
                 new IdentityConverter(),
-                new DateTimeOffsetConverter());
+                new DateTimeOffsetConverter(),
+                new DomainErrorsConverter(),
+                new ReadModelsConverter());
             await context.HttpContext.Response.WriteAsync(ser);
         }
     }

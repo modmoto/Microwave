@@ -126,7 +126,6 @@ namespace Microwave
                 config.InputFormatters.Insert(0, new NewtonsoftInputFormatter());
                 config.ModelBinderProviders.Insert(0, new IdentityModelBinderProvider());
                 config.ModelBinderProviders.Insert(0, new DateTimeOffsetBinderProvider());
-                config.ModelBinderProviders.Insert(0, new DomainErrorsBinderProvider());
             });
             return services;
         }

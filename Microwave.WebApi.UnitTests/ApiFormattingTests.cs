@@ -1,8 +1,11 @@
 using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Domain;
+using Microwave.Queries;
 using Microwave.WebApi.ApiFormatting.DateTimeOffsets;
+using Microwave.WebApi.ApiFormatting.DomainErrors;
 using Microwave.WebApi.ApiFormatting.Identities;
+using Microwave.WebApi.ApiFormatting.ReadModels;
 using Newtonsoft.Json;
 
 namespace Microwave.WebApi.UnitTests
@@ -59,6 +62,18 @@ namespace Microwave.WebApi.UnitTests
                 .Create());
             Assert.IsNull(time);
         }
+
+        [TestMethod]
+        public  void ReadModelIsFound()
+        {
+            var domainErrorsConverter = new ReadModelsConverter();
+            var canWrite = domainErrorsConverter.CanConvert(typeof(ReadModelTest));
+            Assert.IsTrue(canWrite);        }
+    }
+
+    public class ReadModelTest : ReadModel
+    {
+        public override Type GetsCreatedOn => typeof(Mockreader);
     }
 
     public class Mockreader : JsonReader
