@@ -26,14 +26,12 @@ Microwave is a Framework for Eventsourcing and CQRS that lets you implement your
 
 [![Build status](https://ci.appveyor.com/api/projects/status/sc8x8uaakosryu7c?svg=true)](https://ci.appveyor.com/project/Lauchi/microwave)
 [![sonarCubeCoverage](https://sonarcloud.io/api/project_badges/measure?project=Lauchi_Microwave&metric=coverage)](https://sonarcloud.io/dashboard?id=Lauchi_Microwave)
-[![nuget](https://img.shields.io/nuget/v/TW.Resfit.Core.svg)](https://www.nuget.org/packages/Microwave/)
+[![nuget](https://img.shields.io/nuget/v/Microwave.svg)](https://www.nuget.org/packages/Microwave/)
 
 
 # Overview
 
 ## Installation
-
-There is a release nuget feed where you can get the release version of Microwave : https://ci.appveyor.com/nuget/microwave-p8dt2iyv8g0c
 
 To install all Microwave dependencies, use this in the startup:
 
