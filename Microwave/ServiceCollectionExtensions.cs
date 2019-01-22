@@ -12,7 +12,6 @@ using Microwave.Queries;
 using Microwave.WebApi;
 using Microwave.WebApi.ApiFormatting;
 using Microwave.WebApi.ApiFormatting.DateTimeOffsets;
-using Microwave.WebApi.ApiFormatting.DomainErrors;
 using Microwave.WebApi.ApiFormatting.Identities;
 using Microwave.WebApi.Filters;
 using MongoDB.Bson.Serialization;

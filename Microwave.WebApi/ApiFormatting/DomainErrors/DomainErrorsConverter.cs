@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using Microwave.Domain;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
