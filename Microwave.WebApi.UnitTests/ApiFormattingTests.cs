@@ -71,18 +71,18 @@ namespace Microwave.WebApi.UnitTests
             Assert.IsTrue(canWrite);
         }
 
-//        [TestMethod]
-//        public  void ReadModelIsConvertedCorrectly()
-//        {
-//            var domainErrorsConverter = new ReadModelsConverter();
-//            var jsonTextWriterMock = new JsonTextWriterMock();
-//            var readModelTest = new ReadModelTest { TestProp = "test"};
-//            domainErrorsConverter.WriteJson(jsonTextWriterMock, readModelTest, null);
-//
-//            var jObject = jsonTextWriterMock.Value as JObject;
-//            Assert.IsTrue(jObject.ContainsKey(nameof(ReadModelTest.TestProp)));
-//            Assert.IsFalse(jObject.ContainsKey(nameof(ReadModelTest.GetsCreatedOn)));
-//        }
+        [TestMethod]
+        public  void ReadModelIsConvertedCorrectly()
+        {
+            var domainErrorsConverter = new ReadModelsConverter();
+            var jsonTextWriterMock = new JsonTextWriterMock();
+            var readModelTest = new ReadModelTest { TestProp = "test"};
+            domainErrorsConverter.WriteJson(jsonTextWriterMock, readModelTest, null);
+
+            var jsonString = jsonTextWriterMock.Value;
+            Assert.IsTrue(jsonString.Contains(nameof(ReadModelTest.TestProp)));
+            Assert.IsFalse(jsonString.Contains(nameof(ReadModelTest.GetsCreatedOn)));
+        }
     }
 
     public class JsonTextWriterMock : JsonWriter
@@ -91,12 +91,12 @@ namespace Microwave.WebApi.UnitTests
         {
         }
 
-        public override void WriteValue(object value)
+        public override void WriteRawValue(string value)
         {
             Value = value;
         }
 
-        public object Value { get; private set; }
+        public string Value { get; private set; }
     }
 
     public class ReadModelTest : ReadModel
