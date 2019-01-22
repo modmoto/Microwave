@@ -25,7 +25,7 @@ namespace Microwave.WebApi.ApiFormatting.ReadModels
 
             var readModelParsed = JObject.FromObject(readModel);
             readModelParsed.Remove(nameof(ReadModel.GetsCreatedOn));
-            writer.WriteValue(readModelParsed);
+            writer.WriteRawValue(readModelParsed.ToString());
         }
     }
 }

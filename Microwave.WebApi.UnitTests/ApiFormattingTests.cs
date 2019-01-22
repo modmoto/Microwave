@@ -71,18 +71,18 @@ namespace Microwave.WebApi.UnitTests
             Assert.IsTrue(canWrite);
         }
 
-        [TestMethod]
-        public  void ReadModelIsConvertedCorrectly()
-        {
-            var domainErrorsConverter = new ReadModelsConverter();
-            var jsonTextWriterMock = new JsonTextWriterMock();
-            var readModelTest = new ReadModelTest { TestProp = "test"};
-            domainErrorsConverter.WriteJson(jsonTextWriterMock, readModelTest, null);
-
-            var jObject = jsonTextWriterMock.Value as JObject;
-            Assert.IsTrue(jObject.ContainsKey(nameof(ReadModelTest.TestProp)));
-            Assert.IsFalse(jObject.ContainsKey(nameof(ReadModelTest.GetsCreatedOn)));
-        }
+//        [TestMethod]
+//        public  void ReadModelIsConvertedCorrectly()
+//        {
+//            var domainErrorsConverter = new ReadModelsConverter();
+//            var jsonTextWriterMock = new JsonTextWriterMock();
+//            var readModelTest = new ReadModelTest { TestProp = "test"};
+//            domainErrorsConverter.WriteJson(jsonTextWriterMock, readModelTest, null);
+//
+//            var jObject = jsonTextWriterMock.Value as JObject;
+//            Assert.IsTrue(jObject.ContainsKey(nameof(ReadModelTest.TestProp)));
+//            Assert.IsFalse(jObject.ContainsKey(nameof(ReadModelTest.GetsCreatedOn)));
+//        }
     }
 
     public class JsonTextWriterMock : JsonWriter
