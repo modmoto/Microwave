@@ -11,8 +11,9 @@ using Microwave.EventStores.Ports;
 using Microwave.Queries;
 using Microwave.WebApi;
 using Microwave.WebApi.ApiFormatting;
-using Microwave.WebApi.ApiFormatting.DateTimeOffset;
-using Microwave.WebApi.ApiFormatting.Identity;
+using Microwave.WebApi.ApiFormatting.DateTimeOffsets;
+using Microwave.WebApi.ApiFormatting.DomainErrors;
+using Microwave.WebApi.ApiFormatting.Identities;
 using Microwave.WebApi.Filters;
 using MongoDB.Bson.Serialization;
 
@@ -125,6 +126,7 @@ namespace Microwave
                 config.InputFormatters.Insert(0, new NewtonsoftInputFormatter());
                 config.ModelBinderProviders.Insert(0, new IdentityModelBinderProvider());
                 config.ModelBinderProviders.Insert(0, new DateTimeOffsetBinderProvider());
+                config.ModelBinderProviders.Insert(0, new DomainErrorsBinderProvider());
             });
             return services;
         }

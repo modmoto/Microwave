@@ -2,7 +2,7 @@
 {
     public class DomainError
     {
-        public DomainError(string description)
+        public DomainError(string description = null)
         {
             Description = description;
         }

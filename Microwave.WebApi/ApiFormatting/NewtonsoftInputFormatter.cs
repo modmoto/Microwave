@@ -3,8 +3,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Net.Http.Headers;
-using Microwave.WebApi.ApiFormatting.DateTimeOffset;
-using Microwave.WebApi.ApiFormatting.Identity;
+using Microwave.WebApi.ApiFormatting.DateTimeOffsets;
+using Microwave.WebApi.ApiFormatting.Identities;
 using Newtonsoft.Json;
 
 namespace Microwave.WebApi.ApiFormatting

@@ -3,7 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
-namespace Microwave.WebApi.ApiFormatting.DateTimeOffset
+namespace Microwave.WebApi.ApiFormatting.DateTimeOffsets
 {
 
     public class DateTimeOffsetBinderProvider : IModelBinderProvider

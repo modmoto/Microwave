@@ -1,8 +1,8 @@
 using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Domain;
-using Microwave.WebApi.ApiFormatting.DateTimeOffset;
-using Microwave.WebApi.ApiFormatting.Identity;
+using Microwave.WebApi.ApiFormatting.DateTimeOffsets;
+using Microwave.WebApi.ApiFormatting.Identities;
 using Newtonsoft.Json;
 
 namespace Microwave.WebApi.UnitTests
