@@ -1,5 +1,7 @@
 using System;
 using Microwave.Queries;
+using Microwave.WebApi.ApiFormatting.DateTimeOffsets;
+using Microwave.WebApi.ApiFormatting.Identities;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -23,9 +25,13 @@ namespace Microwave.WebApi.ApiFormatting.ReadModels
         {
             if (!(value is ReadModel readModel)) return;
 
-            var readModelParsed = JObject.FromObject(readModel);
-            readModelParsed.Remove(nameof(ReadModel.GetsCreatedOn));
-            writer.WriteRawValue(readModelParsed.ToString());
+            var serializeObject = JsonConvert.SerializeObject(readModel,
+                new IdentityConverter(),
+                new DateTimeOffsetConverter());
+
+            var jObject = JObject.Parse(serializeObject);
+            jObject.Remove(nameof(ReadModel.GetsCreatedOn));
+            writer.WriteRawValue(jObject.ToString());
         }
     }
 }

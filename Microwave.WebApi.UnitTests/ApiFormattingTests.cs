@@ -76,12 +76,11 @@ namespace Microwave.WebApi.UnitTests
         {
             var domainErrorsConverter = new ReadModelsConverter();
             var jsonTextWriterMock = new JsonTextWriterMock();
-            var readModelTest = new ReadModelTest { TestProp = "test"};
+            var readModelTest = new ReadModelTest { TestProp = "test", Identity = StringIdentity.Create("TestId")};
             domainErrorsConverter.WriteJson(jsonTextWriterMock, readModelTest, null);
 
             var jsonString = jsonTextWriterMock.Value;
-            Assert.IsTrue(jsonString.Contains(nameof(ReadModelTest.TestProp)));
-            Assert.IsFalse(jsonString.Contains(nameof(ReadModelTest.GetsCreatedOn)));
+            Assert.AreEqual("{\n  \"Identity\": \"TestId\",\n  \"TestProp\": \"test\"\n}", jsonString);
         }
     }
 
@@ -101,6 +100,7 @@ namespace Microwave.WebApi.UnitTests
 
     public class ReadModelTest : ReadModel
     {
+        public Identity Identity { get; set; }
         public string TestProp { get; set; }
         public override Type GetsCreatedOn => typeof(Mockreader);
     }
