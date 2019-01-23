@@ -31,7 +31,7 @@ namespace Microwave.WebApi.ApiFormatting.ReadModels
 
             var jObject = JObject.Parse(serializeObject);
             jObject.Remove(nameof(ReadModel.GetsCreatedOn));
-            writer.WriteValue(jObject);
+            writer.WriteRawValue(jObject.ToString(Formatting.Indented));
         }
     }
 }

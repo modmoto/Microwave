@@ -79,13 +79,8 @@ namespace Microwave.WebApi.UnitTests
             var readModelTest = new ReadModelTest { TestProp = "test", IdentityField = StringIdentity.Create("TestId")};
             domainErrorsConverter.WriteJson(jsonTextWriterMock, readModelTest, null);
 
-            var jobject = jsonTextWriterMock.Value as JObject;
-            var idField = jobject[nameof(ReadModelTest.IdentityField)].ToString();
-            var propField = jobject[nameof(ReadModelTest.TestProp)].ToString();
-
-            Assert.AreEqual("TestId", idField);
-            Assert.AreEqual("test", propField);
-            Assert.IsFalse(jobject.ContainsKey(nameof(ReadModel.GetsCreatedOn)));
+            var jobject = jsonTextWriterMock.StringValue;
+            Assert.AreEqual("{\n  \"IdentityField\": \"TestId\",\n  \"TestProp\": \"test\"\n}", jobject);
         }
     }
 
