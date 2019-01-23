@@ -76,11 +76,16 @@ namespace Microwave.WebApi.UnitTests
         {
             var domainErrorsConverter = new ReadModelsConverter();
             var jsonTextWriterMock = new JsonTextWriterMock();
-            var readModelTest = new ReadModelTest { TestProp = "test", Identity = StringIdentity.Create("TestId")};
+            var readModelTest = new ReadModelTest { TestProp = "test", IdentityField = StringIdentity.Create("TestId")};
             domainErrorsConverter.WriteJson(jsonTextWriterMock, readModelTest, null);
 
-            var jsonString = jsonTextWriterMock.Value;
-            Assert.AreEqual("{\n  \"Identity\": \"TestId\",\n  \"TestProp\": \"test\"\n}", jsonString);
+            var jobject = jsonTextWriterMock.Value as JObject;
+            var idField = jobject[nameof(ReadModelTest.IdentityField)].ToString();
+            var propField = jobject[nameof(ReadModelTest.TestProp)].ToString();
+
+            Assert.AreEqual("TestId", idField);
+            Assert.AreEqual("test", propField);
+            Assert.IsFalse(jobject.ContainsKey(nameof(ReadModel.GetsCreatedOn)));
         }
     }
 
@@ -92,15 +97,21 @@ namespace Microwave.WebApi.UnitTests
 
         public override void WriteRawValue(string value)
         {
+            StringValue = value;
+        }
+
+        public override void WriteValue(object value)
+        {
             Value = value;
         }
 
-        public string Value { get; private set; }
+        public object Value { get; private set; }
+        public string StringValue { get; private set; }
     }
 
     public class ReadModelTest : ReadModel
     {
-        public Identity Identity { get; set; }
+        public Identity IdentityField { get; set; }
         public string TestProp { get; set; }
         public override Type GetsCreatedOn => typeof(Mockreader);
     }
