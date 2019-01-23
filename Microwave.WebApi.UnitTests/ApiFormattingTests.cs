@@ -80,7 +80,8 @@ namespace Microwave.WebApi.UnitTests
             domainErrorsConverter.WriteJson(jsonTextWriterMock, readModelTest, null);
 
             var jobject = jsonTextWriterMock.StringValue;
-            Assert.AreEqual("{\r\n  \"IdentityField\": \"TestId\",\r\n  \"TestProp\": \"test\"\r\n}", jobject);
+            Assert.AreEqual($"{{{Environment.NewLine}  \"IdentityField\": \"TestId\",{Environment.NewLine}  \"TestProp\": \"test\"{Environment.NewLine}}}",
+            jobject);
         }
     }
 
