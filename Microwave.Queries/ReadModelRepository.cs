@@ -29,13 +29,13 @@ namespace Microwave.Queries
             return Result<T>.Ok(query.Payload);
         }
 
-        public async Task<ReadModelWrapper<T>> Load<T>(Identity id) where T : ReadModel
+        public async Task<ReadModelResult<T>> Load<T>(Identity id) where T : ReadModel
         {
             var mongoCollection = _database.GetCollection<ReadModelDbo<T>>(GetReadModelCollectionName<T>());
             var asyncCursor = await mongoCollection.FindAsync(dbo => dbo.Id == id.Id);
             var identifiableQueryDbo = asyncCursor.FirstOrDefault();
-            if (identifiableQueryDbo == null) return ReadModelWrapper<T>.NotFound(id);
-            return ReadModelWrapper<T>.Ok(identifiableQueryDbo.Payload, id, identifiableQueryDbo.Version);
+            if (identifiableQueryDbo == null) return ReadModelResult<T>.NotFound(id);
+            return ReadModelResult<T>.Ok(identifiableQueryDbo.Payload, id, identifiableQueryDbo.Version);
         }
 
         public async Task<Result> Save<T>(T query) where T : Query
@@ -56,19 +56,19 @@ namespace Microwave.Queries
             return Result.Ok();
         }
 
-        public async Task<Result> Save<T>(ReadModelWrapper<T> readModelWrapper) where T : ReadModel, new()
+        public async Task<Result> Save<T>(ReadModelResult<T> readModelResult) where T : ReadModel, new()
         {
             var mongoCollection = _database.GetCollection<ReadModelDbo<T>>(GetReadModelCollectionName<T>());
 
             var findOneAndReplaceOptions = new FindOneAndReplaceOptions<ReadModelDbo<T>>();
             findOneAndReplaceOptions.IsUpsert = true;
             await mongoCollection.FindOneAndReplaceAsync(
-                (Expression<Func<ReadModelDbo<T>, bool>>) (e => e.Id == readModelWrapper.Id.Id),
+                (Expression<Func<ReadModelDbo<T>, bool>>) (e => e.Id == readModelResult.Id.Id),
                 new ReadModelDbo<T>
                 {
-                    Id = readModelWrapper.Id.Id,
-                    Version = readModelWrapper.Version,
-                    Payload = readModelWrapper.Value
+                    Id = readModelResult.Id.Id,
+                    Version = readModelResult.Version,
+                    Payload = readModelResult.Value
                 }, findOneAndReplaceOptions);
 
             return Result.Ok();
