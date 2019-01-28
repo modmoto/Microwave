@@ -34,7 +34,7 @@ namespace Microwave.Eventstores.UnitTests
             var eventStore = new EventStore(entityStremRepo.Object, snapShotRepo.Object);
             var loadAsync = await eventStore.LoadAsync<TestEntity>(entityId);
 
-            Assert.AreEqual(entityId, loadAsync.Value.Entity.Id);
+            Assert.AreEqual(entityId, loadAsync.Entity.Id);
         }
 
         [TestMethod]
@@ -56,7 +56,7 @@ namespace Microwave.Eventstores.UnitTests
             var eventStore = new EventStore(entityStremRepo.Object, snapShotRepo.Object);
             var loadAsync = await eventStore.LoadAsync<TestEntity_NoIApply>(entityId);
 
-            Assert.AreEqual(Guid.Empty, loadAsync.Value.Entity.Id);
+            Assert.AreEqual(Guid.Empty, loadAsync.Entity.Id);
         }
 
         [TestMethod]
@@ -77,7 +77,7 @@ namespace Microwave.Eventstores.UnitTests
             var eventStore = new EventStore(entityStremRepo.Object, snapShotRepo.Object);
             var loadAsync = await eventStore.LoadAsync<TestEntity_NoIApply>(entityId);
 
-            Assert.AreEqual(Guid.Empty, loadAsync.Value.Entity.Id);
+            Assert.AreEqual(Guid.Empty, loadAsync.Entity.Id);
         }
 
         [TestMethod]
@@ -93,11 +93,11 @@ namespace Microwave.Eventstores.UnitTests
             var loadAsync = await eventStore.LoadAsync<TestEntity>(entityId);
             var loadAsync2 = await eventStore.LoadAsync<TestEntity>(entityId);
 
-            Assert.IsTrue(entityId.Equals(loadAsync.Value.Entity.Id));
-            Assert.AreEqual("Test", loadAsync.Value.Entity.Name);
+            Assert.IsTrue(entityId.Equals(loadAsync.Entity.Id));
+            Assert.AreEqual("Test", loadAsync.Entity.Name);
 
-            Assert.IsTrue(entityId.Equals(loadAsync2.Value.Entity.Id));
-            Assert.AreEqual("Test", loadAsync2.Value.Entity.Name);
+            Assert.IsTrue(entityId.Equals(loadAsync2.Entity.Id));
+            Assert.AreEqual("Test", loadAsync2.Entity.Name);
         }
 
         [TestMethod]
@@ -112,8 +112,8 @@ namespace Microwave.Eventstores.UnitTests
             await eventStore.AppendAsync(new TestEventEventStore(entityId, "Test"), 0);
             var loadAsync = await eventStore.LoadAsync<TestEntity>(entityId);
 
-            Assert.IsTrue(entityId.Equals(loadAsync.Value.Entity.Id));
-            Assert.AreEqual("Test", loadAsync.Value.Entity.Name);
+            Assert.IsTrue(entityId.Equals(loadAsync.Entity.Id));
+            Assert.AreEqual("Test", loadAsync.Entity.Name);
         }
 
         [TestMethod]
@@ -142,7 +142,7 @@ namespace Microwave.Eventstores.UnitTests
             var eventStore = new EventStore(new EventRepository(EventDatabase, new VersionCache(EventDatabase)), snapShotRepo.Object);
 
             var result = await eventStore.LoadAsync<TestEntity>(entityId);
-            var exception = Assert.ThrowsException<NotFoundException>(() => result.Value);
+            var exception = Assert.ThrowsException<NotFoundException>(() => result.Entity);
 
             Assert.IsTrue(exception.Message.StartsWith("Could not find TestEntity"));
 

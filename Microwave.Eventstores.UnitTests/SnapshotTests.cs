@@ -42,8 +42,8 @@ namespace Microwave.Eventstores.UnitTests
 
             var eventstoreResult = await eventStore.LoadAsync<User>(entityId);
 
-            var user = eventstoreResult.Value;
-            Assert.AreEqual(4, eventstoreResult.Value.Version);
+            var user = eventstoreResult;
+            Assert.AreEqual(4, eventstoreResult.Version);
             Assert.AreEqual(14, user.Entity.Age);
             Assert.AreEqual("PeterNeu", user.Entity.Name);
             Assert.AreEqual(entityId.Id, user.Entity.Id.Id);
@@ -76,8 +76,8 @@ namespace Microwave.Eventstores.UnitTests
             await eventStore.LoadAsync<User>(entityId);
             var result = await eventStore.LoadAsync<User>(entityId);
 
-            Assert.AreEqual("Peterneu", result.Value.Entity.Name);
-            Assert.AreEqual(3, result.Value.Version);
+            Assert.AreEqual("Peterneu", result.Entity.Name);
+            Assert.AreEqual(3, result.Version);
         }
     }
 
