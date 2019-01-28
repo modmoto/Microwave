@@ -21,9 +21,9 @@ namespace Microwave.Queries.UnitTests
             var guid = GuidIdentity.Create(Guid.NewGuid());
             var testQuerry = new TestReadModel();
             testQuerry.SetVars("Test", new[] {"Jeah", "jeah2"});
-            await queryRepository.Save(new ReadModelWrapper<TestReadModel>(testQuerry, guid, 1));
+            await queryRepository.Save(ReadModelWrapper<TestReadModel>.Ok(testQuerry, guid, 1));
 
-            var querry1 = (await queryRepository.Load<TestReadModel>(guid)).Value;
+            var querry1 = await queryRepository.Load<TestReadModel>(guid);
 
             Assert.AreEqual(guid, querry1.Id);
             Assert.AreEqual("Test", querry1.ReadModel.UserName);
@@ -69,7 +69,7 @@ namespace Microwave.Queries.UnitTests
             await Task.WhenAll(new List<Task<Result>> { save, save2 });
 
             var resultOfLoad = await queryRepository.Load<TestReadModel>(guid);
-            Assert.AreEqual(2, resultOfLoad.Value.Version);
+            Assert.AreEqual(2, resultOfLoad.Version);
         }
 
         [TestMethod]
@@ -81,28 +81,6 @@ namespace Microwave.Queries.UnitTests
             var query = (await queryRepository.Load<TestQuerry>()).Value;
 
             Assert.AreEqual("NewName", query.UserName);
-        }
-
-        [TestMethod]
-        public async Task LoadAllReadModels()
-        {
-            var queryRepository = new ReadModelRepository(ReadModelDatabase);
-            var guid = GuidIdentity.Create(Guid.NewGuid());
-            var guid2 =GuidIdentity.Create(Guid.NewGuid());
-            var testQuery = new TestReadModel();
-            testQuery.SetVars("Test1", new []{ "Jeah", "jeah2"});
-            var testQuery2 = new TestReadModel();
-            testQuery2.SetVars("Test2", new []{ "Jeah", "jeah2"});
-
-            await queryRepository.Save(new ReadModelWrapper<TestReadModel>(testQuery, guid, 1));
-            await queryRepository.Save(new ReadModelWrapper<TestReadModel>(testQuery2, guid2, 1));
-
-            var loadAll = await queryRepository.LoadAll<TestReadModel>();
-            var readModelWrappers = loadAll.Value.ToList();
-
-            Assert.AreEqual(2, readModelWrappers.Count);
-            Assert.AreEqual(testQuery.UserName, readModelWrappers[0].ReadModel.UserName);
-            Assert.AreEqual(testQuery2.UserName, readModelWrappers[1].ReadModel.UserName);
         }
 
         [TestMethod]
@@ -127,7 +105,7 @@ namespace Microwave.Queries.UnitTests
             var guid2 = GuidIdentity.Create(Guid.NewGuid());
             var result = await queryRepository.Load<TestReadModel>(guid2);
 
-            var notFoundException = Assert.ThrowsException<NotFoundException>(() => result.Value);
+            var notFoundException = Assert.ThrowsException<NotFoundException>(() => result);
             Assert.IsTrue(notFoundException.Message.StartsWith("Could not find TestReadModel"));
         }
     }

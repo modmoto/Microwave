@@ -29,22 +29,13 @@ namespace Microwave.Queries
             return Result<T>.Ok(query.Payload);
         }
 
-        public async Task<Result<ReadModelWrapper<T>>> Load<T>(Identity id) where T : ReadModel
+        public async Task<ReadModelWrapper<T>> Load<T>(Identity id) where T : ReadModel
         {
             var mongoCollection = _database.GetCollection<ReadModelDbo<T>>(GetReadModelCollectionName<T>());
             var asyncCursor = await mongoCollection.FindAsync(dbo => dbo.Id == id.Id);
             var identifiableQueryDbo = asyncCursor.FirstOrDefault();
-            if (identifiableQueryDbo == null) return Result<ReadModelWrapper<T>>.NotFound(id);
-            var wrapper = new ReadModelWrapper<T>(identifiableQueryDbo.Payload, id, identifiableQueryDbo.Version);
-            return Result<ReadModelWrapper<T>>.Ok(wrapper);
-        }
-
-        public async Task<Result<IEnumerable<ReadModelWrapper<T>>>> LoadAll<T>() where T : ReadModel
-        {
-            var mongoCollection = _database.GetCollection<ReadModelDbo<T>>(GetReadModelCollectionName<T>());
-            var querries = await mongoCollection.Find(_ => true).ToListAsync();
-            var readModelWrappers = querries.Select(q => new ReadModelWrapper<T>(q.Payload, Identity.Create(q.Id), q.Version));
-            return Result<IEnumerable<ReadModelWrapper<T>>>.Ok(readModelWrappers);
+            if (identifiableQueryDbo == null) return ReadModelWrapper<T>.NotFound(id);
+            return ReadModelWrapper<T>.Ok(identifiableQueryDbo.Payload, id, identifiableQueryDbo.Version);
         }
 
         public async Task<Result> Save<T>(T query) where T : Query

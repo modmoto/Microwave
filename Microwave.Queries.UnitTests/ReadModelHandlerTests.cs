@@ -24,9 +24,9 @@ namespace Microwave.Queries.UnitTests
             await readModelHandler.Update();
 
             var result = await queryRepository.Load<TestReadModelQuerries>(EntityGuid);
-            Assert.AreEqual(EntityGuid, result.Value.Id);
-            Assert.AreEqual(14, result.Value.Version);
-            Assert.AreEqual("testName", result.Value.ReadModel.Name);
+            Assert.AreEqual(EntityGuid, result.Id);
+            Assert.AreEqual(14, result.Version);
+            Assert.AreEqual("testName", result.ReadModel.Name);
         }
 
         [TestMethod]
@@ -44,8 +44,8 @@ namespace Microwave.Queries.UnitTests
 
             var result = await queryRepository.Load<TestReadModelQuerries>(EntityGuid);
             var result2 = await queryRepository.Load<TestReadModelQuerries>(EntityGuid2);
-            Assert.AreEqual(EntityGuid, result.Value.Id);
-            Assert.AreEqual(EntityGuid2, result2.Value.Id);
+            Assert.AreEqual(EntityGuid, result.Id);
+            Assert.AreEqual(EntityGuid2, result2.Id);
         }
 
         [TestMethod]
@@ -62,7 +62,7 @@ namespace Microwave.Queries.UnitTests
 
             var result = await queryRepository.Load<TestReadModelQuerries>(EntityGuid);
             var result2 = await queryRepository.Load<TestReadModelQuerries>(EntityGuid2);
-            Assert.AreEqual(EntityGuid, result.Value.Id);
+            Assert.AreEqual(EntityGuid, result.Id);
             var condition = result2.Is<NotFound>();
             Assert.IsTrue(condition);
         }
@@ -82,9 +82,9 @@ namespace Microwave.Queries.UnitTests
             await readModelHandler.Update();
 
             var result = await queryRepository.Load<TestReadModelQuerries_OnlyOneEventAndVersionIsCounted>(EntityGuid);
-            Assert.AreEqual(14, result.Value.Version);
-            Assert.AreEqual(null, result.Value.ReadModel.Name);
-            Assert.AreEqual(EntityGuid.Id, result.Value.ReadModel.Id.Id);
+            Assert.AreEqual(14, result.Version);
+            Assert.AreEqual(null, result.ReadModel.Name);
+            Assert.AreEqual(EntityGuid.Id, result.ReadModel.Id.Id);
         }
 
         [TestMethod]
@@ -104,8 +104,8 @@ namespace Microwave.Queries.UnitTests
 
             var result = await queryRepository.Load<TestReadModelQuerries_TwoParallelFeeds1>(EntityGuid);
             var result2 = await queryRepository.Load<TestReadModelQuerries_TwoParallelFeeds2>(EntityGuid2);
-            Assert.AreEqual(EntityGuid.Id, result.Value.ReadModel.Id.Id);
-            Assert.AreEqual(EntityGuid2.Id, result2.Value.ReadModel.IdTotallyDifferenzt.Id);
+            Assert.AreEqual(EntityGuid.Id, result.ReadModel.Id.Id);
+            Assert.AreEqual(EntityGuid2.Id, result2.ReadModel.IdTotallyDifferenzt.Id);
         }
 
         public static GuidIdentity EntityGuid { get; set; }
