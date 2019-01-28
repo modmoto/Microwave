@@ -11,6 +11,12 @@ namespace Microwave.EventStores.Ports
             _value = entity;
         }
 
+        public EventStoreResult(T entity, long version) : base(new Ok())
+        {
+            _version = version;
+            _value = entity;
+        }
+
         public long Version
         {
             get

@@ -19,7 +19,7 @@ namespace Microwave.Application.Exceptions
         private static string CreateMessage(Type type, string id)
         {
             var typeName = type.Name;
-            if (typeName == "ReadModelWrapper`1") typeName = type.GenericTypeArguments.First().Name;
+            if (typeName == "ReadModelResult`1") typeName = type.GenericTypeArguments.First().Name;
             if (typeName == "EventStoreResult`1") typeName = type.GenericTypeArguments.First().Name;
             if (typeName == "IEnumerable`1")
             {

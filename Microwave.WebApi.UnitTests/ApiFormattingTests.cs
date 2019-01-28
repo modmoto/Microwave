@@ -6,7 +6,6 @@ using Microwave.WebApi.ApiFormatting.DateTimeOffsets;
 using Microwave.WebApi.ApiFormatting.Identities;
 using Microwave.WebApi.ApiFormatting.ReadModels;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Microwave.WebApi.UnitTests
 {
