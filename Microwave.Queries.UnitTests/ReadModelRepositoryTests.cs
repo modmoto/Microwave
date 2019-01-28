@@ -105,7 +105,7 @@ namespace Microwave.Queries.UnitTests
             var guid2 = GuidIdentity.Create(Guid.NewGuid());
             var result = await queryRepository.Load<TestReadModel>(guid2);
 
-            var notFoundException = Assert.ThrowsException<NotFoundException>(() => result);
+            var notFoundException = Assert.ThrowsException<NotFoundException>(() => result.ReadModel);
             Assert.IsTrue(notFoundException.Message.StartsWith("Could not find TestReadModel"));
         }
     }
