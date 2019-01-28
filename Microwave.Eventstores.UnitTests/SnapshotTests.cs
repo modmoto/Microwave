@@ -44,9 +44,9 @@ namespace Microwave.Eventstores.UnitTests
 
             var user = eventstoreResult;
             Assert.AreEqual(4, eventstoreResult.Version);
-            Assert.AreEqual(14, user.Entity.Age);
-            Assert.AreEqual("PeterNeu", user.Entity.Name);
-            Assert.AreEqual(entityId.Id, user.Entity.Id.Id);
+            Assert.AreEqual(14, user.Value.Age);
+            Assert.AreEqual("PeterNeu", user.Value.Name);
+            Assert.AreEqual(entityId.Id, user.Value.Id.Id);
 
             var snapShotDbo = (await mongoCollection.FindAsync(e => e.Id == entityId.Id)).ToList().First();
 
@@ -76,7 +76,7 @@ namespace Microwave.Eventstores.UnitTests
             await eventStore.LoadAsync<User>(entityId);
             var result = await eventStore.LoadAsync<User>(entityId);
 
-            Assert.AreEqual("Peterneu", result.Entity.Name);
+            Assert.AreEqual("Peterneu", result.Value.Name);
             Assert.AreEqual(3, result.Version);
         }
     }

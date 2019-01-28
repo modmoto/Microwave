@@ -68,7 +68,7 @@ namespace Microwave.Queries
                 {
                     Id = readModelWrapper.Id.Id,
                     Version = readModelWrapper.Version,
-                    Payload = readModelWrapper.ReadModel
+                    Payload = readModelWrapper.Value
                 }, findOneAndReplaceOptions);
 
             return Result.Ok();

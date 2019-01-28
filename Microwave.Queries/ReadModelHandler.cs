@@ -51,7 +51,7 @@ namespace Microwave.Queries
 
                 if (result.Is<NotFound>()) continue;
 
-                var readModel = result.ReadModel;
+                var readModel = result.Value;
                 readModel.Handle(latestEventDomainEvent);
 
                 if (latestEventVersion < result.Version) latestEventVersion = result.Version;

@@ -3,13 +3,12 @@ using Microwave.Domain;
 
 namespace Microwave.EventStores.Ports
 {
-    public class EventStoreResult<T>
+    public class EventStoreResult<T> : Result<T>
     {
-        protected EventStoreResult(ResultStatus status, T entity, long version)
+        protected EventStoreResult(ResultStatus status, T entity, long version) : base(status)
         {
             _version = version;
-            _entity = entity;
-            Status = status;
+            _value = entity;
         }
 
         public long Version
@@ -21,31 +20,14 @@ namespace Microwave.EventStores.Ports
             }
         }
 
-        private T _entity;
         private readonly long _version;
-
-        protected ResultStatus Status { get; }
-
-        public T Entity
-        {
-            get
-            {
-                Status.Check();
-                return _entity;
-            }
-        }
 
         public static EventStoreResult<T> Ok(T value, long version)
         {
             return new Ok<T>(value, version);
         }
 
-        public bool Is<TCheck>() where TCheck : ResultStatus
-        {
-            return typeof(TCheck) == Status.GetType();
-        }
-
-        public static EventStoreResult<T> NotFound(Identity notFoundId)
+        public new static EventStoreResult<T> NotFound(Identity notFoundId)
         {
             return new NotFoundResult<T>(notFoundId);
         }

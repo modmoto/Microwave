@@ -26,7 +26,7 @@ namespace Microwave.Queries.UnitTests
             var result = await queryRepository.Load<TestReadModelQuerries>(EntityGuid);
             Assert.AreEqual(EntityGuid, result.Id);
             Assert.AreEqual(14, result.Version);
-            Assert.AreEqual("testName", result.ReadModel.Name);
+            Assert.AreEqual("testName", result.Value.Name);
         }
 
         [TestMethod]
@@ -83,8 +83,8 @@ namespace Microwave.Queries.UnitTests
 
             var result = await queryRepository.Load<TestReadModelQuerries_OnlyOneEventAndVersionIsCounted>(EntityGuid);
             Assert.AreEqual(14, result.Version);
-            Assert.AreEqual(null, result.ReadModel.Name);
-            Assert.AreEqual(EntityGuid.Id, result.ReadModel.Id.Id);
+            Assert.AreEqual(null, result.Value.Name);
+            Assert.AreEqual(EntityGuid.Id, result.Value.Id.Id);
         }
 
         [TestMethod]
@@ -104,8 +104,8 @@ namespace Microwave.Queries.UnitTests
 
             var result = await queryRepository.Load<TestReadModelQuerries_TwoParallelFeeds1>(EntityGuid);
             var result2 = await queryRepository.Load<TestReadModelQuerries_TwoParallelFeeds2>(EntityGuid2);
-            Assert.AreEqual(EntityGuid.Id, result.ReadModel.Id.Id);
-            Assert.AreEqual(EntityGuid2.Id, result2.ReadModel.IdTotallyDifferenzt.Id);
+            Assert.AreEqual(EntityGuid.Id, result.Value.Id.Id);
+            Assert.AreEqual(EntityGuid2.Id, result2.Value.IdTotallyDifferenzt.Id);
         }
 
         public static GuidIdentity EntityGuid { get; set; }

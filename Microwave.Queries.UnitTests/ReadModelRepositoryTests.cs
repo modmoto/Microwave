@@ -26,8 +26,8 @@ namespace Microwave.Queries.UnitTests
             var querry1 = await queryRepository.Load<TestReadModel>(guid);
 
             Assert.AreEqual(guid, querry1.Id);
-            Assert.AreEqual("Test", querry1.ReadModel.UserName);
-            Assert.AreEqual("Jeah", querry1.ReadModel.Strings.First());
+            Assert.AreEqual("Test", querry1.Value.UserName);
+            Assert.AreEqual("Jeah", querry1.Value.Strings.First());
         }
 
         [TestMethod]
@@ -105,7 +105,7 @@ namespace Microwave.Queries.UnitTests
             var guid2 = GuidIdentity.Create(Guid.NewGuid());
             var result = await queryRepository.Load<TestReadModel>(guid2);
 
-            var notFoundException = Assert.ThrowsException<NotFoundException>(() => result.ReadModel);
+            var notFoundException = Assert.ThrowsException<NotFoundException>(() => result.Value);
             Assert.IsTrue(notFoundException.Message.StartsWith("Could not find TestReadModel"));
         }
     }

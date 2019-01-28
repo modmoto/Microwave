@@ -34,7 +34,7 @@ namespace Microwave.Application.Results
 
     public abstract class Result<T>
     {
-        private T _value;
+        protected T _value;
         protected ResultStatus Status { get; }
 
         protected Result(ResultStatus status)

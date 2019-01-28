@@ -12,23 +12,24 @@ namespace Microwave.Queries
         Task<Result> Save<T>(ReadModelWrapper<T> readModelWrapper) where T : ReadModel, new();
     }
 
-    public class ReadModelWrapper<T>
+    public class ReadModelWrapper<T> : Result<T>
     {
-        protected ReadModelWrapper(ResultStatus status, T readModel, long version, Identity id)
+        protected ReadModelWrapper(ResultStatus status, T readModel, long version, Identity id) : base(status)
         {
             _version = version;
-            _readModel = readModel;
-            Status = status;
+            _value = readModel;
             _id = id;
         }
 
-        public ReadModelWrapper(T readModel, Identity id, long version)
+        public ReadModelWrapper(T readModel, Identity id, long version) : base(new Ok())
         {
             _version = version;
-            _readModel = readModel;
-            Status = new Ok();
+            _value = readModel;
             _id = id;
         }
+
+        private readonly long _version;
+        private readonly Identity _id;
 
         public long Version
         {
@@ -39,12 +40,6 @@ namespace Microwave.Queries
             }
         }
 
-        private T _readModel;
-        private readonly long _version;
-        private readonly Identity _id;
-
-        protected ResultStatus Status { get; }
-
         public Identity Id
         {
             get
@@ -54,26 +49,12 @@ namespace Microwave.Queries
             }
         }
 
-        public T ReadModel
-        {
-            get
-            {
-                Status.Check();
-                return _readModel;
-            }
-        }
-
         public static ReadModelWrapper<T> Ok(T value, Identity id, long version)
         {
             return new Ok<T>(value, version, id);
         }
 
-        public bool Is<TCheck>() where TCheck : ResultStatus
-        {
-            return typeof(TCheck) == Status.GetType();
-        }
-
-        public static ReadModelWrapper<T> NotFound(Identity notFoundId)
+        public new static ReadModelWrapper<T> NotFound(Identity notFoundId)
         {
             return new NotFoundResult<T>(notFoundId);
         }
