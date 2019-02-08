@@ -49,6 +49,22 @@ namespace Microwave.Queries.UnitTests
         }
 
         [TestMethod]
+        public async Task IdentifiableQuerySaveAndLoadAll_UnknownType()
+        {
+            var queryRepository = new ReadModelRepository(ReadModelDatabase);
+
+            var testQuerry = new TestReadModel();
+            var testQuerry2 = new TestReadModel();
+            testQuerry.SetVars("Test", new[] {"Jeah", "jeah2"});
+            testQuerry2.SetVars("Test", new[] {"Jeah", "jeah2"});
+            await queryRepository.Save(ReadModelResult<TestReadModel>.Ok(testQuerry, GuidIdentity.Create(), 1));
+            await queryRepository.Save(ReadModelResult<TestReadModel>.Ok(testQuerry2, GuidIdentity.Create(), 1));
+
+            var loadAll = await queryRepository.LoadAll<TestReadModel2>();
+            Assert.IsTrue(loadAll.Is<NotFound>());
+        }
+
+        [TestMethod]
         public async Task InsertQuery()
         {
             var queryRepository = new ReadModelRepository(ReadModelDatabase);
