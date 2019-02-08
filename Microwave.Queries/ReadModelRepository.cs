@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microwave.Application.Results;
@@ -70,6 +72,14 @@ namespace Microwave.Queries
                 }, findOneAndReplaceOptions);
 
             return Result.Ok();
+        }
+
+        public async Task<Result<IEnumerable<T>>> LoadAll<T>()
+        {
+            var mongoCollection = _database.GetCollection<ReadModelDbo<T>>(GetReadModelCollectionName<T>());
+            var allElements = await mongoCollection.FindSync(_ => true).ToListAsync();
+            if (!allElements.Any()) return Result<IEnumerable<T>>.NotFound(StringIdentity.Create(nameof(T)));
+            return Result<IEnumerable<T>>.Ok(allElements.Select(r => r.Payload));
         }
     }
 }

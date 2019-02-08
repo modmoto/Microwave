@@ -31,6 +31,24 @@ namespace Microwave.Queries.UnitTests
         }
 
         [TestMethod]
+        public async Task IdentifiableQuerySaveAndLoadAll()
+        {
+            var queryRepository = new ReadModelRepository(ReadModelDatabase);
+
+            var testQuerry = new TestReadModel();
+            var testQuerry2 = new TestReadModel();
+            testQuerry.SetVars("Test", new[] {"Jeah", "jeah2"});
+            testQuerry2.SetVars("Test", new[] {"Jeah", "jeah2"});
+            await queryRepository.Save(ReadModelResult<TestReadModel>.Ok(testQuerry, GuidIdentity.Create(), 1));
+            await queryRepository.Save(ReadModelResult<TestReadModel>.Ok(testQuerry2, GuidIdentity.Create(), 1));
+
+            var querry1 = await queryRepository.LoadAll<TestReadModel>();
+
+            Assert.AreEqual(2, querry1.Value.Count());
+            Assert.AreEqual("Test", querry1.Value.First().UserName);
+        }
+
+        [TestMethod]
         public async Task InsertQuery()
         {
             var queryRepository = new ReadModelRepository(ReadModelDatabase);
