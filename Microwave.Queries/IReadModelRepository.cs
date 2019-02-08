@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microwave.Application.Results;
 using Microwave.Domain;
 
@@ -10,6 +11,7 @@ namespace Microwave.Queries
         Task<ReadModelResult<T>> Load<T>(Identity id) where T : ReadModel;
         Task<Result> Save<T>(T query) where T : Query;
         Task<Result> Save<T>(ReadModelResult<T> readModelResult) where T : ReadModel, new();
+        Task<Result<IEnumerable<T>>> LoadAll<T>() where T : ReadModel;
     }
 
     public class ReadModelResult<T> : Result<T>

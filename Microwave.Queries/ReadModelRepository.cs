@@ -74,7 +74,7 @@ namespace Microwave.Queries
             return Result.Ok();
         }
 
-        public async Task<Result<IEnumerable<T>>> LoadAll<T>()
+        public async Task<Result<IEnumerable<T>>> LoadAll<T>() where T : ReadModel
         {
             var mongoCollection = _database.GetCollection<ReadModelDbo<T>>(GetReadModelCollectionName<T>());
             var allElements = await mongoCollection.FindSync(_ => true).ToListAsync();
