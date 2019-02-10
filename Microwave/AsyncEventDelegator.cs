@@ -7,18 +7,18 @@ namespace Microwave
 {
     public class AsyncEventDelegator
     {
-        private readonly IEnumerable<IAsyncEventHandler> _handler;
-        private readonly IEnumerable<IQueryEventHandler> _queryEventHandlers;
-        private readonly IEnumerable<IReadModelHandler> _identifiableQueryEventHandlers;
+        private readonly IEnumerable<IAsyncEventHandler> _asyncEventHandlers;
+        private readonly IEnumerable<IQueryEventHandler> _queryHandlers;
+        private readonly IEnumerable<IReadModelHandler> _readModelHandlers;
 
         public AsyncEventDelegator(
-            IEnumerable<IAsyncEventHandler> handler,
-            IEnumerable<IQueryEventHandler> queryEventHandlers,
-            IEnumerable<IReadModelHandler> identifiableQueryEventHandlers)
+            IEnumerable<IAsyncEventHandler> asyncEventHandlers,
+            IEnumerable<IQueryEventHandler> queryHandlers,
+            IEnumerable<IReadModelHandler> readModelHandlers)
         {
-            _handler = handler;
-            _queryEventHandlers = queryEventHandlers;
-            _identifiableQueryEventHandlers = identifiableQueryEventHandlers;
+            _asyncEventHandlers = asyncEventHandlers;
+            _queryHandlers = queryHandlers;
+            _readModelHandlers = readModelHandlers;
         }
 
         public async Task Update()
@@ -27,9 +27,9 @@ namespace Microwave
             {
                 await Task.Delay(1000);
 
-                foreach (var handler in _handler) await SecureCall(() => handler.Update());
-                foreach (var handler in _queryEventHandlers) await SecureCall(() => handler.Update());
-                foreach (var handler in _identifiableQueryEventHandlers) await SecureCall(() => handler.Update());
+                foreach (var handler in _queryHandlers) await SecureCall(() => handler.Update());
+                foreach (var handler in _readModelHandlers) await SecureCall(() => handler.Update());
+                foreach (var handler in _asyncEventHandlers) await SecureCall(() => handler.Update());
             }
         }
 
