@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microwave.DependencyInjectionExtensions.UnitTests.ExtendenDll;
 using Microwave.Domain;
 using Microwave.EventStores.Ports;
 using Microwave.Queries;
@@ -133,6 +134,25 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
             Assert.IsTrue(BsonClassMap.IsClassMapRegistered(typeof(TestDomainEvent1)));
             Assert.IsTrue(BsonClassMap.IsClassMapRegistered(typeof(TestDomainEvent2)));
             Assert.IsTrue(BsonClassMap.IsClassMapRegistered(typeof(TestDomainEvent3)));
+        }
+
+        [TestMethod]
+        public void AddMicrowaveDependencies_ChainedDlls()
+        {
+            var config = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.test.json")
+                .Build();
+
+            var collection = (IServiceCollection) new ServiceCollection();
+
+            collection.AddMicrowave(config);
+            collection.AddMicrowaveReadModels(config);
+
+            var buildServiceProvider = collection.BuildServiceProvider();
+
+            Assert.IsTrue(BsonClassMap.IsClassMapRegistered(typeof(TestDomainEventExtendedDll)));
+            var handleAsync = buildServiceProvider.GetService<IHandleAsync<TestDomainEventExtendedDll>>();
+            Assert.IsNotNull(handleAsync);
         }
     }
 
