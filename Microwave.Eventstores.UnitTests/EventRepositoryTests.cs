@@ -438,6 +438,7 @@ namespace Microwave.Eventstores.UnitTests
         }
     }
 
+
     public class TestEvent1 : IDomainEvent
     {
         public TestEvent1(Identity entityId)

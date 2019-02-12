@@ -15,11 +15,11 @@ namespace Microwave.EventStores
         public DomainEventKey Key { get; set; }
 
         public string Id {
-            get => $"{Key.EntityId}_{Key.Version}";
+            get => $"{Key.EntityId}_StreamVersion:_{Key.Version}";
             set => Key = new DomainEventKey
             {
-                EntityId = value.Split('_')[0],
-                Version = long.Parse(value.Split('_')[1])
+                EntityId = value.Split(new[] { "_StreamVersion:_" }, StringSplitOptions.None)[0],
+                Version = long.Parse(value.Split(new[] { "_StreamVersion:_" }, StringSplitOptions.None)[1])
             };
         }
         public IDomainEvent Payload { get; set; }
