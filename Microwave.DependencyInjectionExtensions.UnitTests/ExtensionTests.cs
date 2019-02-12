@@ -24,7 +24,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
                 .AddJsonFile("appsettings.test.json")
                 .Build();
 
-            var storeDependencies = collection.AddMicrowaveReadModels(config, typeof(TestEventHandler).Assembly);
+            var storeDependencies = collection.AddMicrowaveReadModels(config);
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
             var eventDelegateHandlers = buildServiceProvider.GetServices<IAsyncEventHandler>().ToList();
@@ -103,8 +103,8 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
                 .Build();
 
             var storeDependencies = collection
-                .AddMicrowaveReadModels(config, typeof(TestEventHandler).Assembly)
-                .AddMicrowaveReadModels(config, typeof(TestEventHandler).Assembly);
+                .AddMicrowaveReadModels(config)
+                .AddMicrowaveReadModels(config);
 
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
@@ -123,7 +123,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
 
             var collection = (IServiceCollection) new ServiceCollection();
 
-            var storeDependencies = collection.AddMicrowave(config, typeof(TestDomainEvent1).Assembly);
+            var storeDependencies = collection.AddMicrowave(config);
 
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
