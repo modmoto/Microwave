@@ -57,7 +57,7 @@ namespace Microwave
             foreach (var assembly in readModelAssembly)
             {
                 services.AddQuerryHandling(assembly);
-                services.AddEventDelegateHandling(assembly);
+                services.AddAsyncEventHandling(assembly);
                 services.AddReadmodelHandling(assembly);
 
                 services.AddDomainEventRegistration(assembly);
@@ -173,7 +173,7 @@ namespace Microwave
             return services;
         }
 
-        private static IServiceCollection AddEventDelegateHandling(this IServiceCollection services, Assembly
+        private static IServiceCollection AddAsyncEventHandling(this IServiceCollection services, Assembly
         assembly)
         {
             var addTransient = AddTransient();
