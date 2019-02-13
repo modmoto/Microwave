@@ -33,7 +33,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
         {
             var confiNew = new ReadModelConfiguration(new Uri("http://localhost:5000/"))
             {
-                Database = new Queries.DatabaseConfig
+                Database = new ReadDatabaseConfig
                 {
                     DatabaseName = "OwnDbName",
                     ConnectionString = "Connection"

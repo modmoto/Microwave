@@ -14,11 +14,11 @@ namespace Microwave.EventStores
 
     public class WriteModelConfiguration
     {
-        public DatabaseConfig Database { get; set; } = new DatabaseConfig();
+        public WriteDatabaseConfig Database { get; set; } = new WriteDatabaseConfig();
 
     }
 
-    public class DatabaseConfig
+    public class WriteDatabaseConfig
     {
         public string ConnectionString { get; set; } = "mongodb://localhost:27017/";
         public string DatabaseName { get; set; } = "MicrowaveWriteModelDb";

@@ -23,7 +23,7 @@ namespace Microwave.Queries
             DefaultDomainEventLocation = defaultDomainEventLocation;
         }
 
-        public DatabaseConfig Database { get; set; } = new DatabaseConfig();
+        public ReadDatabaseConfig Database { get; set; } = new ReadDatabaseConfig();
         public Uri DefaultDomainEventLocation { get; }
         public DomainEventConfig DomainEventConfig { get; set; } = new DomainEventConfig();
 
@@ -74,7 +74,7 @@ namespace Microwave.Queries
         }
     }
 
-    public class DatabaseConfig
+    public class ReadDatabaseConfig
     {
         public string ConnectionString { get; set; } = "mongodb://localhost:27017/";
         public string DatabaseName { get; set; } = "MicrowaveReadModelDb";

@@ -15,7 +15,7 @@ namespace Microwave.Eventstores.UnitTests
         {
             var readModelConfiguration = new ReadModelConfiguration(new Uri("http://localhost:5000/"))
             {
-                Database = new Queries.DatabaseConfig
+                Database = new ReadDatabaseConfig
                 {
                     DatabaseName = "IntegrationTest"
                 }
@@ -23,7 +23,7 @@ namespace Microwave.Eventstores.UnitTests
 
             var writeModelConfiguration = new WriteModelConfiguration()
             {
-                Database = new EventStores.DatabaseConfig
+                Database = new WriteDatabaseConfig
                 {
                     DatabaseName = "IntegrationTest"
                 }
