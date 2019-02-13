@@ -36,7 +36,7 @@ namespace Microwave
         }
 
         public static IServiceCollection AddMicrowaveReadModels(this IServiceCollection services,
-            IConfiguration configuration,
+            ReadModelConfiguration configuration,
             params Assembly[] readModelAssembly)
         {
             services.AddTransient(option =>
@@ -52,7 +52,7 @@ namespace Microwave
             services.AddTransient<IReadModelRepository, ReadModelRepository>();
             services.AddTransient<AsyncEventDelegator>();
             services.AddTransient<IDomainEventFactory, DomainEventFactory>();
-            services.AddSingleton<IEventLocationConfig>(new EventLocationConfig(configuration));
+            services.AddSingleton(configuration);
 
             foreach (var assembly in readModelAssembly)
             {
@@ -71,7 +71,7 @@ namespace Microwave
         }
 
         public static IServiceCollection AddMicrowave(this IServiceCollection services,
-            IConfiguration configuration,
+            WriteModelConfiguration configuration,
             params Assembly[] domainEventAssembly)
         {
             services.AddTransient(option =>

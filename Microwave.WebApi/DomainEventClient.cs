@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Net.Http;
 using Microwave.Queries;
@@ -6,23 +7,23 @@ namespace Microwave.WebApi
 {
     public class DomainEventClient<T> : HttpClient
     {
-        public DomainEventClient(IEventLocationConfig config)
+        public DomainEventClient(ReadModelConfiguration config)
         {
             var type = typeof(T);
             if (typeof(IAsyncEventHandler).IsAssignableFrom(type))
             {
                 var eventType = type.GetGenericArguments().First();
-                BaseAddress = config.GetLocationForDomainEvent(eventType.Name);
+                BaseAddress = new Uri(config.GetDomainEventLocation(eventType) + $"Api/DomainEventTypeStreams/{eventType.Name}");
             }
             else if (typeof(IQueryEventHandler).IsAssignableFrom(type))
             {
                 var eventType = type.GetGenericArguments().Skip(1).First();
-                BaseAddress = config.GetLocationForDomainEvent(eventType.Name);
+                BaseAddress = new Uri(config.GetDomainEventLocation(eventType) + $"Api/DomainEventTypeStreams/{eventType.Name}");
             }
             else
             {
                 var readModelType = type.GetGenericArguments().First();
-                BaseAddress = config.GetLocationForReadModel(readModelType.Name);
+                BaseAddress = new Uri(config.GetReadModelLocation(readModelType) + "Api/DomainEvents");
             }
         }
 

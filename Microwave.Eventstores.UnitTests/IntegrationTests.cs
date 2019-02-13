@@ -1,8 +1,7 @@
-using Microsoft.Extensions.Configuration;
+using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.EventStores;
 using Microwave.Queries;
-using MongoDB.Driver;
 
 namespace Microwave.Eventstores.UnitTests
 {
@@ -14,14 +13,25 @@ namespace Microwave.Eventstores.UnitTests
         [TestInitialize]
         public void SetupMongoDb()
         {
-            var config = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.test.json")
-                .Build();
+            var readModelConfiguration = new ReadModelConfiguration(new Uri("http://localhost:5000/"))
+            {
+                Database = new Queries.DatabaseConfig
+                {
+                    DatabaseName = "IntegrationTest"
+                }
+            };
 
-            var client = new MongoClient("mongodb://localhost:27017");
-            EventDatabase = new EventDatabase(config);
+            var writeModelConfiguration = new WriteModelConfiguration()
+            {
+                Database = new EventStores.DatabaseConfig
+                {
+                    DatabaseName = "IntegrationTest"
+                }
+            };
+
+            EventDatabase = new EventDatabase(writeModelConfiguration);
             EventDatabase.Database.Client.DropDatabase("IntegrationTest");
-            ReadModelDatabase = new ReadModelDatabase(config);
+            ReadModelDatabase = new ReadModelDatabase(readModelConfiguration);
         }
     }
 }

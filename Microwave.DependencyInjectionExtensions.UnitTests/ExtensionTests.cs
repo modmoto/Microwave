@@ -2,10 +2,10 @@ using System;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Domain;
+using Microwave.EventStores;
 using Microwave.EventStores.Ports;
 using Microwave.Queries;
 using Microwave.WebApi;
@@ -20,11 +20,9 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
         public void AddDiContainerTest()
         {
             var collection = (IServiceCollection) new ServiceCollection();
-            var config = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.test.json")
-                .Build();
 
-            var storeDependencies = collection.AddMicrowaveReadModels(config, typeof(TestEventHandler).Assembly);
+            var storeDependencies = collection.AddMicrowaveReadModels(new ReadModelConfiguration(new Uri("http://localhost:5000/")), typeof
+            (TestEventHandler).Assembly);
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
             var eventDelegateHandlers = buildServiceProvider.GetServices<IAsyncEventHandler>().ToList();
@@ -98,9 +96,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
         public void AddDiContainerTest_Twice()
         {
             var collection = (IServiceCollection) new ServiceCollection();
-            var config = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.test.json")
-                .Build();
+            var config = new ReadModelConfiguration(new Uri("http://localhost:5000/"));
 
             var storeDependencies = collection
                 .AddMicrowaveReadModels(config, typeof(TestEventHandler).Assembly)
@@ -117,13 +113,9 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
         [TestMethod]
         public void AddMicrowaveDependencies()
         {
-            var config = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.test.json")
-                .Build();
-
             var collection = (IServiceCollection) new ServiceCollection();
 
-            var storeDependencies = collection.AddMicrowave(config, typeof(TestDomainEvent1).Assembly);
+            var storeDependencies = collection.AddMicrowave(new WriteModelConfiguration(), typeof(TestDomainEvent1).Assembly);
 
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 

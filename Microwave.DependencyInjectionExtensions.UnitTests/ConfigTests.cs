@@ -1,5 +1,4 @@
 using System;
-using Microsoft.Extensions.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Domain;
 using Microwave.EventStores;
@@ -11,81 +10,48 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
     public class ConfigTests
     {
         [TestMethod]
-        public void ConfigTest_ConfigNull()
-        {
-            Assert.ThrowsException<ArgumentException>(() => new EventLocationConfig(null));
-        }
-
-        [TestMethod]
-        public void ConfigTest_BaseUrlNull()
-        {
-            var config = new ConfigurationBuilder()
-                .AddJsonFile("appsettings_valueForBaseUrlNull.test.json")
-                .Build();
-            var argumentException = Assert.ThrowsException<ArgumentException>(() => new EventLocationConfig(config));
-            Assert.AreEqual("Baseurl for event feed not defined in appsettings.json.", argumentException.Message);
-        }
-
-        [TestMethod]
-        public void ConfigTest_LocationDefNull()
-        {
-            var config = new ConfigurationBuilder()
-                .AddJsonFile("appsettings_valueForLocationsNull.test.json")
-                .Build();
-            var confiNew = new EventLocationConfig(config);
-            Assert.AreEqual("http://localhost:5000/Api/DomainEventTypeStreams/whatever", confiNew.GetLocationForDomainEvent("whatever").ToString());
-        }
-
-        [TestMethod]
         public void ConfigTest_ReadModel()
         {
-            var config = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.test_ReadModelLocation.json")
-                .Build();
-            var confiNew = new EventLocationConfig(config);
-            Assert.AreEqual("http://localhost:6000/Api/DomainEvents", confiNew.GetLocationForReadModel(typeof(TestReadModel).Name).ToString());
+            var confiNew = new ReadModelConfiguration(new Uri("http://localhost:5000/"))
+            {
+                ReadModelConfig = new ReadModelConfig()
+                {
+                    { typeof(TestReadModel), new Uri("http://localhost:6000/Api/DomainEvents")}
+                }
+            };
+            Assert.AreEqual("http://localhost:6000/Api/DomainEvents", confiNew.GetReadModelLocation(typeof(TestReadModel)).ToString());
         }
 
         [TestMethod]
         public void ConfigTest_ReadModel_Default()
         {
-            var config = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.test_ReadModelLocation_Default.json")
-                .Build();
-            var confiNew = new EventLocationConfig(config);
-            Assert.AreEqual("http://localhost:5000/Api/DomainEvents", confiNew.GetLocationForReadModel(typeof(TestReadModel).Name).ToString());
-        }
-
-        [TestMethod]
-        public void ConfigTest_ReadModel_Default2()
-        {
-            var config = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.test_ReadModelLocation_Default2.json")
-                .Build();
-            var confiNew = new EventLocationConfig(config);
-            Assert.AreEqual("http://localhost:5000/Api/DomainEvents", confiNew.GetLocationForReadModel(typeof(TestReadModel).Name).ToString());
+            var confiNew = new ReadModelConfiguration(new Uri("http://localhost:5000/"));
+            Assert.AreEqual("http://localhost:5000/", confiNew.GetReadModelLocation(typeof(TestReadModel)).ToString());
         }
 
         [TestMethod]
         public void ConfigTest_ReadModelDbConnection()
         {
-            var config = new ConfigurationBuilder()
-                .AddJsonFile("appsettings_own_connectionstring.test.json")
-                .Build();
-            var confiNew = new EventDatabase(config);
+            var confiNew = new ReadModelConfiguration(new Uri("http://localhost:5000/"))
+            {
+                Database = new Queries.DatabaseConfig
+                {
+                    DatabaseName = "OwnDbName",
+                    ConnectionString = "Connection"
+                }
+            };
 
-            Assert.AreEqual("OwnDbName", confiNew.Database.DatabaseNamespace.DatabaseName);
+            Assert.AreEqual("OwnDbName", confiNew.Database.DatabaseName);
+            Assert.AreEqual("Connection", confiNew.Database.ConnectionString);
         }
 
         [TestMethod]
         public void ConfigTest_ReadModelDbConnection_Default()
         {
-            var config = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.test.json")
-                .Build();
-            var confiNew = new EventDatabase(config);
+            var confiNew = new ReadModelConfiguration(new Uri("http://localhost:5000/"));
 
-            Assert.AreEqual("MicrowaveWriteModelDb", confiNew.Database.DatabaseNamespace.DatabaseName);
+            Assert.AreEqual("MicrowaveReadModelDb", confiNew.Database.DatabaseName);
+            Assert.AreEqual("mongodb://localhost:27017/", confiNew.Database.ConnectionString);
         }
     }
 

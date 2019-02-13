@@ -1,5 +1,4 @@
 using System;
-using Microsoft.Extensions.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Domain;
 using Microwave.Queries;
@@ -9,9 +8,18 @@ namespace Microwave.WebApi.UnitTests
     [TestClass]
     public class DomainEventClientTest
     {
-        EventLocationConfig config = new EventLocationConfig(new ConfigurationBuilder()
-            .AddJsonFile("appsettings.test.json")
-            .Build());
+        ReadModelConfiguration config = new ReadModelConfiguration(new Uri("http://troll.de"))
+        {
+            DomainEventConfig = new DomainEventConfig()
+            {
+                { typeof(Ev1), new Uri("http://luls.de")}
+            },
+            ReadModelConfig = new ReadModelConfig()
+            {
+                { typeof(Ev1), new Uri("http://lulsReadModel.de")}
+
+            }
+        };
 
         [TestMethod]
         public void ClientForQueries()
@@ -24,14 +32,14 @@ namespace Microwave.WebApi.UnitTests
         public void ClientForAsyncHandles()
         {
             var domainEventClient = new DomainEventClient<AsyncEventHandler<Ev2>>(config);
-            Assert.AreEqual("http://localhost:5000/Api/DomainEventTypeStreams/Ev2", domainEventClient.BaseAddress.ToString());
+            Assert.AreEqual("http://troll.de/Api/DomainEventTypeStreams/Ev2", domainEventClient.BaseAddress.ToString());
         }
 
         [TestMethod]
         public void ClientForReadModels()
         {
             var domainEventClient = new DomainEventClient<ReadModelHandler<IdQuery>>(config);
-            Assert.AreEqual("http://lulsreadmodel.de/Api/DomainEvents", domainEventClient.BaseAddress.ToString());
+            Assert.AreEqual("http://troll.de/Api/DomainEvents", domainEventClient.BaseAddress.ToString());
         }
     }
 
