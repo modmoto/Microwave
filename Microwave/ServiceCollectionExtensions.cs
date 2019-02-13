@@ -36,10 +36,9 @@ namespace Microwave
         }
 
         public static IServiceCollection AddMicrowaveReadModels(this IServiceCollection services,
-            IConfiguration configuration)
+            IConfiguration configuration,
+            params Assembly[] readModelAssembly)
         {
-            var readModelAssembly = AppDomain.CurrentDomain.GetAssemblies();
-
             services.AddTransient(option =>
             {
                 return new ReadModelDatabase(configuration);
@@ -54,7 +53,6 @@ namespace Microwave
             services.AddTransient<AsyncEventDelegator>();
             services.AddTransient<IDomainEventFactory, DomainEventFactory>();
             services.AddSingleton<IEventLocationConfig>(new EventLocationConfig(configuration));
-            services.AddDomainEventRegistration(readModelAssembly);
 
             foreach (var assembly in readModelAssembly)
             {
@@ -62,6 +60,7 @@ namespace Microwave
                 services.AddAsyncEventHandling(assembly);
                 services.AddReadmodelHandling(assembly);
 
+                services.AddDomainEventRegistration(assembly);
                 BsonMapRegistrationHelpers.AddBsonMapsForMicrowave(assembly);
             }
 
@@ -72,10 +71,9 @@ namespace Microwave
         }
 
         public static IServiceCollection AddMicrowave(this IServiceCollection services,
-            IConfiguration configuration)
+            IConfiguration configuration,
+            params Assembly[] domainEventAssembly)
         {
-            var domainEventAssembly = AppDomain.CurrentDomain.GetAssemblies();
-
             services.AddTransient(option =>
             {
                 return new EventDatabase(configuration);
@@ -103,16 +101,13 @@ namespace Microwave
             return services;
         }
 
-        private static IServiceCollection AddDomainEventRegistration(this IServiceCollection services, Assembly[] assemblies)
+        private static IServiceCollection AddDomainEventRegistration(this IServiceCollection services, Assembly assembly)
         {
+            var domainEventTypes = assembly.GetTypes().Where(ev => ev.GetInterfaces().Contains(typeof(IDomainEvent)));
             var eventRegistration = new EventRegistration();
-            foreach (var assembly in assemblies)
+            foreach (var domainEventType in domainEventTypes)
             {
-                var domainEventTypes = assembly.GetTypes().Where(ev => ev.GetInterfaces().Contains(typeof(IDomainEvent)));
-                foreach (var domainEventType in domainEventTypes)
-                {
-                    eventRegistration.Add(domainEventType.Name, domainEventType);
-                }
+                eventRegistration.Add(domainEventType.Name, domainEventType);
             }
             services.AddSingleton(eventRegistration);
             return services;
