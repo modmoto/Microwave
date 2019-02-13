@@ -35,14 +35,6 @@ namespace Microwave
         }
 
         public static IServiceCollection AddMicrowaveReadModels(this IServiceCollection services,
-            params Assembly[] readModelAndDomainEventAssemblies)
-        {
-            var configuration = new ReadModelConfiguration(new Uri(AppDomain.CurrentDomain.GetData("BaseUrl").ToString()));
-            services.AddMicrowaveReadModels(configuration, readModelAndDomainEventAssemblies);
-            return services;
-        }
-
-        public static IServiceCollection AddMicrowaveReadModels(this IServiceCollection services,
             ReadModelConfiguration configuration,
             params Assembly[] readModelAndDomainEventAssemblies)
         {
