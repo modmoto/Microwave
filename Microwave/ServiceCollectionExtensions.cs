@@ -3,7 +3,6 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microwave.Domain;
 using Microwave.EventStores;
@@ -36,13 +35,14 @@ namespace Microwave
         }
 
         public static IServiceCollection AddMicrowaveReadModels(this IServiceCollection services,
-            ReadModelConfiguration configuration,
+            ReadModelConfiguration configuration = null,
             params Assembly[] readModelAssembly)
         {
-            services.AddTransient(option =>
+            services.AddTransient<ReadModelDatabase>();
+            if (configuration == null)
             {
-                return new ReadModelDatabase(configuration);
-            });
+                configuration = new ReadModelConfiguration(new Uri(AppDomain.CurrentDomain.GetData("BaseUrl").ToString()));
+            }
 
             services.AddMicrowaveMvcExtensions();
 
@@ -74,11 +74,7 @@ namespace Microwave
             WriteModelConfiguration configuration = null,
             params Assembly[] domainEventAssembly)
         {
-            if (configuration == null) configuration = new WriteModelConfiguration();
-            services.AddTransient(option =>
-            {
-                return new EventDatabase(configuration);
-            });
+            services.AddTransient<EventDatabase>();
 
             services.AddTransient<DomainEventController>();
             services.AddTransient<JSonHack>();
@@ -90,6 +86,9 @@ namespace Microwave
             services.AddTransient<ISnapShotRepository, SnapShotRepository>();
 
             services.AddMicrowaveMvcExtensions();
+
+            if (configuration == null) configuration = new WriteModelConfiguration();
+            services.AddSingleton(configuration);
 
             foreach (var assembly in domainEventAssembly)
             {
