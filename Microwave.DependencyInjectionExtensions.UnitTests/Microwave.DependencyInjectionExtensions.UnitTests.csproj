@@ -56,7 +56,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Microwave.DependencyInjectionExtensions.UnitTests.ExtendenDll\Microwave.DependencyInjectionExtensions.UnitTests.ExtendenDll.csproj" />
       <ProjectReference Include="..\Microwave.WebApi\Microwave.WebApi.csproj" />
       <ProjectReference Include="..\Microwave\Microwave.csproj" />
     </ItemGroup>
