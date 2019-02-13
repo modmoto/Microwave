@@ -35,14 +35,18 @@ namespace Microwave
         }
 
         public static IServiceCollection AddMicrowaveReadModels(this IServiceCollection services,
-            ReadModelConfiguration configuration = null,
-            params Assembly[] readModelAssembly)
+            params Assembly[] readModelAndDomainEventAssemblies)
+        {
+            var configuration = new ReadModelConfiguration(new Uri(AppDomain.CurrentDomain.GetData("BaseUrl").ToString()));
+            services.AddMicrowaveReadModels(configuration, readModelAndDomainEventAssemblies);
+            return services;
+        }
+
+        public static IServiceCollection AddMicrowaveReadModels(this IServiceCollection services,
+            ReadModelConfiguration configuration,
+            params Assembly[] readModelAndDomainEventAssemblies)
         {
             services.AddTransient<ReadModelDatabase>();
-            if (configuration == null)
-            {
-                configuration = new ReadModelConfiguration(new Uri(AppDomain.CurrentDomain.GetData("BaseUrl").ToString()));
-            }
 
             services.AddMicrowaveMvcExtensions();
 
@@ -54,7 +58,7 @@ namespace Microwave
             services.AddTransient<IDomainEventFactory, DomainEventFactory>();
             services.AddSingleton(configuration);
 
-            foreach (var assembly in readModelAssembly)
+            foreach (var assembly in readModelAndDomainEventAssemblies)
             {
                 services.AddQuerryHandling(assembly);
                 services.AddAsyncEventHandling(assembly);
@@ -71,8 +75,16 @@ namespace Microwave
         }
 
         public static IServiceCollection AddMicrowave(this IServiceCollection services,
-            WriteModelConfiguration configuration = null,
-            params Assembly[] domainEventAssembly)
+            params Assembly[] domainEventAssemblies)
+        {
+            var configuration = new WriteModelConfiguration();
+            services.AddMicrowave(configuration, domainEventAssemblies);
+            return services;
+        }
+
+        public static IServiceCollection AddMicrowave(this IServiceCollection services,
+            WriteModelConfiguration configuration,
+            params Assembly[] domainEventAssemblies)
         {
             services.AddTransient<EventDatabase>();
 
@@ -87,10 +99,9 @@ namespace Microwave
 
             services.AddMicrowaveMvcExtensions();
 
-            if (configuration == null) configuration = new WriteModelConfiguration();
             services.AddSingleton(configuration);
 
-            foreach (var assembly in domainEventAssembly)
+            foreach (var assembly in domainEventAssemblies)
             {
                 BsonMapRegistrationHelpers.AddBsonMapsForMicrowave(assembly);
             }
