@@ -71,9 +71,10 @@ namespace Microwave
         }
 
         public static IServiceCollection AddMicrowave(this IServiceCollection services,
-            WriteModelConfiguration configuration,
+            WriteModelConfiguration configuration = null,
             params Assembly[] domainEventAssembly)
         {
+            if (configuration == null) configuration = new WriteModelConfiguration();
             services.AddTransient(option =>
             {
                 return new EventDatabase(configuration);
