@@ -39,6 +39,7 @@ namespace Microwave.Queries
         }
     }
 
+    [Serializable]
     public class ReadModelConfig : Dictionary<Type, Uri>
     {
         public Uri TryGet(Type type)
@@ -47,6 +48,7 @@ namespace Microwave.Queries
         }
     }
 
+    [Serializable]
     public class DomainEventConfig : Dictionary<Type, Uri>
     {
         public Uri TryGet(Type type)
