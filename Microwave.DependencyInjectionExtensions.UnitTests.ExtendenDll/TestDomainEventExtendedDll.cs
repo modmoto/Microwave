@@ -18,7 +18,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests.ExtendenDll
     {
         public Task HandleAsync(TestDomainEventExtendedDll domainEvent)
         {
-            return Task.CompletedTask;
+            throw new System.NotImplementedException();
         }
     }
 }
