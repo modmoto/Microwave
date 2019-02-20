@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Microwave.Application;
 using Microwave.Queries;
@@ -24,11 +25,20 @@ namespace Microwave.WebApi
         {
             if (since == default(DateTimeOffset)) since = DateTimeOffset.MinValue;
             var isoString = since.ToString("o");
-            var response = await _domainEventClient.GetAsync($"?timeStamp={isoString}");
-            if (response.StatusCode != HttpStatusCode.OK) return new List<DomainEventWrapper>();
-            var content = await response.Content.ReadAsStringAsync();
-            var eventsByTypeAsync = _objectConverter.Deserialize(content);
-            return eventsByTypeAsync;
+            try
+            {
+                var response = await _domainEventClient.GetAsync($"?timeStamp={isoString}");
+                if (response.StatusCode != HttpStatusCode.OK) return new List<DomainEventWrapper>();
+                var content = await response.Content.ReadAsStringAsync();
+                var eventsByTypeAsync = _objectConverter.Deserialize(content);
+                return eventsByTypeAsync;
+
+            }
+            catch (HttpRequestException)
+            {
+                Console.WriteLine($"Could not reach service for: {typeof(T).Name}");
+                return new List<DomainEventWrapper>();
+            }
         }
     }
 }
