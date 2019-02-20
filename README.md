@@ -58,20 +58,7 @@ The Packages are also available in smaller chunks, like Microwave.Eventstores, M
 
 ## Database
 
-Microwave uses mongodb as the database and you have to define the connectionstring in the `appsettings.json` for the service to work. The definition goes like this:
-
-```
-{
-  "WriteModelDatabase": {
-    "ConnectionString" : "mongodb://localhost:815/",
-    "DatabaseName" : "MyWriteDb"                        --> optional, default is "MicrowaveWriteModelDatabase"
-  },
-  "ReadModelDatabase": {
-      "ConnectionString" : "mongodb://localhost:815/",
-      "DatabaseName" : "MyReadDb"                       --> optional, default is "MicrowaveReadModelDatabase"
-    }
-}
-```
+Microwave uses mongodb as the database and you can define the connectionstring or name in the `WriteModelConfiguration` or `ReadModelConfiguration` classes.
 
 # EventStore
 
@@ -215,23 +202,21 @@ public class UserReadModel : ReadModel, IHandle<UserCreatedEvent>, IHandle<UserC
 ### Loading Querries and Readmodels
 To load the Querries and ReadModels there are two Repositories `IQuerryRepository` and `IReadModelRepository` that offer functionality to load and update Querries/Readmodels. You can use them to update Querries or Readmodels inside a IHandleAsync by yourself, if you need to.
 
-## Setting up the event source
+## Setting up the event locations
 
-The location for Events can be defined in the appsettings.json, so you can quickly move adjust the source for your events if you move entities aroung. For Microwave it does not matter where the events are stored, it always gets the from the webapi provided and applies them to the local handlers or ReadModels. The appsettings has to contain the following definitions:
+The location for Events can be defined in the `ReadModelConfiguration`. Just add a type of the domain event and the uri the other service is running on. Example:
 
 ```
-{
-  "DefaultDomainEventLocation": "http://localhost:5000/",  --> this is mandatory (will throw exception when not present)
-  "DomainEventLocations": {
-    "UserCreatedEvent" : "http://localhost:123/"           --> tells Mircowave to get the event from this location for handlers and querries
-  },
-  "DomainEventReadModelLocations": {
-    "UserReadModel" : "http://localhost:123/"              --> tells Mircowave to get the all events for the readmodel from this location
-  }
-}
+var readModelConfig = new ReadModelConfiguration(new Uri("http://localhost:5002/"))
+    {
+        DomainEventConfig = new DomainEventConfig
+        {
+            { typeof(PlayerBought), new Uri("http://localhost:5000/")}
+        }
+    };
 ```
 
-The Locations are optional, if they are not provided, Microwave will try to get the events from the `DefaultDomainEventLocation`
+The Locations are optional, if they are not provided, Microwave will try to get the events from the `DefaultDomainEventLocation`, wich is the uri provided in the constructor.
 
 # Quality of Live Tools
 
