@@ -38,9 +38,9 @@ namespace Microwave
             ReadModelConfiguration configuration,
             params Assembly[] readModelAndDomainEventAssemblies)
         {
-            services.AddTransient<ReadModelDatabase>();
-
             services.AddMicrowaveMvcExtensions();
+
+            services.AddTransient<ReadModelDatabase>();
 
             services.AddTransient<DomainEventWrapperListDeserializer>();
             services.AddTransient<JSonHack>();
@@ -78,6 +78,8 @@ namespace Microwave
             WriteModelConfiguration configuration,
             params Assembly[] domainEventAssemblies)
         {
+            services.AddMicrowaveMvcExtensions();
+
             services.AddTransient<EventDatabase>();
 
             services.AddTransient<DomainEventController>();
@@ -88,8 +90,6 @@ namespace Microwave
             services.AddTransient<IEventRepository, EventRepository>();
             services.AddSingleton<IVersionCache, VersionCache>();
             services.AddTransient<ISnapShotRepository, SnapShotRepository>();
-
-            services.AddMicrowaveMvcExtensions();
 
             services.AddSingleton(configuration);
 
@@ -118,7 +118,7 @@ namespace Microwave
 
         private static IServiceCollection AddMicrowaveMvcExtensions(this IServiceCollection services)
         {
-            services.AddMvc(config =>
+            services.AddMvcCore(config =>
             {
                 config.Filters.Add(new DomainValidationFilter());
                 config.Filters.Add(new NotFoundFilter());
@@ -126,6 +126,7 @@ namespace Microwave
 
                 config.OutputFormatters.Insert(0, new NewtonsoftOutputFormatter());
                 config.InputFormatters.Insert(0, new NewtonsoftInputFormatter());
+
                 config.ModelBinderProviders.Insert(0, new IdentityModelBinderProvider());
                 config.ModelBinderProviders.Insert(0, new DateTimeOffsetBinderProvider());
             });
