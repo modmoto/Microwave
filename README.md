@@ -13,7 +13,7 @@
   - [Reacting to Events happening in the Domain](#reacting-to-events-happening-in-the-domain)
   - [ReadModels and Querries](#readmodels-and-querries)
     - [Loading Querries and Readmodels](#loading-querries-and-readmodels)
-  - [Setting up the event source](#setting-up-the-event-source)
+  - [Setting up the event location](#setting-up-the-event-source)
 - [Quality of Live Tools](#quality-of-live-tools)
   - [Exceptions and Filters](#exceptions-and-filters)
   - [Result Objects](#result-objects)
