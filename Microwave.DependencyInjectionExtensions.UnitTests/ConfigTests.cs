@@ -56,7 +56,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
 
     public class TestReadModel : ReadModel, IHandle<Ev>
     {
-        public void Handle(Ev domainEvent)
+        public void Handle(Ev domainEvent, long version)
         {
         }
 

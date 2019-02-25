@@ -131,13 +131,13 @@ namespace Microwave.Queries.UnitTests
 
     public class TestReadModelQuerries : ReadModel, IHandle<TestEvnt2>, IHandle<TestEvnt1>
     {
-        public void Handle(TestEvnt2 domainEvent)
+        public void Handle(TestEvnt2 domainEvent, long version)
         {
             Id = domainEvent.EntityId;
         }
 
         public Identity Id { get; set; }
-        public void Handle(TestEvnt1 domainEvent)
+        public void Handle(TestEvnt1 domainEvent, long version)
         {
             Name = domainEvent.Name;
         }
@@ -148,7 +148,7 @@ namespace Microwave.Queries.UnitTests
 
     public class TestReadModelQuerries_OnlyOneEventAndVersionIsCounted : ReadModel, IHandle<TestEvnt2>
     {
-        public void Handle(TestEvnt2 domainEvent)
+        public void Handle(TestEvnt2 domainEvent, long version)
         {
             Id = domainEvent.EntityId;
         }
@@ -206,7 +206,7 @@ namespace Microwave.Queries.UnitTests
 
     public class TestReadModelQuerries_TwoParallelFeeds1 : ReadModel, IHandle<TestEvnt1>
     {
-        public void Handle(TestEvnt1 domainEvent)
+        public void Handle(TestEvnt1 domainEvent, long version)
         {
             Id = domainEvent.EntityId;
         }
@@ -225,7 +225,7 @@ namespace Microwave.Queries.UnitTests
 
     public class TestReadModelQuerries_TwoParallelFeeds2 : ReadModel, IHandle<TestEvnt2>
     {
-        public void Handle(TestEvnt2 domainEvent)
+        public void Handle(TestEvnt2 domainEvent, long version)
         {
             IdTotallyDifferenzt = domainEvent.EntityId;
         }
