@@ -13,7 +13,7 @@ namespace Microwave.Application.UnitTests
         [TestMethod]
         public void NotFound()
         {
-            var readModelWrapper = new ReadModelResult<ReadModelTest>(new ReadModelTest(), GuidIdentity.Create(Guid.NewGuid()), 0);
+            var readModelWrapper = new ReadModelResult<ReadModelTest>(new ReadModelTest(), GuidIdentity.Create());
             var notFoundException = new NotFoundException(readModelWrapper.GetType(), "TheId");
             Assert.AreEqual("Could not find ReadModelTest with ID TheId", notFoundException.Message);
         }

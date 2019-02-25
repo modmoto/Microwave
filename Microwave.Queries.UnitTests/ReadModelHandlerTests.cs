@@ -25,7 +25,6 @@ namespace Microwave.Queries.UnitTests
 
             var result = await queryRepository.Load<TestReadModelQuerries>(EntityGuid);
             Assert.AreEqual(EntityGuid, result.Id);
-            Assert.AreEqual(14, result.Version);
             Assert.AreEqual("testName", result.Value.Name);
         }
 
@@ -82,7 +81,6 @@ namespace Microwave.Queries.UnitTests
             await readModelHandler.Update();
 
             var result = await queryRepository.Load<TestReadModelQuerries_OnlyOneEventAndVersionIsCounted>(EntityGuid);
-            Assert.AreEqual(14, result.Version);
             Assert.AreEqual(null, result.Value.Name);
             Assert.AreEqual(EntityGuid.Id, result.Value.Id.Id);
         }
