@@ -269,25 +269,16 @@ namespace Microwave
                 .Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IHandleAsync<>));
         }
 
-
-        private static bool ImplementsIhandle(Type myType, Type baseType)
+        private static bool ImplementsIhandleInterfaceAndQuerry(Type myType)
         {
             return myType.GetInterfaces()
-                .Any(i =>
-                    i.IsGenericType
-                    && (i.GetGenericTypeDefinition() == typeof(IHandle<>)
-                        || i.GetGenericTypeDefinition() == typeof(IHandleVersioned<>)))
-                    && myType.BaseType == baseType;
+                .Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IHandle<>)) && myType.BaseType == typeof(Query);
         }
 
         private static bool ImplementsIhandleInterfaceAndReadModel(Type myType)
         {
-            return ImplementsIhandle(myType, typeof(ReadModel));
-        }
-
-        private static bool ImplementsIhandleInterfaceAndQuerry(Type myType)
-        {
-            return ImplementsIhandle(myType, typeof(Query));
+            return myType.GetInterfaces()
+                       .Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IHandle<>)) && myType.BaseType == typeof(ReadModel);
         }
 
         private static MethodInfo AddTransientSingle()

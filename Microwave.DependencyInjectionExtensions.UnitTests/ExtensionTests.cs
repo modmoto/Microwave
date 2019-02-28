@@ -130,26 +130,24 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
 
     public class TestIdQuery : ReadModel, IHandle<TestDomainEvent1>, IHandle<TestDomainEvent2>
     {
-        public void Handle(TestDomainEvent1 domainEvent)
+        public void Handle(TestDomainEvent1 domainEvent, long version)
         {
         }
 
-        public void Handle(TestDomainEvent2 domainEvent)
+        public void Handle(TestDomainEvent2 domainEvent, long version)
         {
         }
 
         public override Type GetsCreatedOn { get; }
-        public override Identity EntityId { get; }
     }
 
     public class TestIdQuerySingle : ReadModel, IHandle<TestDomainEvent3>
     {
-        public void Handle(TestDomainEvent3 domainEvent)
+        public void Handle(TestDomainEvent3 domainEvent, long version)
         {
         }
 
         public override Type GetsCreatedOn { get; }
-        public override Identity EntityId { get; }
     }
 
     public class TestDomainEvent3 : IDomainEvent
@@ -166,28 +164,27 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
 
     public class TestIdQuery2 : ReadModel, IHandle<TestDomainEvent1>
     {
-        public void Handle(TestDomainEvent1 domainEvent)
+        public void Handle(TestDomainEvent1 domainEvent, long version)
         {
         }
 
         public override Type GetsCreatedOn { get; }
-        public override Identity EntityId { get; }
     }
 
     public class TestQuery1 : Query, IHandle<TestDomainEvent1>, IHandle<TestDomainEvent2>
     {
-        public void Handle(TestDomainEvent1 domainEvent)
+        public void Handle(TestDomainEvent1 domainEvent, long version)
         {
         }
 
-        public void Handle(TestDomainEvent2 domainEvent)
+        public void Handle(TestDomainEvent2 domainEvent, long version)
         {
         }
     }
 
     public class TestQuery2 : Query, IHandle<TestDomainEvent1>
     {
-        public void Handle(TestDomainEvent1 domainEvent)
+        public void Handle(TestDomainEvent1 domainEvent, long version)
         {
         }
     }
