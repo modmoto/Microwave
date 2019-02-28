@@ -22,5 +22,6 @@ namespace Microwave.Queries
     public abstract class ReadModel : Query
     {
         public abstract Type GetsCreatedOn { get; }
+        public abstract Identity EntityId { get; }
     }
 }

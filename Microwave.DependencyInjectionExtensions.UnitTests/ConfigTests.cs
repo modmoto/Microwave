@@ -61,6 +61,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
         }
 
         public override Type GetsCreatedOn { get; }
+        public override Identity EntityId { get; }
     }
 
     public class Ev : IDomainEvent

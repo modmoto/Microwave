@@ -51,6 +51,7 @@ namespace Microwave.WebApi.UnitTests
     public class IdQuery : ReadModel
     {
         public override Type GetsCreatedOn { get; }
+        public override Identity EntityId { get; }
     }
 
     public class Ev1 : IDomainEvent

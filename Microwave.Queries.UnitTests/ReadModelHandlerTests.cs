@@ -24,7 +24,7 @@ namespace Microwave.Queries.UnitTests
             await readModelHandler.Update();
 
             var result = await queryRepository.Load<TestReadModelQuerries>(EntityGuid);
-            Assert.AreEqual(EntityGuid, result.Id);
+            Assert.AreEqual(EntityGuid, result.Value.EntityId);
             Assert.AreEqual("testName", result.Value.Name);
         }
 
@@ -43,8 +43,8 @@ namespace Microwave.Queries.UnitTests
 
             var result = await queryRepository.Load<TestReadModelQuerries>(EntityGuid);
             var result2 = await queryRepository.Load<TestReadModelQuerries>(EntityGuid2);
-            Assert.AreEqual(EntityGuid, result.Id);
-            Assert.AreEqual(EntityGuid2, result2.Id);
+            Assert.AreEqual(EntityGuid, result.Value.EntityId);
+            Assert.AreEqual(EntityGuid2, result2.Value.EntityId);
         }
 
         [TestMethod]
@@ -61,7 +61,7 @@ namespace Microwave.Queries.UnitTests
 
             var result = await queryRepository.Load<TestReadModelQuerries>(EntityGuid);
             var result2 = await queryRepository.Load<TestReadModelQuerries>(EntityGuid2);
-            Assert.AreEqual(EntityGuid, result.Id);
+            Assert.AreEqual(EntityGuid, result.Value.EntityId);
             var condition = result2.Is<NotFound>();
             Assert.IsTrue(condition);
         }
@@ -135,6 +135,8 @@ namespace Microwave.Queries.UnitTests
         }
 
         public Identity Id { get; set; }
+
+        public override Identity EntityId => Id;
         public void Handle(TestEvnt1 domainEvent, long version)
         {
             Name = domainEvent.Name;
@@ -152,6 +154,8 @@ namespace Microwave.Queries.UnitTests
         }
 
         public Identity Id { get; set; }
+
+        public override Identity EntityId => Id;
         public string Name { get; set; }
         public override Type GetsCreatedOn => typeof(TestEvnt2);
     }
@@ -210,6 +214,8 @@ namespace Microwave.Queries.UnitTests
         }
 
         public Identity Id { get; set; }
+
+        public override Identity EntityId => Id;
         public override Type GetsCreatedOn => typeof(TestEvnt1);
     }
 
@@ -229,6 +235,8 @@ namespace Microwave.Queries.UnitTests
         }
 
         public Identity IdTotallyDifferenzt { get; set; }
+
+        public override Identity EntityId => IdTotallyDifferenzt;
         public override Type GetsCreatedOn => typeof(TestEvnt2);
     }
 

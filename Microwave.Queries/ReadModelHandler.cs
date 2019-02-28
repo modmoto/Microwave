@@ -40,7 +40,7 @@ namespace Microwave.Queries
                 var latestEventVersion = latestEvent.Version;
 
                 var result = new T().GetsCreatedOn == latestEventDomainEvent.GetType()
-                    ? ReadModelResult<T>.Ok(new T(), domainEventEntityId)
+                    ? Result<T>.Ok(new T())
                     : await _readModelRepository.Load<T>(domainEventEntityId);
 
                 if (result.Is<NotFound>()) continue;
@@ -48,8 +48,7 @@ namespace Microwave.Queries
                 var readModel = result.Value;
                 readModel.Handle(latestEventDomainEvent, latestEventVersion);
 
-                var readModelWrapper = ReadModelResult<T>.Ok(readModel, domainEventEntityId);
-                await _readModelRepository.Save(readModelWrapper);
+                await _readModelRepository.SaveReadModel(readModel);
                 await _versionRepository.SaveVersion(new LastProcessedVersion(redaModelVersionCounter, latestEvent.Created));
             }
         }

@@ -139,6 +139,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
         }
 
         public override Type GetsCreatedOn { get; }
+        public override Identity EntityId { get; }
     }
 
     public class TestIdQuerySingle : ReadModel, IHandle<TestDomainEvent3>
@@ -148,6 +149,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
         }
 
         public override Type GetsCreatedOn { get; }
+        public override Identity EntityId { get; }
     }
 
     public class TestDomainEvent3 : IDomainEvent
@@ -169,6 +171,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
         }
 
         public override Type GetsCreatedOn { get; }
+        public override Identity EntityId { get; }
     }
 
     public class TestQuery1 : Query, IHandle<TestDomainEvent1>, IHandle<TestDomainEvent2>
