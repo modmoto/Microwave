@@ -66,7 +66,7 @@ namespace Microwave.Queries.UnitTests
 
     public class TestQ : Query, IHandle<TestEv>
     {
-        public void Handle(TestEv domainEvent, long version)
+        public void Handle(TestEv domainEvent)
         {
             WasCalled++;
         }

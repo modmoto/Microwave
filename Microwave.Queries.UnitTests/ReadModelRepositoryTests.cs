@@ -18,14 +18,14 @@ namespace Microwave.Queries.UnitTests
         {
             var queryRepository = new ReadModelRepository(ReadModelDatabase);
 
-            var guid = GuidIdentity.Create(Guid.NewGuid());
-            var testQuerry = new TestReadModel();
+            var guid = GuidIdentity.Create();
+            var testQuerry = new TestReadModel(guid);
             testQuerry.SetVars("Test", new[] {"Jeah", "jeah2"});
-            await queryRepository.Save(ReadModelResult<TestReadModel>.Ok(testQuerry, guid));
+            await queryRepository.SaveReadModel(testQuerry);
 
             var querry1 = await queryRepository.Load<TestReadModel>(guid);
 
-            Assert.AreEqual(guid, querry1.Id);
+            Assert.AreEqual(guid, querry1.Value.EntityId);
             Assert.AreEqual("Test", querry1.Value.UserName);
             Assert.AreEqual("Jeah", querry1.Value.Strings.First());
         }
@@ -35,12 +35,12 @@ namespace Microwave.Queries.UnitTests
         {
             var queryRepository = new ReadModelRepository(ReadModelDatabase);
 
-            var testQuerry = new TestReadModel();
-            var testQuerry2 = new TestReadModel();
+            var testQuerry = new TestReadModel(GuidIdentity.Create());
+            var testQuerry2 = new TestReadModel(GuidIdentity.Create());
             testQuerry.SetVars("Test", new[] {"Jeah", "jeah2"});
             testQuerry2.SetVars("Test", new[] {"Jeah", "jeah2"});
-            await queryRepository.Save(ReadModelResult<TestReadModel>.Ok(testQuerry, GuidIdentity.Create()));
-            await queryRepository.Save(ReadModelResult<TestReadModel>.Ok(testQuerry2, GuidIdentity.Create()));
+            await queryRepository.SaveReadModel(testQuerry);
+            await queryRepository.SaveReadModel(testQuerry2);
 
             var querry1 = await queryRepository.LoadAll<TestReadModel>();
 
@@ -53,12 +53,12 @@ namespace Microwave.Queries.UnitTests
         {
             var queryRepository = new ReadModelRepository(ReadModelDatabase);
 
-            var testQuerry = new TestReadModel();
-            var testQuerry2 = new TestReadModel();
+            var testQuerry = new TestReadModel(GuidIdentity.Create());
+            var testQuerry2 = new TestReadModel(GuidIdentity.Create());
             testQuerry.SetVars("Test", new[] {"Jeah", "jeah2"});
             testQuerry2.SetVars("Test", new[] {"Jeah", "jeah2"});
-            await queryRepository.Save(ReadModelResult<TestReadModel>.Ok(testQuerry, GuidIdentity.Create()));
-            await queryRepository.Save(ReadModelResult<TestReadModel>.Ok(testQuerry2, GuidIdentity.Create()));
+            await queryRepository.SaveReadModel(testQuerry);
+            await queryRepository.SaveReadModel(testQuerry2);
 
             var loadAll = await queryRepository.LoadAll<TestReadModel2>();
             Assert.IsTrue(loadAll.Is<NotFound>());
@@ -103,10 +103,10 @@ namespace Microwave.Queries.UnitTests
         {
             var queryRepository = new ReadModelRepository(ReadModelDatabase);
             var guid2 = GuidIdentity.Create(Guid.NewGuid());
-            var testQuery2 = new TestReadModel2();
+            var testQuery2 = new TestReadModel2(guid2);
             testQuery2.SetVars("Test2", new []{ "Jeah", "jeah2"});
 
-            await queryRepository.Save(new ReadModelResult<TestReadModel2>(testQuery2, guid2));
+            await queryRepository.SaveReadModel(testQuery2);
 
             var loadAll2 = await queryRepository.Load<TestReadModel>(guid2);
 
@@ -132,8 +132,15 @@ namespace Microwave.Queries.UnitTests
 
     public class TestReadModel : ReadModel
     {
-        public string UserName { get; private set; }
-        public IEnumerable<string> Strings { get; private set; } = new List<string>();
+        public TestReadModel(Identity entityId)
+        {
+            MyId = entityId;
+        }
+
+        public Identity MyId { get; set; }
+
+        public string UserName { get; set; }
+        public IEnumerable<string> Strings { get; set; } = new List<string>();
 
         public void SetVars(string test, IEnumerable<string> str)
         {
@@ -142,10 +149,16 @@ namespace Microwave.Queries.UnitTests
         }
 
         public override Type GetsCreatedOn { get; }
+        public override Identity EntityId => MyId;
     }
 
     public class TestReadModel2 : ReadModel
     {
+        public TestReadModel2(GuidIdentity guid2)
+        {
+            EntityId = guid2;
+        }
+
         public string UserNameAllDifferent { get; private set; }
         public IEnumerable<string> StringsAllDifferent { get; private set; } = new List<string>();
 
@@ -156,5 +169,6 @@ namespace Microwave.Queries.UnitTests
         }
 
         public override Type GetsCreatedOn { get; }
+        public override Identity EntityId { get; }
     }
 }

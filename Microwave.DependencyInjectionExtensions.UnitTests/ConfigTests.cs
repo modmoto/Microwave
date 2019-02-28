@@ -54,13 +54,14 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
         }
     }
 
-    public class TestReadModel : ReadModel, IHandle<Ev>
+    public class TestReadModel : ReadModel, IHandleVersioned<Ev>
     {
         public void Handle(Ev domainEvent, long version)
         {
         }
 
         public override Type GetsCreatedOn { get; }
+        public override Identity EntityId { get; }
     }
 
     public class Ev : IDomainEvent
