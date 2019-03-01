@@ -4,5 +4,6 @@
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageVersion>0.4.8</PackageVersion>
     <DebugType>full</DebugType>
+    <ProjectGuid>{ff1bcf79-c2b1-4fa2-85e3-930145ba4a9f}</ProjectGuid>
   </PropertyGroup>
 </Project>

@@ -4,6 +4,7 @@
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageVersion>0.4.8</PackageVersion>
     <DebugType>full</DebugType>
+    <ProjectGuid>{6d54ff20-82af-4dd3-8dfa-f6273ef82244}</ProjectGuid>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Microwave.Domain\Microwave.Domain.csproj" />

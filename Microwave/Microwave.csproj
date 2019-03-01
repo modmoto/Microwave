@@ -5,6 +5,7 @@
     <PackageVersion>0.4.8</PackageVersion>
     <DebugType>full</DebugType>
     <RootNamespace>Microwave</RootNamespace>
+    <ProjectGuid>{E2CEBBAF-6DF7-41E9-815D-9AD4CF90C844}</ProjectGuid>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60">
