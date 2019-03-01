@@ -9,8 +9,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microwave.Application", "Mi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microwave.EventStores", "Microwave.EventStores\Microwave.EventStores.csproj", "{05981F37-6A08-4CC9-8020-B0B00BF5E622}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microwave.Eventstores.UnitTests", "Microwave.Eventstores.UnitTests\Microwave.Eventstores.UnitTests.csproj", "{C73734E8-928B-4C41-9054-F294D02219F1}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microwave.Queries", "Microwave.Queries\Microwave.Queries.csproj", "{8D96537D-5061-45AC-A587-C69F7E4DB3D1}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microwave.Queries.UnitTests", "Microwave.Queries.UnitTests\Microwave.Queries.UnitTests.csproj", "{B3AA5BEA-6586-4A39-9541-1812F456FB0B}"
@@ -18,16 +16,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microwave.WebApi", "Microwave.WebApi\Microwave.WebApi.csproj", "{4110C154-DF57-445A-93EE-10D5FB4CD16C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microwave", "Microwave\Microwave.csproj", "{FA64444E-B6E5-49F4-8915-45D50B1F83DA}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microwave.DependencyInjectionExtensions.UnitTests", "Microwave.DependencyInjectionExtensions.UnitTests\Microwave.DependencyInjectionExtensions.UnitTests.csproj", "{6DE4BD27-1E59-43F3-AF52-5925CEA1E9CA}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microwave.Domain.UnitTests", "Microwave.Domain.UnitTests\Microwave.Domain.UnitTests.csproj", "{306D2634-E1A9-4C72-AEA5-AEB9FA26110F}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microwave.Application.UnitTests", "Microwave.Application.UnitTests\Microwave.Application.UnitTests.csproj", "{E692F31A-891F-4FCC-99DA-5BC9213A43F3}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microwave.WebApi.UnitTests", "Microwave.WebApi.UnitTests\Microwave.WebApi.UnitTests.csproj", "{3622487E-A894-49FD-A8EF-5D11DAA01B62}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microwave.Eventstores.UnitTests.DomainEvents", "Microwave.Eventstores.UnitTests.DomainEvents\Microwave.Eventstores.UnitTests.DomainEvents.csproj", "{AA1064F6-6A41-405B-9AEB-BDFD5670506C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -47,10 +35,6 @@ Global
 		{05981F37-6A08-4CC9-8020-B0B00BF5E622}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{05981F37-6A08-4CC9-8020-B0B00BF5E622}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{05981F37-6A08-4CC9-8020-B0B00BF5E622}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C73734E8-928B-4C41-9054-F294D02219F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C73734E8-928B-4C41-9054-F294D02219F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C73734E8-928B-4C41-9054-F294D02219F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C73734E8-928B-4C41-9054-F294D02219F1}.Release|Any CPU.Build.0 = Release|Any CPU
 		{8D96537D-5061-45AC-A587-C69F7E4DB3D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{8D96537D-5061-45AC-A587-C69F7E4DB3D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8D96537D-5061-45AC-A587-C69F7E4DB3D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -67,26 +51,6 @@ Global
 		{FA64444E-B6E5-49F4-8915-45D50B1F83DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FA64444E-B6E5-49F4-8915-45D50B1F83DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FA64444E-B6E5-49F4-8915-45D50B1F83DA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6DE4BD27-1E59-43F3-AF52-5925CEA1E9CA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6DE4BD27-1E59-43F3-AF52-5925CEA1E9CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6DE4BD27-1E59-43F3-AF52-5925CEA1E9CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6DE4BD27-1E59-43F3-AF52-5925CEA1E9CA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{306D2634-E1A9-4C72-AEA5-AEB9FA26110F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{306D2634-E1A9-4C72-AEA5-AEB9FA26110F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{306D2634-E1A9-4C72-AEA5-AEB9FA26110F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{306D2634-E1A9-4C72-AEA5-AEB9FA26110F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E692F31A-891F-4FCC-99DA-5BC9213A43F3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E692F31A-891F-4FCC-99DA-5BC9213A43F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E692F31A-891F-4FCC-99DA-5BC9213A43F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E692F31A-891F-4FCC-99DA-5BC9213A43F3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3622487E-A894-49FD-A8EF-5D11DAA01B62}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3622487E-A894-49FD-A8EF-5D11DAA01B62}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3622487E-A894-49FD-A8EF-5D11DAA01B62}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3622487E-A894-49FD-A8EF-5D11DAA01B62}.Release|Any CPU.Build.0 = Release|Any CPU
-		{AA1064F6-6A41-405B-9AEB-BDFD5670506C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AA1064F6-6A41-405B-9AEB-BDFD5670506C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{AA1064F6-6A41-405B-9AEB-BDFD5670506C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AA1064F6-6A41-405B-9AEB-BDFD5670506C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
