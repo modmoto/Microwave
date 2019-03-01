@@ -2,9 +2,8 @@
 
     <PropertyGroup>
         <TargetFramework>netcoreapp2.2</TargetFramework>
-
+        <ProjectGuid>{d8f29dc2-ebdf-448d-bc7c-996bf9eed6fa}</ProjectGuid>
         <IsPackable>false</IsPackable>
-
         <RootNamespace>Microwave.DependencyInjectionExtensions.UnitTests</RootNamespace>
     </PropertyGroup>
 
