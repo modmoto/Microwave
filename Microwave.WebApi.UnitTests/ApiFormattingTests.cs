@@ -79,7 +79,7 @@ namespace Microwave.WebApi.UnitTests
             domainErrorsConverter.WriteJson(jsonTextWriterMock, readModelTest, null);
 
             var jobject = jsonTextWriterMock.StringValue;
-            Assert.AreEqual($"{{{Environment.NewLine}  \"IdentityField\": \"TestId\",{Environment.NewLine}  \"TestProp\": \"test\",{Environment.NewLine}  \"EntityId\": \"TestId\"{Environment.NewLine}}}",
+            Assert.AreEqual($"{{{Environment.NewLine}  \"IdentityField\": \"TestId\",{Environment.NewLine}  \"TestProp\": \"test\"{Environment.NewLine}}}",
             jobject);
         }
     }
@@ -109,7 +109,6 @@ namespace Microwave.WebApi.UnitTests
         public Identity IdentityField { get; set; }
         public string TestProp { get; set; }
         public override Type GetsCreatedOn => typeof(Mockreader);
-        public override Identity EntityId => IdentityField;
     }
 
     public class Mockreader : JsonReader
