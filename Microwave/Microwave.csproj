@@ -1,8 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <PackageVersion>0.4.8</PackageVersion>
     <DebugType>full</DebugType>
     <RootNamespace>Microwave</RootNamespace>
+    <ProjectGuid>{68425dcc-f2d8-4f4b-ad19-5acb89726f78}</ProjectGuid>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60">

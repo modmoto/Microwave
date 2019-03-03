@@ -1,7 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <TargetFramework>netstandard2.0</TargetFramework>
+        <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+        <PackageVersion>0.4.8</PackageVersion>
         <DebugType>full</DebugType>
+        <ProjectGuid>{ef738539-a069-4e6a-9f15-021a799cae57}</ProjectGuid>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="MongoDB.Driver" Version="2.7.3" />
