@@ -24,7 +24,7 @@
 # Microwave
 Microwave is a Framework for Eventsourcing and CQRS that lets you implement your domain and not have you worried about distributing your domain events or storing them.
 
-[![Build status](https://dev.azure.com/vrn-integration/Microwave/_apis/build/status/Microwave-DEV)](https://dev.azure.com/vrn-integration/Microwave/_build/latest?definitionId=3)
+[![Build status](https://dev.azure.com/simonheiss87/Microwave/_apis/build/status/Microwave-DEV)](https://dev.azure.com/simonheiss87/Microwave/_build/latest?definitionId=5)[![Build status](https://dev.azure.com/simonheiss87/Microwave/_apis/build/status/Microwave-DEV)](https://dev.azure.com/simonheiss87/Microwave/_build/latest?definitionId=5)
 [![sonarCubeCoverage](https://sonarcloud.io/api/project_badges/measure?project=Lauchi_Microwave&metric=coverage)](https://sonarcloud.io/dashboard?id=Lauchi_Microwave)
 [![nuget](https://img.shields.io/nuget/v/Microwave.svg)](https://www.nuget.org/packages/Microwave/)
 
