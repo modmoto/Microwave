@@ -16,19 +16,31 @@ namespace Microwave.Queries
 
     public class ReadModelResult<T> : Result<T>
     {
-        protected ReadModelResult(ResultStatus status, T readModel, Identity id) : base(status)
+        protected ReadModelResult(ResultStatus status, T readModel, long version, Identity id) : base(status)
         {
+            _version = version;
             _value = readModel;
             _id = id;
         }
 
-        public ReadModelResult(T readModel, Identity id) : base(new Ok())
+        public ReadModelResult(T readModel, Identity id, long version) : base(new Ok())
         {
+            _version = version;
             _value = readModel;
             _id = id;
         }
 
+        private readonly long _version;
         private readonly Identity _id;
+
+        public long Version
+        {
+            get
+            {
+                Status.Check();
+                return _version;
+            }
+        }
 
         public Identity Id
         {
@@ -39,9 +51,9 @@ namespace Microwave.Queries
             }
         }
 
-        public static ReadModelResult<T> Ok(T value, Identity id)
+        public static ReadModelResult<T> Ok(T value, Identity id, long version)
         {
-            return new Ok<T>(value, id);
+            return new Ok<T>(value, version, id);
         }
 
         public new static ReadModelResult<T> NotFound(Identity notFoundId)
@@ -52,14 +64,14 @@ namespace Microwave.Queries
 
     public class Ok<T> : ReadModelResult<T>
     {
-        public Ok(T readModel, Identity id) : base(new Ok(), readModel, id)
+        public Ok(T readModel, long version, Identity id) : base(new Ok(), readModel, version, id)
         {
         }
     }
 
     public class NotFoundResult<T> : ReadModelResult<T>
     {
-        public NotFoundResult(Identity notFoundId) : base(new NotFound(typeof(T), notFoundId), default(T), null)
+        public NotFoundResult(Identity notFoundId) : base(new NotFound(typeof(T), notFoundId), default(T), -1, null)
         {
         }
     }

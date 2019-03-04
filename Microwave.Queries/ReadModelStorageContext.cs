@@ -8,6 +8,7 @@ namespace Microwave.Queries
         [BsonId]
         public string Id { get; set; }
         public T Payload { get; set; }
+        public long Version { get; set; }
     }
 
     public class QueryDbo<T>

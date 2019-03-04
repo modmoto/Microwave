@@ -21,7 +21,7 @@ namespace Microwave.Queries.UnitTests
             var guid = GuidIdentity.Create(Guid.NewGuid());
             var testQuerry = new TestReadModel();
             testQuerry.SetVars("Test", new[] {"Jeah", "jeah2"});
-            await queryRepository.Save(ReadModelResult<TestReadModel>.Ok(testQuerry, guid));
+            await queryRepository.Save(ReadModelResult<TestReadModel>.Ok(testQuerry, guid, 1));
 
             var querry1 = await queryRepository.Load<TestReadModel>(guid);
 
@@ -39,8 +39,8 @@ namespace Microwave.Queries.UnitTests
             var testQuerry2 = new TestReadModel();
             testQuerry.SetVars("Test", new[] {"Jeah", "jeah2"});
             testQuerry2.SetVars("Test", new[] {"Jeah", "jeah2"});
-            await queryRepository.Save(ReadModelResult<TestReadModel>.Ok(testQuerry, GuidIdentity.Create()));
-            await queryRepository.Save(ReadModelResult<TestReadModel>.Ok(testQuerry2, GuidIdentity.Create()));
+            await queryRepository.Save(ReadModelResult<TestReadModel>.Ok(testQuerry, GuidIdentity.Create(), 1));
+            await queryRepository.Save(ReadModelResult<TestReadModel>.Ok(testQuerry2, GuidIdentity.Create(), 1));
 
             var querry1 = await queryRepository.LoadAll<TestReadModel>();
 
@@ -57,8 +57,8 @@ namespace Microwave.Queries.UnitTests
             var testQuerry2 = new TestReadModel();
             testQuerry.SetVars("Test", new[] {"Jeah", "jeah2"});
             testQuerry2.SetVars("Test", new[] {"Jeah", "jeah2"});
-            await queryRepository.Save(ReadModelResult<TestReadModel>.Ok(testQuerry, GuidIdentity.Create()));
-            await queryRepository.Save(ReadModelResult<TestReadModel>.Ok(testQuerry2, GuidIdentity.Create()));
+            await queryRepository.Save(ReadModelResult<TestReadModel>.Ok(testQuerry, GuidIdentity.Create(), 1));
+            await queryRepository.Save(ReadModelResult<TestReadModel>.Ok(testQuerry2, GuidIdentity.Create(), 1));
 
             var loadAll = await queryRepository.LoadAll<TestReadModel2>();
             Assert.IsTrue(loadAll.Is<NotFound>());
@@ -88,6 +88,25 @@ namespace Microwave.Queries.UnitTests
         }
 
         [TestMethod]
+        public async Task InsertIDQuery_ConcurrencyProblem()
+        {
+            var queryRepository = new ReadModelRepository(ReadModelDatabase);
+            var guid = GuidIdentity.Create(Guid.NewGuid());
+            var testQuery = new TestReadModel();
+            testQuery.SetVars("Test1", new []{ "Jeah", "jeah2"});
+            var testQuery2 = new TestReadModel();
+            testQuery2.SetVars("Test2", new []{ "Jeah", "jeah2"});
+
+            var save = queryRepository.Save(new ReadModelResult<TestReadModel>(testQuery, guid, 1));
+            var save2 = queryRepository.Save(new ReadModelResult<TestReadModel>(testQuery2, guid, 2));
+
+            await Task.WhenAll(new List<Task<Result>> { save, save2 });
+
+            var resultOfLoad = await queryRepository.Load<TestReadModel>(guid);
+            Assert.AreEqual(2, resultOfLoad.Version);
+        }
+
+        [TestMethod]
         public async Task UpdateQuery()
         {
             var queryRepository = new ReadModelRepository(ReadModelDatabase);
@@ -106,7 +125,7 @@ namespace Microwave.Queries.UnitTests
             var testQuery2 = new TestReadModel2();
             testQuery2.SetVars("Test2", new []{ "Jeah", "jeah2"});
 
-            await queryRepository.Save(new ReadModelResult<TestReadModel2>(testQuery2, guid2));
+            await queryRepository.Save(new ReadModelResult<TestReadModel2>(testQuery2, guid2, 1));
 
             var loadAll2 = await queryRepository.Load<TestReadModel>(guid2);
 

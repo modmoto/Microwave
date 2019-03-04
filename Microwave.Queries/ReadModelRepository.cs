@@ -35,7 +35,7 @@ namespace Microwave.Queries
             var asyncCursor = await mongoCollection.FindAsync(dbo => dbo.Id == id.Id);
             var identifiableQueryDbo = asyncCursor.FirstOrDefault();
             if (identifiableQueryDbo == null) return ReadModelResult<T>.NotFound(id);
-            return ReadModelResult<T>.Ok(identifiableQueryDbo.Payload, id);
+            return ReadModelResult<T>.Ok(identifiableQueryDbo.Payload, id, identifiableQueryDbo.Version);
         }
 
         public async Task<Result> Save<T>(T query) where T : Query
@@ -67,6 +67,7 @@ namespace Microwave.Queries
                 new ReadModelDbo<T>
                 {
                     Id = readModelResult.Id.Id,
+                    Version = readModelResult.Version,
                     Payload = readModelResult.Value
                 }, findOneAndReplaceOptions);
 
