@@ -46,7 +46,7 @@ namespace Microwave.Queries
                 if (result.Is<NotFound>()) continue;
 
                 var readModel = result.Value;
-                readModel.Handle(latestEventDomainEvent, latestEventVersion);
+                readModel.Handle(latestEventDomainEvent);
 
                 var readModelWrapper = ReadModelResult<T>.Ok(readModel, domainEventEntityId);
                 await _readModelRepository.Save(readModelWrapper);
