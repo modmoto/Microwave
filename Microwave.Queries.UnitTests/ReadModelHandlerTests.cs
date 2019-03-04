@@ -108,6 +108,26 @@ namespace Microwave.Queries.UnitTests
             Assert.AreEqual(EntityGuid2.Id, result2.Value.IdTotallyDifferenzt.Id);
         }
 
+        [TestMethod]
+        public async Task UpdateModel_VersionUpdatedExplicitly()
+        {
+            EntityGuid = GuidIdentity.Create(Guid.NewGuid());
+
+            var queryRepository = new ReadModelRepository(ReadModelDatabase);
+
+            var readModelHandler = new ReadModelHandler<TestReadModelQuerries_VerionedHandle>(
+                queryRepository,
+                new VersionRepository(ReadModelDatabase),
+                new FeedMockVersioned());
+
+            await readModelHandler.Update();
+
+            var result = await queryRepository.Load<TestReadModelQuerries_VerionedHandle>(EntityGuid);
+            Assert.AreEqual(EntityGuid.Id, result.Value.Id.Id);
+            Assert.AreEqual(12, result.Value.Version);
+            Assert.AreEqual(14, result.Version);
+        }
+
         public static GuidIdentity EntityGuid { get; set; }
         public static GuidIdentity EntityGuid2 { get; set; }
 
@@ -144,6 +164,22 @@ namespace Microwave.Queries.UnitTests
 
         public string Name { get; set; }
         public override Type GetsCreatedOn => typeof(TestEvnt2);
+    }
+
+    public class TestReadModelQuerries_VerionedHandle : ReadModel, IHandleVersioned<TestEvnt2>, IHandle<TestEvnt3>
+    {
+        public void Handle(TestEvnt2 domainEvent, long version)
+        {
+            Id = domainEvent.EntityId;
+            Version = version;
+        }
+
+        public Identity Id { get; set; }
+        public long Version { get; set; }
+        public override Type GetsCreatedOn => typeof(TestEvnt2);
+        public void Handle(TestEvnt3 domainEvent)
+        {
+        }
     }
 
     public class TestReadModelQuerries_OnlyOneEventAndVersionIsCounted : ReadModel, IHandle<TestEvnt2>
@@ -190,6 +226,25 @@ namespace Microwave.Queries.UnitTests
             {
                 Version = 14,
                 DomainEvent = new TestEvnt1(ReadModelHandlerTests.EntityGuid, "testName")
+            };
+            var list = new List<DomainEventWrapper> {domainEventWrapper, domainEventWrappe2};
+            return Task.FromResult((IEnumerable<DomainEventWrapper>) list);
+        }
+    }
+
+    public class FeedMockVersioned : IEventFeed<ReadModelHandler<TestReadModelQuerries_VerionedHandle>>
+    {
+        public Task<IEnumerable<DomainEventWrapper>> GetEventsAsync(DateTimeOffset since = default(DateTimeOffset))
+        {
+            var domainEventWrapper = new DomainEventWrapper
+            {
+                Version = 12,
+                DomainEvent = new TestEvnt2(ReadModelHandlerTests.EntityGuid)
+            };
+            var domainEventWrappe2 = new DomainEventWrapper
+            {
+                Version = 14,
+                DomainEvent = new TestEvnt3(ReadModelHandlerTests.EntityGuid)
             };
             var list = new List<DomainEventWrapper> {domainEventWrapper, domainEventWrappe2};
             return Task.FromResult((IEnumerable<DomainEventWrapper>) list);
