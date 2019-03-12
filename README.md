@@ -33,17 +33,33 @@ Microwave is a Framework for Eventsourcing and CQRS that lets you implement your
 
 ## Installation
 
-To install all Microwave dependencies, use this in the startup:
+First Install the needed Microwave nuget:
+```
+dotnet add package Microwave
+```
+
+To register all Microwave dependencies for the write side, use this in the startup:
 
 ```
+using Microwave;
+using Microwave.EventStores;
+
+...
+
 services.AddMicrowave(typeof(UserCreated).Assembly, Configuration);
 ```
 
-You have to tell Microwave the Assembly with the DomainEvents, so it can set up all the handling. Also you have to pass an `IConfiguration` to tell Microwave your DBConnectionstring.
+You have to tell Microwave the Assembly with the DomainEvents, so it can set up all the handling. Also you have to 
+pass an `WriteModelConfiguration` or `ReadModelConfiguration` to tell Microwave your DBConnectionstring.
 
 On the readside, you have to add:
 
 ```
+using Microwave;
+using Microwave.Queries;
+
+...
+
 services.AddMicrowaveReadModels(typeof(UserReadModel).Assembly, Configuration);
 ```
 and the assembly containing the ReadModels/Querries. Also you have to start Microwave with this in the builder section:
