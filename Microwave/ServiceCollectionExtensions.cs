@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
+using Microwave.Application;
 using Microwave.Domain;
 using Microwave.EventStores;
 using Microwave.EventStores.Ports;
@@ -84,6 +85,7 @@ namespace Microwave
             services.AddTransient<EventDatabase>();
 
             services.AddTransient<DomainEventController>();
+            services.AddTransient<DiscoveryController>();
             services.AddTransient<JSonHack>();
             services.AddTransient<DomainEventWrapperListDeserializer>();
 

@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Microwave
+namespace Microwave.Application
 {
     public class PublishedEventCollection : List<string>
     {
