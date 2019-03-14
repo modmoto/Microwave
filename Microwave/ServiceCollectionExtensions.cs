@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -98,10 +99,35 @@ namespace Microwave
                 BsonMapRegistrationHelpers.AddBsonMapsForMicrowave(assembly);
             }
 
+            var publishedEventCollection = new PublishedEventCollection();
+            foreach (var assembly in domainEventAssemblies)
+            {
+                publishedEventCollection.AddRange(GetEventsForPublish(assembly));
+            }
+
+            services.AddSingleton(publishedEventCollection);
+
             if (!BsonClassMap.IsClassMapRegistered(typeof(GuidIdentity))) BsonClassMap.RegisterClassMap<GuidIdentity>();
             if (!BsonClassMap.IsClassMapRegistered(typeof(StringIdentity))) BsonClassMap.RegisterClassMap<StringIdentity>();
 
             return services;
+        }
+
+        private static IEnumerable<string> GetEventsForPublish(Assembly assembly)
+        {
+            var entityTypes = assembly.GetTypes().Where(ev => ev.GetInterfaces().Contains(typeof(IApply)));
+            var domainEvents = new List<Type>();
+            foreach (var entityType in entityTypes)
+            {
+                var interfaces = entityType.GetInterfaces();
+                var domainEventTypes = interfaces.Where(i =>
+                    i.IsGenericType &&
+                    i.GetGenericArguments().Length == 1
+                    && i.GetGenericArguments().First().GetInterfaces().Contains(typeof(IDomainEvent)));
+                domainEvents.AddRange(domainEventTypes);
+            }
+
+            return domainEvents.Select(e => e.GetGenericArguments().First().Name);
         }
 
         private static IServiceCollection AddDomainEventRegistration(this IServiceCollection services, Assembly assembly)

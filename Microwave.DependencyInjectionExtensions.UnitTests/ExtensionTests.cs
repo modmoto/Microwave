@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -125,6 +126,29 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
             Assert.IsTrue(BsonClassMap.IsClassMapRegistered(typeof(TestDomainEvent1)));
             Assert.IsTrue(BsonClassMap.IsClassMapRegistered(typeof(TestDomainEvent2)));
             Assert.IsTrue(BsonClassMap.IsClassMapRegistered(typeof(TestDomainEvent3)));
+
+            var publishingEventRegistration = buildServiceProvider.GetServices<PublishedEventCollection>().Single().ToList();
+            Assert.AreEqual(nameof(TestDomainEvent1), publishingEventRegistration[0]);
+            Assert.AreEqual(nameof(TestDomainEvent3), publishingEventRegistration[1]);
+            Assert.AreEqual(2, publishingEventRegistration.Count);
+        }
+    }
+
+    public class TestEntity1 : IApply, IApply<TestDomainEvent1>
+    {
+        public void Apply(IEnumerable<IDomainEvent> domainEvents)
+        {
+        }
+
+        public void Apply(TestDomainEvent1 domainEvent)
+        {
+        }
+    }
+
+    public class TestEntity3 : Entity, IApply<TestDomainEvent3>
+    {
+        public void Apply(TestDomainEvent3 domainEvent)
+        {
         }
     }
 
