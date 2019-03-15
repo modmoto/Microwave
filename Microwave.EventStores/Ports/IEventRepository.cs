@@ -13,5 +13,6 @@ namespace Microwave.EventStores.Ports
         Task<Result> AppendAsync(IEnumerable<IDomainEvent> domainEvents, long currentEntityVersion);
         Task<Result<IEnumerable<DomainEventWrapper>>> LoadEvents(DateTimeOffset tickSince = default(DateTimeOffset));
         Task<Result<IEnumerable<DomainEventWrapper>>> LoadEventsByTypeAsync(string eventType, DateTimeOffset tickSince = default(DateTimeOffset));
+        Task<Result<long>> GetEventTypeCount(string domainEventType);
     }
 }

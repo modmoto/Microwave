@@ -91,6 +91,15 @@ namespace Microwave.EventStores
             return Result<IEnumerable<DomainEventWrapper>>.Ok(domainEvents);
         }
 
+        public async Task<Result<long>> GetEventTypeCount(string domainEventType)
+        {
+            var mongoCollection = _database.GetCollection<DomainEventDbo>(_eventCollectionName);
+            var dbo = await mongoCollection
+                .CountDocumentsAsync(e => e.EventType == domainEventType);
+            if (dbo == 0) return Result<long>.NotFound(StringIdentity.Create(domainEventType));
+            return Result<long>.Ok(dbo);
+        }
+
         public async Task<Result> AppendAsync(IEnumerable<IDomainEvent> domainEvents, long currentEntityVersion)
         {
             var events = domainEvents.ToList();

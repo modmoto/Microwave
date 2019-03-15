@@ -429,6 +429,45 @@ namespace Microwave.Eventstores.UnitTests
             Assert.AreEqual(typeof(TestEvent1), result.Value.ToList()[0].DomainEvent.GetType());
         }
 
+        [TestMethod]
+        public async Task GetLatestEvent_HappyPath()
+        {
+            var eventRepository = new EventRepository(EventDatabase, new VersionCache(EventDatabase));
+
+            var newGuid = GuidIdentity.Create(Guid.NewGuid());
+            var events = new List<IDomainEvent>
+            {
+                new TestEvent1(newGuid),
+                new TestEvent2(newGuid),
+                new TestEvent1(newGuid),
+                new TestEvent2(newGuid),
+                new TestEvent2(newGuid)
+            };
+
+            await eventRepository.AppendAsync(events, 0);
+
+            var result = await eventRepository.GetEventTypeCount(nameof(TestEvent1));
+            var result2 = await eventRepository.GetEventTypeCount(nameof(TestEvent2));
+
+            Assert.AreEqual(2, result.Value);
+            Assert.AreEqual(3, result2.Value);
+        }
+
+        [TestMethod]
+        public async Task GetLatestEvent_NotFound()
+        {
+            var eventRepository = new EventRepository(EventDatabase, new VersionCache(EventDatabase));
+
+            var newGuid = GuidIdentity.Create(Guid.NewGuid());
+            var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid), new TestEvent1(newGuid), new TestEvent2(newGuid), new TestEvent2(newGuid)};
+
+            await eventRepository.AppendAsync(events, 0);
+
+            var result = await eventRepository.GetEventTypeCount(nameof(TestEvent3));
+
+            Assert.IsTrue(result.Is<NotFound>());
+        }
+
         private static void CheckAllResults(Result[] whenAll)
         {
             foreach (var result in whenAll)
