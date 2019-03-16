@@ -45,6 +45,10 @@ namespace Microwave
             services.AddTransient<ReadModelDatabase>();
 
             services.AddTransient<DomainEventWrapperListDeserializer>();
+
+            services.AddTransient<MonitoringAsyncHandlingController>();
+            services.AddTransient<DiscoveryController>();
+
             services.AddTransient<JSonHack>();
             services.AddTransient<IVersionRepository, VersionRepository>();
             services.AddTransient<IReadModelRepository, ReadModelRepository>();
@@ -86,6 +90,8 @@ namespace Microwave
 
             services.AddTransient<DomainEventController>();
             services.AddTransient<DiscoveryController>();
+            services.AddTransient<MonitoringController>();
+
             services.AddTransient<JSonHack>();
             services.AddTransient<DomainEventWrapperListDeserializer>();
 
