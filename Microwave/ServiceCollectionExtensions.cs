@@ -193,6 +193,11 @@ namespace Microwave
 
             foreach (var readModel in readModels)
             {
+                var instance = Activator.CreateInstance(readModel);
+                var propertyInfo = readModel.GetProperty(nameof(ReadModel.GetsCreatedOn));
+                var createdType = propertyInfo?.GetValue(instance) as Type;
+                if (createdType == null) throw new InvalidReadModelCreationTypeException(readModel.Name);
+
                 var interfaces = readModel.GetInterfaces();
                 var domainEventTypes = interfaces.Where(i =>
                     i.IsGenericType &&
@@ -201,7 +206,7 @@ namespace Microwave
                     && i.GetGenericArguments().First().GetInterfaces().Contains(typeof(IDomainEvent)));
 
                 var readModelSubscription = new ReadModelSubscription(domainEventTypes.Select(e => e
-                .GenericTypeArguments.First().Name), null);
+                .GenericTypeArguments.First().Name), createdType.Name);
                 subscriptions.Add(readModelSubscription);
             }
 
@@ -397,6 +402,14 @@ namespace Microwave
             return typeof(ServiceCollectionServiceExtensions).GetMethods().Single(m =>
                 m.Name == "AddTransient" && m.GetGenericArguments().Length == 2 &&
                 m.GetParameters().Length == 1);
+        }
+    }
+
+    internal class InvalidReadModelCreationTypeException : Exception
+    {
+        public InvalidReadModelCreationTypeException(string readModel) : base(
+            $"Can not instantiate Readmodel {readModel} as it is missing a valid creationtype")
+        {
         }
     }
 }

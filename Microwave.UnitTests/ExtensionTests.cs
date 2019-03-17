@@ -172,7 +172,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
 
             var publishingEventRegistration = buildServiceProvider.GetServices<SubscribedEventCollection>().Single();
             var readModelSubscription = publishingEventRegistration.ReadModelSubcriptions.ToList();
-            //Assert.AreEqual(nameof(TestDomainEvent_PublishedEvent1), readModelSubscription[0].GetsCreatedOn);
+            Assert.AreEqual(nameof(TestDomainEvent_PublishedEvent1), readModelSubscription[0].GetsCreatedOn);
             Assert.AreEqual(nameof(TestDomainEvent_PublishedEvent2), readModelSubscription[0].SubscribedEvents.ToList()[0]);
             Assert.AreEqual(nameof(TestDomainEvent_PublishedEvent1), readModelSubscription[0].SubscribedEvents.ToList()[1]);
             Assert.AreEqual(1, readModelSubscription.Count);
