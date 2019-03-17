@@ -124,9 +124,20 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
             var store = buildServiceProvider.GetServices<IEventStore>().FirstOrDefault();
             Assert.IsNotNull(store);
 
-            Assert.IsTrue(BsonClassMap.IsClassMapRegistered(typeof(TestDomainEvent1)));
-            Assert.IsTrue(BsonClassMap.IsClassMapRegistered(typeof(TestDomainEvent2)));
-            Assert.IsTrue(BsonClassMap.IsClassMapRegistered(typeof(TestDomainEvent3)));
+            var publishingEventRegistration = buildServiceProvider.GetServices<PublishedEventCollection>().Single().ToList();
+            Assert.AreEqual(nameof(TestDomainEvent1), publishingEventRegistration[0]);
+            Assert.AreEqual(nameof(TestDomainEvent3), publishingEventRegistration[1]);
+            Assert.AreEqual(2, publishingEventRegistration.Count);
+        }
+
+        [TestMethod]
+        public void AddMicrowaveDependencies_PublishedEventsCorrect()
+        {
+            var collection = (IServiceCollection) new ServiceCollection();
+
+            var storeDependencies = collection.AddMicrowave(new WriteModelConfiguration(), typeof(TestDomainEvent1).Assembly);
+
+            var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
             var publishingEventRegistration = buildServiceProvider.GetServices<PublishedEventCollection>().Single().ToList();
             Assert.AreEqual(nameof(TestDomainEvent1), publishingEventRegistration[0]);
@@ -142,6 +153,29 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
         }
 
         public void Apply(TestDomainEvent1 domainEvent)
+        {
+        }
+    }
+
+    public class TestEntity_NotImplementingIApply : IApply<TestDomainEvent2>
+    {
+        public void Apply(TestDomainEvent2 domainEvent)
+        {
+        }
+    }
+
+    public class TestReadModel_NotImplementingIApply : ReadModel, IApply<TestDomainEvent2>
+    {
+        public void Apply(TestDomainEvent2 domainEvent)
+        {
+        }
+
+        public override Type GetsCreatedOn { get; }
+    }
+
+    public class TestQuerry_NotImplementingIApply : Query, IApply<TestDomainEvent2>
+    {
+        public void Apply(TestDomainEvent2 domainEvent)
         {
         }
     }
