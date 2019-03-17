@@ -12,6 +12,7 @@ using Microwave.EventStores.Ports;
 using Microwave.Queries;
 using Microwave.UnitTests.PublishedEventsDll;
 using Microwave.WebApi;
+using MongoDB.Bson.Serialization;
 
 namespace Microwave.DependencyInjectionExtensions.UnitTests
 {
@@ -124,10 +125,9 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
             var store = buildServiceProvider.GetServices<IEventStore>().FirstOrDefault();
             Assert.IsNotNull(store);
 
-            var publishingEventRegistration = buildServiceProvider.GetServices<PublishedEventCollection>().Single().ToList();
-            Assert.AreEqual(nameof(TestDomainEvent1), publishingEventRegistration[0]);
-            Assert.AreEqual(nameof(TestDomainEvent3), publishingEventRegistration[1]);
-            Assert.AreEqual(2, publishingEventRegistration.Count);
+            Assert.IsTrue(BsonClassMap.IsClassMapRegistered(typeof(TestDomainEvent1)));
+            Assert.IsTrue(BsonClassMap.IsClassMapRegistered(typeof(TestDomainEvent2)));
+            Assert.IsTrue(BsonClassMap.IsClassMapRegistered(typeof(TestDomainEvent3)));
         }
 
         [TestMethod]
@@ -154,10 +154,11 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
 
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
-            var publishingEventRegistration = buildServiceProvider.GetServices<SubscribedEventCollection>().Single().ToList();
-            Assert.AreEqual(nameof(TestDomainEvent_PublishedEvent1), publishingEventRegistration[0]);
-            Assert.AreEqual(nameof(TestDomainEvent_PublishedEvent2), publishingEventRegistration[1]);
-            Assert.AreEqual(2, publishingEventRegistration.Count);
+            var publishingEventRegistration = buildServiceProvider.GetServices<SubscribedEventCollection>().Single();
+            var ihandleAsyncEvents = publishingEventRegistration.IHandleAsyncEvents.ToList();
+            Assert.AreEqual(nameof(TestDomainEvent_PublishedEvent1), ihandleAsyncEvents[0]);
+            Assert.AreEqual(nameof(TestDomainEvent_PublishedEvent2), ihandleAsyncEvents[1]);
+            Assert.AreEqual(2, ihandleAsyncEvents.Count);
         }
     }
 

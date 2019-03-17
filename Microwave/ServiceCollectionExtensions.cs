@@ -66,15 +66,15 @@ namespace Microwave
                 BsonMapRegistrationHelpers.AddBsonMapsForMicrowave(assembly);
             }
 
-            var publishedEventCollection = new SubscribedEventCollection();
+            var subscribedEvents = new List<string>();
             foreach (var assembly in readModelAndDomainEventAssemblies)
             {
                 var eventsForPublish = GetEventsForSubscribe(assembly);
-                var notAddedYet = eventsForPublish.Where(e => !publishedEventCollection.Contains(e));
-                publishedEventCollection.AddRange(notAddedYet);
+                var notAddedYet = eventsForPublish.Where(e => !subscribedEvents.Contains(e));
+                subscribedEvents.AddRange(notAddedYet);
             }
 
-            services.AddSingleton(publishedEventCollection);
+            services.AddSingleton(new SubscribedEventCollection(subscribedEvents));
 
 
             if (!BsonClassMap.IsClassMapRegistered(typeof(GuidIdentity))) BsonClassMap.RegisterClassMap<GuidIdentity>();
