@@ -66,15 +66,23 @@ namespace Microwave
                 BsonMapRegistrationHelpers.AddBsonMapsForMicrowave(assembly);
             }
 
-            var subscribedEvents = new List<string>();
+            var iHandleAsyncEvents = new List<string>();
             foreach (var assembly in readModelAndDomainEventAssemblies)
             {
                 var eventsForPublish = GetEventsForSubscribe(assembly);
-                var notAddedYet = eventsForPublish.Where(e => !subscribedEvents.Contains(e));
-                subscribedEvents.AddRange(notAddedYet);
+                var notAddedYet = eventsForPublish.Where(e => !iHandleAsyncEvents.Contains(e));
+                iHandleAsyncEvents.AddRange(notAddedYet);
             }
 
-            services.AddSingleton(new SubscribedEventCollection(subscribedEvents));
+            var readModelSubscriptions = new List<ReadModelSubscription>();
+            foreach (var assembly in readModelAndDomainEventAssemblies)
+            {
+                var eventsForPublish = GetEventsForReadModelSubscribe(assembly);
+                var notAddedYet = eventsForPublish.Where(e => !readModelSubscriptions.Contains(e));
+                readModelSubscriptions.AddRange(notAddedYet);
+            }
+
+            services.AddSingleton(new SubscribedEventCollection(iHandleAsyncEvents, readModelSubscriptions));
 
 
             if (!BsonClassMap.IsClassMapRegistered(typeof(GuidIdentity))) BsonClassMap.RegisterClassMap<GuidIdentity>();
@@ -171,6 +179,31 @@ namespace Microwave
             }
 
             return domainEvents.Select(e => e.GetGenericArguments().First().Name);
+        }
+
+        private static IEnumerable<ReadModelSubscription> GetEventsForReadModelSubscribe(Assembly assembly)
+        {
+            var types = assembly.GetTypes();
+            var readModels = types.Where(ev => ev.GetInterfaces().Any(x =>
+                x.IsGenericType &&
+                x.GetGenericTypeDefinition() == typeof(IHandle<>)));
+            var subscriptions = new List<ReadModelSubscription>();
+
+            foreach (var handler in readModels)
+            {
+                var interfaces = handler.GetInterfaces();
+                var domainEventTypes = interfaces.Where(i =>
+                    i.IsGenericType &&
+                    i.GetGenericArguments().Length == 1
+                    && i.GetGenericTypeDefinition() == typeof(IHandle<>)
+                    && i.GetGenericArguments().First().GetInterfaces().Contains(typeof(IDomainEvent)));
+
+                var readModelSubscription = new ReadModelSubscription(domainEventTypes.Select(e => e
+                .GenericTypeArguments.First().Name), null);
+                subscriptions.Add(readModelSubscription);
+            }
+
+            return subscriptions;
         }
 
         private static IServiceCollection AddDomainEventRegistration(this IServiceCollection services, Assembly assembly)

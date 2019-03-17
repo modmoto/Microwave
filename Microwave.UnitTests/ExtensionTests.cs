@@ -160,6 +160,23 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
             Assert.AreEqual(nameof(TestDomainEvent_PublishedEvent2), ihandleAsyncEvents[1]);
             Assert.AreEqual(2, ihandleAsyncEvents.Count);
         }
+
+        [TestMethod]
+        public void AddMicrowaveDependencies_ReadModelsCorrect()
+        {
+            var collection = (IServiceCollection) new ServiceCollection();
+            var storeDependencies = collection.AddMicrowaveReadModels(new ReadModelConfiguration(new Uri("http://localhost:5000/")), typeof
+                (TestReadModelSubscriptions).Assembly);
+
+            var buildServiceProvider = storeDependencies.BuildServiceProvider();
+
+            var publishingEventRegistration = buildServiceProvider.GetServices<SubscribedEventCollection>().Single();
+            var readModelSubscription = publishingEventRegistration.ReadModelSubcriptions.ToList();
+            //Assert.AreEqual(nameof(TestDomainEvent_PublishedEvent1), readModelSubscription[0].GetsCreatedOn);
+            Assert.AreEqual(nameof(TestDomainEvent_PublishedEvent2), readModelSubscription[0].SubscribedEvents.ToList()[0]);
+            Assert.AreEqual(nameof(TestDomainEvent_PublishedEvent1), readModelSubscription[0].SubscribedEvents.ToList()[1]);
+            Assert.AreEqual(1, readModelSubscription.Count);
+        }
     }
 
     public class TestIdQuery : ReadModel, IHandle<TestDomainEvent1>, IHandle<TestDomainEvent2>
