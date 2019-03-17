@@ -39,4 +39,11 @@ namespace Microwave.UnitTests.PublishedEventsDll
         {
         }
     }
+
+    public class TestReadModelSubscriptions_NotImplementingReadModel : IHandle<TestDomainEvent_PublishedEvent1>
+    {
+        public void Handle(TestDomainEvent_PublishedEvent1 domainEvent)
+        {
+        }
+    }
 }

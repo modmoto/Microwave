@@ -184,14 +184,16 @@ namespace Microwave
         private static IEnumerable<ReadModelSubscription> GetEventsForReadModelSubscribe(Assembly assembly)
         {
             var types = assembly.GetTypes();
-            var readModels = types.Where(ev => ev.GetInterfaces().Any(x =>
-                x.IsGenericType &&
-                x.GetGenericTypeDefinition() == typeof(IHandle<>)));
+            var readModels = types.Where(ev =>
+                ev.GetInterfaces().Any(x =>
+                    x.IsGenericType &&
+                    x.GetGenericTypeDefinition() == typeof(IHandle<>)) &&
+                typeof(ReadModel).IsAssignableFrom(ev)).ToList();
             var subscriptions = new List<ReadModelSubscription>();
 
-            foreach (var handler in readModels)
+            foreach (var readModel in readModels)
             {
-                var interfaces = handler.GetInterfaces();
+                var interfaces = readModel.GetInterfaces();
                 var domainEventTypes = interfaces.Where(i =>
                     i.IsGenericType &&
                     i.GetGenericArguments().Length == 1
