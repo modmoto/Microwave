@@ -1,6 +1,5 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microwave.EventStores.Ports;
 using Microwave.Queries;
 
 namespace Microwave.WebApi

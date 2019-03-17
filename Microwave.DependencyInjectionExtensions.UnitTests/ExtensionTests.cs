@@ -11,7 +11,6 @@ using Microwave.EventStores;
 using Microwave.EventStores.Ports;
 using Microwave.Queries;
 using Microwave.WebApi;
-using MongoDB.Bson.Serialization;
 
 namespace Microwave.DependencyInjectionExtensions.UnitTests
 {
