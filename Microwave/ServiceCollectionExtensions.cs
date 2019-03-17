@@ -66,6 +66,17 @@ namespace Microwave
                 BsonMapRegistrationHelpers.AddBsonMapsForMicrowave(assembly);
             }
 
+            var publishedEventCollection = new SubscribedEventCollection();
+            foreach (var assembly in readModelAndDomainEventAssemblies)
+            {
+                var eventsForPublish = GetEventsForSubscribe(assembly);
+                var notAddedYet = eventsForPublish.Where(e => !publishedEventCollection.Contains(e));
+                publishedEventCollection.AddRange(notAddedYet);
+            }
+
+            services.AddSingleton(publishedEventCollection);
+
+
             if (!BsonClassMap.IsClassMapRegistered(typeof(GuidIdentity))) BsonClassMap.RegisterClassMap<GuidIdentity>();
             if (!BsonClassMap.IsClassMapRegistered(typeof(StringIdentity))) BsonClassMap.RegisterClassMap<StringIdentity>();
 
@@ -110,7 +121,9 @@ namespace Microwave
             var publishedEventCollection = new PublishedEventCollection();
             foreach (var assembly in domainEventAssemblies)
             {
-                publishedEventCollection.AddRange(GetEventsForPublish(assembly));
+                var eventsForPublish = GetEventsForPublish(assembly);
+                var notAddedYet = eventsForPublish.Where(e => !publishedEventCollection.Contains(e));
+                publishedEventCollection.AddRange(notAddedYet);
             }
 
             services.AddSingleton(publishedEventCollection);
@@ -131,6 +144,28 @@ namespace Microwave
                 var domainEventTypes = interfaces.Where(i =>
                     i.IsGenericType &&
                     i.GetGenericArguments().Length == 1
+                    && i.GetGenericArguments().First().GetInterfaces().Contains(typeof(IDomainEvent)));
+                domainEvents.AddRange(domainEventTypes);
+            }
+
+            return domainEvents.Select(e => e.GetGenericArguments().First().Name);
+        }
+
+        private static IEnumerable<string> GetEventsForSubscribe(Assembly assembly)
+        {
+            var types = assembly.GetTypes();
+            var handleAsyncs = types.Where(ev => ev.GetInterfaces().Any(x =>
+                x.IsGenericType &&
+                x.GetGenericTypeDefinition() == typeof(IHandleAsync<>)));
+            var domainEvents = new List<Type>();
+
+            foreach (var handler in handleAsyncs)
+            {
+                var interfaces = handler.GetInterfaces();
+                var domainEventTypes = interfaces.Where(i =>
+                    i.IsGenericType &&
+                    i.GetGenericArguments().Length == 1
+                    && i.GetGenericTypeDefinition() == typeof(IHandleAsync<>)
                     && i.GetGenericArguments().First().GetInterfaces().Contains(typeof(IDomainEvent)));
                 domainEvents.AddRange(domainEventTypes);
             }

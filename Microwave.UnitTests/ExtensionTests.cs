@@ -10,6 +10,7 @@ using Microwave.Domain;
 using Microwave.EventStores;
 using Microwave.EventStores.Ports;
 using Microwave.Queries;
+using Microwave.UnitTests.PublishedEventsDll;
 using Microwave.WebApi;
 
 namespace Microwave.DependencyInjectionExtensions.UnitTests
@@ -134,55 +135,29 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
         {
             var collection = (IServiceCollection) new ServiceCollection();
 
-            var storeDependencies = collection.AddMicrowave(new WriteModelConfiguration(), typeof(TestDomainEvent1).Assembly);
+            var storeDependencies = collection.AddMicrowave(new WriteModelConfiguration(), typeof(TestDomainEvent_PublishedEvent1).Assembly);
 
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
             var publishingEventRegistration = buildServiceProvider.GetServices<PublishedEventCollection>().Single().ToList();
-            Assert.AreEqual(nameof(TestDomainEvent1), publishingEventRegistration[0]);
-            Assert.AreEqual(nameof(TestDomainEvent3), publishingEventRegistration[1]);
+            Assert.AreEqual(nameof(TestDomainEvent_PublishedEvent1), publishingEventRegistration[0]);
+            Assert.AreEqual(nameof(TestDomainEvent_PublishedEvent3), publishingEventRegistration[1]);
             Assert.AreEqual(2, publishingEventRegistration.Count);
         }
-    }
 
-    public class TestEntity1 : IApply, IApply<TestDomainEvent1>
-    {
-        public void Apply(IEnumerable<IDomainEvent> domainEvents)
+        [TestMethod]
+        public void AddMicrowaveDependencies_SubscribedEventsCorrect()
         {
-        }
+            var collection = (IServiceCollection) new ServiceCollection();
+            var storeDependencies = collection.AddMicrowaveReadModels(new ReadModelConfiguration(new Uri("http://localhost:5000/")), typeof
+                (TestHandle).Assembly);
 
-        public void Apply(TestDomainEvent1 domainEvent)
-        {
-        }
-    }
+            var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
-    public class TestEntity_NotImplementingIApply : IApply<TestDomainEvent2>
-    {
-        public void Apply(TestDomainEvent2 domainEvent)
-        {
-        }
-    }
-
-    public class TestReadModel_NotImplementingIApply : ReadModel, IApply<TestDomainEvent2>
-    {
-        public void Apply(TestDomainEvent2 domainEvent)
-        {
-        }
-
-        public override Type GetsCreatedOn { get; }
-    }
-
-    public class TestQuerry_NotImplementingIApply : Query, IApply<TestDomainEvent2>
-    {
-        public void Apply(TestDomainEvent2 domainEvent)
-        {
-        }
-    }
-
-    public class TestEntity3 : Entity, IApply<TestDomainEvent3>
-    {
-        public void Apply(TestDomainEvent3 domainEvent)
-        {
+            var publishingEventRegistration = buildServiceProvider.GetServices<SubscribedEventCollection>().Single().ToList();
+            Assert.AreEqual(nameof(TestDomainEvent_PublishedEvent1), publishingEventRegistration[0]);
+            Assert.AreEqual(nameof(TestDomainEvent_PublishedEvent2), publishingEventRegistration[1]);
+            Assert.AreEqual(2, publishingEventRegistration.Count);
         }
     }
 
