@@ -404,12 +404,4 @@ namespace Microwave
                 m.GetParameters().Length == 1);
         }
     }
-
-    internal class InvalidReadModelCreationTypeException : Exception
-    {
-        public InvalidReadModelCreationTypeException(string readModel) : base(
-            $"Can not instantiate Readmodel {readModel} as it is missing a valid creationtype")
-        {
-        }
-    }
 }
