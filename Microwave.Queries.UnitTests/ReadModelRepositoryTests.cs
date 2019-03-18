@@ -88,25 +88,6 @@ namespace Microwave.Queries.UnitTests
         }
 
         [TestMethod]
-        public async Task InsertIDQuery_ConcurrencyProblem()
-        {
-            var queryRepository = new ReadModelRepository(ReadModelDatabase);
-            var guid = GuidIdentity.Create(Guid.NewGuid());
-            var testQuery = new TestReadModel();
-            testQuery.SetVars("Test1", new []{ "Jeah", "jeah2"});
-            var testQuery2 = new TestReadModel();
-            testQuery2.SetVars("Test2", new []{ "Jeah", "jeah2"});
-
-            var save = queryRepository.Save(new ReadModelResult<TestReadModel>(testQuery, guid, 1));
-            var save2 = queryRepository.Save(new ReadModelResult<TestReadModel>(testQuery2, guid, 2));
-
-            await Task.WhenAll(new List<Task<Result>> { save, save2 });
-
-            var resultOfLoad = await queryRepository.Load<TestReadModel>(guid);
-            Assert.AreEqual(2, resultOfLoad.Version);
-        }
-
-        [TestMethod]
         public async Task UpdateQuery()
         {
             var queryRepository = new ReadModelRepository(ReadModelDatabase);
