@@ -60,7 +60,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
         {
         }
 
-        public override Type GetsCreatedOn { get; }
+        public override Type GetsCreatedOn => typeof(Ev);
     }
 
     public class Ev : IDomainEvent
