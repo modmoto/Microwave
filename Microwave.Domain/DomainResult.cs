@@ -21,30 +21,36 @@ namespace Microwave.Domain
 
         public IEnumerable<DomainError> DomainErrors { get; }
 
-        private DomainResult(IEnumerable<IDomainEvent> domainEvents, IEnumerable<DomainError> domainErrors)
+        private DomainResult(IEnumerable<IDomainEvent> domainEvents)
         {
             _domainEvents = domainEvents;
+            DomainErrors = new List<DomainError>();
+        }
+
+        private DomainResult(IEnumerable<DomainError> domainErrors)
+        {
+            _domainEvents = new List<IDomainEvent>();
             DomainErrors = domainErrors;
         }
 
         public static DomainResult Ok(IDomainEvent domainEvent)
         {
-            return new DomainResult(new List<IDomainEvent> { domainEvent }, new List<DomainError>());
+            return new DomainResult(new List<IDomainEvent> { domainEvent });
         }
 
         public static DomainResult Ok(IEnumerable<IDomainEvent> domainEvents)
         {
-            return new DomainResult(domainEvents, new List<DomainError>());
+            return new DomainResult(domainEvents);
         }
 
         public static DomainResult Error(DomainError domainDomainError)
         {
-            return new DomainResult(new List<IDomainEvent>(), new List<DomainError> { domainDomainError });
+            return new DomainResult(new List<DomainError> { domainDomainError });
         }
 
         public static DomainResult Error(IEnumerable<DomainError> domainErrors)
         {
-            return new DomainResult(new List<IDomainEvent>(), domainErrors);
+            return new DomainResult(domainErrors);
         }
 
         public void EnsureSucces()
