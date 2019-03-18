@@ -2,7 +2,13 @@ namespace Microwave.EventStores.Ports
 {
     public class StreamVersion
     {
-        public string DomainEventType { get; set; }
-        public long Version { get; set; }
+        public StreamVersion(string domainEventType, long version)
+        {
+            DomainEventType = domainEventType;
+            Version = version;
+        }
+
+        public string DomainEventType { get; }
+        public long Version { get; }
     }
 }

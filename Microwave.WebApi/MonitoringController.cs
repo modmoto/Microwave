@@ -18,11 +18,7 @@ namespace Microwave.WebApi
         public async Task<ActionResult> GetStreamVersion(string eventType)
         {
             var streamVersion = await _eventRepository.GetEventTypeCount(eventType);
-            return Ok(new StreamVersion
-            {
-                Version = streamVersion.Value,
-                DomainEventType = eventType
-            });
+            return Ok(new StreamVersion(eventType, streamVersion.Value));
         }
     }
 }
