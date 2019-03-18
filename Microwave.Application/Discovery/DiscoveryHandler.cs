@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Microwave.Application.Discovery
@@ -22,15 +23,31 @@ namespace Microwave.Application.Discovery
 
         public async Task<IEnumerable<ConsumingService>> GetConsumingServices()
         {
-            var serviceConfigsTemp = new List<ConsumingService>();
+            var allServices = new List<ConsumingService>();
             foreach (var serviceAddress in _serviceBaseAdressCollection)
             {
                 var publishedEventTypes = await _discoveryRepository.GetPublishedEventTypes(serviceAddress);
-                serviceConfigsTemp.Add(publishedEventTypes);
+                allServices.Add(publishedEventTypes);
             }
 
 
-            return serviceConfigsTemp;
+            var relevantServices = new List<ConsumingService>();
+
+            var handleAsyncEvents = _subscribedEventCollection.IHandleAsyncEvents.ToList();
+
+            foreach (var service in allServices)
+            {
+                var relevantEvents = service.PublishedEventTypes.Where(ev => handleAsyncEvents.Contains(ev)).ToList();
+                if (relevantEvents.Any())
+                {
+                    relevantServices.Add(new ConsumingService(
+                        service.ServiceBaseAddress,
+                        relevantEvents,
+                        service.ServiceName));
+                }
+            }
+
+            return relevantServices;
         }
     }
 
