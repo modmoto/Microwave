@@ -23,7 +23,7 @@ namespace Microwave.Application.UnitTests
                 ConsumingService(new Uri("http://service2.de"), new[] {"Event2"}, "Service2"));
 
             discoveryRepo.Setup(m => m.GetPublishedEventTypes(new Uri("http://Service3.de"))).ReturnsAsync(new
-                ConsumingService(new Uri("http://service3.de"), new[] {"Event3"}, "Service3"));
+                ConsumingService(new Uri("http://service3.de"), new[] {"Event3", "Event4"}, "Service3"));
             var discoveryHandler = new DiscoveryHandler(new ServiceBaseAdressCollection
             {
                 new Uri("http://service1.de"),
@@ -42,6 +42,8 @@ namespace Microwave.Application.UnitTests
             Assert.AreEqual("Service3", consumingServices[1].ServiceName);
             Assert.AreEqual(new Uri("http://service1.de/"), consumingServices[0].ServiceBaseAddress);
             Assert.AreEqual(new Uri("http://service3.de" ), consumingServices[1].ServiceBaseAddress);
+            Assert.AreEqual("Event1", consumingServices[0].PublishedEventTypes.Single());
+            Assert.AreEqual("Event3", consumingServices[1].PublishedEventTypes.Single());
         }
     }
 }
