@@ -24,7 +24,7 @@ namespace Microwave.Application.UnitTests
 
             discoveryRepo.Setup(m => m.GetPublishedEventTypes(new Uri("http://Service3.de"))).ReturnsAsync(new
                 ConsumingService(new Uri("http://service3.de"), new[] {"Event3", "Event4"}, "Service3"));
-            var discoveryHandler = new DiscoveryHandler(new ServiceBaseAdressCollection
+            var discoveryHandler = new DiscoveryHandler(new ServiceBaseAddressCollection
             {
                 new Uri("http://service1.de"),
                 new Uri("http://service2.de"),
@@ -35,7 +35,7 @@ namespace Microwave.Application.UnitTests
                     new List<ReadModelSubscription>()),
                 discoveryRepo.Object);
 
-            var consumingServices = (await discoveryHandler.GetConsumingServices()).ToList();
+            var consumingServices = await discoveryHandler.GetConsumingServices();
 
             Assert.AreEqual(2, consumingServices.Count);
             Assert.AreEqual("Service1", consumingServices[0].ServiceName);

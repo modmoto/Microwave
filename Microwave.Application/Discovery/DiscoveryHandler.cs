@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -7,31 +6,31 @@ namespace Microwave.Application.Discovery
 {
     public class DiscoveryHandler
     {
-        private readonly ServiceBaseAdressCollection _serviceBaseAdressCollection;
+        private readonly ServiceBaseAddressCollection _serviceBaseAddressCollection;
         private readonly SubscribedEventCollection _subscribedEventCollection;
         private readonly IServiceDiscoveryRepository _discoveryRepository;
 
         public DiscoveryHandler(
-            ServiceBaseAdressCollection serviceBaseAdressCollection,
+            ServiceBaseAddressCollection serviceBaseAddressCollection,
             SubscribedEventCollection subscribedEventCollection,
             IServiceDiscoveryRepository discoveryRepository)
         {
-            _serviceBaseAdressCollection = serviceBaseAdressCollection;
+            _serviceBaseAddressCollection = serviceBaseAddressCollection;
             _subscribedEventCollection = subscribedEventCollection;
             _discoveryRepository = discoveryRepository;
         }
 
-        public async Task<IEnumerable<ConsumingService>> GetConsumingServices()
+        public async Task<ServiceConfig> GetConsumingServices()
         {
             var allServices = new List<ConsumingService>();
-            foreach (var serviceAddress in _serviceBaseAdressCollection)
+            foreach (var serviceAddress in _serviceBaseAddressCollection)
             {
                 var publishedEventTypes = await _discoveryRepository.GetPublishedEventTypes(serviceAddress);
                 allServices.Add(publishedEventTypes);
             }
 
 
-            var relevantServices = new List<ConsumingService>();
+            var relevantServices = new ServiceConfig();;
 
             var handleAsyncEvents = _subscribedEventCollection.IHandleAsyncEvents.ToList();
 
@@ -49,10 +48,5 @@ namespace Microwave.Application.Discovery
 
             return relevantServices;
         }
-    }
-
-    public interface IServiceDiscoveryRepository
-    {
-        Task<ConsumingService> GetPublishedEventTypes(Uri serviceAdress);
     }
 }
