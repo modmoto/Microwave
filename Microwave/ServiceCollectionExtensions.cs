@@ -43,6 +43,7 @@ namespace Microwave
             services.AddMicrowaveMvcExtensions();
 
             services.AddTransient<ReadModelDatabase>();
+            services.AddSingleton(new EventLocation());
 
             services.AddTransient<DomainEventWrapperListDeserializer>();
 

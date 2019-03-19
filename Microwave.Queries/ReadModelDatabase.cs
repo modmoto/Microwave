@@ -16,30 +16,6 @@ namespace Microwave.Queries
         }
     }
 
-    public class ReadModelConfiguration
-    {
-        public ReadModelConfiguration(Uri defaultDomainEventLocation)
-        {
-            DefaultDomainEventLocation = defaultDomainEventLocation;
-        }
-
-        public ReadDatabaseConfig Database { get; set; } = new ReadDatabaseConfig();
-        public Uri DefaultDomainEventLocation { get; }
-        public DomainEventConfig DomainEventConfig { get; set; } = new DomainEventConfig();
-
-        public ReadModelConfig ReadModelConfig { get; set; } = new ReadModelConfig();
-
-        public Uri GetDomainEventLocation(Type domainEventType)
-        {
-            return DomainEventConfig.TryGet(domainEventType) ?? DefaultDomainEventLocation;
-        }
-
-        public Uri GetReadModelLocation(Type readModelType)
-        {
-            return ReadModelConfig.TryGet(readModelType) ?? DefaultDomainEventLocation;
-        }
-    }
-
     [Serializable]
     public class ReadModelConfig : Dictionary<Type, Uri>
     {

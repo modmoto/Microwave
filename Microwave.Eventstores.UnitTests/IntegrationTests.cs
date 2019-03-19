@@ -13,7 +13,7 @@ namespace Microwave.Eventstores.UnitTests
         [TestInitialize]
         public void SetupMongoDb()
         {
-            var readModelConfiguration = new ReadModelConfiguration(new Uri("http://localhost:5000/"))
+            var readModelConfiguration = new ReadModelConfiguration()
             {
                 Database = new ReadDatabaseConfig
                 {

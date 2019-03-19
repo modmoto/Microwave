@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Application;
+using Microwave.Application.Discovery;
 using Microwave.Domain;
 using Microwave.EventStores;
 using Microwave.EventStores.Ports;
@@ -26,6 +27,11 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
             var storeDependencies = collection.AddMicrowaveReadModels(new ReadModelConfiguration(new Uri("http://localhost:5000/")), typeof
             (TestEventHandler).Assembly);
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
+
+            var eventLocation = buildServiceProvider.GetService<EventLocation>();
+            eventLocation.SetDomainEventLocation(new ConsumingService(new Uri("http://localhost:5002/"), new []{ nameof
+                (TestDomainEvent1), nameof(TestDomainEvent2), nameof(TestDomainEvent3) } ));
+
 
             var eventDelegateHandlers = buildServiceProvider.GetServices<IAsyncEventHandler>().ToList();
             Assert.AreEqual(2, eventDelegateHandlers.Count);
@@ -72,7 +78,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
             var typeQueryFeed = queryFeed1.GetType();
             var fieldInfoQueryFeed = typeQueryFeed.GetField("_domainEventClient", BindingFlags.NonPublic | BindingFlags.Instance);
             var valueQueryFeed = (DomainEventClient<QueryEventHandler<TestQuery1, TestDomainEvent1>>) fieldInfoQueryFeed.GetValue(queryFeed1);
-            Assert.AreEqual("http://localhost:5000/Api/DomainEventTypeStreams/TestDomainEvent1", valueQueryFeed.BaseAddress.ToString());
+            Assert.AreEqual("http://localhost:5002/Api/DomainEventTypeStreams/TestDomainEvent1", valueQueryFeed.BaseAddress.ToString());
 
 
             var qHandler1 = buildServiceProvider.GetServices<IQueryEventHandler>().ToList();
@@ -98,7 +104,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
         public void AddDiContainerTest_Twice()
         {
             var collection = (IServiceCollection) new ServiceCollection();
-            var config = new ReadModelConfiguration(new Uri("http://localhost:5000/"));
+            var config = new ReadModelConfiguration(new Uri("http://SomeUtir.de"));
 
             var storeDependencies = collection
                 .AddMicrowaveReadModels(config, typeof(TestEventHandler).Assembly)
@@ -106,6 +112,9 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
 
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
+            var eventLocation = buildServiceProvider.GetService<EventLocation>();
+            eventLocation.SetDomainEventLocation(new ConsumingService(new Uri("http://some-uri.de"), new []{ nameof
+            (TestDomainEvent1) } ));
             var eventFeed1 = buildServiceProvider.GetServices<IEventFeed<AsyncEventHandler<TestDomainEvent1>>>().FirstOrDefault();
             Assert.IsNotNull(eventFeed1);
             var identHandler = buildServiceProvider.GetServices<IReadModelHandler>().ToList();
@@ -148,7 +157,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
         public void AddMicrowaveDependencies_SubscribedEventsCorrect()
         {
             var collection = (IServiceCollection) new ServiceCollection();
-            var storeDependencies = collection.AddMicrowaveReadModels(new ReadModelConfiguration(new Uri("http://localhost:5000/")), typeof
+            var storeDependencies = collection.AddMicrowaveReadModels(new ReadModelConfiguration(), typeof
                 (TestHandle).Assembly);
 
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
@@ -164,7 +173,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
         public void AddMicrowaveDependencies_ReadModelsCorrect()
         {
             var collection = (IServiceCollection) new ServiceCollection();
-            var storeDependencies = collection.AddMicrowaveReadModels(new ReadModelConfiguration(new Uri("http://localhost:5000/")), typeof
+            var storeDependencies = collection.AddMicrowaveReadModels(new ReadModelConfiguration(), typeof
                 (TestReadModelSubscriptions).Assembly);
 
             var buildServiceProvider = storeDependencies.BuildServiceProvider();

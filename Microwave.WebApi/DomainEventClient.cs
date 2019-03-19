@@ -7,18 +7,19 @@ namespace Microwave.WebApi
 {
     public class DomainEventClient<T> : HttpClient
     {
-        public DomainEventClient(ReadModelConfiguration config)
+        public DomainEventClient(ReadModelConfiguration config, EventLocation eventLocation)
         {
             var type = typeof(T);
             if (typeof(IAsyncEventHandler).IsAssignableFrom(type))
             {
                 var eventType = type.GetGenericArguments().First();
-                BaseAddress = new Uri(config.GetDomainEventLocation(eventType) + $"Api/DomainEventTypeStreams/{eventType.Name}");
+                var domainEventLocation = eventLocation.GetDomainEventLocation(eventType);
+                BaseAddress = new Uri(domainEventLocation + $"Api/DomainEventTypeStreams/{eventType.Name}");
             }
             else if (typeof(IQueryEventHandler).IsAssignableFrom(type))
             {
                 var eventType = type.GetGenericArguments().Skip(1).First();
-                BaseAddress = new Uri(config.GetDomainEventLocation(eventType) + $"Api/DomainEventTypeStreams/{eventType.Name}");
+                BaseAddress = new Uri(eventLocation.GetDomainEventLocation(eventType) + $"Api/DomainEventTypeStreams/{eventType.Name}");
             }
             else
             {

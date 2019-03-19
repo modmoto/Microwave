@@ -29,7 +29,6 @@ namespace Microwave.Application.Discovery
                 allServices.Add(publishedEventTypes);
             }
 
-
             var relevantServices = new ServiceConfig();;
 
             var handleAsyncEvents = _subscribedEventCollection.IHandleAsyncEvents.ToList();

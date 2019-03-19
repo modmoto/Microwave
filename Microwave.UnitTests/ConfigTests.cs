@@ -11,7 +11,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
         [TestMethod]
         public void ConfigTest_ReadModel()
         {
-            var confiNew = new ReadModelConfiguration(new Uri("http://localhost:5000/"))
+            var confiNew = new ReadModelConfiguration()
             {
                 ReadModelConfig = new ReadModelConfig()
                 {
@@ -31,7 +31,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
         [TestMethod]
         public void ConfigTest_ReadModelDbConnection()
         {
-            var confiNew = new ReadModelConfiguration(new Uri("http://localhost:5000/"))
+            var confiNew = new ReadModelConfiguration()
             {
                 Database = new ReadDatabaseConfig
                 {
@@ -47,7 +47,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
         [TestMethod]
         public void ConfigTest_ReadModelDbConnection_Default()
         {
-            var confiNew = new ReadModelConfiguration(new Uri("http://localhost:5000/"));
+            var confiNew = new ReadModelConfiguration();
 
             Assert.AreEqual("MicrowaveReadModelDb", confiNew.Database.DatabaseName);
             Assert.AreEqual("mongodb://localhost:27017/", confiNew.Database.ConnectionString);
