@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microwave.Application;
+using Microwave.Application.Discovery;
 using Microwave.Domain;
 using Microwave.EventStores;
 using Microwave.EventStores.Ports;
@@ -24,12 +25,13 @@ namespace Microwave
         public static IApplicationBuilder RunMicrowaveQueries(this IApplicationBuilder builder)
         {
             var serviceScope = builder.ApplicationServices.CreateScope();
-            var eventLocations = serviceScope.ServiceProvider.GetService<EventLocation>();
+            var discoveryHandler = serviceScope.ServiceProvider.GetService<DiscoveryHandler>();
 
             var asyncEventDelegator = serviceScope.ServiceProvider.GetService<AsyncEventDelegator>();
             Task.Run(() =>
             {
                 Task.Delay(10000).Wait();
+                discoveryHandler.DiscoverConsumingServices().Wait();
                 #pragma warning disable 4014
                 asyncEventDelegator.Update();
                 #pragma warning restore 4014
