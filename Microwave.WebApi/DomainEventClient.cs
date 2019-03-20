@@ -13,13 +13,14 @@ namespace Microwave.WebApi
             if (typeof(IAsyncEventHandler).IsAssignableFrom(type))
             {
                 var eventType = type.GetGenericArguments().First();
-                var domainEventLocation = eventLocation.GetDomainEventLocation(eventType);
-                BaseAddress = new Uri(domainEventLocation + $"Api/DomainEventTypeStreams/{eventType.Name}");
+                var domainEventLocation = eventLocation.GetService(eventType);
+                BaseAddress = new Uri(domainEventLocation.ServiceBaseAddress + $"Api/DomainEventTypeStreams/{eventType.Name}");
             }
             else if (typeof(IQueryEventHandler).IsAssignableFrom(type))
             {
                 var eventType = type.GetGenericArguments().Skip(1).First();
-                BaseAddress = new Uri(eventLocation.GetDomainEventLocation(eventType) + $"Api/DomainEventTypeStreams/{eventType.Name}");
+                var consumingService = eventLocation.GetService(eventType);
+                BaseAddress = new Uri(consumingService.ServiceBaseAddress + $"Api/DomainEventTypeStreams/{eventType.Name}");
             }
             else
             {
