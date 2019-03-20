@@ -9,18 +9,26 @@ namespace Microwave.Application.Discovery
         private readonly ServiceBaseAddressCollection _serviceBaseAddressCollection;
         private readonly SubscribedEventCollection _subscribedEventCollection;
         private readonly IServiceDiscoveryRepository _discoveryRepository;
+        private readonly IEventLocation _eventLocation;
 
         public DiscoveryHandler(
             ServiceBaseAddressCollection serviceBaseAddressCollection,
             SubscribedEventCollection subscribedEventCollection,
-            IServiceDiscoveryRepository discoveryRepository)
+            IServiceDiscoveryRepository discoveryRepository,
+            IEventLocation eventLocation)
         {
             _serviceBaseAddressCollection = serviceBaseAddressCollection;
             _subscribedEventCollection = subscribedEventCollection;
             _discoveryRepository = discoveryRepository;
+            _eventLocation = eventLocation;
         }
 
-        public async Task<ServiceConfig> GetConsumingServices()
+        public IEventLocation GetConsumingServices()
+        {
+            return _eventLocation;
+        }
+
+        public async Task DiscoverConsumingServices()
         {
             var allServices = new List<ConsumingService>();
             foreach (var serviceAddress in _serviceBaseAddressCollection)
@@ -29,8 +37,6 @@ namespace Microwave.Application.Discovery
                 allServices.Add(publishedEventTypes);
             }
 
-            var relevantServices = new ServiceConfig();;
-
             var handleAsyncEvents = _subscribedEventCollection.IHandleAsyncEvents.ToList();
 
             foreach (var service in allServices)
@@ -38,14 +44,13 @@ namespace Microwave.Application.Discovery
                 var relevantEvents = service.PublishedEventTypes.Where(ev => handleAsyncEvents.Contains(ev)).ToList();
                 if (relevantEvents.Any())
                 {
-                    relevantServices.Add(new ConsumingService(
+                    _eventLocation.SetDomainEventLocation(new ConsumingService(
                         service.ServiceBaseAddress,
                         relevantEvents,
                         service.ServiceName));
                 }
             }
 
-            return relevantServices;
         }
     }
 }

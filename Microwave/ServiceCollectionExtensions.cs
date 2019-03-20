@@ -24,6 +24,8 @@ namespace Microwave
         public static IApplicationBuilder RunMicrowaveQueries(this IApplicationBuilder builder)
         {
             var serviceScope = builder.ApplicationServices.CreateScope();
+            var eventLocations = serviceScope.ServiceProvider.GetService<EventLocation>();
+
             var asyncEventDelegator = serviceScope.ServiceProvider.GetService<AsyncEventDelegator>();
             Task.Run(() =>
             {

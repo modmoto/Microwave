@@ -32,7 +32,6 @@ namespace Microwave.WebApi
                 var content = await response.Content.ReadAsStringAsync();
                 var eventsByTypeAsync = _objectConverter.Deserialize(content);
                 return eventsByTypeAsync;
-
             }
             catch (HttpRequestException)
             {
