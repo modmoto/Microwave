@@ -3,10 +3,11 @@ using System.Collections.Generic;
 
 namespace Microwave.Application.Discovery
 {
-    public class ConsumingService
+    public class PublisherEventConfig
     {
-        public ConsumingService(Uri serviceBaseAddress, IEnumerable<string> publishedEventTypes, string
-            serviceName = null)
+        public PublisherEventConfig(Uri serviceBaseAddress,
+            IEnumerable<string> publishedEventTypes,
+            string serviceName = null)
         {
             ServiceBaseAddress = serviceBaseAddress;
             ServiceName = serviceName ?? serviceBaseAddress.ToString();
@@ -17,4 +18,5 @@ namespace Microwave.Application.Discovery
         public string ServiceName { get; }
         public IEnumerable<string> PublishedEventTypes { get; }
     }
+
 }

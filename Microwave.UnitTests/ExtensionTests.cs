@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -28,9 +29,17 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
             (TestEventHandler).Assembly);
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
-            var eventLocation = buildServiceProvider.GetService<EventLocation>();
-            eventLocation.SetDomainEventLocation(new ConsumingService(new Uri("http://localhost:5002/"), new []{ nameof
-                (TestDomainEvent1), nameof(TestDomainEvent2), nameof(TestDomainEvent3) } ));
+            var eventLocation = buildServiceProvider.GetService<IEventLocation>();
+            eventLocation.SetDomainEventLocation(new SubscriberEventAndReadmodelConfig(
+                new Uri("http://localhost:5002/"),
+                new []{ nameof (TestDomainEvent1), nameof(TestDomainEvent2), nameof(TestDomainEvent3) },
+                new List<ReadModelSubscription>
+                {
+                    new ReadModelSubscription(nameof(TestReadModel), new TestReadModel().GetsCreatedOn.Name),
+                    new ReadModelSubscription(nameof(TestIdQuery), new TestIdQuery().GetsCreatedOn.Name),
+                    new ReadModelSubscription(nameof(TestIdQuery2), new TestIdQuery2().GetsCreatedOn.Name),
+                    new ReadModelSubscription(nameof(TestIdQuerySingle), new TestIdQuerySingle().GetsCreatedOn.Name),
+                }));
 
 
             var eventDelegateHandlers = buildServiceProvider.GetServices<IAsyncEventHandler>().ToList();
@@ -73,7 +82,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
             var type = eventOverallClients1.GetType();
             var fieldInfo = type.GetField("_domainEventClient", BindingFlags.NonPublic | BindingFlags.Instance);
             var value = (DomainEventClient<ReadModelHandler<TestReadModel>>) fieldInfo.GetValue(eventOverallClients1);
-            Assert.AreEqual("http://localhost:5000/Api/DomainEvents", value.BaseAddress.ToString());
+            Assert.AreEqual("http://localhost:5002/Api/DomainEvents", value.BaseAddress.ToString());
 
             var typeQueryFeed = queryFeed1.GetType();
             var fieldInfoQueryFeed = typeQueryFeed.GetField("_domainEventClient", BindingFlags.NonPublic | BindingFlags.Instance);
@@ -112,9 +121,18 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
 
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
-            var eventLocation = buildServiceProvider.GetService<EventLocation>();
-            eventLocation.SetDomainEventLocation(new ConsumingService(new Uri("http://some-uri.de"), new []{ nameof
-            (TestDomainEvent1) } ));
+            var eventLocation = buildServiceProvider.GetService<IEventLocation>();
+            eventLocation.SetDomainEventLocation(new SubscriberEventAndReadmodelConfig(
+                new Uri("http://some-uri.de"),
+                new []{ nameof (TestDomainEvent1) },
+                new List<ReadModelSubscription>
+                {
+                    new ReadModelSubscription(nameof(TestReadModel), new TestReadModel().GetsCreatedOn.Name),
+                    new ReadModelSubscription(nameof(TestIdQuery), new TestIdQuery().GetsCreatedOn.Name),
+                    new ReadModelSubscription(nameof(TestIdQuery2), new TestIdQuery2().GetsCreatedOn.Name),
+                    new ReadModelSubscription(nameof(TestIdQuerySingle), new TestIdQuerySingle().GetsCreatedOn.Name),
+                }));
+
             var eventFeed1 = buildServiceProvider.GetServices<IEventFeed<AsyncEventHandler<TestDomainEvent1>>>().FirstOrDefault();
             Assert.IsNotNull(eventFeed1);
             var identHandler = buildServiceProvider.GetServices<IReadModelHandler>().ToList();
@@ -181,8 +199,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
             var publishingEventRegistration = buildServiceProvider.GetServices<SubscribedEventCollection>().Single();
             var readModelSubscription = publishingEventRegistration.ReadModelSubcriptions.ToList();
             Assert.AreEqual(nameof(TestDomainEvent_PublishedEvent1), readModelSubscription[0].GetsCreatedOn);
-            Assert.AreEqual(nameof(TestDomainEvent_PublishedEvent2), readModelSubscription[0].SubscribedEvents.ToList()[0]);
-            Assert.AreEqual(nameof(TestDomainEvent_PublishedEvent1), readModelSubscription[0].SubscribedEvents.ToList()[1]);
+            Assert.AreEqual(nameof(TestReadModelSubscriptions), readModelSubscription[0].ReadModelName);
             Assert.AreEqual(1, readModelSubscription.Count);
         }
     }

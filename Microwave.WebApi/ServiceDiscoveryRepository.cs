@@ -11,13 +11,13 @@ namespace Microwave.WebApi
 {
     public class ServiceDiscoveryRepository : IServiceDiscoveryRepository
     {
-        public async Task<ConsumingService> GetPublishedEventTypes(Uri serviceAdress)
+        public async Task<PublisherEventConfig> GetPublishedEventTypes(Uri serviceAdress)
         {
             var client = new HttpClient();
             client.BaseAddress = serviceAdress;
 
             var response = await client.GetAsync("Dicovery/PublishedEvents");
-            if (response.StatusCode != HttpStatusCode.OK) return new ConsumingService(
+            if (response.StatusCode != HttpStatusCode.OK) return new PublisherEventConfig(
                 serviceAdress,
                 new List<string>(),
                 "Service unavailable");
@@ -25,7 +25,8 @@ namespace Microwave.WebApi
             var content = await response.Content.ReadAsStringAsync();
             var eventsByTypeAsync = JsonConvert.DeserializeObject<PublishedEventCollection>(content);
 
-            return new ConsumingService(serviceAdress, eventsByTypeAsync);
+            // TODO hier aufräumen wenn der Service das ezaehlt
+            return new PublisherEventConfig(serviceAdress, eventsByTypeAsync);
         }
     }
 }

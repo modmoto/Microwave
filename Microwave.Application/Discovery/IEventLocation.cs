@@ -4,7 +4,8 @@ namespace Microwave.Application.Discovery
 {
     public interface IEventLocation
     {
-        ConsumingService GetService(Type eventType);
-        void SetDomainEventLocation(ConsumingService service);
+        SubscriberEventAndReadmodelConfig GetServiceForEvent(Type eventType);
+        SubscriberEventAndReadmodelConfig GetServiceForReadModel(Type eventType);
+        void SetDomainEventLocation(SubscriberEventAndReadmodelConfig service);
     }
 }

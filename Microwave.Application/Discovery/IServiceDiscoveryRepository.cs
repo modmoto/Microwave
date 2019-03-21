@@ -5,6 +5,6 @@ namespace Microwave.Application.Discovery
 {
     public interface IServiceDiscoveryRepository
     {
-        Task<ConsumingService> GetPublishedEventTypes(Uri serviceAdress);
+        Task<PublisherEventConfig> GetPublishedEventTypes(Uri serviceAdress);
     }
 }

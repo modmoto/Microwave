@@ -47,7 +47,7 @@ namespace Microwave
             services.AddMicrowaveMvcExtensions();
 
             services.AddTransient<ReadModelDatabase>();
-            services.AddSingleton(new EventLocation());
+            services.AddSingleton<IEventLocation>(new EventLocation());
 
             services.AddTransient<DomainEventWrapperListDeserializer>();
 
@@ -203,15 +203,7 @@ namespace Microwave
                 var createdType = propertyInfo?.GetValue(instance) as Type;
                 if (createdType == null) throw new InvalidReadModelCreationTypeException(readModel.Name);
 
-                var interfaces = readModel.GetInterfaces();
-                var domainEventTypes = interfaces.Where(i =>
-                    i.IsGenericType &&
-                    i.GetGenericArguments().Length == 1
-                    && i.GetGenericTypeDefinition() == typeof(IHandle<>)
-                    && i.GetGenericArguments().First().GetInterfaces().Contains(typeof(IDomainEvent)));
-
-                var readModelSubscription = new ReadModelSubscription(domainEventTypes.Select(e => e
-                .GenericTypeArguments.First().Name), createdType.Name);
+                var readModelSubscription = new ReadModelSubscription(readModel.Name, createdType.Name);
                 subscriptions.Add(readModelSubscription);
             }
 

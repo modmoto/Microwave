@@ -18,13 +18,13 @@ namespace Microwave.Application
 
     public class ReadModelSubscription
     {
-        public ReadModelSubscription(IEnumerable<string> subscribedEvents, string getsCreatedOn)
+        public ReadModelSubscription(string readModelName, string getsCreatedOn)
         {
-            SubscribedEvents = subscribedEvents;
+            ReadModelName = readModelName;
             GetsCreatedOn = getsCreatedOn;
         }
 
-        public IEnumerable<string> SubscribedEvents { get; }
+        public string ReadModelName { get; }
         public string GetsCreatedOn { get; }
     }
 }
