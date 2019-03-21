@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using Microwave.Application;
 using Microwave.Application.Discovery;
 
@@ -26,6 +27,13 @@ namespace Microwave.WebApi
         public ActionResult GetConsumingServices()
         {
             return Ok(_discoveryHandler.GetConsumingServices());
+        }
+
+        [HttpGet("ConsumingServices/Update")]
+        public async Task<ActionResult> UpdateConsumingServices()
+        {
+            await _discoveryHandler.DiscoverConsumingServices();
+            return Ok();
         }
     }
 }
