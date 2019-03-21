@@ -48,6 +48,8 @@ namespace Microwave
 
             services.AddTransient<ReadModelDatabase>();
             services.AddSingleton<IEventLocation>(new EventLocation());
+            services.AddTransient<IServiceDiscoveryRepository, ServiceDiscoveryRepository>();
+            services.AddTransient<DiscoveryHandler>();
 
             services.AddTransient<DomainEventWrapperListDeserializer>();
 
@@ -111,6 +113,8 @@ namespace Microwave
             services.AddMicrowaveMvcExtensions();
 
             services.AddTransient<EventDatabase>();
+            services.AddTransient<IServiceDiscoveryRepository, ServiceDiscoveryRepository>();
+            services.AddTransient<DiscoveryHandler>();
 
             services.AddTransient<DomainEventController>();
             services.AddTransient<DiscoveryController>();
