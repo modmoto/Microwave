@@ -18,13 +18,13 @@ namespace Microwave.Application.UnitTests
         {
             var discoveryRepo = new Mock<IServiceDiscoveryRepository>();
             discoveryRepo.Setup(m => m.GetPublishedEventTypes(new Uri("http://service1.de"))).ReturnsAsync(new
-                PublisherEventConfig(new Uri("http://service1.de"), new[] {"Event1"}, "Service1"));
+                PublisherEventConfig(new Uri("http://service1.de"), new[] {"Event1"}, true, "Service1"));
 
             discoveryRepo.Setup(m => m.GetPublishedEventTypes(new Uri("http://service2.de"))).ReturnsAsync(new
-                PublisherEventConfig(new Uri("http://service2.de"), new[] {"Event2"}, "Service2"));
+                PublisherEventConfig(new Uri("http://service2.de"), new[] {"Event2"}, true, "Service2"));
 
             discoveryRepo.Setup(m => m.GetPublishedEventTypes(new Uri("http://Service3.de"))).ReturnsAsync(new
-                PublisherEventConfig(new Uri("http://service3.de"), new[] {"Event3", "Event4"}, "Service3"));
+                PublisherEventConfig(new Uri("http://service3.de"), new[] {"Event3", "Event4"}, true, "Service3"));
             var discoveryHandler = new DiscoveryHandler(new ServiceBaseAddressCollection
             {
                 new Uri("http://service1.de"),
@@ -56,13 +56,13 @@ namespace Microwave.Application.UnitTests
         {
             var discoveryRepo = new Mock<IServiceDiscoveryRepository>();
             discoveryRepo.Setup(m => m.GetPublishedEventTypes(new Uri("http://service1.de"))).ReturnsAsync(new
-                PublisherEventConfig(new Uri("http://service1.de"), new[] {nameof(TestEv1)}, "Service1"));
+                PublisherEventConfig(new Uri("http://service1.de"), new[] {nameof(TestEv1)}, true, "Service1"));
 
             discoveryRepo.Setup(m => m.GetPublishedEventTypes(new Uri("http://service2.de"))).ReturnsAsync(new
-                PublisherEventConfig(new Uri("http://service2.de"), new[] {nameof(TestEv2)}, "Service2"));
+                PublisherEventConfig(new Uri("http://service2.de"), new[] {nameof(TestEv2)}, true, "Service2"));
 
             discoveryRepo.Setup(m => m.GetPublishedEventTypes(new Uri("http://Service3.de"))).ReturnsAsync(new
-                PublisherEventConfig(new Uri("http://service3.de"), new[] {nameof(TestEv3), "Event4"}, "Service3"));
+                PublisherEventConfig(new Uri("http://service3.de"), new[] {nameof(TestEv3), "Event4"}, true, "Service3"));
             var discoveryHandler = new DiscoveryHandler(new ServiceBaseAddressCollection
             {
                 new Uri("http://service1.de"),

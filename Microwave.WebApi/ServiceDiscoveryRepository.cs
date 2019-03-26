@@ -16,17 +16,19 @@ namespace Microwave.WebApi
             var client = new HttpClient();
             client.BaseAddress = serviceAdress;
 
-            var response = await client.GetAsync("Dicovery/PublishedEvents");
-            if (response.StatusCode != HttpStatusCode.OK) return new PublisherEventConfig(
-                serviceAdress,
-                new List<string>(),
-                "Service unavailable");
+            try
+            {
+                var response = await client.GetAsync("Dicovery/PublishedEvents");
+                var content = await response.Content.ReadAsStringAsync();
+                var eventsByTypeAsync = JsonConvert.DeserializeObject<PublishedEventCollection>(content);
 
-            var content = await response.Content.ReadAsStringAsync();
-            var eventsByTypeAsync = JsonConvert.DeserializeObject<PublishedEventCollection>(content);
+                return new PublisherEventConfig(serviceAdress, eventsByTypeAsync);
+            }
+            catch (HttpRequestException )
+            {
+                return new PublisherEventConfig(serviceAdress, new List<string>(), false);
+            }
 
-            // TODO hier aufräumen wenn der Service das ezaehlt
-            return new PublisherEventConfig(serviceAdress, eventsByTypeAsync);
         }
     }
 }

@@ -215,6 +215,33 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
             var discoveryController = buildServiceProvider.GetServices<DiscoveryController>().Single();
             Assert.IsNotNull(discoveryController);
         }
+
+        [TestMethod]
+        public void AddMicrowaveDependencies_RunStarts_DiscoveryFails()
+        {
+            var collection = (IServiceCollection) new ServiceCollection();
+            var storeDependencies = collection.AddMicrowaveReadModels(new ReadModelConfiguration
+            {
+                Database = new ReadDatabaseConfig
+                {
+                    DatabaseName = "IntegrationTest",
+                },
+                ServiceLocations = new ServiceBaseAddressCollection
+                {
+                    new Uri("http://localhost:5002")
+                }
+            }, typeof
+                (TestReadModelSubscriptions).Assembly);
+
+            var buildServiceProvider = storeDependencies.BuildServiceProvider();
+
+            var discoveryHandler = buildServiceProvider.CreateScope().ServiceProvider.GetService<DiscoveryHandler>();
+
+            discoveryHandler.DiscoverConsumingServices().Wait();
+
+            var discoveryController = buildServiceProvider.GetServices<DiscoveryController>().Single();
+            Assert.IsNotNull(discoveryController);
+        }
     }
 
     public class TestIdQuery : ReadModel, IHandle<TestDomainEvent1>, IHandle<TestDomainEvent2>

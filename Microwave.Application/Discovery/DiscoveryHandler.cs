@@ -55,7 +55,6 @@ namespace Microwave.Application.Discovery
                         service.ServiceName));
                 }
             }
-
         }
     }
 }
