@@ -50,6 +50,7 @@ namespace Microwave
             services.AddSingleton<IEventLocation>(new EventLocation());
             services.AddTransient<IServiceDiscoveryRepository, ServiceDiscoveryRepository>();
             services.AddTransient<DiscoveryHandler>();
+            services.AddSingleton(configuration.ServiceLocations);
 
             services.AddTransient<DomainEventWrapperListDeserializer>();
 
@@ -90,6 +91,7 @@ namespace Microwave
             }
 
             services.AddSingleton(new SubscribedEventCollection(iHandleAsyncEvents, readModelSubscriptions));
+            AddPublishedEventCollection(services, readModelAndDomainEventAssemblies);
 
 
             if (!BsonClassMap.IsClassMapRegistered(typeof(GuidIdentity))) BsonClassMap.RegisterClassMap<GuidIdentity>();
@@ -135,6 +137,14 @@ namespace Microwave
                 BsonMapRegistrationHelpers.AddBsonMapsForMicrowave(assembly);
             }
 
+            if (!BsonClassMap.IsClassMapRegistered(typeof(GuidIdentity))) BsonClassMap.RegisterClassMap<GuidIdentity>();
+            if (!BsonClassMap.IsClassMapRegistered(typeof(StringIdentity))) BsonClassMap.RegisterClassMap<StringIdentity>();
+
+            return services;
+        }
+
+        private static void AddPublishedEventCollection(IServiceCollection services, Assembly[] domainEventAssemblies)
+        {
             var publishedEventCollection = new PublishedEventCollection();
             foreach (var assembly in domainEventAssemblies)
             {
@@ -144,11 +154,6 @@ namespace Microwave
             }
 
             services.AddSingleton(publishedEventCollection);
-
-            if (!BsonClassMap.IsClassMapRegistered(typeof(GuidIdentity))) BsonClassMap.RegisterClassMap<GuidIdentity>();
-            if (!BsonClassMap.IsClassMapRegistered(typeof(StringIdentity))) BsonClassMap.RegisterClassMap<StringIdentity>();
-
-            return services;
         }
 
         private static IEnumerable<string> GetEventsForPublish(Assembly assembly)

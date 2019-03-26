@@ -9,26 +9,6 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
     public class ConfigTests
     {
         [TestMethod]
-        public void ConfigTest_ReadModel()
-        {
-            var confiNew = new ReadModelConfiguration()
-            {
-                ReadModelConfig = new ReadModelConfig()
-                {
-                    { typeof(TestReadModel), new Uri("http://localhost:6000/Api/DomainEvents")}
-                }
-            };
-            Assert.AreEqual("http://localhost:6000/Api/DomainEvents", confiNew.GetReadModelLocation(typeof(TestReadModel)).ToString());
-        }
-
-        [TestMethod]
-        public void ConfigTest_ReadModel_Default()
-        {
-            var confiNew = new ReadModelConfiguration(new Uri("http://localhost:5000/"));
-            Assert.AreEqual("http://localhost:5000/", confiNew.GetReadModelLocation(typeof(TestReadModel)).ToString());
-        }
-
-        [TestMethod]
         public void ConfigTest_ReadModelDbConnection()
         {
             var confiNew = new ReadModelConfiguration()

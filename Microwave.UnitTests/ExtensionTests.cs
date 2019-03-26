@@ -25,7 +25,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
         {
             var collection = (IServiceCollection) new ServiceCollection();
 
-            var storeDependencies = collection.AddMicrowaveReadModels(new ReadModelConfiguration(new Uri("http://localhost:5000/")), typeof
+            var storeDependencies = collection.AddMicrowaveReadModels(new ReadModelConfiguration(), typeof
             (TestEventHandler).Assembly);
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
@@ -113,7 +113,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
         public void AddDiContainerTest_Twice()
         {
             var collection = (IServiceCollection) new ServiceCollection();
-            var config = new ReadModelConfiguration(new Uri("http://SomeUtir.de"));
+            var config = new ReadModelConfiguration();
 
             var storeDependencies = collection
                 .AddMicrowaveReadModels(config, typeof(TestEventHandler).Assembly)
@@ -201,6 +201,19 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
             Assert.AreEqual(nameof(TestDomainEvent_PublishedEvent1), readModelSubscription[0].GetsCreatedOn);
             Assert.AreEqual(nameof(TestReadModelSubscriptions), readModelSubscription[0].ReadModelName);
             Assert.AreEqual(1, readModelSubscription.Count);
+        }
+
+        [TestMethod]
+        public void AddMicrowaveDependencies_DepedencyControllerIsResolved()
+        {
+            var collection = (IServiceCollection) new ServiceCollection();
+            var storeDependencies = collection.AddMicrowaveReadModels(new ReadModelConfiguration(), typeof
+                (TestReadModelSubscriptions).Assembly);
+
+            var buildServiceProvider = storeDependencies.BuildServiceProvider();
+
+            var discoveryController = buildServiceProvider.GetServices<DiscoveryController>().Single();
+            Assert.IsNotNull(discoveryController);
         }
     }
 

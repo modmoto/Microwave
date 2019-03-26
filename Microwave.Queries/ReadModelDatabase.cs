@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Runtime.Serialization;
-using MongoDB.Driver;
+﻿using MongoDB.Driver;
 
 namespace Microwave.Queries
 {
@@ -13,40 +10,6 @@ namespace Microwave.Queries
             var dbConfig = config.Database;
             var client = new MongoClient(dbConfig.ConnectionString);
             Database = client.GetDatabase(dbConfig.DatabaseName);
-        }
-    }
-
-    [Serializable]
-    public class ReadModelConfig : Dictionary<Type, Uri>
-    {
-        public ReadModelConfig()
-        {
-        }
-
-        protected ReadModelConfig(SerializationInfo info, StreamingContext context) : base(info, context)
-        {
-        }
-
-        public Uri TryGet(Type type)
-        {
-            return ContainsKey(type) ? this[type] : null;
-        }
-    }
-
-    [Serializable]
-    public class DomainEventConfig : Dictionary<Type, Uri>
-    {
-        public DomainEventConfig()
-        {
-        }
-
-        protected DomainEventConfig(SerializationInfo info, StreamingContext context) : base(info, context)
-        {
-        }
-
-        public Uri TryGet(Type type)
-        {
-            return ContainsKey(type) ? this[type] : null;
         }
     }
 
