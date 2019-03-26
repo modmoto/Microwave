@@ -132,6 +132,8 @@ namespace Microwave
 
             services.AddSingleton(configuration);
 
+            AddPublishedEventCollection(services, domainEventAssemblies);
+
             foreach (var assembly in domainEventAssemblies)
             {
                 BsonMapRegistrationHelpers.AddBsonMapsForMicrowave(assembly);
