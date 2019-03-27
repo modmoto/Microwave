@@ -27,17 +27,21 @@ namespace Microwave.WebApi
             var isoString = since.ToString("o");
             try
             {
-                var response = await _domainEventClient.GetAsync($"?timeStamp={isoString}");
-                if (response.StatusCode != HttpStatusCode.OK) return new List<DomainEventWrapper>();
-                var content = await response.Content.ReadAsStringAsync();
-                var eventsByTypeAsync = _objectConverter.Deserialize(content);
-                return eventsByTypeAsync;
+                var init = _domainEventClient.Init();
+                if (init) {
+                    var response = await _domainEventClient.GetAsync($"?timeStamp={isoString}");
+                    if (response.StatusCode != HttpStatusCode.OK) return new List<DomainEventWrapper>();
+                    var content = await response.Content.ReadAsStringAsync();
+                    var eventsByTypeAsync = _objectConverter.Deserialize(content);
+                    return eventsByTypeAsync;
+                }
             }
             catch (HttpRequestException)
             {
-                Console.WriteLine($"Could not reach service for: {typeof(T).Name}");
-                return new List<DomainEventWrapper>();
             }
+
+            Console.WriteLine($"Could not reach service for: {typeof(T).Name}");
+            return new List<DomainEventWrapper>();
         }
     }
 }
