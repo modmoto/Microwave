@@ -117,6 +117,7 @@ namespace Microwave
             services.AddTransient<EventDatabase>();
             services.AddTransient<IServiceDiscoveryRepository, ServiceDiscoveryRepository>();
             services.AddTransient<DiscoveryHandler>();
+            services.AddSingleton(new ServiceBaseAddressCollection());
 
             services.AddTransient<DomainEventController>();
             services.AddTransient<DiscoveryController>();
