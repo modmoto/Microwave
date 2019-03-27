@@ -27,11 +27,11 @@ namespace Microwave
             var serviceScope = builder.ApplicationServices.CreateScope();
             var discoveryHandler = serviceScope.ServiceProvider.GetService<DiscoveryHandler>();
 
-            var asyncEventDelegator = serviceScope.ServiceProvider.GetService<AsyncEventDelegator>();
             Task.Run(() =>
             {
                 Task.Delay(10000).Wait();
                 discoveryHandler.DiscoverConsumingServices().Wait();
+                var asyncEventDelegator = serviceScope.ServiceProvider.GetService<AsyncEventDelegator>();
                 #pragma warning disable 4014
                 asyncEventDelegator.Update();
                 #pragma warning restore 4014
