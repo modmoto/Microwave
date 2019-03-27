@@ -27,8 +27,7 @@ namespace Microwave.WebApi
             var isoString = since.ToString("o");
             try
             {
-                var init = _domainEventClient.Init();
-                if (init) {
+                if (_domainEventClient.HasTheValidLocation) {
                     var response = await _domainEventClient.GetAsync($"?timeStamp={isoString}");
                     if (response.StatusCode != HttpStatusCode.OK) return new List<DomainEventWrapper>();
                     var content = await response.Content.ReadAsStringAsync();
