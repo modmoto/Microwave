@@ -11,14 +11,19 @@ namespace Microwave.WebApi
 {
     public class ServiceDiscoveryRepository : IServiceDiscoveryRepository
     {
+        private HttpClient _client;
+
+        public ServiceDiscoveryRepository(DiscoveryClient client)
+        {
+            _client = client;
+        }
         public async Task<PublisherEventConfig> GetPublishedEventTypes(Uri serviceAdress)
         {
-            var client = new HttpClient();
-            client.BaseAddress = serviceAdress;
+            _client.BaseAddress = serviceAdress;
 
             try
             {
-                var response = await client.GetAsync("Dicovery/PublishedEvents");
+                var response = await _client.GetAsync("Dicovery/PublishedEvents");
                 var content = await response.Content.ReadAsStringAsync();
                 var eventsByTypeAsync = JsonConvert.DeserializeObject<List<string>>(content);
 
@@ -29,6 +34,13 @@ namespace Microwave.WebApi
                 return new PublisherEventConfig(serviceAdress, new List<string>(), false);
             }
 
+        }
+    }
+
+    public class  DiscoveryClient : HttpClient
+    {
+        public DiscoveryClient(HttpMessageHandler handler) : base(handler)
+        {
         }
     }
 }
