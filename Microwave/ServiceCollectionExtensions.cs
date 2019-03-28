@@ -50,6 +50,7 @@ namespace Microwave
             services.AddSingleton<IEventLocation>(new EventLocation());
             services.AddTransient<IServiceDiscoveryRepository, ServiceDiscoveryRepository>();
             services.AddTransient<DiscoveryHandler>();
+            services.AddTransient<DiscoveryClient>();
             services.AddSingleton(configuration.ServiceLocations);
 
             services.AddTransient<DomainEventWrapperListDeserializer>();

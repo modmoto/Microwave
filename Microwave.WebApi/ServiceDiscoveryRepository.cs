@@ -28,7 +28,7 @@ namespace Microwave.WebApi
 
                 return new PublisherEventConfig(serviceAdress, eventsByTypeAsync);
             }
-            catch (HttpRequestException )
+            catch (HttpRequestException)
             {
                 return new PublisherEventConfig(serviceAdress, new List<string>(), false);
             }
@@ -38,6 +38,11 @@ namespace Microwave.WebApi
 
     public class  DiscoveryClient : HttpClient
     {
+        // For DI
+        public DiscoveryClient()
+        {
+        }
+
         public DiscoveryClient(HttpMessageHandler handler) : base(handler)
         {
         }
