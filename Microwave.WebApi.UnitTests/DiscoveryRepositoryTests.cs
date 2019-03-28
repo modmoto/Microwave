@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using RichardSzalay.MockHttp;
@@ -14,7 +15,7 @@ namespace Microwave.WebApi.UnitTests
         {
             var mockHttp = new MockHttpMessageHandler();
             mockHttp.When("http://localost:5000/Dicovery/PublishedEvents")
-                .Respond("application/json", "[ \"event1\", \"event2]");
+                .Respond("application/json", "[ \"event1\", \"event2\"]");
 
             var client = new DiscoveryClient(mockHttp);
 
@@ -24,7 +25,10 @@ namespace Microwave.WebApi.UnitTests
 
             var publisherEventConfig = publishedEventTypes.Result;
             Assert.AreEqual(serviceAdress, publisherEventConfig.ServiceBaseAddress);
-            Assert.AreEqual(new List<string> { "event1", "event2"}, publisherEventConfig.PublishedEventTypes);
+            var eventTypes = publisherEventConfig.PublishedEventTypes.ToList();
+            Assert.AreEqual(2, eventTypes.Count);
+            Assert.AreEqual("event1", eventTypes[0]);
+            Assert.AreEqual("event2", eventTypes[1]);
         }
     }
 }
