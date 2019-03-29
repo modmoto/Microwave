@@ -1,4 +1,5 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microwave.Application;
 using Microwave.EventStores;
 using Microwave.Queries;
 
@@ -12,17 +13,17 @@ namespace Microwave.Eventstores.UnitTests
         [TestInitialize]
         public void SetupMongoDb()
         {
-            var readModelConfiguration = new ReadModelConfiguration()
+            var readModelConfiguration = new MicrowaveConfiguration()
             {
-                Database = new ReadDatabaseConfig
+                ReadDatabase = new ReadDatabaseConfig
                 {
                     DatabaseName = "IntegrationTest"
                 }
             };
 
-            var writeModelConfiguration = new WriteModelConfiguration()
+            var writeModelConfiguration = new MicrowaveConfiguration()
             {
-                Database = new WriteDatabaseConfig
+                WriteDatabase = new WriteDatabaseConfig
                 {
                     DatabaseName = "IntegrationTest"
                 }

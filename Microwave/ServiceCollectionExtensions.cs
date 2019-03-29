@@ -65,13 +65,12 @@ namespace Microwave
         public static IServiceCollection AddMicrowave(this IServiceCollection services,
             params Assembly[] domainEventAssemblies)
         {
-            services.AddMicrowave(new WriteModelConfiguration(), new ReadModelConfiguration(), domainEventAssemblies);
+            services.AddMicrowave(new MicrowaveConfiguration(), domainEventAssemblies);
             return services;
         }
 
         public static IServiceCollection AddMicrowave(this IServiceCollection services,
-            WriteModelConfiguration writeModelConfiguration,
-            ReadModelConfiguration readModelconfiguration,
+            MicrowaveConfiguration microwaveConfiguration,
             params Assembly[] assemblies)
         {
             services.AddMicrowaveMvcExtensions();
@@ -80,7 +79,6 @@ namespace Microwave
             services.AddTransient<IServiceDiscoveryRepository, ServiceDiscoveryRepository>();
             services.AddTransient<DiscoveryHandler>();
             services.AddSingleton(new ServiceBaseAddressCollection());
-            services.AddSingleton(writeModelConfiguration);
 
             services.AddTransient<DomainEventController>();
             services.AddTransient<DiscoveryController>();
@@ -102,8 +100,8 @@ namespace Microwave
             services.AddTransient<ReadModelDatabase>();
             services.AddTransient<AsyncEventDelegator>();
             services.AddTransient<IDomainEventFactory, DomainEventFactory>();
-            services.AddSingleton(readModelconfiguration);
-            services.AddSingleton(readModelconfiguration?.ServiceLocations ?? new ServiceBaseAddressCollection());
+            services.AddSingleton(microwaveConfiguration);
+            services.AddSingleton(microwaveConfiguration?.ServiceLocations ?? new ServiceBaseAddressCollection());
 
             AddEventAndReadModelSubscriptions(services, assemblies);
             AddPublishedEventCollection(services, assemblies);

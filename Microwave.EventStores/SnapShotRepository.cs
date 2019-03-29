@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using Microwave.Application;
 using Microwave.Domain;
 using Microwave.EventStores.Ports;
 using MongoDB.Driver;

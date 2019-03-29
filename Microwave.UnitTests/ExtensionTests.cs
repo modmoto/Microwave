@@ -222,9 +222,9 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
         public void AddMicrowaveDependencies_RunStarts_DiscoveryFails()
         {
             var collection = (IServiceCollection) new ServiceCollection();
-            var storeDependencies = collection.AddMicrowave(new WriteModelConfiguration(), new ReadModelConfiguration
+            var storeDependencies = collection.AddMicrowave(new MicrowaveConfiguration
             {
-                Database = new ReadDatabaseConfig
+                ReadDatabase = new ReadDatabaseConfig
                 {
                     DatabaseName = "IntegrationTest",
                 },

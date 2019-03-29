@@ -1,5 +1,6 @@
 using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microwave.Application;
 using Microwave.Domain;
 using Microwave.Queries;
 
@@ -11,26 +12,26 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
         [TestMethod]
         public void ConfigTest_ReadModelDbConnection()
         {
-            var confiNew = new ReadModelConfiguration()
+            var confiNew = new MicrowaveConfiguration
             {
-                Database = new ReadDatabaseConfig
+                ReadDatabase = new ReadDatabaseConfig
                 {
                     DatabaseName = "OwnDbName",
                     ConnectionString = "Connection"
                 }
             };
 
-            Assert.AreEqual("OwnDbName", confiNew.Database.DatabaseName);
-            Assert.AreEqual("Connection", confiNew.Database.ConnectionString);
+            Assert.AreEqual("OwnDbName", confiNew.ReadDatabase.DatabaseName);
+            Assert.AreEqual("Connection", confiNew.ReadDatabase.ConnectionString);
         }
 
         [TestMethod]
         public void ConfigTest_ReadModelDbConnection_Default()
         {
-            var confiNew = new ReadModelConfiguration();
+            var confiNew = new MicrowaveConfiguration();
 
-            Assert.AreEqual("MicrowaveReadModelDb", confiNew.Database.DatabaseName);
-            Assert.AreEqual("mongodb://localhost:27017/", confiNew.Database.ConnectionString);
+            Assert.AreEqual("MicrowaveReadModelDb", confiNew.ReadDatabase.DatabaseName);
+            Assert.AreEqual("mongodb://localhost:27017/", confiNew.ReadDatabase.ConnectionString);
         }
     }
 
