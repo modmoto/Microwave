@@ -169,6 +169,9 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
             Assert.AreEqual(nameof(TestDomainEvent_PublishedEvent1), publishingEventRegistration[0]);
             Assert.AreEqual(nameof(TestDomainEvent_PublishedEvent3), publishingEventRegistration[1]);
             Assert.AreEqual(2, publishingEventRegistration.Count);
+
+            var discoveryController = buildServiceProvider.GetServices<DiscoveryController>().Single();
+            Assert.IsNotNull(discoveryController);
         }
 
         [TestMethod]
@@ -185,6 +188,9 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
             Assert.AreEqual(nameof(TestDomainEvent_PublishedEvent1), ihandleAsyncEvents[0]);
             Assert.AreEqual(nameof(TestDomainEvent_PublishedEvent2), ihandleAsyncEvents[1]);
             Assert.AreEqual(2, ihandleAsyncEvents.Count);
+
+            var discoveryController = buildServiceProvider.GetServices<DiscoveryController>().Single();
+            Assert.IsNotNull(discoveryController);
         }
 
         [TestMethod]
