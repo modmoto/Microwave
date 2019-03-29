@@ -13,25 +13,21 @@ namespace Microwave.Eventstores.UnitTests
         [TestInitialize]
         public void SetupMongoDb()
         {
-            var readModelConfiguration = new MicrowaveConfiguration()
+            var writeModelConfiguration = new MicrowaveConfiguration()
             {
+                WriteDatabase = new WriteDatabaseConfig
+                {
+                    DatabaseName = "IntegrationTest"
+                },
                 ReadDatabase = new ReadDatabaseConfig
                 {
                     DatabaseName = "IntegrationTest"
                 }
             };
 
-            var writeModelConfiguration = new MicrowaveConfiguration()
-            {
-                WriteDatabase = new WriteDatabaseConfig
-                {
-                    DatabaseName = "IntegrationTest"
-                }
-            };
-
             EventDatabase = new EventDatabase(writeModelConfiguration);
+            ReadModelDatabase = new ReadModelDatabase(writeModelConfiguration);
             EventDatabase.Database.Client.DropDatabase("IntegrationTest");
-            ReadModelDatabase = new ReadModelDatabase(readModelConfiguration);
         }
     }
 }

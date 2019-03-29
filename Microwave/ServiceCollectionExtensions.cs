@@ -75,7 +75,6 @@ namespace Microwave
         {
             services.AddMicrowaveMvcExtensions();
 
-            services.AddTransient<EventDatabase>();
             services.AddTransient<IServiceDiscoveryRepository, ServiceDiscoveryRepository>();
             services.AddTransient<DiscoveryHandler>();
             services.AddSingleton(new ServiceBaseAddressCollection());
@@ -93,15 +92,18 @@ namespace Microwave
             services.AddTransient<IEventRepository, EventRepository>();
             services.AddSingleton<IVersionCache, VersionCache>();
             services.AddTransient<ISnapShotRepository, SnapShotRepository>();
+            services.AddTransient<EventDatabase>();
 
             services.AddTransient<JSonHack>();
             services.AddTransient<IVersionRepository, VersionRepository>();
             services.AddTransient<IReadModelRepository, ReadModelRepository>();
-            services.AddTransient<ReadModelDatabase>();
             services.AddTransient<AsyncEventDelegator>();
+            services.AddTransient<ReadModelDatabase>();
             services.AddTransient<IDomainEventFactory, DomainEventFactory>();
             services.AddSingleton(microwaveConfiguration);
-            services.AddSingleton(microwaveConfiguration?.ServiceLocations ?? new ServiceBaseAddressCollection());
+            services.AddSingleton(microwaveConfiguration.ServiceLocations);
+            services.AddSingleton(microwaveConfiguration.ReadDatabase);
+            services.AddSingleton(microwaveConfiguration.WriteDatabase);
 
             AddEventAndReadModelSubscriptions(services, assemblies);
             AddPublishedEventCollection(services, assemblies);
