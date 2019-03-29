@@ -25,7 +25,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
         {
             var collection = (IServiceCollection) new ServiceCollection();
 
-            var storeDependencies = collection.AddMicrowaveReadModels(new ReadModelConfiguration(), typeof
+            var storeDependencies = collection.AddMicrowave(typeof
             (TestEventHandler).Assembly);
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
@@ -113,11 +113,10 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
         public void AddDiContainerTest_Twice()
         {
             var collection = (IServiceCollection) new ServiceCollection();
-            var config = new ReadModelConfiguration();
 
             var storeDependencies = collection
-                .AddMicrowaveReadModels(config, typeof(TestEventHandler).Assembly)
-                .AddMicrowaveReadModels(config, typeof(TestEventHandler).Assembly);
+                .AddMicrowave(typeof(TestEventHandler).Assembly)
+                .AddMicrowave(typeof(TestEventHandler).Assembly);
 
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
@@ -144,7 +143,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
         {
             var collection = (IServiceCollection) new ServiceCollection();
 
-            var storeDependencies = collection.AddMicrowave(new WriteModelConfiguration(), typeof(TestDomainEvent1).Assembly);
+            var storeDependencies = collection.AddMicrowave(typeof(TestDomainEvent1).Assembly);
 
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
@@ -161,7 +160,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
         {
             var collection = (IServiceCollection) new ServiceCollection();
 
-            var storeDependencies = collection.AddMicrowave(new WriteModelConfiguration(), typeof(TestDomainEvent_PublishedEvent1).Assembly);
+            var storeDependencies = collection.AddMicrowave(typeof(TestDomainEvent_PublishedEvent1).Assembly);
 
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
@@ -178,8 +177,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
         public void AddMicrowaveDependencies_SubscribedEventsCorrect()
         {
             var collection = (IServiceCollection) new ServiceCollection();
-            var storeDependencies = collection.AddMicrowaveReadModels(new ReadModelConfiguration(), typeof
-                (TestHandle).Assembly);
+            var storeDependencies = collection.AddMicrowave(typeof(TestHandle).Assembly);
 
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
@@ -197,8 +195,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
         public void AddMicrowaveDependencies_ReadModelsCorrect()
         {
             var collection = (IServiceCollection) new ServiceCollection();
-            var storeDependencies = collection.AddMicrowaveReadModels(new ReadModelConfiguration(), typeof
-                (TestReadModelSubscriptions).Assembly);
+            var storeDependencies = collection.AddMicrowave(typeof(TestReadModelSubscriptions).Assembly);
 
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
@@ -213,8 +210,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
         public void AddMicrowaveDependencies_DepedencyControllerIsResolved()
         {
             var collection = (IServiceCollection) new ServiceCollection();
-            var storeDependencies = collection.AddMicrowaveReadModels(new ReadModelConfiguration(), typeof
-                (TestReadModelSubscriptions).Assembly);
+            var storeDependencies = collection.AddMicrowave(typeof(TestReadModelSubscriptions).Assembly);
 
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
@@ -226,7 +222,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
         public void AddMicrowaveDependencies_RunStarts_DiscoveryFails()
         {
             var collection = (IServiceCollection) new ServiceCollection();
-            var storeDependencies = collection.AddMicrowaveReadModels(new ReadModelConfiguration
+            var storeDependencies = collection.AddMicrowave(new WriteModelConfiguration(), new ReadModelConfiguration
             {
                 Database = new ReadDatabaseConfig
                 {

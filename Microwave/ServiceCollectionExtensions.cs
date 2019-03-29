@@ -40,52 +40,6 @@ namespace Microwave
             return builder;
         }
 
-        public static IServiceCollection AddMicrowaveReadModels(this IServiceCollection services,
-            ReadModelConfiguration configuration,
-            params Assembly[] readModelAndDomainEventAssemblies)
-        {
-            services.AddMicrowaveMvcExtensions();
-
-            services.AddTransient<ReadModelDatabase>();
-            services.AddSingleton<IEventLocation>(new EventLocation());
-            services.AddTransient<IServiceDiscoveryRepository, ServiceDiscoveryRepository>();
-            services.AddTransient<DiscoveryHandler>();
-            services.AddTransient<DiscoveryClient>();
-            services.AddSingleton(configuration.ServiceLocations);
-
-            services.AddTransient<DomainEventWrapperListDeserializer>();
-
-            services.AddTransient<MonitoringAsyncHandlingController>();
-            services.AddTransient<DiscoveryController>();
-
-            services.AddTransient<JSonHack>();
-            services.AddTransient<IVersionRepository, VersionRepository>();
-            services.AddTransient<IReadModelRepository, ReadModelRepository>();
-            services.AddTransient<AsyncEventDelegator>();
-            services.AddTransient<IDomainEventFactory, DomainEventFactory>();
-            services.AddSingleton(configuration);
-
-            foreach (var assembly in readModelAndDomainEventAssemblies)
-            {
-                services.AddQuerryHandling(assembly);
-                services.AddAsyncEventHandling(assembly);
-                services.AddReadmodelHandling(assembly);
-
-                services.AddDomainEventRegistration(assembly);
-                BsonMapRegistrationHelpers.AddBsonMapsForMicrowave(assembly);
-            }
-
-            AddEventAndReadModelSubscriptions(services, readModelAndDomainEventAssemblies);
-
-            AddPublishedEventCollection(services, readModelAndDomainEventAssemblies);
-
-
-            if (!BsonClassMap.IsClassMapRegistered(typeof(GuidIdentity))) BsonClassMap.RegisterClassMap<GuidIdentity>();
-            if (!BsonClassMap.IsClassMapRegistered(typeof(StringIdentity))) BsonClassMap.RegisterClassMap<StringIdentity>();
-
-            return services;
-        }
-
         private static void AddEventAndReadModelSubscriptions(IServiceCollection services,
             Assembly[] readModelAndDomainEventAssemblies)
         {
@@ -111,14 +65,14 @@ namespace Microwave
         public static IServiceCollection AddMicrowave(this IServiceCollection services,
             params Assembly[] domainEventAssemblies)
         {
-            var configuration = new WriteModelConfiguration();
-            services.AddMicrowave(configuration, domainEventAssemblies);
+            services.AddMicrowave(new WriteModelConfiguration(), new ReadModelConfiguration(), domainEventAssemblies);
             return services;
         }
 
         public static IServiceCollection AddMicrowave(this IServiceCollection services,
-            WriteModelConfiguration configuration,
-            params Assembly[] domainEventAssemblies)
+            WriteModelConfiguration writeModelConfiguration,
+            ReadModelConfiguration readModelconfiguration,
+            params Assembly[] assemblies)
         {
             services.AddMicrowaveMvcExtensions();
 
@@ -126,6 +80,7 @@ namespace Microwave
             services.AddTransient<IServiceDiscoveryRepository, ServiceDiscoveryRepository>();
             services.AddTransient<DiscoveryHandler>();
             services.AddSingleton(new ServiceBaseAddressCollection());
+            services.AddSingleton(writeModelConfiguration);
 
             services.AddTransient<DomainEventController>();
             services.AddTransient<DiscoveryController>();
@@ -141,13 +96,30 @@ namespace Microwave
             services.AddSingleton<IVersionCache, VersionCache>();
             services.AddTransient<ISnapShotRepository, SnapShotRepository>();
 
-            services.AddSingleton(configuration);
+            services.AddTransient<JSonHack>();
+            services.AddTransient<IVersionRepository, VersionRepository>();
+            services.AddTransient<IReadModelRepository, ReadModelRepository>();
+            services.AddTransient<ReadModelDatabase>();
+            services.AddTransient<AsyncEventDelegator>();
+            services.AddTransient<IDomainEventFactory, DomainEventFactory>();
+            services.AddSingleton(readModelconfiguration);
+            services.AddSingleton(readModelconfiguration?.ServiceLocations ?? new ServiceBaseAddressCollection());
 
-            AddEventAndReadModelSubscriptions(services, domainEventAssemblies);
-            AddPublishedEventCollection(services, domainEventAssemblies);
+            AddEventAndReadModelSubscriptions(services, assemblies);
+            AddPublishedEventCollection(services, assemblies);
 
-            foreach (var assembly in domainEventAssemblies)
+            foreach (var assembly in assemblies)
             {
+                BsonMapRegistrationHelpers.AddBsonMapsForMicrowave(assembly);
+            }
+
+            foreach (var assembly in assemblies)
+            {
+                services.AddQuerryHandling(assembly);
+                services.AddAsyncEventHandling(assembly);
+                services.AddReadmodelHandling(assembly);
+
+                services.AddDomainEventRegistration(assembly);
                 BsonMapRegistrationHelpers.AddBsonMapsForMicrowave(assembly);
             }
 
