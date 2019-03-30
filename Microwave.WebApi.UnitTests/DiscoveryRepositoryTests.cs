@@ -11,7 +11,7 @@ namespace Microwave.WebApi.UnitTests
     public class DiscoveryRepositoryTests
     {
         [TestMethod]
-        public async Task GetPublishedEvents()
+        public void GetPublishedEvents()
         {
             var mockHttp = new MockHttpMessageHandler();
             mockHttp.When("http://localhost:5000/Dicovery/PublishedEvents")
