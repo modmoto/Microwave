@@ -6,7 +6,7 @@ namespace Microwave.Application.Discovery
     public interface IEventLocation
     {
         SubscriberEventAndReadmodelConfig GetServiceForEvent(Type eventType);
-        SubscriberEventAndReadmodelConfig GetServiceForReadModel(Type eventType);
+        SubscriberEventAndReadmodelConfig GetServiceForReadModel(Type readModel);
         void SetDomainEventLocation(SubscriberEventAndReadmodelConfig service);
         IEnumerable<SubscriberEventAndReadmodelConfig> Services { get; }
     }

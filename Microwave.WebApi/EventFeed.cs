@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -37,9 +38,11 @@ namespace Microwave.WebApi
             }
             catch (HttpRequestException)
             {
+                var type = typeof(T);
+                var readModel = type.GenericTypeArguments.Single();
+                Console.WriteLine($"Could not reach service for: {readModel.Name}");
             }
 
-            Console.WriteLine($"Could not reach service for: {typeof(T).Name}");
             return new List<DomainEventWrapper>();
         }
     }

@@ -10,15 +10,15 @@ namespace Microwave.WebApi
 {
     public class ServiceDiscoveryRepository : IServiceDiscoveryRepository
     {
-        private IDiscoveryClientFactory _client;
+        private readonly IDiscoveryClientFactory _factory;
 
-        public ServiceDiscoveryRepository(IDiscoveryClientFactory client)
+        public ServiceDiscoveryRepository(IDiscoveryClientFactory factory)
         {
-            _client = client;
+            _factory = factory;
         }
         public async Task<PublisherEventConfig> GetPublishedEventTypes(Uri serviceAdress)
         {
-            var client = _client.GetClient(serviceAdress);
+            var client = _factory.GetClient(serviceAdress);
             try
             {
                 var response = await client.GetAsync("Dicovery/PublishedEvents");
