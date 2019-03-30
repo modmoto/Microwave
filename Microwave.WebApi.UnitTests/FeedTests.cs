@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Domain;
@@ -34,6 +35,24 @@ namespace Microwave.WebApi.UnitTests
             Assert.AreEqual(1, domainEventWrappers.Count);
             Assert.AreEqual(new Guid("5a8b63c8-0f7f-4de7-a9e5-b6b377aa2180").ToString(), domainEventWrappers[0].DomainEvent
                 .EntityId.Id);
+        }
+
+        [TestMethod]
+        public async Task ReadModelFeed_Exception()
+        {
+            var mockHttp = new MockHttpMessageHandler();
+            mockHttp.When("http://localost:5000/api/DomainEvents/?timeStamp=0001-01-01T00:00:00.0000000+00:00")
+                .Throw(new HttpRequestException());
+            var domainOverallEventClient = new DomainEventClient<ReadModelHandler<TestReadModel>>(mockHttp);
+            domainOverallEventClient.BaseAddress = new Uri("http://localost:5000/api/DomainEvents/");
+
+            var domainEventFactory = new DomainEventFactory(_eventTypeRegistration);
+            var domainEventWrapperListDeserializer = new DomainEventWrapperListDeserializer(new JSonHack(), domainEventFactory);
+            var readModelFeed = new EventFeed<ReadModelHandler<TestReadModel>>(domainEventWrapperListDeserializer, domainOverallEventClient);
+            var domainEvents = await readModelFeed.GetEventsAsync();
+            var domainEventWrappers = domainEvents.ToList();
+
+            Assert.AreEqual(0, domainEventWrappers.Count);
         }
     }
 
