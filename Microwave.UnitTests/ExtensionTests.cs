@@ -8,7 +8,6 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Application;
 using Microwave.Application.Discovery;
 using Microwave.Domain;
-using Microwave.EventStores;
 using Microwave.EventStores.Ports;
 using Microwave.Queries;
 using Microwave.UnitTests.PublishedEventsDll;
