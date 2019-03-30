@@ -12,7 +12,7 @@ namespace Microwave.WebApi.UnitTests
     public class EventLocationTests
     {
         [TestMethod]
-        public async Task AddFeedDoesReplaceOldOne()
+        public void AddFeedDoesReplaceOldOne()
         {
             var eventLocation = new EventLocation();
             var service = new SubscriberEventAndReadmodelConfig(new Uri("http://localhost:5000"), new List<string> {
