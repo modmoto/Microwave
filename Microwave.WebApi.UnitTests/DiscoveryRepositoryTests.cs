@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
 using RichardSzalay.MockHttp;
 
 namespace Microwave.WebApi.UnitTests
@@ -18,7 +19,9 @@ namespace Microwave.WebApi.UnitTests
 
             var client = new DiscoveryClient(mockHttp);
 
-            var serviceDiscoveryRepository = new ServiceDiscoveryRepository(client);
+            var mock = new Mock<IDiscoveryClientFactory>();
+            mock.Setup(m => m.GetClient(It.IsAny<Uri>())).Returns(client);
+            var serviceDiscoveryRepository = new ServiceDiscoveryRepository(mock.Object);
             var serviceAdress = new Uri("http://localost:5000/");
             var publishedEventTypes = serviceDiscoveryRepository.GetPublishedEventTypes(serviceAdress);
 

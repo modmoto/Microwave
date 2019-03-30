@@ -81,7 +81,7 @@ namespace Microwave
 
             services.AddTransient<DomainEventController>();
             services.AddTransient<DiscoveryController>();
-            services.AddTransient<DiscoveryClient>();
+            services.AddTransient<IDiscoveryClientFactory, DiscoveryClientFactory>();
             services.AddTransient<MonitoringController>();
             services.AddSingleton<IEventLocation>(new EventLocation());
 

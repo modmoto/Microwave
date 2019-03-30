@@ -10,19 +10,18 @@ namespace Microwave.WebApi
 {
     public class ServiceDiscoveryRepository : IServiceDiscoveryRepository
     {
-        private HttpClient _client;
+        private IDiscoveryClientFactory _client;
 
-        public ServiceDiscoveryRepository(DiscoveryClient client)
+        public ServiceDiscoveryRepository(IDiscoveryClientFactory client)
         {
             _client = client;
         }
         public async Task<PublisherEventConfig> GetPublishedEventTypes(Uri serviceAdress)
         {
-            _client.BaseAddress = serviceAdress;
-
+            var client = _client.GetClient(serviceAdress);
             try
             {
-                var response = await _client.GetAsync("Dicovery/PublishedEvents");
+                var response = await client.GetAsync("Dicovery/PublishedEvents");
                 var content = await response.Content.ReadAsStringAsync();
                 var eventsByTypeAsync = JsonConvert.DeserializeObject<PublishedEventCollection>(content);
 
@@ -32,8 +31,22 @@ namespace Microwave.WebApi
             {
                 return new PublisherEventConfig(serviceAdress, new List<string>(), false);
             }
-
         }
+    }
+
+    public class DiscoveryClientFactory : IDiscoveryClientFactory
+    {
+        public DiscoveryClient GetClient(Uri serviceAdress)
+        {
+            var discoveryClient = new DiscoveryClient();
+            discoveryClient.BaseAddress = serviceAdress;
+            return discoveryClient;
+        }
+    }
+
+    public interface IDiscoveryClientFactory
+    {
+        DiscoveryClient GetClient(Uri serviceAdress);
     }
 
     public class  DiscoveryClient : HttpClient
