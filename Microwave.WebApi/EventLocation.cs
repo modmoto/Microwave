@@ -7,21 +7,24 @@ namespace Microwave.WebApi
 {
     public class EventLocation : IEventLocation
     {
-        private IEnumerable<SubscriberEventAndReadmodelConfig> _services = new List<SubscriberEventAndReadmodelConfig>();
+        public IEnumerable<SubscriberEventAndReadmodelConfig> Services { get; private set; }
+            = new List<SubscriberEventAndReadmodelConfig>();
 
         public SubscriberEventAndReadmodelConfig GetServiceForEvent(Type eventType)
         {
-            return _services.FirstOrDefault(s => s.SubscribedEvents.Contains(eventType.Name));
+            return Services.FirstOrDefault(s => s.SubscribedEvents.Contains(eventType.Name));
         }
 
         public SubscriberEventAndReadmodelConfig GetServiceForReadModel(Type readModel)
         {
-            return _services.FirstOrDefault(s => s.ReadModels.Any(rm => rm.ReadModelName == readModel.Name));
+            return Services.FirstOrDefault(s => s.ReadModels.Any(rm => rm.ReadModelName == readModel.Name));
         }
 
         public void SetDomainEventLocation(SubscriberEventAndReadmodelConfig service)
         {
-            _services = _services.Append(service);
+            var servicesWithoutAddedService = Services.Where(s => s.ServiceBaseAddress != service.ServiceBaseAddress);
+            var services = servicesWithoutAddedService.Append(service);
+            Services = services;
         }
     }
 }
