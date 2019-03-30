@@ -40,6 +40,7 @@ namespace Microwave.Application.Discovery
             var handleAsyncEvents = _subscribedEventCollection.IHandleAsyncEvents.ToList();
             var readModels = _subscribedEventCollection.ReadModelSubcriptions.ToList();
 
+            _eventLocation.Reset();
             foreach (var service in allServices)
             {
                 var relevantEvents = service.PublishedEventTypes.Where(ev => handleAsyncEvents.Contains(ev)).ToList();

@@ -10,6 +10,11 @@ namespace Microwave.WebApi
         public IEnumerable<SubscriberEventAndReadmodelConfig> Services { get; private set; }
             = new List<SubscriberEventAndReadmodelConfig>();
 
+        public void Reset()
+        {
+            Services = new List<SubscriberEventAndReadmodelConfig>();
+        }
+
         public SubscriberEventAndReadmodelConfig GetServiceForEvent(Type eventType)
         {
             return Services.FirstOrDefault(s => s.SubscribedEvents.Contains(eventType.Name));
