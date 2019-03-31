@@ -42,26 +42,24 @@ To register all Microwave dependencies for the write side, use this in the start
 
 ```
 using Microwave;
-using Microwave.EventStores;
+using Microwave.Application;
 
-...
-
-services.AddMicrowave(typeof(UserCreated).Assembly, Configuration);
+public void ConfigureServices(IServiceCollection services)
+{
+    var config = new MicrowaveConfiguration{
+        new Uri("http://localhost:5000"), // this is me
+        new Uri("http://localhost:5002")  // this is another service
+    }
+    
+    services.AddMicrowave(config);
+}
 ```
 
-You have to tell Microwave the Assembly with the DomainEvents, so it can set up all the handling. Also you have to 
-pass an `WriteModelConfiguration` or `ReadModelConfiguration` to tell Microwave your DBConnectionstring.
+You can pass a `MicrowaveConfiguration` class to configure microwave (such as Databaselocations) and most 
+importantly, you have to give Microwave the URIs to the other services, so it can start discovering the 
+other services. It will call the services and ask what events they are providing, so it can start the async handling 
+processes.
 
-On the readside, you have to add:
-
-```
-using Microwave;
-using Microwave.Queries;
-
-...
-
-services.AddMicrowaveReadModels(typeof(UserReadModel).Assembly, Configuration);
-```
 and the assembly containing the ReadModels/Querries. Also you have to start Microwave with this in the builder section:
 
 ```
@@ -74,7 +72,7 @@ The Packages are also available in smaller chunks, like Microwave.Eventstores, M
 
 ## Database
 
-Microwave uses mongodb as the database and you can define the connectionstring or name in the `WriteModelConfiguration` or `ReadModelConfiguration` classes.
+Microwave uses mongodb as the database and you can define the connectionstring or name in the `MicrowaveConfiguration` classes.
 
 # EventStore
 
@@ -218,19 +216,6 @@ public class UserReadModel : ReadModel, IHandle<UserCreatedEvent>, IHandle<UserC
 ### Loading Querries and Readmodels
 To load the Querries and ReadModels there are two Repositories `IQuerryRepository` and `IReadModelRepository` that offer functionality to load and update Querries/Readmodels. You can use them to update Querries or Readmodels inside a IHandleAsync by yourself, if you need to.
 
-## Setting up the event locations
-
-The location for Events can be defined in the `ReadModelConfiguration`. Just add a type of the domain event and the uri the other service is running on. Example:
-
-```
-var readModelConfig = new ReadModelConfiguration(new Uri("http://localhost:5002/"))
-    {
-        DomainEventConfig = new DomainEventConfig
-        {
-            { typeof(PlayerBought), new Uri("http://localhost:5000/")}
-        }
-    };
-```
 
 The Locations are optional, if they are not provided, Microwave will try to get the events from the `DefaultDomainEventLocation`, wich is the uri provided in the constructor.
 
