@@ -75,7 +75,13 @@ namespace Microwave
         {
             var assemblies = new List<Assembly>();
             var referencedPaths = Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory, "*.dll", SearchOption.AllDirectories).ToList();
-            referencedPaths.ForEach(path => assemblies.Add(AppDomain.CurrentDomain.Load(AssemblyName.GetAssemblyName(path))));
+            referencedPaths.ForEach(path =>
+            {
+                if (File.Exists(path))
+                {
+                    assemblies.Add(AppDomain.CurrentDomain.Load(AssemblyName.GetAssemblyName(path)));
+                }
+            });
 
             services.AddMicrowaveMvcExtensions();
 
