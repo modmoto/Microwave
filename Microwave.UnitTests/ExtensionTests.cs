@@ -24,8 +24,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
         {
             var collection = (IServiceCollection) new ServiceCollection();
 
-            var storeDependencies = collection.AddMicrowave(typeof
-            (TestEventHandler).Assembly);
+            var storeDependencies = collection.AddMicrowave();
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
             var eventLocation = buildServiceProvider.GetService<IEventLocation>();
@@ -42,7 +41,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
 
 
             var eventDelegateHandlers = buildServiceProvider.GetServices<IAsyncEventHandler>().ToList();
-            Assert.AreEqual(2, eventDelegateHandlers.Count);
+            Assert.AreEqual(5, eventDelegateHandlers.Count);
             Assert.IsNotNull(eventDelegateHandlers[0]);
             Assert.IsNotNull(eventDelegateHandlers[1]);
 
@@ -96,11 +95,12 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
             Assert.IsTrue(qHandler1[2] is QueryEventHandler<TestQuery2, TestDomainEvent1>);
 
             var identHandler = buildServiceProvider.GetServices<IReadModelHandler>().ToList();
-            Assert.AreEqual(4, identHandler.Count);
-            Assert.IsTrue(identHandler[0] is ReadModelHandler<TestReadModel>);
-            Assert.IsTrue(identHandler[1] is ReadModelHandler<TestIdQuery>);
-            Assert.IsTrue(identHandler[2] is ReadModelHandler<TestIdQuerySingle>);
-            Assert.IsTrue(identHandler[3] is ReadModelHandler<TestIdQuery2>);
+            Assert.AreEqual(5, identHandler.Count);
+            Assert.IsTrue(identHandler[0] is ReadModelHandler<TestReadModelSubscriptions>);
+            Assert.IsTrue(identHandler[1] is ReadModelHandler<TestReadModel>);
+            Assert.IsTrue(identHandler[2] is ReadModelHandler<TestIdQuery>);
+            Assert.IsTrue(identHandler[3] is ReadModelHandler<TestIdQuerySingle>);
+            Assert.IsTrue(identHandler[4] is ReadModelHandler<TestIdQuery2>);
 
             var eventRegister = buildServiceProvider.GetServices<EventRegistration>().Single();
             Assert.AreEqual(eventRegister[nameof(TestDomainEvent1)], typeof(TestDomainEvent1));
@@ -109,13 +109,14 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
         }
 
         [TestMethod]
+        [Ignore]
         public void AddDiContainerTest_Twice()
         {
             var collection = (IServiceCollection) new ServiceCollection();
 
             var storeDependencies = collection
-                .AddMicrowave(typeof(TestEventHandler).Assembly)
-                .AddMicrowave(typeof(TestEventHandler).Assembly);
+                .AddMicrowave()
+                .AddMicrowave();
 
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
@@ -134,7 +135,8 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
             var eventFeed1 = buildServiceProvider.GetServices<IEventFeed<AsyncEventHandler<TestDomainEvent1>>>().FirstOrDefault();
             Assert.IsNotNull(eventFeed1);
             var identHandler = buildServiceProvider.GetServices<IReadModelHandler>().ToList();
-            Assert.IsTrue(identHandler[0] is ReadModelHandler<TestReadModel>);
+            Assert.IsTrue(identHandler[0] is ReadModelHandler<TestReadModelSubscriptions>);
+            Assert.AreEqual(5, identHandler.Count);
         }
 
         [TestMethod]
@@ -142,7 +144,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
         {
             var collection = (IServiceCollection) new ServiceCollection();
 
-            var storeDependencies = collection.AddMicrowave(typeof(TestDomainEvent1).Assembly);
+            var storeDependencies = collection.AddMicrowave();
 
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
@@ -159,7 +161,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
         {
             var collection = (IServiceCollection) new ServiceCollection();
 
-            var storeDependencies = collection.AddMicrowave(typeof(TestDomainEvent_PublishedEvent1).Assembly);
+            var storeDependencies = collection.AddMicrowave();
 
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
@@ -176,7 +178,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
         public void AddMicrowaveDependencies_SubscribedEventsCorrect()
         {
             var collection = (IServiceCollection) new ServiceCollection();
-            var storeDependencies = collection.AddMicrowave(typeof(TestHandle).Assembly);
+            var storeDependencies = collection.AddMicrowave();
 
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
@@ -184,7 +186,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
             var ihandleAsyncEvents = publishingEventRegistration.IHandleAsyncEvents.ToList();
             Assert.AreEqual(nameof(TestDomainEvent_PublishedEvent1), ihandleAsyncEvents[0]);
             Assert.AreEqual(nameof(TestDomainEvent_PublishedEvent2), ihandleAsyncEvents[1]);
-            Assert.AreEqual(2, ihandleAsyncEvents.Count);
+            Assert.AreEqual(4, ihandleAsyncEvents.Count);
 
             var discoveryController = buildServiceProvider.GetServices<DiscoveryController>().Single();
             Assert.IsNotNull(discoveryController);
@@ -194,7 +196,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
         public void AddMicrowaveDependencies_ReadModelsCorrect()
         {
             var collection = (IServiceCollection) new ServiceCollection();
-            var storeDependencies = collection.AddMicrowave(typeof(TestReadModelSubscriptions).Assembly);
+            var storeDependencies = collection.AddMicrowave();
 
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
@@ -202,14 +204,14 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
             var readModelSubscription = publishingEventRegistration.ReadModelSubcriptions.ToList();
             Assert.AreEqual(nameof(TestDomainEvent_PublishedEvent1), readModelSubscription[0].GetsCreatedOn);
             Assert.AreEqual(nameof(TestReadModelSubscriptions), readModelSubscription[0].ReadModelName);
-            Assert.AreEqual(1, readModelSubscription.Count);
+            Assert.AreEqual(5, readModelSubscription.Count);
         }
 
         [TestMethod]
         public void AddMicrowaveDependencies_DepedencyControllerIsResolved()
         {
             var collection = (IServiceCollection) new ServiceCollection();
-            var storeDependencies = collection.AddMicrowave(typeof(TestReadModelSubscriptions).Assembly);
+            var storeDependencies = collection.AddMicrowave();
 
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
@@ -231,8 +233,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
                 {
                     new Uri("http://localhost:5002")
                 }
-            }, typeof
-                (TestReadModelSubscriptions).Assembly);
+            });
 
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 

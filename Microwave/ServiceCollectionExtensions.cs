@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -41,10 +42,11 @@ namespace Microwave
         }
 
         private static void AddEventAndReadModelSubscriptions(IServiceCollection services,
-            Assembly[] readModelAndDomainEventAssemblies)
+            IEnumerable<Assembly> readModelAndDomainEventAssemblies)
         {
             var iHandleAsyncEvents = new List<string>();
-            foreach (var assembly in readModelAndDomainEventAssemblies)
+            var modelAndDomainEventAssemblies = readModelAndDomainEventAssemblies.ToList();
+            foreach (var assembly in modelAndDomainEventAssemblies)
             {
                 var eventsForPublish = GetEventsForSubscribe(assembly);
                 var notAddedYet = eventsForPublish.Where(e => !iHandleAsyncEvents.Contains(e));
@@ -52,7 +54,7 @@ namespace Microwave
             }
 
             var readModelSubscriptions = new List<ReadModelSubscription>();
-            foreach (var assembly in readModelAndDomainEventAssemblies)
+            foreach (var assembly in modelAndDomainEventAssemblies)
             {
                 var eventsForPublish = GetEventsForReadModelSubscribe(assembly);
                 var notAddedYet = eventsForPublish.Where(e => !readModelSubscriptions.Contains(e));
@@ -62,17 +64,19 @@ namespace Microwave
             services.AddSingleton(new SubscribedEventCollection(iHandleAsyncEvents, readModelSubscriptions));
         }
 
-        public static IServiceCollection AddMicrowave(this IServiceCollection services,
-            params Assembly[] domainEventAssemblies)
+        public static IServiceCollection AddMicrowave(this IServiceCollection services)
         {
-            services.AddMicrowave(new MicrowaveConfiguration(), domainEventAssemblies);
+            services.AddMicrowave(new MicrowaveConfiguration());
             return services;
         }
 
         public static IServiceCollection AddMicrowave(this IServiceCollection services,
-            MicrowaveConfiguration microwaveConfiguration,
-            params Assembly[] assemblies)
+            MicrowaveConfiguration microwaveConfiguration)
         {
+            var assemblies = new List<Assembly>();
+            var referencedPaths = Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory, "*.dll", SearchOption.AllDirectories).ToList();
+            referencedPaths.ForEach(path => assemblies.Add(AppDomain.CurrentDomain.Load(AssemblyName.GetAssemblyName(path))));
+
             services.AddMicrowaveMvcExtensions();
 
             services.AddTransient<IServiceDiscoveryRepository, ServiceDiscoveryRepository>();
@@ -113,15 +117,19 @@ namespace Microwave
                 BsonMapRegistrationHelpers.AddBsonMapsForMicrowave(assembly);
             }
 
+            var eventRegistration = new EventRegistration();
+
             foreach (var assembly in assemblies)
             {
                 services.AddQuerryHandling(assembly);
                 services.AddAsyncEventHandling(assembly);
                 services.AddReadmodelHandling(assembly);
 
-                services.AddDomainEventRegistration(assembly);
+                services.AddDomainEventRegistration(assembly, eventRegistration);
                 BsonMapRegistrationHelpers.AddBsonMapsForMicrowave(assembly);
             }
+
+            services.AddSingleton(eventRegistration);
 
             if (!BsonClassMap.IsClassMapRegistered(typeof(GuidIdentity))) BsonClassMap.RegisterClassMap<GuidIdentity>();
             if (!BsonClassMap.IsClassMapRegistered(typeof(StringIdentity))) BsonClassMap.RegisterClassMap<StringIdentity>();
@@ -129,7 +137,7 @@ namespace Microwave
             return services;
         }
 
-        private static void AddPublishedEventCollection(IServiceCollection services, Assembly[] domainEventAssemblies)
+        private static void AddPublishedEventCollection(IServiceCollection services, IEnumerable<Assembly> domainEventAssemblies)
         {
             var publishedEventCollection = new PublishedEventCollection();
             foreach (var assembly in domainEventAssemblies)
@@ -205,15 +213,14 @@ namespace Microwave
             return subscriptions;
         }
 
-        private static IServiceCollection AddDomainEventRegistration(this IServiceCollection services, Assembly assembly)
+        private static IServiceCollection AddDomainEventRegistration(this IServiceCollection services,
+            Assembly assembly, EventRegistration eventRegistration)
         {
             var domainEventTypes = assembly.GetTypes().Where(ev => ev.GetInterfaces().Contains(typeof(IDomainEvent)));
-            var eventRegistration = new EventRegistration();
             foreach (var domainEventType in domainEventTypes)
             {
                 eventRegistration.Add(domainEventType.Name, domainEventType);
             }
-            services.AddSingleton(eventRegistration);
             return services;
         }
 
