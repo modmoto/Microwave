@@ -8,8 +8,9 @@ namespace Microwave.EventStores
         public IMongoDatabase Database { get; }
         public EventDatabase(MicrowaveConfiguration config)
         {
-            var client = new MongoClient(config.ReadDatabase.ConnectionString);
-            Database = client.GetDatabase(config.ReadDatabase.DatabaseName);
+            var writeDatabase = config.WriteDatabase;
+            var client = new MongoClient(writeDatabase.ConnectionString);
+            Database = client.GetDatabase(writeDatabase.DatabaseName);
         }
     }
 }
