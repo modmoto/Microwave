@@ -94,13 +94,15 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
             Assert.IsTrue(qHandler1[1] is QueryEventHandler<TestQuery1, TestDomainEvent2>);
             Assert.IsTrue(qHandler1[2] is QueryEventHandler<TestQuery2, TestDomainEvent1>);
 
-            var identHandler = buildServiceProvider.GetServices<IReadModelHandler>().ToList();
+            var identHandler = buildServiceProvider.GetServices<IReadModelHandler>().OrderBy(r => r.GetType()
+                .GetGenericArguments().First().Name).ToList();
             Assert.AreEqual(5, identHandler.Count);
-            Assert.IsTrue(identHandler[0] is ReadModelHandler<TestReadModelSubscriptions>);
-            Assert.IsTrue(identHandler[1] is ReadModelHandler<TestReadModel>);
-            Assert.IsTrue(identHandler[2] is ReadModelHandler<TestIdQuery>);
-            Assert.IsTrue(identHandler[3] is ReadModelHandler<TestIdQuerySingle>);
-            Assert.IsTrue(identHandler[4] is ReadModelHandler<TestIdQuery2>);
+
+            Assert.IsTrue(identHandler[4] is ReadModelHandler<TestReadModelSubscriptions>);
+            Assert.IsTrue(identHandler[3] is ReadModelHandler<TestReadModel>);
+            Assert.IsTrue(identHandler[0] is ReadModelHandler<TestIdQuery>);
+            Assert.IsTrue(identHandler[2] is ReadModelHandler<TestIdQuerySingle>);
+            Assert.IsTrue(identHandler[1] is ReadModelHandler<TestIdQuery2>);
 
             var eventRegister = buildServiceProvider.GetServices<EventRegistration>().Single();
             Assert.AreEqual(eventRegister[nameof(TestDomainEvent1)], typeof(TestDomainEvent1));
@@ -133,8 +135,9 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
 
             var eventFeed1 = buildServiceProvider.GetServices<IEventFeed<AsyncEventHandler<TestDomainEvent1>>>().FirstOrDefault();
             Assert.IsNotNull(eventFeed1);
-            var identHandler = buildServiceProvider.GetServices<IReadModelHandler>().ToList();
-            Assert.IsTrue(identHandler[0] is ReadModelHandler<TestReadModelSubscriptions>);
+            var identHandler = buildServiceProvider.GetServices<IReadModelHandler>().OrderBy(r => r.GetType()
+            .GetGenericArguments().First().Name).ToList();
+            Assert.IsTrue(identHandler[0] is ReadModelHandler<TestIdQuery>);
             Assert.AreEqual(10, identHandler.Count); // double as just checking if no exception is done
         }
 
@@ -182,7 +185,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
             var publishingEventRegistration = buildServiceProvider.GetServices<SubscribedEventCollection>().Single();
-            var ihandleAsyncEvents = publishingEventRegistration.IHandleAsyncEvents.ToList();
+            var ihandleAsyncEvents = publishingEventRegistration.IHandleAsyncEvents.OrderBy(r => r).ToList();
             Assert.AreEqual(nameof(TestDomainEvent_PublishedEvent1), ihandleAsyncEvents[0]);
             Assert.AreEqual(nameof(TestDomainEvent_PublishedEvent2), ihandleAsyncEvents[1]);
             Assert.AreEqual(4, ihandleAsyncEvents.Count);
@@ -200,9 +203,9 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
             var publishingEventRegistration = buildServiceProvider.GetServices<SubscribedEventCollection>().Single();
-            var readModelSubscription = publishingEventRegistration.ReadModelSubcriptions.ToList();
-            Assert.AreEqual(nameof(TestDomainEvent_PublishedEvent1), readModelSubscription[0].GetsCreatedOn);
-            Assert.AreEqual(nameof(TestReadModelSubscriptions), readModelSubscription[0].ReadModelName);
+            var readModelSubscription = publishingEventRegistration.ReadModelSubcriptions.OrderBy(r => r.ReadModelName).ToList();
+            Assert.AreEqual(nameof(TestDomainEvent_PublishedEvent1), readModelSubscription[4].GetsCreatedOn);
+            Assert.AreEqual(nameof(TestReadModelSubscriptions), readModelSubscription[4].ReadModelName);
             Assert.AreEqual(5, readModelSubscription.Count);
         }
 
