@@ -109,7 +109,6 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
         }
 
         [TestMethod]
-        [Ignore]
         public void AddDiContainerTest_Twice()
         {
             var collection = (IServiceCollection) new ServiceCollection();
@@ -136,7 +135,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
             Assert.IsNotNull(eventFeed1);
             var identHandler = buildServiceProvider.GetServices<IReadModelHandler>().ToList();
             Assert.IsTrue(identHandler[0] is ReadModelHandler<TestReadModelSubscriptions>);
-            Assert.AreEqual(5, identHandler.Count);
+            Assert.AreEqual(10, identHandler.Count); // double as just checking if no exception is done
         }
 
         [TestMethod]
