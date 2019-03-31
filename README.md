@@ -46,6 +46,7 @@ using Microwave.Application;
 
 public void ConfigureServices(IServiceCollection services)
 {
+    ...
     var config = new MicrowaveConfiguration{
         new Uri("http://localhost:5000"), // this is me
         new Uri("http://localhost:5002")  // this is another service
@@ -63,7 +64,11 @@ processes.
 and the assembly containing the ReadModels/Querries. Also you have to start Microwave with this in the builder section:
 
 ```
-app.RunMicrowaveQueries();
+public void Configure(IApplicationBuilder app)
+{
+    ...
+    app.RunMicrowaveQueries();
+}
 ```
 
 Now you should be able to start the services and the read side will update when something on the write side happens, provided you defined some handlers. Of course you can implement the read side on the write side, too.
