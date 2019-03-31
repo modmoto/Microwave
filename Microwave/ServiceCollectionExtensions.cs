@@ -77,9 +77,12 @@ namespace Microwave
             var referencedPaths = Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory, "*.dll", SearchOption.AllDirectories).ToList();
             referencedPaths.ForEach(path =>
             {
-                if (File.Exists(path))
+                try
                 {
                     assemblies.Add(AppDomain.CurrentDomain.Load(AssemblyName.GetAssemblyName(path)));
+                }
+                catch (FileNotFoundException)
+                {
                 }
             });
 
