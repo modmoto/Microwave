@@ -17,23 +17,10 @@
     <ProjectReference Include="..\Microwave.WebApi\Microwave.WebApi.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Pages\Index.cshtml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Pages\Shared\_Layout.cshtml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Pages\_ViewImports.cshtml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Pages\_ViewStart.cshtml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Update="Pages\Index.cshtml.cs">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Compile>
+    <Content Include="Pages\Index.cshtml" />
+    <Content Include="Pages\Shared\_Layout.cshtml" />
+    <Content Include="Pages\_ViewImports.cshtml" />
+    <Content Include="Pages\_ViewStart.cshtml" />
   </ItemGroup>
 
 </Project>
