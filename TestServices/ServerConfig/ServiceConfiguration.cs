@@ -7,9 +7,9 @@ namespace ServerConfig
     {
         public static ServiceBaseAddressCollection ServiceAdresses => new ServiceBaseAddressCollection
         {
-            new Uri("http://localhost:6001"),
-            new Uri("http://localhost:6002"),
-            new Uri("http://localhost:6003")
+            new Uri("http://localhost:5010"),
+            new Uri("http://localhost:5012"),
+            new Uri("http://localhost:5014")
         };
     }
 }

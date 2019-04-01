@@ -5,7 +5,7 @@ namespace ReadService1
     [Route("api")]
     public class ReadController : Controller
     {
-        [HttpGet("helloWorld")]
+        [HttpGet("hello")]
         public ActionResult Hello()
         {
             return Ok("Hello");

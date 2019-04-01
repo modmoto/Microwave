@@ -29,8 +29,8 @@ namespace WriteService1
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            app.RunMicrowaveQueries();
             app.UseMvc();
+            app.RunMicrowaveQueries();
         }
     }
 }
