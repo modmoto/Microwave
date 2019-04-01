@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microwave.Application.Discovery;
 
-namespace Microwave.Pages
+namespace Microwave.ServiceUI.Pages
 {
     public class IndexModel : PageModel
     {

@@ -12,11 +12,4 @@
       <ProjectReference Include="..\Microwave.Application\Microwave.Application.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <UpToDateCheckInput Remove="Pages\Index.cshtml" />
-      <UpToDateCheckInput Remove="Pages\Shared\_Layout.cshtml" />
-      <UpToDateCheckInput Remove="Pages\_ViewImports.cshtml" />
-      <UpToDateCheckInput Remove="Pages\_ViewStart.cshtml" />
-    </ItemGroup>
-
 </Project>
