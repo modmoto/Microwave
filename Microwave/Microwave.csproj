@@ -11,6 +11,7 @@
 
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Micowave.ServiceUI\Micowave.ServiceUI.csproj" />
     <ProjectReference Include="..\Microwave.Application\Microwave.Application.csproj" />
     <ProjectReference Include="..\Microwave.EventStores\Microwave.EventStores.csproj" />
     <ProjectReference Include="..\Microwave.Queries\Microwave.Queries.csproj" />
