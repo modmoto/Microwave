@@ -13,7 +13,7 @@ namespace Microwave.Eventstores.UnitTests
         [TestInitialize]
         public void SetupMongoDb()
         {
-            var writeModelConfiguration = new MicrowaveConfiguration()
+            var writeModelConfiguration = new MicrowaveConfiguration
             {
                 WriteDatabase = new WriteDatabaseConfig
                 {
