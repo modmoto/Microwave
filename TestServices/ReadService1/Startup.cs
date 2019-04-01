@@ -23,8 +23,6 @@ namespace ReadService1
         {
             services.AddMvc();
             services.AddMicrowave(_microwaveConfiguration);
-
-            services.AddTransient<ReadController>();
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
