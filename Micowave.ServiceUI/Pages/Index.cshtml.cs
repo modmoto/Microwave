@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microwave.Application.Discovery;
 
-namespace Teams.ReadHost.Pages
+namespace Micowave.ServiceUI.Pages
 {
     public class IndexModel : PageModel
     {
