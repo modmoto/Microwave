@@ -15,7 +15,7 @@ namespace Microwave.WebApi.UnitTests
         {
             var mockHttp = new MockHttpMessageHandler();
             mockHttp.When("http://localhost:5000/Dicovery/PublishedEvents")
-                .Respond("application/json", "[ \"event1\", \"event2\"]");
+                .Respond("application/json", "{ \"ServiceName\": \"MeinService\", \"PublishedEvents\":[ \"event1\", \"event2\"]}");
 
             var client = new DiscoveryClient(mockHttp);
             client.BaseAddress = new Uri("http://localhost:5000/");
@@ -32,6 +32,7 @@ namespace Microwave.WebApi.UnitTests
             Assert.AreEqual(2, eventTypes.Count);
             Assert.AreEqual("event1", eventTypes[0]);
             Assert.AreEqual("event2", eventTypes[1]);
+            Assert.AreEqual("MeinService", publisherEventConfig.ServiceName);
         }
     }
 }

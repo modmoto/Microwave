@@ -8,10 +8,10 @@ namespace Microwave.WebApi
     [Route("Dicovery")]
     public class DiscoveryController : Controller
     {
-        private readonly PublishedEventCollection _publishedEvents;
+        private readonly ServicePublishingConfig _publishedEvents;
         private readonly DiscoveryHandler _discoveryHandler;
 
-        public DiscoveryController(PublishedEventCollection publishedEvents, DiscoveryHandler discoveryHandler)
+        public DiscoveryController(ServicePublishingConfig publishedEvents, DiscoveryHandler discoveryHandler)
         {
             _publishedEvents = publishedEvents;
             _discoveryHandler = discoveryHandler;

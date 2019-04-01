@@ -149,12 +149,12 @@ namespace Microwave
         private static void AddPublishedEventCollection(IServiceCollection services,
             IEnumerable<Assembly> domainEventAssemblies, MicrowaveConfiguration microwaveConfiguration)
         {
-            var publishedEventCollection = new PublishedEventCollection { ServiceName = microwaveConfiguration.ServiceName };
+            var publishedEventCollection = new ServicePublishingConfig { ServiceName = microwaveConfiguration.ServiceName };
             foreach (var assembly in domainEventAssemblies)
             {
                 var eventsForPublish = GetEventsForPublish(assembly);
-                var notAddedYet = eventsForPublish.Where(e => !publishedEventCollection.Contains(e));
-                publishedEventCollection.AddRange(notAddedYet);
+                var notAddedYet = eventsForPublish.Where(e => !publishedEventCollection.PublishedEvents.Contains(e));
+                publishedEventCollection.PublishedEvents.AddRange(notAddedYet);
             }
 
             services.AddSingleton(publishedEventCollection);

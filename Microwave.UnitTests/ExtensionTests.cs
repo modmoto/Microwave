@@ -167,7 +167,8 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
 
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
-            var publishingEventRegistration = buildServiceProvider.GetServices<PublishedEventCollection>().Single().ToList();
+            var publishingEventRegistration = buildServiceProvider.GetServices<ServicePublishingConfig>().Single()
+            .PublishedEvents.ToList();
             Assert.AreEqual(nameof(TestDomainEvent_PublishedEvent1), publishingEventRegistration[0]);
             Assert.AreEqual(nameof(TestDomainEvent_PublishedEvent3), publishingEventRegistration[1]);
             Assert.AreEqual(2, publishingEventRegistration.Count);
@@ -232,13 +233,13 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
 
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
-            var services = buildServiceProvider.GetServices<PublishedEventCollection>().Single();
+            var services = buildServiceProvider.GetServices<ServicePublishingConfig>().Single();
             
             Assert.AreEqual("TestService", services.ServiceName);
         }
 
         [TestMethod]
-        public void AddMicrowaveDependencies_RunStarts_DiscoveryFails()
+        public async Task AddMicrowaveDependencies_RunStarts_DiscoveryFails()
         {
             var collection = (IServiceCollection) new ServiceCollection();
             var storeDependencies = collection.AddMicrowave(new MicrowaveConfiguration
@@ -249,7 +250,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
                 },
                 ServiceLocations = new ServiceBaseAddressCollection
                 {
-                    new Uri("http://localhost:5002")
+                    new Uri("http://localhost:1234")
                 }
             });
 
@@ -257,7 +258,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
 
             var discoveryHandler = buildServiceProvider.CreateScope().ServiceProvider.GetService<DiscoveryHandler>();
 
-            discoveryHandler.DiscoverConsumingServices().Wait();
+            await discoveryHandler.DiscoverConsumingServices();
 
             var discoveryController = buildServiceProvider.GetServices<DiscoveryController>().Single();
             Assert.IsNotNull(discoveryController);

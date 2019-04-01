@@ -23,9 +23,9 @@ namespace Microwave.WebApi
             {
                 var response = await client.GetAsync("Dicovery/PublishedEvents");
                 var content = await response.Content.ReadAsStringAsync();
-                var eventsByTypeAsync = JsonConvert.DeserializeObject<PublishedEventCollection>(content);
+                var events = JsonConvert.DeserializeObject<ServicePublishingConfig>(content);
 
-                return new PublisherEventConfig(serviceAdress, eventsByTypeAsync, true, eventsByTypeAsync.ServiceName);
+                return new PublisherEventConfig(serviceAdress, events.PublishedEvents, true, events.ServiceName);
             }
             catch (HttpRequestException)
             {
