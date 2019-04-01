@@ -5,6 +5,7 @@ namespace Microwave.Application
     public class MicrowaveConfiguration
     {
         public WriteDatabaseConfig WriteDatabase { get; set; } = new WriteDatabaseConfig();
+        public string ServiceName { get; set; }
         public ReadDatabaseConfig ReadDatabase { get; set; } = new ReadDatabaseConfig();
         public ServiceBaseAddressCollection ServiceLocations { get; set; } = new ServiceBaseAddressCollection();
     }

@@ -119,7 +119,7 @@ namespace Microwave
             services.AddSingleton(microwaveConfiguration.WriteDatabase);
 
             AddEventAndReadModelSubscriptions(services, assemblies);
-            AddPublishedEventCollection(services, assemblies);
+            AddPublishedEventCollection(services, assemblies, microwaveConfiguration);
 
             foreach (var assembly in assemblies)
             {
@@ -146,9 +146,10 @@ namespace Microwave
             return services;
         }
 
-        private static void AddPublishedEventCollection(IServiceCollection services, IEnumerable<Assembly> domainEventAssemblies)
+        private static void AddPublishedEventCollection(IServiceCollection services,
+            IEnumerable<Assembly> domainEventAssemblies, MicrowaveConfiguration microwaveConfiguration)
         {
-            var publishedEventCollection = new PublishedEventCollection();
+            var publishedEventCollection = new PublishedEventCollection { ServiceName = microwaveConfiguration.ServiceName };
             foreach (var assembly in domainEventAssemblies)
             {
                 var eventsForPublish = GetEventsForPublish(assembly);

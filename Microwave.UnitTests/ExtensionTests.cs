@@ -220,6 +220,22 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
             var discoveryController = buildServiceProvider.GetServices<DiscoveryController>().Single();
             Assert.IsNotNull(discoveryController);
         }
+        
+        [TestMethod]
+        public void AddMicrowaveDependencies_ServiceNameIsCorrect()
+        {
+            var collection = (IServiceCollection) new ServiceCollection();
+            var storeDependencies = collection.AddMicrowave(new MicrowaveConfiguration
+            {
+                ServiceName = "TestService"
+            });
+
+            var buildServiceProvider = storeDependencies.BuildServiceProvider();
+
+            var services = buildServiceProvider.GetServices<PublishedEventCollection>().Single();
+            
+            Assert.AreEqual("TestService", services.ServiceName);
+        }
 
         [TestMethod]
         public void AddMicrowaveDependencies_RunStarts_DiscoveryFails()
