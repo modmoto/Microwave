@@ -1,22 +1,19 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microwave.Application;
-using Microwave.Application.Discovery;
 
-namespace Microwave.WebApi
+namespace Microwave.Application.Discovery
 {
     public class EventLocation : IEventLocation
     {
-        public IEnumerable<SubscriberEventAndReadmodelConfig> Services { get; private set; }
-            = new List<SubscriberEventAndReadmodelConfig>();
+        public EventLocation()
+        {
+        }
 
-        public void Reset(List<PublisherEventConfig> allServices, SubscribedEventCollection subscribedEventCollection)
+        public EventLocation(List<PublisherEventConfig> allServices, SubscribedEventCollection subscribedEventCollection)
         {
             var readModels = subscribedEventCollection.ReadModelSubcriptions.ToList();
             var handleAsyncEvents = subscribedEventCollection.IHandleAsyncEvents.ToList();
-
-            Services = new List<SubscriberEventAndReadmodelConfig>();
 
             foreach (var service in allServices)
             {
@@ -34,6 +31,8 @@ namespace Microwave.WebApi
                 }
             }
         }
+        public IEnumerable<SubscriberEventAndReadmodelConfig> Services { get; private set; }
+            = new List<SubscriberEventAndReadmodelConfig>();
 
         public SubscriberEventAndReadmodelConfig GetServiceForEvent(Type eventType)
         {

@@ -9,7 +9,7 @@ namespace Microwave.Application.Discovery
         private readonly ServiceBaseAddressCollection _serviceBaseAddressCollection;
         private readonly SubscribedEventCollection _subscribedEventCollection;
         private readonly IServiceDiscoveryRepository _discoveryRepository;
-        private readonly IEventLocation _eventLocation;
+        private IEventLocation _eventLocation;
 
         public DiscoveryHandler(
             ServiceBaseAddressCollection serviceBaseAddressCollection,
@@ -37,7 +37,7 @@ namespace Microwave.Application.Discovery
                 allServices.Add(publishedEventTypes);
             }
 
-            _eventLocation.Reset(allServices, _subscribedEventCollection);
+            _eventLocation = new EventLocation(allServices, _subscribedEventCollection);
         }
     }
 }
