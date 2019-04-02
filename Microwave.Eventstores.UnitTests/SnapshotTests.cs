@@ -137,4 +137,16 @@ namespace Microwave.Eventstores.UnitTests
         public Identity EntityId { get; }
         public int Age { get; }
     }
+
+    public class Event4 : IDomainEvent
+    {
+        public Event4(Identity entityId, int age)
+        {
+            EntityId = entityId;
+            Age = age;
+        }
+
+        public Identity EntityId { get; }
+        public int Age { get; }
+    }
 }

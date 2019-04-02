@@ -24,7 +24,7 @@ namespace Microwave.Application.UnitTests
                 PublisherEventConfig(new Uri("http://service2.de"), new[] {"Event2"}, true, "Service2"));
 
             discoveryRepo.Setup(m => m.GetPublishedEventTypes(new Uri("http://Service3.de"))).ReturnsAsync(new
-                PublisherEventConfig(new Uri("http://service3.de"), new[] {"Event3", "Event4"}, true, "Service3"));
+                PublisherEventConfig(new Uri("http://service3.de"), new[] {"Event3", "Event2"}, true, "Service3"));
             var discoveryHandler = new DiscoveryHandler(new ServiceBaseAddressCollection
             {
                 new Uri("http://service1.de"),
@@ -32,7 +32,7 @@ namespace Microwave.Application.UnitTests
                 new Uri("http://service3.de")
             },
                 new SubscribedEventCollection(
-                    new []{ nameof(Event1), nameof(Event3)},
+                    new []{ nameof(Event1), nameof(Event3), nameof(Event4)},
                     new List<ReadModelSubscription>()),
                 discoveryRepo.Object,
                 new EventLocation());
@@ -49,6 +49,7 @@ namespace Microwave.Application.UnitTests
             Assert.AreEqual(new Uri("http://service3.de" ), service.ServiceBaseAddress);
             Assert.AreEqual("Event1", consumingService.SubscribedEvents.Single());
             Assert.AreEqual("Event3", service.SubscribedEvents.Single());
+            Assert.AreEqual("Event4", consumingServices.UnresolvedEventSubscriptions.Single());
         }
 
         [TestMethod]
