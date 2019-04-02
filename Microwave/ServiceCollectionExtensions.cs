@@ -61,7 +61,10 @@ namespace Microwave
                 readModelSubscriptions.AddRange(notAddedYet);
             }
 
-            services.AddSingleton(new SubscribedEventCollection(iHandleAsyncEvents, readModelSubscriptions));
+            var subscribedEventCollection = new SubscribedEventCollection(iHandleAsyncEvents, readModelSubscriptions);
+            services.AddSingleton(subscribedEventCollection);
+            services.AddSingleton<IEventLocation>(new EventLocation(new List<PublisherEventConfig>(), subscribedEventCollection));
+
         }
 
         public static IServiceCollection AddMicrowave(this IServiceCollection services)
@@ -96,7 +99,6 @@ namespace Microwave
             services.AddTransient<DiscoveryController>();
             services.AddTransient<IDiscoveryClientFactory, DiscoveryClientFactory>();
             services.AddTransient<MonitoringController>();
-            services.AddSingleton<IEventLocation>(new EventLocation());
 
             services.AddTransient<JSonHack>();
             services.AddTransient<DomainEventWrapperListDeserializer>();

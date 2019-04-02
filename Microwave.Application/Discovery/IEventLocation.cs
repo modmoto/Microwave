@@ -7,7 +7,6 @@ namespace Microwave.Application.Discovery
     {
         SubscriberEventAndReadmodelConfig GetServiceForEvent(Type eventType);
         SubscriberEventAndReadmodelConfig GetServiceForReadModel(Type readModel);
-        void SetDomainEventLocation(SubscriberEventAndReadmodelConfig service);
         IEnumerable<SubscriberEventAndReadmodelConfig> Services { get; }
 
         IEnumerable<string> UnresolvedEventSubscriptions { get; }

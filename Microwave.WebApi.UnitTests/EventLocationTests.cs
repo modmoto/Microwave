@@ -13,36 +13,21 @@ namespace Microwave.WebApi.UnitTests
         [TestMethod]
         public void AddFeedDoesReplaceOldOne()
         {
-            var eventLocation = new EventLocation();
-            var service = new SubscriberEventAndReadmodelConfig(new Uri("http://localhost:5000"), new List<string> {
-            "Event1"}, new []{ new ReadModelSubscription("ReadModel1", "Event1")  }, "TeamService" );
-            var service2 = new SubscriberEventAndReadmodelConfig(new Uri("http://localhost:5000"), new List<string> {
-                "Event2"}, new []{ new ReadModelSubscription("ReadModel2", "Event1")  }, "TeamService" );
-
-            eventLocation.SetDomainEventLocation(service);
-            eventLocation.SetDomainEventLocation(service2);
+            var eventLocation = new EventLocation(
+                new List<PublisherEventConfig>
+                {
+                    new PublisherEventConfig(
+                        new Uri("http://jeah.de"), new []{ nameof(Event2) })
+                },
+                new SubscribedEventCollection(
+                    new List<string> { "Event2"},
+                    new []{ new ReadModelSubscription("ReadModel2", "Event1") }));
 
             var serviceAfter2 = eventLocation.GetServiceForEvent(typeof(Event2));
             var serviceAfter1 = eventLocation.GetServiceForEvent(typeof(Event1));
 
             Assert.AreEqual(nameof(Event2), serviceAfter2.SubscribedEvents.Single());
             Assert.IsNull(serviceAfter1);
-        }
-
-        [TestMethod]
-        [Ignore]
-        public void ResetWorks()
-        {
-            var eventLocation = new EventLocation();
-            var service = new SubscriberEventAndReadmodelConfig(new Uri("http://localhost:5000"), new List<string> {
-                "Event1"}, new []{ new ReadModelSubscription("ReadModel1", "Event1")  }, "TeamService" );
-
-            eventLocation.SetDomainEventLocation(service);
-           // eventLocation.Reset();
-
-            var serviceAfter = eventLocation.GetServiceForEvent(typeof(Event1));
-
-            Assert.IsNull(serviceAfter);
         }
     }
 

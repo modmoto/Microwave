@@ -5,6 +5,7 @@ using Microwave.Application;
 using Microwave.Application.Discovery;
 using Microwave.Domain;
 using Microwave.Queries;
+using Moq;
 
 namespace Microwave.WebApi.UnitTests
 {
@@ -14,38 +15,33 @@ namespace Microwave.WebApi.UnitTests
         [TestMethod]
         public void ClientForQueries()
         {
-            var eventLocation = new EventLocation();
-            eventLocation.SetDomainEventLocation(new SubscriberEventAndReadmodelConfig(
-                new Uri("http://luls.de/"),
-                new []{ nameof(Ev1) },
-                new List<ReadModelSubscription>()));
-
-            var domainEventClient = new DomainEventClient<QueryEventHandler<Q1, Ev1>>(eventLocation);
+            var mock = new Mock<IEventLocation>();
+            mock.Setup(m => m.GetServiceForEvent(typeof(Ev1))).Returns(new SubscriberEventAndReadmodelConfig(new Uri
+            ("http://luls.de/"), null, null));
+            var domainEventClient = new DomainEventClient<QueryEventHandler<Q1, Ev1>>(mock.Object);
             Assert.AreEqual("http://luls.de/Api/DomainEventTypeStreams/Ev1", domainEventClient.BaseAddress.ToString());
         }
 
         [TestMethod]
         public void ClientForAsyncHandles()
         {
-            var eventLocation = new EventLocation();
-            eventLocation.SetDomainEventLocation(new SubscriberEventAndReadmodelConfig(
-                new Uri("http://troll.de/"),
-                new []{ nameof(Ev2)},
-                new List<ReadModelSubscription>()));
-            var domainEventClient = new DomainEventClient<AsyncEventHandler<Ev2>>(eventLocation);
+            var mock = new Mock<IEventLocation>();
+            mock.Setup(m => m.GetServiceForEvent(typeof(Ev2))).Returns(new SubscriberEventAndReadmodelConfig(new Uri
+                ("http://troll.de/"), null, null));
+
+            var domainEventClient = new DomainEventClient<AsyncEventHandler<Ev2>>(mock.Object);
             Assert.AreEqual("http://troll.de/Api/DomainEventTypeStreams/Ev2", domainEventClient.BaseAddress.ToString());
         }
 
         [TestMethod]
         public void ClientForReadModels()
         {
-            var eventLocation = new EventLocation();
-            eventLocation.SetDomainEventLocation(new SubscriberEventAndReadmodelConfig(
-                new Uri("http://troll.de"),
-                new List<string>(),
-                new List<ReadModelSubscription> { new ReadModelSubscription(nameof(IdQuery), "wutEvent")}));
-            var domainEventClient = new DomainEventClient<ReadModelHandler<IdQuery>>(eventLocation);
-            Assert.AreEqual("http://troll.de/Api/DomainEvents", domainEventClient.BaseAddress.ToString());
+            var mock = new Mock<IEventLocation>();
+            mock.Setup(m => m.GetServiceForReadModel(typeof(IdQuery))).Returns(new SubscriberEventAndReadmodelConfig(new Uri
+                ("http://troll2.de/"), null, null));
+
+            var domainEventClient = new DomainEventClient<ReadModelHandler<IdQuery>>(mock.Object);
+            Assert.AreEqual("http://troll2.de/Api/DomainEvents", domainEventClient.BaseAddress.ToString());
         }
     }
 

@@ -27,19 +27,6 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
             var storeDependencies = collection.AddMicrowave();
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
-            var eventLocation = buildServiceProvider.GetService<IEventLocation>();
-            eventLocation.SetDomainEventLocation(new SubscriberEventAndReadmodelConfig(
-                new Uri("http://localhost:5002/"),
-                new []{ nameof (TestDomainEvent1), nameof(TestDomainEvent2), nameof(TestDomainEvent3) },
-                new List<ReadModelSubscription>
-                {
-                    new ReadModelSubscription(nameof(TestReadModel), new TestReadModel().GetsCreatedOn.Name),
-                    new ReadModelSubscription(nameof(TestIdQuery), new TestIdQuery().GetsCreatedOn.Name),
-                    new ReadModelSubscription(nameof(TestIdQuery2), new TestIdQuery2().GetsCreatedOn.Name),
-                    new ReadModelSubscription(nameof(TestIdQuerySingle), new TestIdQuerySingle().GetsCreatedOn.Name),
-                }));
-
-
             var eventDelegateHandlers = buildServiceProvider.GetServices<IAsyncEventHandler>().ToList();
             Assert.AreEqual(5, eventDelegateHandlers.Count);
             Assert.IsNotNull(eventDelegateHandlers[0]);
@@ -77,17 +64,6 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
             Assert.IsTrue(eventOverallClients3 is EventFeed<ReadModelHandler<TestIdQuerySingle>>);
             Assert.IsTrue(eventOverallClients4 is EventFeed<ReadModelHandler<TestIdQuery2>>);
 
-            var type = eventOverallClients1.GetType();
-            var fieldInfo = type.GetField("_domainEventClient", BindingFlags.NonPublic | BindingFlags.Instance);
-            var value = (DomainEventClient<ReadModelHandler<TestReadModel>>) fieldInfo.GetValue(eventOverallClients1);
-            Assert.AreEqual("http://localhost:5002/Api/DomainEvents", value.BaseAddress.ToString());
-
-            var typeQueryFeed = queryFeed1.GetType();
-            var fieldInfoQueryFeed = typeQueryFeed.GetField("_domainEventClient", BindingFlags.NonPublic | BindingFlags.Instance);
-            var valueQueryFeed = (DomainEventClient<QueryEventHandler<TestQuery1, TestDomainEvent1>>) fieldInfoQueryFeed.GetValue(queryFeed1);
-            Assert.AreEqual("http://localhost:5002/Api/DomainEventTypeStreams/TestDomainEvent1", valueQueryFeed.BaseAddress.ToString());
-
-
             var qHandler1 = buildServiceProvider.GetServices<IQueryEventHandler>().ToList();
             Assert.AreEqual(3, qHandler1.Count);
             Assert.IsTrue(qHandler1[0] is QueryEventHandler<TestQuery1, TestDomainEvent1>);
@@ -120,18 +96,6 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
                 .AddMicrowave();
 
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
-
-            var eventLocation = buildServiceProvider.GetService<IEventLocation>();
-            eventLocation.SetDomainEventLocation(new SubscriberEventAndReadmodelConfig(
-                new Uri("http://some-uri.de"),
-                new []{ nameof (TestDomainEvent1) },
-                new List<ReadModelSubscription>
-                {
-                    new ReadModelSubscription(nameof(TestReadModel), new TestReadModel().GetsCreatedOn.Name),
-                    new ReadModelSubscription(nameof(TestIdQuery), new TestIdQuery().GetsCreatedOn.Name),
-                    new ReadModelSubscription(nameof(TestIdQuery2), new TestIdQuery2().GetsCreatedOn.Name),
-                    new ReadModelSubscription(nameof(TestIdQuerySingle), new TestIdQuerySingle().GetsCreatedOn.Name),
-                }));
 
             var eventFeed1 = buildServiceProvider.GetServices<IEventFeed<AsyncEventHandler<TestDomainEvent1>>>().FirstOrDefault();
             Assert.IsNotNull(eventFeed1);

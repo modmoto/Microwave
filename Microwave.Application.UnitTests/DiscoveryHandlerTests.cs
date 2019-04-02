@@ -25,17 +25,18 @@ namespace Microwave.Application.UnitTests
 
             discoveryRepo.Setup(m => m.GetPublishedEventTypes(new Uri("http://Service3.de"))).ReturnsAsync(new
                 PublisherEventConfig(new Uri("http://service3.de"), new[] {"Event3", "Event2"}, true, "Service3"));
+            var subscribedEventCollection = new SubscribedEventCollection(
+                new []{ nameof(Event1), nameof(Event3), nameof(Event4)},
+                new List<ReadModelSubscription>());
             var discoveryHandler = new DiscoveryHandler(new ServiceBaseAddressCollection
             {
                 new Uri("http://service1.de"),
                 new Uri("http://service2.de"),
                 new Uri("http://service3.de")
             },
-                new SubscribedEventCollection(
-                    new []{ nameof(Event1), nameof(Event3), nameof(Event4)},
-                    new List<ReadModelSubscription>()),
+                subscribedEventCollection,
                 discoveryRepo.Object,
-                new EventLocation());
+                new EventLocation(new List<PublisherEventConfig>(), subscribedEventCollection));
 
             await discoveryHandler.DiscoverConsumingServices();
             var consumingServices = discoveryHandler.GetConsumingServices();
@@ -64,22 +65,25 @@ namespace Microwave.Application.UnitTests
 
             discoveryRepo.Setup(m => m.GetPublishedEventTypes(new Uri("http://Service3.de"))).ReturnsAsync(new
                 PublisherEventConfig(new Uri("http://service3.de"), new[] {nameof(TestEv3), "Event2"}, true, "Service3"));
+            var subscribedEventCollection = new SubscribedEventCollection(
+                new List<string>(),
+                new List<ReadModelSubscription> {
+                    new ReadModelSubscription( nameof(ReadModel1), nameof(TestEv1) ),
+                    new ReadModelSubscription( nameof(ReadModel3), nameof(TestEv3) ),
+                    new ReadModelSubscription( nameof(ReadModel4), nameof(Event4) ),
+                }
+            );
             var discoveryHandler = new DiscoveryHandler(new ServiceBaseAddressCollection
             {
                 new Uri("http://service1.de"),
                 new Uri("http://service2.de"),
                 new Uri("http://service3.de")
             },
-                new SubscribedEventCollection(
-                    new List<string>(),
-                    new List<ReadModelSubscription> {
-                        new ReadModelSubscription( nameof(ReadModel1), nameof(TestEv1) ),
-                        new ReadModelSubscription( nameof(ReadModel3), nameof(TestEv3) ),
-                        new ReadModelSubscription( nameof(ReadModel4), nameof(Event4) ),
-                        }
-                    ),
+                subscribedEventCollection,
                 discoveryRepo.Object,
-                new EventLocation());
+                new EventLocation(
+                    new List<PublisherEventConfig>(),
+                    subscribedEventCollection));
 
             await discoveryHandler.DiscoverConsumingServices();
             var consumingServices = discoveryHandler.GetConsumingServices();
