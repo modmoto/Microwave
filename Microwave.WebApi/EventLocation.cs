@@ -16,6 +16,8 @@ namespace Microwave.WebApi
             var readModels = subscribedEventCollection.ReadModelSubcriptions.ToList();
             var handleAsyncEvents = subscribedEventCollection.IHandleAsyncEvents.ToList();
 
+            Services = new List<SubscriberEventAndReadmodelConfig>();
+
             foreach (var service in allServices)
             {
                 var relevantEvents = service.PublishedEventTypes.Where(ev => handleAsyncEvents.Contains(ev)).ToList();
