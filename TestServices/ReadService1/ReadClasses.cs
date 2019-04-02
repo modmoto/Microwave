@@ -46,6 +46,15 @@ namespace ReadService1
         }
     }
 
+    public class ReadModelNotPublished : ReadModel, IHandle<EventNotPublished>
+    {
+        public override Type GetsCreatedOn => typeof(EventNotPublished);
+
+        public void Handle(EventNotPublished domainEvent)
+        {
+        }
+    }
+
     public class Event1 : IDomainEvent
     {
         public Event1(Identity entityId)
