@@ -24,15 +24,15 @@ namespace Microwave.Pages
             _versionRepository = versionRepository;
         }
 
-        public void OnGet()
+        public async Task OnGetAsync()
         {
+            var consumingServices = await _discoveryHandler.GetConsumingServices();
+            ConsumingServices = consumingServices;
         }
 
         public async Task<IActionResult> OnPostAsync()
         {
             await _discoveryHandler.DiscoverConsumingServices();
-            var consumingServices = _discoveryHandler.GetConsumingServices();
-            ConsumingServices = consumingServices;
             return Redirect("#");
         }
     }

@@ -36,10 +36,10 @@ namespace Microwave.Application.UnitTests
             },
                 subscribedEventCollection,
                 discoveryRepo.Object,
-                new EventLocation(new List<PublisherEventConfig>(), subscribedEventCollection));
+                new Mock<IStatusRepository>().Object);
 
             await discoveryHandler.DiscoverConsumingServices();
-            var consumingServices = discoveryHandler.GetConsumingServices();
+            var consumingServices = await discoveryHandler.GetConsumingServices();
 
             var consumingService = consumingServices.GetServiceForEvent(typeof(Event1));
             var service = consumingServices.GetServiceForEvent(typeof(Event3));
@@ -81,12 +81,10 @@ namespace Microwave.Application.UnitTests
             },
                 subscribedEventCollection,
                 discoveryRepo.Object,
-                new EventLocation(
-                    new List<PublisherEventConfig>(),
-                    subscribedEventCollection));
+                new Mock<IStatusRepository>().Object);
 
             await discoveryHandler.DiscoverConsumingServices();
-            var consumingServices = discoveryHandler.GetConsumingServices();
+            var consumingServices = await discoveryHandler.GetConsumingServices();
 
             var consumingService1 = consumingServices.GetServiceForReadModel(typeof(ReadModel1));
             var consumingService2 = consumingServices.GetServiceForReadModel(typeof(ReadModel2));

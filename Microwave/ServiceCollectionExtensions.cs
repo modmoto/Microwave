@@ -98,6 +98,7 @@ namespace Microwave
             services.AddTransient<DomainEventController>();
             services.AddTransient<DiscoveryController>();
             services.AddTransient<IDiscoveryClientFactory, DiscoveryClientFactory>();
+            services.AddTransient<IStatusRepository, StatusRepository>();
             services.AddTransient<MonitoringController>();
 
             services.AddTransient<JSonHack>();
