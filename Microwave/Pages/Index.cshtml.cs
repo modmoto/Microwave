@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microwave.Application.Discovery;
 using Microwave.EventStores.Ports;
 using Microwave.Queries;
-using Microwave.WebApi;
 
 namespace Microwave.Pages
 {
@@ -15,18 +14,14 @@ namespace Microwave.Pages
         private readonly IVersionRepository _versionRepository;
 
         public IEventLocation ConsumingServices { get; set; }
-        public IEventLocation EventLocations { get; set; }
-
         public IndexModel(
             DiscoveryHandler discoveryHandler,
             IEventRepository eventRepo,
-            IVersionRepository versionRepository,
-            IEventLocation eventLocations)
+            IVersionRepository versionRepository)
         {
             _discoveryHandler = discoveryHandler;
             _eventRepo = eventRepo;
             _versionRepository = versionRepository;
-            EventLocations = eventLocations;
         }
 
         public void OnGet()

@@ -8,7 +8,7 @@
     <form class="form-inline my-2 my-lg-0 p-3" method="post">
         <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Discover Dependencies</button>
     </form>
-    @foreach (var item in Model.EventLocations.Services)
+    @foreach (var item in Model.ConsumingServices.Services)
     {
         foreach (var readModel in item.ReadModels)
         {
