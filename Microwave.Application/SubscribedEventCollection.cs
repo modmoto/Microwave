@@ -36,5 +36,10 @@ namespace Microwave.Application
 
             return false;
         }
+
+        public override int GetHashCode()
+        {
+            return ReadModelName != null ? ReadModelName.GetHashCode() : 0;
+        }
     }
 }
