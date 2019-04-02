@@ -63,7 +63,7 @@ namespace Microwave.Application.UnitTests
                 PublisherEventConfig(new Uri("http://service2.de"), new[] {nameof(TestEv2)}, true, "Service2"));
 
             discoveryRepo.Setup(m => m.GetPublishedEventTypes(new Uri("http://Service3.de"))).ReturnsAsync(new
-                PublisherEventConfig(new Uri("http://service3.de"), new[] {nameof(TestEv3), "Event4"}, true, "Service3"));
+                PublisherEventConfig(new Uri("http://service3.de"), new[] {nameof(TestEv3), "Event2"}, true, "Service3"));
             var discoveryHandler = new DiscoveryHandler(new ServiceBaseAddressCollection
             {
                 new Uri("http://service1.de"),
@@ -74,7 +74,8 @@ namespace Microwave.Application.UnitTests
                     new List<string>(),
                     new List<ReadModelSubscription> {
                         new ReadModelSubscription( nameof(ReadModel1), nameof(TestEv1) ),
-                        new ReadModelSubscription( nameof(ReadModel3), nameof(TestEv3) )
+                        new ReadModelSubscription( nameof(ReadModel3), nameof(TestEv3) ),
+                        new ReadModelSubscription( nameof(ReadModel4), nameof(Event4) ),
                         }
                     ),
                 discoveryRepo.Object,
@@ -92,6 +93,7 @@ namespace Microwave.Application.UnitTests
             Assert.AreEqual("Service3", consumingService3.ServiceName);
             Assert.AreEqual(new Uri("http://service1.de/"), consumingService1.ServiceBaseAddress);
             Assert.AreEqual(new Uri("http://service3.de" ), consumingService3.ServiceBaseAddress);
+            Assert.AreEqual("ReadModel4", consumingServices.UnresolvedReadModeSubscriptions.Single().ReadModelName);
         }
     }
 
@@ -104,6 +106,10 @@ namespace Microwave.Application.UnitTests
     }
 
     class ReadModel3
+    {
+    }
+
+    class ReadModel4
     {
     }
 }

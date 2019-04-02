@@ -26,5 +26,15 @@ namespace Microwave.Application
 
         public string ReadModelName { get; }
         public string GetsCreatedOn { get; }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is ReadModelSubscription rms)
+            {
+                return rms.ReadModelName == ReadModelName;
+            }
+
+            return false;
+        }
     }
 }
