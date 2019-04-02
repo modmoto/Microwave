@@ -5,60 +5,74 @@
 }
 
 <div>
-    <form class="form-inline my-2 my-lg-0 p-3" method="post">
-        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Discover Dependencies</button>
-    </form>
-    @foreach (var eventSubscription in Model.ConsumingServices.UnresolvedEventSubscriptions)
-    {
-        <p>@Html.DisplayFor(modelItem => eventSubscription)</p>
-    }
-
-    @foreach (var readModel in Model.ConsumingServices.UnresolvedReadModeSubscriptions)
-    {
-        <p>@Html.DisplayFor(modelItem => readModel.ReadModelName)</p>
-    }
-    <div class="container">
-    <div class="card-deck">
-        @foreach (var item in Model.ConsumingServices.Services)
+    <div class="d-flex">
+        @if(Model.HasMissingEvents)
         {
-            <div class="card mb-4 pt-2">
-                <div class="card-body">
-                    <h5 class="card-title">
-                        <a href="@item.ServiceBaseAddress">@Html.DisplayFor(modelItem => item.ServiceName)</a>
-                    </h5>
+            <div class="dropdown p-3 col-4">
+                <button class="btn btn-danger dropdown-toggle" type="button" id="dropdownMenuButton"
+                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Some dependencies could not be discovered!
+                </button>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    @foreach (var eventSubscription in Model.ConsumingServices.UnresolvedEventSubscriptions)
+                    {
+                        <a class="dropdown-item" href="#">ev: @Html.DisplayFor(modelItem => eventSubscription)</a>
+                    }
 
-                    <div class="card">
-                        <div class="card-header">
-                            Readmodels
-                        </div>
-                        <ul class="list-group list-group-flush">
-                            @foreach (var readModel in item.ReadModels)
-                            {
-                                <li class="list-group-item">
-                                    @Html.DisplayFor(modelItem => readModel.ReadModelName)
-                                </li>
-                            }
-                        </ul>
-                    </div>
-
-                    <br/>
-
-                    <div class="card">
-                        <div class="card-header">
-                            Subscribed events
-                        </div>
-                        <ul class="list-group list-group-flush">
-                            @foreach (var subscribedEvent in item.SubscribedEvents)
-                            {
-                                <li class="list-group-item">
-                                    @Html.DisplayFor(modelItem => subscribedEvent)
-                                </li>
-                            }
-                        </ul>
-                    </div>
+                    @foreach (var readModel in Model.ConsumingServices.UnresolvedReadModeSubscriptions)
+                    {
+                        <a class="dropdown-item" href="#">rm: @Html.DisplayFor(modelItem => readModel.ReadModelName)</a>
+                    }
                 </div>
             </div>
         }
+        <form class="my-2 my-lg-0 p-3 ml-auto" method="post">
+            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Discover Dependencies</button>
+        </form>
+
     </div>
+    <div class="container">
+        <div class="card-deck">
+            @foreach (var item in Model.ConsumingServices.Services)
+            {
+                <div class="card mb-4 pt-2">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <a href="@item.ServiceBaseAddress">@Html.DisplayFor(modelItem => item.ServiceName)</a>
+                        </h5>
+
+                        <div class="card">
+                            <div class="card-header">
+                                Readmodels
+                            </div>
+                            <ul class="list-group list-group-flush">
+                                @foreach (var readModel in item.ReadModels)
+                                {
+                                    <li class="list-group-item">
+                                        @Html.DisplayFor(modelItem => readModel.ReadModelName)
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+
+                        <br/>
+
+                        <div class="card">
+                            <div class="card-header">
+                                Subscribed events
+                            </div>
+                            <ul class="list-group list-group-flush">
+                                @foreach (var subscribedEvent in item.SubscribedEvents)
+                                {
+                                    <li class="list-group-item">
+                                        @Html.DisplayFor(modelItem => subscribedEvent)
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
     </div>
 </div>

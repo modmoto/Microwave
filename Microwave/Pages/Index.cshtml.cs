@@ -1,27 +1,24 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microwave.Application.Discovery;
-using Microwave.EventStores.Ports;
-using Microwave.Queries;
 
 namespace Microwave.Pages
 {
     public class IndexModel : PageModel
     {
         private readonly DiscoveryHandler _discoveryHandler;
-        private readonly IEventRepository _eventRepo;
-        private readonly IVersionRepository _versionRepository;
 
         public IEventLocation ConsumingServices { get; set; }
+
+        public bool HasMissingEvents => ConsumingServices.UnresolvedEventSubscriptions.Any()
+                                        || ConsumingServices.UnresolvedReadModeSubscriptions.Any();
+
         public IndexModel(
-            DiscoveryHandler discoveryHandler,
-            IEventRepository eventRepo,
-            IVersionRepository versionRepository)
+            DiscoveryHandler discoveryHandler)
         {
             _discoveryHandler = discoveryHandler;
-            _eventRepo = eventRepo;
-            _versionRepository = versionRepository;
         }
 
         public async Task OnGetAsync()
