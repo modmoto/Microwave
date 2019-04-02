@@ -14,7 +14,7 @@ namespace Microwave.Application.Discovery
         {
             var readModels = subscribedEventCollection.ReadModelSubcriptions.ToList();
             var handleAsyncEvents = subscribedEventCollection.IHandleAsyncEvents.ToList();
-            UnresolvedEventSubscriptions = new List<string> { "Event4" };
+            UnresolvedEventSubscriptions = handleAsyncEvents;
 
             foreach (var service in allServices)
             {
@@ -29,6 +29,7 @@ namespace Microwave.Application.Discovery
                         relevantEvents,
                         relevantReadModels,
                         service.ServiceName));
+                    UnresolvedEventSubscriptions = UnresolvedEventSubscriptions.Except(relevantEvents);
                 }
             }
         }
