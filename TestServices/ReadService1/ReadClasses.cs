@@ -5,7 +5,7 @@ using Microwave.Queries;
 
 namespace ReadService1
 {
-    public class Handler1 : IHandleAsync<Event2>, IHandleAsync<Event4>
+    public class Handler1 : IHandleAsync<Event2>, IHandleAsync<Event4>, IHandleAsync<EventNotPublished>
     {
         public Task HandleAsync(Event2 domainEvent)
         {
@@ -16,6 +16,21 @@ namespace ReadService1
         {
             return null;
         }
+
+        public Task HandleAsync(EventNotPublished domainEvent)
+        {
+            return null;
+        }
+    }
+
+    public class EventNotPublished : IDomainEvent
+    {
+        public EventNotPublished(Identity entityId)
+        {
+            EntityId = entityId;
+        }
+
+        public Identity EntityId { get; }
     }
 
     public class ReadModel1 : ReadModel, IHandle<Event3>, IHandle<Event4>

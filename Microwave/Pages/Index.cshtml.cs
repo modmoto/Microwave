@@ -2,18 +2,31 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microwave.Application.Discovery;
+using Microwave.EventStores.Ports;
+using Microwave.Queries;
+using Microwave.WebApi;
 
 namespace Microwave.Pages
 {
     public class IndexModel : PageModel
     {
         private readonly DiscoveryHandler _discoveryHandler;
+        private readonly IEventRepository _eventRepo;
+        private readonly IVersionRepository _versionRepository;
 
         public IEventLocation ConsumingServices { get; set; }
+        public IEventLocation EventLocations { get; set; }
 
-        public IndexModel(DiscoveryHandler discoveryHandler)
+        public IndexModel(
+            DiscoveryHandler discoveryHandler,
+            IEventRepository eventRepo,
+            IVersionRepository versionRepository,
+            IEventLocation eventLocations)
         {
             _discoveryHandler = discoveryHandler;
+            _eventRepo = eventRepo;
+            _versionRepository = versionRepository;
+            EventLocations = eventLocations;
         }
 
         public void OnGet()
@@ -25,6 +38,11 @@ namespace Microwave.Pages
         public async Task<IActionResult> OnPostAsync()
         {
             await _discoveryHandler.DiscoverConsumingServices();
+            var consumingServices = _discoveryHandler.GetConsumingServices();
+            foreach (var VARIABLE in consumingServices.Services)
+            {
+
+            }
             return Redirect("#");
         }
     }
