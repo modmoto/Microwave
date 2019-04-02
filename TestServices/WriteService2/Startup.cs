@@ -16,6 +16,10 @@ namespace WriteService2
             WriteDatabase = new WriteDatabaseConfig
             {
                 DatabaseName = "TestWriteService2"
+            },
+            ReadDatabase = new ReadDatabaseConfig
+            {
+                DatabaseName = "TestWriteService2ReadDb"
             }
         };
 
