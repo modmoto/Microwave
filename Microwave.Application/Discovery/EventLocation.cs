@@ -32,6 +32,16 @@ namespace Microwave.Application.Discovery
             }
         }
 
+        public EventLocation(
+            IEnumerable<SubscriberEventAndReadmodelConfig> services, 
+            IEnumerable<string> unresolvedEventSubscriptions, 
+            IEnumerable<ReadModelSubscription> unresolvedReadModeSubscriptions)
+        {
+            Services = services;
+            UnresolvedEventSubscriptions = unresolvedEventSubscriptions;
+            UnresolvedReadModeSubscriptions = unresolvedReadModeSubscriptions;
+        }
+
         public IEnumerable<SubscriberEventAndReadmodelConfig> Services { get; private set; }
             = new List<SubscriberEventAndReadmodelConfig>();
         public IEnumerable<string> UnresolvedEventSubscriptions { get; }
