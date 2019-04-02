@@ -44,22 +44,6 @@ namespace Microwave.WebApi.UnitTests
 
             Assert.IsNull(serviceAfter);
         }
-
-        [TestMethod]
-        [Ignore]
-        public void ResetWorks()
-        {
-            var eventLocation = new EventLocation();
-            var service = new SubscriberEventAndReadmodelConfig(new Uri("http://localhost:5000"), new List<string> {
-                "Event1"}, new []{ new ReadModelSubscription("ReadModel1", "Event1")  }, "TeamService" );
-
-            eventLocation.SetDomainEventLocation(service);
-            // eventLocation.Reset();
-
-            var serviceAfter = eventLocation.GetServiceForEvent(typeof(Event1));
-
-            Assert.IsNull(serviceAfter);
-        }
     }
 
     public class Event2
