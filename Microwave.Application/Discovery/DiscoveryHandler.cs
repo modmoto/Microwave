@@ -37,25 +37,7 @@ namespace Microwave.Application.Discovery
                 allServices.Add(publishedEventTypes);
             }
 
-            var handleAsyncEvents = _subscribedEventCollection.IHandleAsyncEvents.ToList();
-            var readModels = _subscribedEventCollection.ReadModelSubcriptions.ToList();
-
-            _eventLocation.Reset();
-            foreach (var service in allServices)
-            {
-                var relevantEvents = service.PublishedEventTypes.Where(ev => handleAsyncEvents.Contains(ev)).ToList();
-                var relevantReadModels = readModels.Where(r =>
-                        service.PublishedEventTypes.Contains(r.GetsCreatedOn)).ToList();
-
-                if (relevantEvents.Any() || relevantReadModels.Any())
-                {
-                    _eventLocation.SetDomainEventLocation(new SubscriberEventAndReadmodelConfig(
-                        service.ServiceBaseAddress,
-                        relevantEvents,
-                        relevantReadModels,
-                        service.ServiceName));
-                }
-            }
+            _eventLocation.Reset(allServices, _subscribedEventCollection);
         }
     }
 }
