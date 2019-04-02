@@ -13,7 +13,6 @@
     <ItemGroup>
       <ProjectReference Include="..\..\Microwave\Microwave.csproj" />
       <ProjectReference Include="..\ServerConfig\ServerConfig.csproj" />
-      <ProjectReference Include="..\WriteService2\WriteService2.csproj" />
     </ItemGroup>
 
 </Project>
