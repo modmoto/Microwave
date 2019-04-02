@@ -26,18 +26,13 @@ namespace Microwave.Pages
 
         public void OnGet()
         {
-            var consumingServices = _discoveryHandler.GetConsumingServices();
-            ConsumingServices = consumingServices;
         }
 
         public async Task<IActionResult> OnPostAsync()
         {
             await _discoveryHandler.DiscoverConsumingServices();
             var consumingServices = _discoveryHandler.GetConsumingServices();
-            foreach (var VARIABLE in consumingServices.Services)
-            {
-
-            }
+            ConsumingServices = consumingServices;
             return Redirect("#");
         }
     }

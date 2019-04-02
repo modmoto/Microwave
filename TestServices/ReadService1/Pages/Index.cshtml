@@ -8,17 +8,14 @@
     <form class="form-inline my-2 my-lg-0 p-3" method="post">
         <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Discover Dependencies</button>
     </form>
-    @foreach (var item in Model.ConsumingServices.Services)
+    @foreach (var eventSubscription in Model.ConsumingServices.UnresolvedEventSubscriptions)
     {
-        foreach (var readModel in item.ReadModels)
-        {
-            <p>@Html.DisplayFor(modelItem => readModel.ReadModelName)</p>
-        }
+        <p>@Html.DisplayFor(modelItem => eventSubscription)</p>
+    }
 
-        foreach (var subscribedEvent in item.SubscribedEvents)
-        {
-            <p>@Html.DisplayFor(modelItem => subscribedEvent)</p>
-        }
+    @foreach (var readModel in Model.ConsumingServices.UnresolvedReadModeSubscriptions)
+    {
+        <p>@Html.DisplayFor(modelItem => readModel.ReadModelName)</p>
     }
     <div class="container">
     <div class="card-deck">
