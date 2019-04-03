@@ -17,7 +17,7 @@
                     @foreach (var eventSubscription in Model.ConsumingServices.UnresolvedEventSubscriptions)
                     {
                         <a class="dropdown-item" href="#"><em class="fas fa-comment-dots pr-3"></em>
-                            @Html.DisplayFor(modelItem => eventSubscription)</a>
+                            @Html.DisplayFor(modelItem => eventSubscription.Name)</a>
                     }
 
                     @foreach (var readModel in Model.ConsumingServices.UnresolvedReadModeSubscriptions)
@@ -66,9 +66,30 @@
                             <ul class="list-group list-group-flush">
                                 @foreach (var subscribedEvent in item.SubscribedEvents)
                                 {
-                                    <li class="list-group-item">
-                                        @Html.DisplayFor(modelItem => subscribedEvent)
-                                    </li>
+                                    <div class="btn-group dropright">
+                                        <button type="button"
+                                                class="btn btn-white text-left pl-4 dropdown-toggle"
+                                                data-toggle="dropdown"
+                                                aria-haspopup="true"
+                                                aria-expanded="false">
+                                            @Html.DisplayFor(modelItem => subscribedEvent.Name)
+                                        </button>
+                                        <div class="dropdown-menu">
+                                            @foreach (var property in subscribedEvent.Properties)
+                                            {
+                                                <a class="dropdown-item" href="#">
+                                                    <div class="d-flex flex-row">
+                                                        <div class="w-50 text-secondary">
+                                                            @Html.DisplayFor(modelItem => property.Type)
+                                                        </div>
+                                                        <div class="w-50">
+                                                            @Html.DisplayFor(modelItem => property.Name)
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            }
+                                        </div>
+                                    </div>
                                 }
                             </ul>
                         </div>
