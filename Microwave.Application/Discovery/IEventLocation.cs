@@ -9,7 +9,7 @@ namespace Microwave.Application.Discovery
         SubscriberEventAndReadmodelConfig GetServiceForReadModel(Type readModel);
         IEnumerable<SubscriberEventAndReadmodelConfig> Services { get; }
 
-        IEnumerable<string> UnresolvedEventSubscriptions { get; }
+        IEnumerable<EventSchema> UnresolvedEventSubscriptions { get; }
         IEnumerable<ReadModelSubscription> UnresolvedReadModeSubscriptions { get; }
     }
 }

@@ -9,7 +9,7 @@ namespace Microwave.Application.Discovery
         public EventLocation(List<PublisherEventConfig> allServices, SubscribedEventCollection subscribedEventCollection)
         {
             var readModels = subscribedEventCollection.ReadModelSubcriptions.ToList();
-            var handleAsyncEvents = subscribedEventCollection.IHandleAsyncEvents.ToList();
+            var handleAsyncEvents = subscribedEventCollection.Events.ToList();
             UnresolvedEventSubscriptions = handleAsyncEvents;
             UnresolvedReadModeSubscriptions = readModels;
 
@@ -19,22 +19,21 @@ namespace Microwave.Application.Discovery
                 var relevantReadModels = readModels.Where(r =>
                     service.PublishedEventTypes.Contains(r.GetsCreatedOn)).ToList();
 
-                if (relevantEvents.Any() || relevantReadModels.Any())
-                {
-                    SetDomainEventLocation(new SubscriberEventAndReadmodelConfig(
-                        service.ServiceBaseAddress,
-                        relevantEvents,
-                        relevantReadModels,
-                        service.ServiceName));
-                    UnresolvedEventSubscriptions = UnresolvedEventSubscriptions.Except(relevantEvents);
-                    UnresolvedReadModeSubscriptions = UnresolvedReadModeSubscriptions.Except(relevantReadModels);
-                }
+                if (!relevantEvents.Any() && !relevantReadModels.Any()) continue;
+
+                SetDomainEventLocation(new SubscriberEventAndReadmodelConfig(
+                    service.ServiceBaseAddress,
+                    relevantEvents,
+                    relevantReadModels,
+                    service.ServiceName));
+                UnresolvedEventSubscriptions = UnresolvedEventSubscriptions.Except(relevantEvents);
+                UnresolvedReadModeSubscriptions = UnresolvedReadModeSubscriptions.Except(relevantReadModels);
             }
         }
 
         public EventLocation(
             IEnumerable<SubscriberEventAndReadmodelConfig> services, 
-            IEnumerable<string> unresolvedEventSubscriptions, 
+            IEnumerable<EventSchema> unresolvedEventSubscriptions,
             IEnumerable<ReadModelSubscription> unresolvedReadModeSubscriptions)
         {
             Services = services;
@@ -44,12 +43,12 @@ namespace Microwave.Application.Discovery
 
         public IEnumerable<SubscriberEventAndReadmodelConfig> Services { get; private set; }
             = new List<SubscriberEventAndReadmodelConfig>();
-        public IEnumerable<string> UnresolvedEventSubscriptions { get; }
+        public IEnumerable<EventSchema> UnresolvedEventSubscriptions { get; }
         public IEnumerable<ReadModelSubscription> UnresolvedReadModeSubscriptions { get; }
 
         public SubscriberEventAndReadmodelConfig GetServiceForEvent(Type eventType)
         {
-            return Services.FirstOrDefault(s => s.SubscribedEvents.Contains(eventType.Name));
+            return Services.FirstOrDefault(s => s.SubscribedEvents.Any(e => e.Name == eventType.Name));
         }
 
         public SubscriberEventAndReadmodelConfig GetServiceForReadModel(Type readModel)

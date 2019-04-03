@@ -17,7 +17,7 @@
                     @foreach (var eventSubscription in Model.ConsumingServices.UnresolvedEventSubscriptions)
                     {
                         <a class="dropdown-item" href="#"><em class="fas fa-comment-dots pr-3"></em>
-                            @Html.DisplayFor(modelItem => eventSubscription)</a>
+                            @Html.DisplayFor(modelItem => eventSubscription.Name)</a>
                     }
 
                     @foreach (var readModel in Model.ConsumingServices.UnresolvedReadModeSubscriptions)
@@ -67,7 +67,7 @@
                                 @foreach (var subscribedEvent in item.SubscribedEvents)
                                 {
                                     <li class="list-group-item">
-                                        @Html.DisplayFor(modelItem => subscribedEvent)
+                                        @Html.DisplayFor(modelItem => subscribedEvent.Name)
                                     </li>
                                 }
                             </ul>

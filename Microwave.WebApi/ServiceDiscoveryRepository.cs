@@ -29,7 +29,7 @@ namespace Microwave.WebApi
             }
             catch (HttpRequestException)
             {
-                return new PublisherEventConfig(serviceAdress, new List<string>(), false);
+                return new PublisherEventConfig(serviceAdress, new List<EventSchema>(), false);
             }
         }
     }

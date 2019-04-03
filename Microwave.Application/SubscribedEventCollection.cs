@@ -1,31 +1,32 @@
 using System.Collections.Generic;
+using Microwave.Application.Discovery;
 
 namespace Microwave.Application
 {
     public class SubscribedEventCollection
     {
         public SubscribedEventCollection(
-            IEnumerable<string> handleAsyncEvents,
+            IEnumerable<EventSchema> events,
             IEnumerable<ReadModelSubscription> readModelSubcriptions)
         {
-            IHandleAsyncEvents = handleAsyncEvents;
+            Events = events;
             ReadModelSubcriptions = readModelSubcriptions;
         }
 
-        public IEnumerable<string> IHandleAsyncEvents { get; }
+        public IEnumerable<EventSchema> Events { get; }
         public IEnumerable<ReadModelSubscription> ReadModelSubcriptions { get; }
     }
 
     public class ReadModelSubscription
     {
-        public ReadModelSubscription(string readModelName, string getsCreatedOn)
+        public ReadModelSubscription(string readModelName, EventSchema getsCreatedOn)
         {
             ReadModelName = readModelName;
             GetsCreatedOn = getsCreatedOn;
         }
 
         public string ReadModelName { get; }
-        public string GetsCreatedOn { get; }
+        public EventSchema GetsCreatedOn { get; }
 
         public override bool Equals(object obj)
         {

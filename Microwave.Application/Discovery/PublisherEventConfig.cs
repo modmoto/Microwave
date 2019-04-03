@@ -6,7 +6,7 @@ namespace Microwave.Application.Discovery
     public class PublisherEventConfig
     {
         public PublisherEventConfig(Uri serviceBaseAddress,
-            IEnumerable<string> publishedEventTypes,
+            IEnumerable<EventSchema> publishedEventTypes,
             bool isReachable = true,
             string serviceName = null)
         {
@@ -18,7 +18,7 @@ namespace Microwave.Application.Discovery
 
         public Uri ServiceBaseAddress { get; }
         public string ServiceName { get; }
-        public IEnumerable<string> PublishedEventTypes { get; }
+        public IEnumerable<EventSchema> PublishedEventTypes { get; }
         public bool IsReachable { get; }
     }
 

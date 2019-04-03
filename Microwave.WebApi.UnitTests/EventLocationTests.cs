@@ -17,16 +17,19 @@ namespace Microwave.WebApi.UnitTests
                 new List<PublisherEventConfig>
                 {
                     new PublisherEventConfig(
-                        new Uri("http://jeah.de"), new []{ nameof(Event2) })
+                        new Uri("http://jeah.de"), new []
+                        {
+                            new EventSchema { Name = "Event2"}
+                        })
                 },
                 new SubscribedEventCollection(
-                    new List<string> { "Event2"},
-                    new []{ new ReadModelSubscription("ReadModel2", "Event1") }));
+                    new List<EventSchema> { new EventSchema { Name = "Event2"}},
+                    new []{ new ReadModelSubscription("ReadModel2", new EventSchema { Name = "Event1"})}));
 
             var serviceAfter2 = eventLocation.GetServiceForEvent(typeof(Event2));
             var serviceAfter1 = eventLocation.GetServiceForEvent(typeof(Event1));
 
-            Assert.AreEqual(nameof(Event2), serviceAfter2.SubscribedEvents.Single());
+            Assert.AreEqual(nameof(Event2), serviceAfter2.SubscribedEvents.Single().Name);
             Assert.IsNull(serviceAfter1);
         }
     }

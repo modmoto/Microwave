@@ -44,7 +44,7 @@ namespace Microwave
         private static void AddEventAndReadModelSubscriptions(IServiceCollection services,
             IEnumerable<Assembly> readModelAndDomainEventAssemblies)
         {
-            var iHandleAsyncEvents = new List<string>();
+            var iHandleAsyncEvents = new List<EventSchema>();
             var modelAndDomainEventAssemblies = readModelAndDomainEventAssemblies.ToList();
             foreach (var assembly in modelAndDomainEventAssemblies)
             {
@@ -156,14 +156,14 @@ namespace Microwave
             foreach (var assembly in domainEventAssemblies)
             {
                 var eventsForPublish = GetEventsForPublish(assembly);
-                var notAddedYet = eventsForPublish.Where(e => !publishedEventCollection.PublishedEvents.Contains(e));
+                var notAddedYet = eventsForPublish.Where(e => publishedEventCollection.PublishedEvents.All(w => w.Name != e.Name));
                 publishedEventCollection.PublishedEvents.AddRange(notAddedYet);
             }
 
             services.AddSingleton(publishedEventCollection);
         }
 
-        private static IEnumerable<string> GetEventsForPublish(Assembly assembly)
+        private static IEnumerable<EventSchema> GetEventsForPublish(Assembly assembly)
         {
             var entityTypes = assembly.GetTypes().Where(ev => ev.GetInterfaces().Contains(typeof(IApply)));
             var domainEvents = new List<Type>();
@@ -177,10 +177,10 @@ namespace Microwave
                 domainEvents.AddRange(domainEventTypes);
             }
 
-            return domainEvents.Select(e => e.GetGenericArguments().First().Name);
+            return domainEvents.Select(e => new EventSchema { Name = e.GetGenericArguments().First().Name});
         }
 
-        private static IEnumerable<string> GetEventsForSubscribe(Assembly assembly)
+        private static IEnumerable<EventSchema> GetEventsForSubscribe(Assembly assembly)
         {
             var types = assembly.GetTypes();
             var handleAsyncs = types.Where(ev => ev.GetInterfaces().Any(x =>
@@ -199,7 +199,11 @@ namespace Microwave
                 domainEvents.AddRange(domainEventTypes);
             }
 
-            return domainEvents.Select(e => e.GetGenericArguments().First().Name);
+            return domainEvents.Select(e =>
+                new EventSchema
+                {
+                    Name = e.GetGenericArguments().First().Name
+                });
         }
 
         private static IEnumerable<ReadModelSubscription> GetEventsForReadModelSubscribe(Assembly assembly)
@@ -219,7 +223,9 @@ namespace Microwave
                 var createdType = propertyInfo?.GetValue(instance) as Type;
                 if (createdType == null) throw new InvalidReadModelCreationTypeException(readModel.Name);
 
-                var readModelSubscription = new ReadModelSubscription(readModel.Name, createdType.Name);
+                var readModelSubscription = new ReadModelSubscription(
+                    readModel.Name,
+                    new EventSchema { Name = createdType.Name});
                 subscriptions.Add(readModelSubscription);
             }
 

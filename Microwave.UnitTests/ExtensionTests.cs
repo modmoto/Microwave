@@ -133,8 +133,8 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
 
             var publishingEventRegistration = buildServiceProvider.GetServices<ServicePublishingConfig>().Single()
             .PublishedEvents.ToList();
-            Assert.AreEqual(nameof(TestDomainEvent_PublishedEvent1), publishingEventRegistration[0]);
-            Assert.AreEqual(nameof(TestDomainEvent_PublishedEvent3), publishingEventRegistration[1]);
+            Assert.AreEqual(nameof(TestDomainEvent_PublishedEvent1), publishingEventRegistration[0].Name);
+            Assert.AreEqual(nameof(TestDomainEvent_PublishedEvent3), publishingEventRegistration[1].Name);
             Assert.AreEqual(2, publishingEventRegistration.Count);
 
             var discoveryController = buildServiceProvider.GetServices<DiscoveryController>().Single();
@@ -150,9 +150,9 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
             var publishingEventRegistration = buildServiceProvider.GetServices<SubscribedEventCollection>().Single();
-            var ihandleAsyncEvents = publishingEventRegistration.IHandleAsyncEvents.OrderBy(r => r).ToList();
-            Assert.AreEqual(nameof(TestDomainEvent_PublishedEvent1), ihandleAsyncEvents[0]);
-            Assert.AreEqual(nameof(TestDomainEvent_PublishedEvent2), ihandleAsyncEvents[1]);
+            var ihandleAsyncEvents = publishingEventRegistration.Events.OrderBy(r => r.Name).ToList();
+            Assert.AreEqual(nameof(TestDomainEvent_PublishedEvent1), ihandleAsyncEvents[0].Name);
+            Assert.AreEqual(nameof(TestDomainEvent_PublishedEvent2), ihandleAsyncEvents[1].Name);
             Assert.AreEqual(4, ihandleAsyncEvents.Count);
 
             var discoveryController = buildServiceProvider.GetServices<DiscoveryController>().Single();
@@ -169,7 +169,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
 
             var publishingEventRegistration = buildServiceProvider.GetServices<SubscribedEventCollection>().Single();
             var readModelSubscription = publishingEventRegistration.ReadModelSubcriptions.OrderBy(r => r.ReadModelName).ToList();
-            Assert.AreEqual(nameof(TestDomainEvent_PublishedEvent1), readModelSubscription[4].GetsCreatedOn);
+            Assert.AreEqual(nameof(TestDomainEvent_PublishedEvent1), readModelSubscription[4].GetsCreatedOn.Name);
             Assert.AreEqual(nameof(TestReadModelSubscriptions), readModelSubscription[4].ReadModelName);
             Assert.AreEqual(5, readModelSubscription.Count);
         }

@@ -21,11 +21,20 @@ namespace Microwave.Queries.UnitTests
             var statusRepository = new StatusRepository(ReadModelDatabase);
 
             List<PublisherEventConfig> services = new List<PublisherEventConfig> {
-                new PublisherEventConfig(new Uri("http://service1.de"), new []{ "Event1", "Event2", "Event3"})
+                new PublisherEventConfig(new Uri("http://service1.de"), new []
+                {
+                    new EventSchema { Name = "Event1"},
+                    new EventSchema { Name = "Event2"},
+                    new EventSchema { Name = "Event3"}
+                })
             };
             var subscribedEventCollection = new SubscribedEventCollection(
-                new []{ "Event1", "Event2" },
-                new []{ new ReadModelSubscription("Rm1", "Event3") });
+                new []
+                {
+                    new EventSchema { Name = "Event1"},
+                    new EventSchema { Name = "Event2"}
+                },
+                new []{ new ReadModelSubscription("Rm1", new EventSchema { Name = "Event3"}) });
             var eventLocation = new EventLocation(services, subscribedEventCollection);
 
             await statusRepository.SaveEventLocation(eventLocation);
@@ -51,17 +60,25 @@ namespace Microwave.Queries.UnitTests
             var statusRepository = new StatusRepository(ReadModelDatabase);
 
             List<PublisherEventConfig> services = new List<PublisherEventConfig> {
-                new PublisherEventConfig(new Uri("http://service1.de"), new []{ "Event1", "Event3"})
+                new PublisherEventConfig(new Uri("http://service1.de"), new []
+                {
+                    new EventSchema { Name = "Event1"},
+                    new EventSchema { Name = "Event3"}
+                })
             };
             var subscribedEventCollection = new SubscribedEventCollection(
-                new []{ "Event1", "Event2" },
-                new []{ new ReadModelSubscription("Rm1", "Event3") });
+                new []
+                {
+                    new EventSchema { Name = "Event1"},
+                    new EventSchema { Name = "Event2"}
+                },
+                new []{ new ReadModelSubscription("Rm1", new EventSchema { Name = "Event3"}) });
             var eventLocation = new EventLocation(services, subscribedEventCollection);
 
             await statusRepository.SaveEventLocation(eventLocation);
             var location = await statusRepository.GetEventLocation();
 
-            Assert.AreEqual("Event2", location.UnresolvedEventSubscriptions.Single());
+            Assert.AreEqual("Event2", location.UnresolvedEventSubscriptions.Single().Name);
             Assert.IsTrue(!location.UnresolvedReadModeSubscriptions.Any());
         }
 
@@ -71,18 +88,26 @@ namespace Microwave.Queries.UnitTests
             var statusRepository = new StatusRepository(ReadModelDatabase);
 
             List<PublisherEventConfig> services = new List<PublisherEventConfig> {
-                new PublisherEventConfig(new Uri("http://service1.de"), new []{ "Event1", "Event2"})
+                new PublisherEventConfig(new Uri("http://service1.de"), new []
+                {
+                    new EventSchema { Name = "Event1"},
+                    new EventSchema { Name = "Event2"}
+                })
             };
             var subscribedEventCollection = new SubscribedEventCollection(
-                new []{ "Event1", "Event2" },
-                new []{ new ReadModelSubscription("Rm1", "Event3") });
+                new []
+                {
+                    new EventSchema { Name = "Event1"},
+                    new EventSchema { Name = "Event2"}
+                },
+                new []{ new ReadModelSubscription("Rm1", new EventSchema { Name = "Event3"}) });
             var eventLocation = new EventLocation(services, subscribedEventCollection);
 
             await statusRepository.SaveEventLocation(eventLocation);
             var location = await statusRepository.GetEventLocation();
 
             Assert.AreEqual("Rm1", location.UnresolvedReadModeSubscriptions.Single().ReadModelName);
-            Assert.AreEqual("Event3", location.UnresolvedReadModeSubscriptions.Single().GetsCreatedOn);
+            Assert.AreEqual("Event3", location.UnresolvedReadModeSubscriptions.Single().GetsCreatedOn.Name);
             Assert.IsTrue(!location.UnresolvedEventSubscriptions.Any());
         }
     }
