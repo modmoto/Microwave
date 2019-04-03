@@ -37,7 +37,7 @@ namespace Microwave.Queries
                 findOneAndReplaceOptions);
         }
 
-        public Guid EventLocationId => new Guid("78448B83-1BA9-44DF-935B-78EC9B3D1FA4");
+        private Guid EventLocationId => new Guid("78448B83-1BA9-44DF-935B-78EC9B3D1FA4");
 
         public async Task<IEventLocation> GetEventLocation()
         {
