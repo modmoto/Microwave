@@ -73,6 +73,10 @@ namespace ReadService1
             EntityId = entityId;
         }
 
+
+        public string Name { get; }
+        public string SurName { get; }
+
         public Identity EntityId { get; }
     }
 
@@ -93,6 +97,9 @@ namespace ReadService1
         {
             EntityId = entityId;
         }
+
+        public int Age { get; }
+        public string Name { get; }
 
         public Identity EntityId { get; }
     }
