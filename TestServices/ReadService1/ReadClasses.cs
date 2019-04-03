@@ -87,6 +87,8 @@ namespace ReadService1
             EntityId = entityId;
         }
 
+        public string RmName { get; }
+        public string RmSurName { get; }
         public Identity EntityId { get; }
     }
 
