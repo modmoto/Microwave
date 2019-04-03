@@ -28,11 +28,7 @@ namespace Microwave.Application.Discovery
         public EventSchema(string name, IEnumerable<PropertyType> properties = null)
         {
             Name = name;
-            Properties = new List<PropertyType>
-            {
-                new PropertyType("Name", typeof(string).Name),
-                new PropertyType("Alter", typeof(int).Name)
-            };
+            Properties = properties ?? new List<PropertyType>();
         }
 
         public string Name { get; }

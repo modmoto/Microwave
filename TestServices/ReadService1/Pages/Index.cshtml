@@ -50,9 +50,33 @@
                             <ul class="list-group list-group-flush">
                                 @foreach (var readModel in item.ReadModels)
                                 {
-                                    <li class="list-group-item">
-                                        @Html.DisplayFor(modelItem => readModel.ReadModelName)
-                                    </li>
+                                    <div class="btn-group dropright">
+                                        <button type="button"
+                                                class="btn btn-white text-left pl-4 dropdown-toggle"
+                                                data-toggle="dropdown"
+                                                aria-haspopup="true"
+                                                aria-expanded="false">
+                                            @Html.DisplayFor(modelItem => readModel.ReadModelName)
+                                        </button>
+                                        <div class="dropdown-menu">
+                                            <div class="dropdown-item">
+                                                @Html.DisplayFor(modelItem => readModel.GetsCreatedOn.Name):
+                                            </div>
+                                            @foreach (var property in readModel.GetsCreatedOn.Properties)
+                                            {
+                                                <a class="dropdown-item" href="#">
+                                                    <div class="d-flex flex-row">
+                                                        <div class="pr-3">
+                                                            @Html.DisplayFor(modelItem => property.Name)
+                                                        </div>
+                                                        <div class="text-secondary">
+                                                            @Html.DisplayFor(modelItem => property.Type)
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            }
+                                        </div>
+                                    </div>
                                 }
                             </ul>
                         </div>
@@ -79,11 +103,11 @@
                                             {
                                                 <a class="dropdown-item" href="#">
                                                     <div class="d-flex flex-row">
-                                                        <div class="w-50 text-secondary">
-                                                            @Html.DisplayFor(modelItem => property.Type)
-                                                        </div>
-                                                        <div class="w-50">
+                                                        <div class="pr-3">
                                                             @Html.DisplayFor(modelItem => property.Name)
+                                                        </div>
+                                                        <div class="text-secondary">
+                                                            @Html.DisplayFor(modelItem => property.Type)
                                                         </div>
                                                     </div>
                                                 </a>

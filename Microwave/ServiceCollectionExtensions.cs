@@ -177,7 +177,12 @@ namespace Microwave
                 domainEvents.AddRange(domainEventTypes);
             }
 
-            return domainEvents.Select(e => new EventSchema(e.GetGenericArguments().First().Name));
+            return domainEvents.Select(e =>
+            {
+                var first = e.GetGenericArguments().First();
+                var propertyTypes = first.GetProperties().Select(p => new PropertyType(p.Name, p.PropertyType.Name));
+                return new EventSchema(first.Name, propertyTypes);
+            });
         }
 
         private static IEnumerable<EventSchema> GetEventsForSubscribe(Assembly assembly)
@@ -199,7 +204,12 @@ namespace Microwave
                 domainEvents.AddRange(domainEventTypes);
             }
 
-            return domainEvents.Select(e => new EventSchema(e.GetGenericArguments().First().Name));
+            return domainEvents.Select(e =>
+            {
+                var propertyInfos = e.GetGenericArguments().First().GetProperties().ToList();
+                var propertyTypes = propertyInfos.Select(p => new PropertyType(p.Name, p.PropertyType.Name));
+                return new EventSchema(e.GetGenericArguments().First().Name, propertyTypes);
+            });
         }
 
         private static IEnumerable<ReadModelSubscription> GetEventsForReadModelSubscribe(Assembly assembly)
@@ -219,9 +229,11 @@ namespace Microwave
                 var createdType = propertyInfo?.GetValue(instance) as Type;
                 if (createdType == null) throw new InvalidReadModelCreationTypeException(readModel.Name);
 
+                var propertyTypes = createdType.GetProperties().Select(p => new PropertyType(p.Name, p.PropertyType.Name));
+
                 var readModelSubscription = new ReadModelSubscription(
                     readModel.Name,
-                    new EventSchema(createdType.Name));
+                    new EventSchema(createdType.Name, propertyTypes));
                 subscriptions.Add(readModelSubscription);
             }
 
