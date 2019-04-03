@@ -15,9 +15,6 @@ namespace Microwave.WebApi.Filters
         [JsonProperty(NullValueHandling=NullValueHandling.Ignore)]
         public IEnumerable<ProblemDocument> DomainErrors { get; }
 
-        [JsonProperty(NullValueHandling=NullValueHandling.Ignore)]
-        public IEnumerable<ProblemDocument> ApplicationErrors { get; }
-
         public ProblemDocument(string key, string detail)
         {
             Key = key;
