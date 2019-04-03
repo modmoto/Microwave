@@ -36,6 +36,16 @@ namespace Microwave.Queries.UnitTests
         }
 
         [TestMethod]
+        public async Task StatusLoadAndSafe_NoSaveBeforeGet()
+        {
+            var statusRepository = new StatusRepository(ReadModelDatabase);
+
+            var location = await statusRepository.GetEventLocation();
+
+            Assert.IsNull(location);
+        }
+
+        [TestMethod]
         public async Task StatusLoadAndSafe_OneUnresolvedEvent()
         {
             var statusRepository = new StatusRepository(ReadModelDatabase);
