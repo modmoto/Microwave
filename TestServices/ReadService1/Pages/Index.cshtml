@@ -16,13 +16,13 @@
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                     @foreach (var eventSubscription in Model.ConsumingServices.UnresolvedEventSubscriptions)
                     {
-                        <a class="dropdown-item" href="#"><i class="fas fa-comment-dots pr-3"></i>
+                        <a class="dropdown-item" href="#"><em class="fas fa-comment-dots pr-3"></em>
                             @Html.DisplayFor(modelItem => eventSubscription)</a>
                     }
 
                     @foreach (var readModel in Model.ConsumingServices.UnresolvedReadModeSubscriptions)
                     {
-                        <a class="dropdown-item" href="#"><i class="fas fa-book pr-3"></i>
+                        <a class="dropdown-item" href="#"><em class="fas fa-book pr-3"></em>
                             @Html.DisplayFor(modelItem => readModel.ReadModelName)</a>
                     }
                 </div>
@@ -45,7 +45,7 @@
 
                         <div class="card">
                             <div class="card-header">
-                                <i class="fas fa-book pr-3"></i>Readmodels
+                                <em class="fas fa-book pr-3"></em>Readmodels
                             </div>
                             <ul class="list-group list-group-flush">
                                 @foreach (var readModel in item.ReadModels)
@@ -61,7 +61,7 @@
 
                         <div class="card">
                             <div class="card-header">
-                                <i class="fas fa-comment-dots pr-3"></i>Subscribed events
+                                <em class="fas fa-comment-dots pr-3"></em>Subscribed events
                             </div>
                             <ul class="list-group list-group-flush">
                                 @foreach (var subscribedEvent in item.SubscribedEvents)
