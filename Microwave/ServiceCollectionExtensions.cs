@@ -177,7 +177,7 @@ namespace Microwave
                 domainEvents.AddRange(domainEventTypes);
             }
 
-            return domainEvents.Select(e => new EventSchema { Name = e.GetGenericArguments().First().Name});
+            return domainEvents.Select(e => new EventSchema(e.GetGenericArguments().First().Name));
         }
 
         private static IEnumerable<EventSchema> GetEventsForSubscribe(Assembly assembly)
@@ -199,11 +199,7 @@ namespace Microwave
                 domainEvents.AddRange(domainEventTypes);
             }
 
-            return domainEvents.Select(e =>
-                new EventSchema
-                {
-                    Name = e.GetGenericArguments().First().Name
-                });
+            return domainEvents.Select(e => new EventSchema(e.GetGenericArguments().First().Name));
         }
 
         private static IEnumerable<ReadModelSubscription> GetEventsForReadModelSubscribe(Assembly assembly)
@@ -225,7 +221,7 @@ namespace Microwave
 
                 var readModelSubscription = new ReadModelSubscription(
                     readModel.Name,
-                    new EventSchema { Name = createdType.Name});
+                    new EventSchema(createdType.Name));
                 subscriptions.Add(readModelSubscription);
             }
 

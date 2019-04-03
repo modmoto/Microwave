@@ -23,18 +23,18 @@ namespace Microwave.Queries.UnitTests
             List<PublisherEventConfig> services = new List<PublisherEventConfig> {
                 new PublisherEventConfig(new Uri("http://service1.de"), new []
                 {
-                    new EventSchema { Name = "Event1"},
-                    new EventSchema { Name = "Event2"},
-                    new EventSchema { Name = "Event3"}
+                    new EventSchema("Event1"),
+                    new EventSchema("Event2"),
+                    new EventSchema("Event3")
                 })
             };
             var subscribedEventCollection = new SubscribedEventCollection(
                 new []
                 {
-                    new EventSchema { Name = "Event1"},
-                    new EventSchema { Name = "Event2"}
+                    new EventSchema("Event1"),
+                    new EventSchema("Event2")
                 },
-                new []{ new ReadModelSubscription("Rm1", new EventSchema { Name = "Event3"}) });
+                new []{ new ReadModelSubscription("Rm1", new EventSchema("Event3")) });
             var eventLocation = new EventLocation(services, subscribedEventCollection);
 
             await statusRepository.SaveEventLocation(eventLocation);
@@ -62,17 +62,17 @@ namespace Microwave.Queries.UnitTests
             List<PublisherEventConfig> services = new List<PublisherEventConfig> {
                 new PublisherEventConfig(new Uri("http://service1.de"), new []
                 {
-                    new EventSchema { Name = "Event1"},
-                    new EventSchema { Name = "Event3"}
+                    new EventSchema("Event1"),
+                    new EventSchema("Event3")
                 })
             };
             var subscribedEventCollection = new SubscribedEventCollection(
                 new []
                 {
-                    new EventSchema { Name = "Event1"},
-                    new EventSchema { Name = "Event2"}
+                    new EventSchema("Event1"),
+                    new EventSchema("Event2")
                 },
-                new []{ new ReadModelSubscription("Rm1", new EventSchema { Name = "Event3"}) });
+                new []{ new ReadModelSubscription("Rm1", new EventSchema("Event3")) });
             var eventLocation = new EventLocation(services, subscribedEventCollection);
 
             await statusRepository.SaveEventLocation(eventLocation);
@@ -90,17 +90,17 @@ namespace Microwave.Queries.UnitTests
             List<PublisherEventConfig> services = new List<PublisherEventConfig> {
                 new PublisherEventConfig(new Uri("http://service1.de"), new []
                 {
-                    new EventSchema { Name = "Event1"},
-                    new EventSchema { Name = "Event2"}
+                    new EventSchema("Event1"),
+                    new EventSchema("Event2")
                 })
             };
             var subscribedEventCollection = new SubscribedEventCollection(
                 new []
                 {
-                    new EventSchema { Name = "Event1"},
-                    new EventSchema { Name = "Event2"}
+                    new EventSchema("Event1"),
+                    new EventSchema("Event2")
                 },
-                new []{ new ReadModelSubscription("Rm1", new EventSchema { Name = "Event3"}) });
+                new []{ new ReadModelSubscription("Rm1", new EventSchema("Event3")) });
             var eventLocation = new EventLocation(services, subscribedEventCollection);
 
             await statusRepository.SaveEventLocation(eventLocation);

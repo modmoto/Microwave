@@ -19,12 +19,12 @@ namespace Microwave.WebApi.UnitTests
                     new PublisherEventConfig(
                         new Uri("http://jeah.de"), new []
                         {
-                            new EventSchema { Name = "Event2"}
+                            new EventSchema("Event2")
                         })
                 },
                 new SubscribedEventCollection(
-                    new List<EventSchema> { new EventSchema { Name = "Event2"}},
-                    new []{ new ReadModelSubscription("ReadModel2", new EventSchema { Name = "Event1"})}));
+                    new List<EventSchema> { new EventSchema("Event2")},
+                    new []{ new ReadModelSubscription("ReadModel2", new EventSchema("Event1"))}));
 
             var serviceAfter2 = eventLocation.GetServiceForEvent(typeof(Event2));
             var serviceAfter1 = eventLocation.GetServiceForEvent(typeof(Event1));

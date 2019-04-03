@@ -25,8 +25,18 @@ namespace Microwave.Application.Discovery
 
     public class EventSchema
     {
-        public string Name { get; set; }
-        public PropertyType Properties { get; set; }
+        public EventSchema(string name, IEnumerable<PropertyType> properties = null)
+        {
+            Name = name;
+            Properties = new List<PropertyType>
+            {
+                new PropertyType("Name", typeof(string).Name),
+                new PropertyType("Alter", typeof(int).Name)
+            };
+        }
+
+        public string Name { get; }
+        public IEnumerable<PropertyType> Properties { get; }
 
         public override bool Equals(object obj)
         {
@@ -46,7 +56,13 @@ namespace Microwave.Application.Discovery
 
     public class PropertyType
     {
-        public string Name { get; set; }
-        public string Type { get; set; }
+        public PropertyType(string name, string type)
+        {
+            Name = name;
+            Type = type;
+        }
+
+        public string Name { get; }
+        public string Type { get; }
     }
 }
