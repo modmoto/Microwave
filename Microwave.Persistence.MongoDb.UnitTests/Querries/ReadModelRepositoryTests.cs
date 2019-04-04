@@ -6,11 +6,11 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Application.Exceptions;
 using Microwave.Application.Results;
 using Microwave.Domain;
-using Microwave.Eventstores.UnitTests;
-using Microwave.Persistence.MongoDb;
 using Microwave.Persistence.MongoDb.Querries;
+using Microwave.Persistence.MongoDb.UnitTests.Eventstores;
+using Microwave.Queries;
 
-namespace Microwave.Queries.UnitTests
+namespace Microwave.Persistence.MongoDb.UnitTests.Querries
 {
     [TestClass]
     public class ReadModelRepositoryTests : IntegrationTests

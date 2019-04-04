@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Domain;
-using Microwave.Eventstores.UnitTests;
 using Microwave.Persistence.MongoDb.Querries;
+using Microwave.Persistence.MongoDb.UnitTests.Eventstores;
 using Microwave.Queries;
 
 namespace Microwave.Application.UnitTests

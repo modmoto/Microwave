@@ -5,14 +5,10 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Application;
 using Microwave.Application.Discovery;
-using Microwave.Application.Exceptions;
-using Microwave.Application.Results;
-using Microwave.Domain;
-using Microwave.Eventstores.UnitTests;
-using Microwave.Persistence.MongoDb;
 using Microwave.Persistence.MongoDb.Querries;
+using Microwave.Persistence.MongoDb.UnitTests.Eventstores;
 
-namespace Microwave.Queries.UnitTests
+namespace Microwave.Persistence.MongoDb.UnitTests.Querries
 {
     [TestClass]
     public class StatusRepositoryTests : IntegrationTests

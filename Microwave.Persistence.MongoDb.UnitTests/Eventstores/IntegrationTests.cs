@@ -1,10 +1,8 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Application;
-using Microwave.EventStores;
 using Microwave.Persistence.MongoDb.Querries;
-using Microwave.Queries;
 
-namespace Microwave.Eventstores.UnitTests
+namespace Microwave.Persistence.MongoDb.UnitTests.Eventstores
 {
     public class IntegrationTests
     {

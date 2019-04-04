@@ -43,6 +43,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServerConfig", "TestService
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microwave.Persistence.MongoDb", "Microwave.Persistence.MongoDb\Microwave.Persistence.MongoDb.csproj", "{6394F395-66C1-483D-B4BC-8B19007F7785}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microwave.Persistence.MongoDb.UnitTests", "Microwave.Persistence.MongoDb.UnitTests\Microwave.Persistence.MongoDb.UnitTests.csproj", "{52EC4F8C-6145-4E15-8FE3-388431BEF5FA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -125,6 +127,10 @@ Global
 		{6394F395-66C1-483D-B4BC-8B19007F7785}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6394F395-66C1-483D-B4BC-8B19007F7785}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6394F395-66C1-483D-B4BC-8B19007F7785}.Release|Any CPU.Build.0 = Release|Any CPU
+		{52EC4F8C-6145-4E15-8FE3-388431BEF5FA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{52EC4F8C-6145-4E15-8FE3-388431BEF5FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{52EC4F8C-6145-4E15-8FE3-388431BEF5FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{52EC4F8C-6145-4E15-8FE3-388431BEF5FA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

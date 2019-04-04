@@ -10,7 +10,7 @@ using Microwave.EventStores;
 using Microwave.Persistence.MongoDb.EventStores;
 using MongoDB.Driver;
 
-namespace Microwave.Eventstores.UnitTests
+namespace Microwave.Persistence.MongoDb.UnitTests.Eventstores
 {
     [TestClass]
     public class EventRepositoryTests : IntegrationTests

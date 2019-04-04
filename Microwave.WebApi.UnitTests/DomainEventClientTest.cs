@@ -1,7 +1,5 @@
 using System;
-using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microwave.Application;
 using Microwave.Application.Discovery;
 using Microwave.Domain;
 using Microwave.Queries;
