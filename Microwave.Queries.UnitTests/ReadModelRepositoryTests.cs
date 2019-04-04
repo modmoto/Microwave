@@ -18,7 +18,7 @@ namespace Microwave.Queries.UnitTests
         [TestMethod]
         public async Task IdentifiableQuerySaveAndLoad()
         {
-            var queryRepository = new ReadModelRepository(MicrowaveDatabase);
+            var queryRepository = new ReadModelRepository(EventDatabase);
 
             var guid = GuidIdentity.Create(Guid.NewGuid());
             var testQuerry = new TestReadModel();
@@ -35,7 +35,7 @@ namespace Microwave.Queries.UnitTests
         [TestMethod]
         public async Task IdentifiableQuerySaveAndLoadAll()
         {
-            var queryRepository = new ReadModelRepository(MicrowaveDatabase);
+            var queryRepository = new ReadModelRepository(EventDatabase);
 
             var testQuerry = new TestReadModel();
             var testQuerry2 = new TestReadModel();
@@ -53,7 +53,7 @@ namespace Microwave.Queries.UnitTests
         [TestMethod]
         public async Task IdentifiableQuerySaveAndLoadAll_UnknownType()
         {
-            var queryRepository = new ReadModelRepository(MicrowaveDatabase);
+            var queryRepository = new ReadModelRepository(EventDatabase);
 
             var testQuerry = new TestReadModel();
             var testQuerry2 = new TestReadModel();
@@ -69,7 +69,7 @@ namespace Microwave.Queries.UnitTests
         [TestMethod]
         public async Task InsertQuery()
         {
-            var queryRepository = new ReadModelRepository(MicrowaveDatabase);
+            var queryRepository = new ReadModelRepository(EventDatabase);
             var testQuery = new TestQuerry { UserName = "Test"};
             await queryRepository.Save(testQuery);
             var query = (await queryRepository.Load<TestQuerry>()).Value;
@@ -80,7 +80,7 @@ namespace Microwave.Queries.UnitTests
         [TestMethod]
         public async Task InsertQuery_ConcurrencyProblem()
         {
-            var queryRepository = new ReadModelRepository(MicrowaveDatabase);
+            var queryRepository = new ReadModelRepository(EventDatabase);
             var testQuery = new TestQuerry { UserName = "Test1"};
             var testQuery2 = new TestQuerry { UserName = "Test2"};
             var save = queryRepository.Save(testQuery);
@@ -92,7 +92,7 @@ namespace Microwave.Queries.UnitTests
         [TestMethod]
         public async Task UpdateQuery()
         {
-            var queryRepository = new ReadModelRepository(MicrowaveDatabase);
+            var queryRepository = new ReadModelRepository(EventDatabase);
             await queryRepository.Save(new TestQuerry { UserName = "Test"});
             await queryRepository.Save(new TestQuerry { UserName = "NewName"});
             var query = (await queryRepository.Load<TestQuerry>()).Value;
@@ -103,7 +103,7 @@ namespace Microwave.Queries.UnitTests
         [TestMethod]
         public async Task LoadTwoTypesOfReadModels_Bug()
         {
-            var queryRepository = new ReadModelRepository(MicrowaveDatabase);
+            var queryRepository = new ReadModelRepository(EventDatabase);
             var guid2 = GuidIdentity.Create(Guid.NewGuid());
             var testQuery2 = new TestReadModel2();
             testQuery2.SetVars("Test2", new []{ "Jeah", "jeah2"});
@@ -118,7 +118,7 @@ namespace Microwave.Queries.UnitTests
         [TestMethod]
         public async Task ReadModelNotFoundEceptionHasCorrectT()
         {
-            var queryRepository = new ReadModelRepository(MicrowaveDatabase);
+            var queryRepository = new ReadModelRepository(EventDatabase);
             var guid2 = GuidIdentity.Create(Guid.NewGuid());
             var result = await queryRepository.Load<TestReadModel>(guid2);
 

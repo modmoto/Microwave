@@ -20,7 +20,7 @@ namespace Microwave.Queries.UnitTests
         [TestMethod]
         public async Task StatusLoadAndSafe_HappyPath()
         {
-            var statusRepository = new StatusRepository(MicrowaveDatabase);
+            var statusRepository = new StatusRepository(EventDatabase);
 
             List<PublisherEventConfig> services = new List<PublisherEventConfig> {
                 new PublisherEventConfig(new Uri("http://service1.de"), new []
@@ -49,7 +49,7 @@ namespace Microwave.Queries.UnitTests
         [TestMethod]
         public async Task StatusLoadAndSafe_NoSaveBeforeGet()
         {
-            var statusRepository = new StatusRepository(MicrowaveDatabase);
+            var statusRepository = new StatusRepository(EventDatabase);
 
             var location = await statusRepository.GetEventLocation();
 
@@ -59,7 +59,7 @@ namespace Microwave.Queries.UnitTests
         [TestMethod]
         public async Task StatusLoadAndSafe_OneUnresolvedEvent()
         {
-            var statusRepository = new StatusRepository(MicrowaveDatabase);
+            var statusRepository = new StatusRepository(EventDatabase);
 
             List<PublisherEventConfig> services = new List<PublisherEventConfig> {
                 new PublisherEventConfig(new Uri("http://service1.de"), new []
@@ -87,7 +87,7 @@ namespace Microwave.Queries.UnitTests
         [TestMethod]
         public async Task StatusLoadAndSafe_OneUnresolvedReadModel()
         {
-            var statusRepository = new StatusRepository(MicrowaveDatabase);
+            var statusRepository = new StatusRepository(EventDatabase);
 
             List<PublisherEventConfig> services = new List<PublisherEventConfig> {
                 new PublisherEventConfig(new Uri("http://service1.de"), new []

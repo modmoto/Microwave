@@ -4,21 +4,15 @@ namespace Microwave.Application
 {
     public class MicrowaveConfiguration
     {
-        public WriteDatabaseConfig WriteDatabase { get; set; } = new WriteDatabaseConfig();
         public string ServiceName { get; set; }
-        public ReadDatabaseConfig ReadDatabase { get; set; } = new ReadDatabaseConfig();
+        public DatabaseConfig DatabaseConfigDatabase { get; set; } = new DatabaseConfig(); 
         public ServiceBaseAddressCollection ServiceLocations { get; set; } = new ServiceBaseAddressCollection();
+
     }
 
-    public class WriteDatabaseConfig
+    public class DatabaseConfig
     {
         public string ConnectionString { get; set; } = "mongodb://localhost:27017/";
-        public string DatabaseName { get; set; } = "MicrowaveWriteModelDb";
-    }
-
-    public class ReadDatabaseConfig
-    {
-        public string ConnectionString { get; set; } = "mongodb://localhost:27017/";
-        public string DatabaseName { get; set; } = "MicrowaveReadModelDb";
+        public string DatabaseName { get; set; } = "MicrowaveDb";
     }
 }

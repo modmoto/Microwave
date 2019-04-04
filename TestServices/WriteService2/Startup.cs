@@ -13,11 +13,7 @@ namespace WriteService2
         {
             ServiceName = "WriteService2",
             ServiceLocations = ServiceConfiguration.ServiceAdresses,
-            WriteDatabase = new WriteDatabaseConfig
-            {
-                DatabaseName = "TestWriteService2"
-            },
-            ReadDatabase = new ReadDatabaseConfig
+            DatabaseConfigDatabase = new DatabaseConfig
             {
                 DatabaseName = "TestWriteService2ReadDb"
             }

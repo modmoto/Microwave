@@ -13,7 +13,7 @@ namespace ReadService1
         {
             ServiceName = "ReadService1",
             ServiceLocations = ServiceConfiguration.ServiceAdresses,
-            ReadDatabase = new ReadDatabaseConfig
+            DatabaseConfigDatabase = new DatabaseConfig
             {
                 DatabaseName = "TestReadService1"
             }

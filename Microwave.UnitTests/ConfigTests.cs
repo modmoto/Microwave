@@ -14,15 +14,15 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
         {
             var confiNew = new MicrowaveConfiguration
             {
-                ReadDatabase = new ReadDatabaseConfig
+                DatabaseConfigDatabase = new DatabaseConfig
                 {
                     DatabaseName = "OwnDbName",
                     ConnectionString = "Connection"
                 }
             };
 
-            Assert.AreEqual("OwnDbName", confiNew.ReadDatabase.DatabaseName);
-            Assert.AreEqual("Connection", confiNew.ReadDatabase.ConnectionString);
+            Assert.AreEqual("OwnDbName", confiNew.DatabaseConfigDatabase.DatabaseName);
+            Assert.AreEqual("Connection", confiNew.DatabaseConfigDatabase.ConnectionString);
         }
 
         [TestMethod]
@@ -30,8 +30,8 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
         {
             var confiNew = new MicrowaveConfiguration();
 
-            Assert.AreEqual("MicrowaveReadModelDb", confiNew.ReadDatabase.DatabaseName);
-            Assert.AreEqual("mongodb://localhost:27017/", confiNew.ReadDatabase.ConnectionString);
+            Assert.AreEqual("MicrowaveReadModelDb", confiNew.DatabaseConfigDatabase.DatabaseName);
+            Assert.AreEqual("mongodb://localhost:27017/", confiNew.DatabaseConfigDatabase.ConnectionString);
         }
     }
 
