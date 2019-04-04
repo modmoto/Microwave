@@ -2,10 +2,11 @@ using System.Collections.Concurrent;
 using System.Linq;
 using System.Threading.Tasks;
 using Microwave.Domain;
-using Microwave.EventStores.Ports;
+using Microwave.EventStores;
+using Microwave.Persistence.MongoDb.Querries;
 using MongoDB.Driver;
 
-namespace Microwave.EventStores
+namespace Microwave.Persistence.MongoDb.EventStores
 {
     public class VersionCache : IVersionCache
     {
@@ -13,7 +14,7 @@ namespace Microwave.EventStores
         private readonly IMongoDatabase _database;
         private readonly string _eventCollectionName = "DomainEventDbos";
 
-        public VersionCache(EventDatabase database)
+        public VersionCache(MicrowaveDatabase database)
         {
             _database = database.Database;
         }

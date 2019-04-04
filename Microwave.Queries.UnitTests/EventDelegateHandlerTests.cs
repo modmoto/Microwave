@@ -5,6 +5,8 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Application;
 using Microwave.Domain;
 using Microwave.Eventstores.UnitTests;
+using Microwave.Persistence.MongoDb;
+using Microwave.Persistence.MongoDb.Querries;
 using Moq;
 
 namespace Microwave.Queries.UnitTests
@@ -54,7 +56,7 @@ namespace Microwave.Queries.UnitTests
             versionRepo.Setup(repo => repo.SaveVersion(It.IsAny<LastProcessedVersion>())).Returns(Task.CompletedTask);
             versionRepo.Setup(repo => repo.GetVersionAsync(It.IsAny<string>())).ReturnsAsync(DateTimeOffset.MinValue);
 
-            var queryRepository = new ReadModelRepository(ReadModelDatabase);
+            var queryRepository = new ReadModelRepository(MicrowaveDatabase);
 
             var eventDelegateHandler = new QueryEventHandler<TestQ, TestEv>(queryRepository, versionRepo.Object, mock.Object);
             await eventDelegateHandler.Update();

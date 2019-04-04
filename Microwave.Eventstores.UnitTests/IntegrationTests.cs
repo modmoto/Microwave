@@ -1,14 +1,15 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Application;
 using Microwave.EventStores;
+using Microwave.Persistence.MongoDb.Querries;
 using Microwave.Queries;
 
 namespace Microwave.Eventstores.UnitTests
 {
     public class IntegrationTests
     {
-        protected EventDatabase EventDatabase;
-        protected ReadModelDatabase ReadModelDatabase;
+        protected MicrowaveDatabase EventDatabase;
+        protected MicrowaveDatabase MicrowaveDatabase;
 
         [TestInitialize]
         public void SetupMongoDb()
@@ -25,8 +26,8 @@ namespace Microwave.Eventstores.UnitTests
                 }
             };
 
-            EventDatabase = new EventDatabase(writeModelConfiguration);
-            ReadModelDatabase = new ReadModelDatabase(writeModelConfiguration);
+            EventDatabase = new MicrowaveDatabase(writeModelConfiguration);
+            MicrowaveDatabase = new MicrowaveDatabase(writeModelConfiguration);
             EventDatabase.Database.Client.DropDatabase("IntegrationTest");
         }
     }

@@ -11,6 +11,8 @@ using Microwave.Application.Discovery;
 using Microwave.Domain;
 using Microwave.EventStores;
 using Microwave.EventStores.Ports;
+using Microwave.Persistence.MongoDb.EventStores;
+using Microwave.Persistence.MongoDb.Querries;
 using Microwave.Queries;
 using Microwave.WebApi;
 using Microwave.WebApi.ApiFormatting;
@@ -108,13 +110,12 @@ namespace Microwave
             services.AddTransient<IEventRepository, EventRepository>();
             services.AddSingleton<IVersionCache, VersionCache>();
             services.AddTransient<ISnapShotRepository, SnapShotRepository>();
-            services.AddTransient<EventDatabase>();
 
             services.AddTransient<JSonHack>();
             services.AddTransient<IVersionRepository, VersionRepository>();
             services.AddTransient<IReadModelRepository, ReadModelRepository>();
             services.AddTransient<AsyncEventDelegator>();
-            services.AddTransient<ReadModelDatabase>();
+            services.AddTransient<MicrowaveDatabase>();
             services.AddTransient<IDomainEventFactory, DomainEventFactory>();
             services.AddSingleton(microwaveConfiguration);
             services.AddSingleton(microwaveConfiguration.ServiceLocations);

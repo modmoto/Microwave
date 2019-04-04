@@ -13,6 +13,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Microwave.Application\Microwave.Application.csproj" />
     <ProjectReference Include="..\Microwave.EventStores\Microwave.EventStores.csproj" />
+    <ProjectReference Include="..\Microwave.Persistence.MongoDb\Microwave.Persistence.MongoDb.csproj" />
     <ProjectReference Include="..\Microwave.Queries\Microwave.Queries.csproj" />
     <ProjectReference Include="..\Microwave.WebApi\Microwave.WebApi.csproj" />
   </ItemGroup>

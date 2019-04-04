@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Domain;
 using Microwave.EventStores;
+using Microwave.Persistence.MongoDb.EventStores;
 using MongoDB.Driver;
 
 namespace Microwave.Eventstores.UnitTests

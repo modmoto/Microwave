@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Domain;
 using Microwave.Eventstores.UnitTests;
+using Microwave.Persistence.MongoDb.Querries;
 using Microwave.Queries;
 
 namespace Microwave.Application.UnitTests
@@ -24,7 +25,7 @@ namespace Microwave.Application.UnitTests
             var handleAsync = new Handler1();
             var handleAsync2 = new Handler2();
             var eventDelegateHandler = new AsyncEventHandler<TestEv2>(
-                new VersionRepository(ReadModelDatabase),
+                new VersionRepository(MicrowaveDatabase),
                 new EventFeedMock(dateTimeOffset, domainEventWrapper),
                 new List<IHandleAsync<TestEv2>> {handleAsync, handleAsync2});
 

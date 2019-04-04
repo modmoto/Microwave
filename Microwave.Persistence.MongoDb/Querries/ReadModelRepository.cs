@@ -5,9 +5,10 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microwave.Application.Results;
 using Microwave.Domain;
+using Microwave.Queries;
 using MongoDB.Driver;
 
-namespace Microwave.Queries
+namespace Microwave.Persistence.MongoDb.Querries
 {
     public class ReadModelRepository : IReadModelRepository
     {
@@ -15,7 +16,7 @@ namespace Microwave.Queries
         private string GetReadModelCollectionName<T>() => $"ReadModelDbos_{typeof(T).Name}";
         private string GetQuerryCollectionName<T>() => $"QueryDbos_{typeof(T).Name}";
 
-        public ReadModelRepository(ReadModelDatabase database)
+        public ReadModelRepository(MicrowaveDatabase database)
         {
             _database = database.Database;
         }

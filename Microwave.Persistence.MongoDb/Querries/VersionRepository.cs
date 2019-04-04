@@ -1,16 +1,17 @@
 using System;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using Microwave.Queries;
 using MongoDB.Driver;
 
-namespace Microwave.Queries
+namespace Microwave.Persistence.MongoDb.Querries
 {
     public class VersionRepository : IVersionRepository
     {
         private readonly IMongoDatabase _dataBase;
         private readonly string _lastProcessedVersions = "LastProcessedVersions";
 
-        public VersionRepository(ReadModelDatabase dataBase)
+        public VersionRepository(MicrowaveDatabase dataBase)
         {
             _dataBase = dataBase.Database;
         }

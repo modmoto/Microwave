@@ -6,14 +6,14 @@ using Microwave.Application;
 using Microwave.Application.Discovery;
 using MongoDB.Driver;
 
-namespace Microwave.Queries
+namespace Microwave.Persistence.MongoDb.Querries
 {
     public class StatusRepository : IStatusRepository
     {
         private readonly IMongoDatabase _database;
         private const string StatusDbName = "MicrowaveStatusCollection";
 
-        public StatusRepository(ReadModelDatabase database)
+        public StatusRepository(MicrowaveDatabase database)
         {
             _database = database.Database;
         }

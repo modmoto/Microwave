@@ -6,6 +6,8 @@ using Microwave.Application;
 using Microwave.Application.Results;
 using Microwave.Domain;
 using Microwave.Eventstores.UnitTests;
+using Microwave.Persistence.MongoDb;
+using Microwave.Persistence.MongoDb.Querries;
 
 namespace Microwave.Queries.UnitTests
 {
@@ -17,10 +19,10 @@ namespace Microwave.Queries.UnitTests
         {
             EntityGuid = GuidIdentity.Create(Guid.NewGuid());
 
-            var queryRepository = new ReadModelRepository(ReadModelDatabase);
+            var queryRepository = new ReadModelRepository(MicrowaveDatabase);
 
             var readModelHandler = new ReadModelHandler<TestReadModelQuerries>(queryRepository,
-                new VersionRepository(ReadModelDatabase), new FeedMock2());
+                new VersionRepository(MicrowaveDatabase), new FeedMock2());
             await readModelHandler.Update();
 
             var result = await queryRepository.Load<TestReadModelQuerries>(EntityGuid);
@@ -35,10 +37,10 @@ namespace Microwave.Queries.UnitTests
             EntityGuid = GuidIdentity.Create(Guid.NewGuid());
             EntityGuid2 = GuidIdentity.Create(Guid.NewGuid());
 
-            var queryRepository = new ReadModelRepository(ReadModelDatabase);
+            var queryRepository = new ReadModelRepository(MicrowaveDatabase);
 
             var readModelHandler = new ReadModelHandler<TestReadModelQuerries>(queryRepository,
-                new VersionRepository(ReadModelDatabase), new FeedMock3());
+                new VersionRepository(MicrowaveDatabase), new FeedMock3());
 
             await readModelHandler.Update();
 
@@ -54,9 +56,9 @@ namespace Microwave.Queries.UnitTests
             EntityGuid = GuidIdentity.Create(Guid.NewGuid());
             EntityGuid2 = GuidIdentity.Create(Guid.NewGuid());
 
-            var queryRepository = new ReadModelRepository(ReadModelDatabase);
+            var queryRepository = new ReadModelRepository(MicrowaveDatabase);
 
-            var readModelHandler = new ReadModelHandler<TestReadModelQuerries>(queryRepository, new VersionRepository(ReadModelDatabase), new FeedMock4());
+            var readModelHandler = new ReadModelHandler<TestReadModelQuerries>(queryRepository, new VersionRepository(MicrowaveDatabase), new FeedMock4());
 
             await readModelHandler.Update();
 
@@ -72,11 +74,11 @@ namespace Microwave.Queries.UnitTests
         {
             EntityGuid = GuidIdentity.Create(Guid.NewGuid());
 
-            var queryRepository = new ReadModelRepository(ReadModelDatabase);
+            var queryRepository = new ReadModelRepository(MicrowaveDatabase);
 
             var readModelHandler = new ReadModelHandler<TestReadModelQuerries_OnlyOneEventAndVersionIsCounted>(
                 queryRepository,
-                new VersionRepository(ReadModelDatabase),
+                new VersionRepository(MicrowaveDatabase),
                 new FeedMock5());
 
             await readModelHandler.Update();
@@ -93,11 +95,11 @@ namespace Microwave.Queries.UnitTests
             EntityGuid = GuidIdentity.Create(Guid.NewGuid());
             EntityGuid2 = GuidIdentity.Create(Guid.NewGuid());
 
-            var queryRepository = new ReadModelRepository(ReadModelDatabase);
+            var queryRepository = new ReadModelRepository(MicrowaveDatabase);
 
-            var readModelHandler = new ReadModelHandler<TestReadModelQuerries_TwoParallelFeeds1>(queryRepository, new VersionRepository(ReadModelDatabase), new FeedMock6());
+            var readModelHandler = new ReadModelHandler<TestReadModelQuerries_TwoParallelFeeds1>(queryRepository, new VersionRepository(MicrowaveDatabase), new FeedMock6());
 
-            var readModelHandler2 = new ReadModelHandler<TestReadModelQuerries_TwoParallelFeeds2>(queryRepository, new VersionRepository(ReadModelDatabase), new FeedMock7());
+            var readModelHandler2 = new ReadModelHandler<TestReadModelQuerries_TwoParallelFeeds2>(queryRepository, new VersionRepository(MicrowaveDatabase), new FeedMock7());
 
             await readModelHandler.Update();
             await readModelHandler2.Update();
@@ -113,11 +115,11 @@ namespace Microwave.Queries.UnitTests
         {
             EntityGuid = GuidIdentity.Create(Guid.NewGuid());
 
-            var queryRepository = new ReadModelRepository(ReadModelDatabase);
+            var queryRepository = new ReadModelRepository(MicrowaveDatabase);
 
             var readModelHandler = new ReadModelHandler<TestReadModelQuerries_VerionedHandle>(
                 queryRepository,
-                new VersionRepository(ReadModelDatabase),
+                new VersionRepository(MicrowaveDatabase),
                 new FeedMockVersioned());
 
             await readModelHandler.Update();

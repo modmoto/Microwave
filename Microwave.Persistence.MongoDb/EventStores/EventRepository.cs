@@ -5,10 +5,12 @@ using System.Threading.Tasks;
 using Microwave.Application;
 using Microwave.Application.Results;
 using Microwave.Domain;
+using Microwave.EventStores;
 using Microwave.EventStores.Ports;
+using Microwave.Persistence.MongoDb.Querries;
 using MongoDB.Driver;
 
-namespace Microwave.EventStores
+namespace Microwave.Persistence.MongoDb.EventStores
 {
     public class EventRepository : IEventRepository
     {
@@ -16,7 +18,7 @@ namespace Microwave.EventStores
         private readonly string _eventCollectionName = "DomainEventDbos";
         private readonly IVersionCache _versions;
 
-        public EventRepository(EventDatabase database, IVersionCache versions)
+        public EventRepository(MicrowaveDatabase database, IVersionCache versions)
         {
             _versions = versions;
             _database = database.Database;

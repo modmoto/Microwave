@@ -9,6 +9,8 @@ using Microwave.Application.Exceptions;
 using Microwave.Application.Results;
 using Microwave.Domain;
 using Microwave.Eventstores.UnitTests;
+using Microwave.Persistence.MongoDb;
+using Microwave.Persistence.MongoDb.Querries;
 
 namespace Microwave.Queries.UnitTests
 {
@@ -18,7 +20,7 @@ namespace Microwave.Queries.UnitTests
         [TestMethod]
         public async Task StatusLoadAndSafe_HappyPath()
         {
-            var statusRepository = new StatusRepository(ReadModelDatabase);
+            var statusRepository = new StatusRepository(MicrowaveDatabase);
 
             List<PublisherEventConfig> services = new List<PublisherEventConfig> {
                 new PublisherEventConfig(new Uri("http://service1.de"), new []
@@ -47,7 +49,7 @@ namespace Microwave.Queries.UnitTests
         [TestMethod]
         public async Task StatusLoadAndSafe_NoSaveBeforeGet()
         {
-            var statusRepository = new StatusRepository(ReadModelDatabase);
+            var statusRepository = new StatusRepository(MicrowaveDatabase);
 
             var location = await statusRepository.GetEventLocation();
 
@@ -57,7 +59,7 @@ namespace Microwave.Queries.UnitTests
         [TestMethod]
         public async Task StatusLoadAndSafe_OneUnresolvedEvent()
         {
-            var statusRepository = new StatusRepository(ReadModelDatabase);
+            var statusRepository = new StatusRepository(MicrowaveDatabase);
 
             List<PublisherEventConfig> services = new List<PublisherEventConfig> {
                 new PublisherEventConfig(new Uri("http://service1.de"), new []
@@ -85,7 +87,7 @@ namespace Microwave.Queries.UnitTests
         [TestMethod]
         public async Task StatusLoadAndSafe_OneUnresolvedReadModel()
         {
-            var statusRepository = new StatusRepository(ReadModelDatabase);
+            var statusRepository = new StatusRepository(MicrowaveDatabase);
 
             List<PublisherEventConfig> services = new List<PublisherEventConfig> {
                 new PublisherEventConfig(new Uri("http://service1.de"), new []

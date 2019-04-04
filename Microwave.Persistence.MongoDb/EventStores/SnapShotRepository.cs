@@ -3,17 +3,19 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microwave.Domain;
+using Microwave.EventStores;
 using Microwave.EventStores.Ports;
+using Microwave.Persistence.MongoDb.Querries;
 using MongoDB.Driver;
 
-namespace Microwave.EventStores
+namespace Microwave.Persistence.MongoDb.EventStores
 {
     public class SnapShotRepository : ISnapShotRepository
     {
         private readonly IMongoDatabase _context;
         private readonly string _snapShotCollectionName = "SnapShotDbos";
 
-        public SnapShotRepository(EventDatabase context)
+        public SnapShotRepository(MicrowaveDatabase context)
         {
             _context = context.Database;
         }

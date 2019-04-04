@@ -1,12 +1,12 @@
 ﻿using Microwave.Application;
 using MongoDB.Driver;
 
-namespace Microwave.Queries
+namespace Microwave.Persistence.MongoDb.Querries
 {
-    public class ReadModelDatabase
+    public class MicrowaveDatabase
     {
         public IMongoDatabase Database { get; }
-        public ReadModelDatabase(MicrowaveConfiguration config)
+        public MicrowaveDatabase(MicrowaveConfiguration config)
         {
             var dbConfig = config.ReadDatabase;
             var client = new MongoClient(dbConfig.ConnectionString);
