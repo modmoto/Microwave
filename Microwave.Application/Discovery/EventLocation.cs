@@ -15,7 +15,19 @@ namespace Microwave.Application.Discovery
 
             foreach (var service in allServices)
             {
-                var relevantEvents = handleAsyncEvents.Where(ev => service.PublishedEventTypes.Contains(ev)).ToList();
+                var relevantEvents = new List<EventSchema>();
+                var relevantEventsOfService = handleAsyncEvents.Where(ev => service.PublishedEventTypes.Contains(ev)).ToList();
+                foreach (var relevantEvent in relevantEventsOfService)
+                {
+                    var eventSchemata = service.PublishedEventTypes.Single(ev => ev.Equals(relevantEvent));
+                    var foundProperties = relevantEvent.Properties.Where(p => eventSchemata.Properties.Contains(p));
+                    var notFoundProperties = relevantEvent.Properties.Where(p => !eventSchemata.Properties.Contains(p)).ToList();
+
+                    var allProps = foundProperties.Select(p => new PropertyType(p.Name, p.Type, true)).ToList();
+                    notFoundProperties.AddRange(allProps);
+
+                    relevantEvents.Add(new EventSchema(relevantEvent.Name, notFoundProperties));
+                }
                 var relevantReadModels = readModels.Where(r =>
                     service.PublishedEventTypes.Contains(r.GetsCreatedOn)).ToList();
 
