@@ -26,11 +26,13 @@ namespace WriteService1
 
     public class Event2 : IDomainEvent
     {
-        public Event2(Identity entityId)
+        public Event2(Identity entityId, string name)
         {
             EntityId = entityId;
+            Name = name;
         }
 
         public Identity EntityId { get; }
+        public string Name { get; }
     }
 }

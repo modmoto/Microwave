@@ -25,7 +25,8 @@ namespace Microwave.Application.Discovery
 
         public async Task<IEventLocation> GetConsumingServices()
         {
-            return await _statusRepository.GetEventLocation();
+            var eventLocation = await _statusRepository.GetEventLocation();
+            return eventLocation;
         }
 
         public async Task DiscoverConsumingServices()

@@ -72,6 +72,14 @@
                                                         <div class="text-secondary">
                                                             @Html.DisplayFor(modelItem => property.Type)
                                                         </div>
+                                                        @if (property.IsPresentInRemote)
+                                                        {
+                                                            <em class="fas fa-exclamation-triangle pt-1 pl-3"
+                                                                data-toggle="tooltip"
+                                                                data-placement="right"
+                                                                title="Property is missing in remote event">
+                                                            </em>
+                                                        }
                                                     </div>
                                                 </a>
                                             }
@@ -109,6 +117,14 @@
                                                         <div class="text-secondary">
                                                             @Html.DisplayFor(modelItem => property.Type)
                                                         </div>
+                                                        @if (!property.IsPresentInRemote)
+                                                        {
+                                                            <em class="fas fa-exclamation-triangle pt-1 pl-3"
+                                                                data-toggle="tooltip"
+                                                                data-placement="right"
+                                                                title="Property is missing in remote event">
+                                                            </em>
+                                                        }
                                                     </div>
                                                 </a>
                                             }

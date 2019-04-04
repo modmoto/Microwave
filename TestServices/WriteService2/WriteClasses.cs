@@ -39,8 +39,8 @@ namespace WriteService2
             EntityId = entityId;
         }
 
-        public string Name2 { get; }
-        public string SurName2 { get; }
+        public int Age { get; }
+        public string Name { get; }
 
         public Identity EntityId { get; }
     }
