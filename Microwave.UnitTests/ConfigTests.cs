@@ -30,7 +30,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
         {
             var confiNew = new MicrowaveConfiguration();
 
-            Assert.AreEqual("MicrowaveReadModelDb", confiNew.DatabaseConfigDatabase.DatabaseName);
+            Assert.AreEqual("MicrowaveDb", confiNew.DatabaseConfigDatabase.DatabaseName);
             Assert.AreEqual("mongodb://localhost:27017/", confiNew.DatabaseConfigDatabase.ConnectionString);
         }
     }
