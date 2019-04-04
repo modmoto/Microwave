@@ -6,7 +6,7 @@ namespace Microwave.Application.Discovery
 {
     public class EventLocation : IEventLocation
     {
-        public EventLocation(List<PublisherEventConfig> allServices, SubscribedEventCollection subscribedEventCollection)
+        public EventLocation(IEnumerable<PublisherEventConfig> allServices, SubscribedEventCollection subscribedEventCollection)
         {
             var readModels = subscribedEventCollection.ReadModelSubcriptions.ToList();
             var handleAsyncEvents = subscribedEventCollection.Events.ToList();
@@ -16,7 +16,8 @@ namespace Microwave.Application.Discovery
             foreach (var service in allServices)
             {
                 var relevantEvents = new List<EventSchema>();
-                var relevantEventsOfService = handleAsyncEvents.Where(ev => service.PublishedEventTypes.Contains(ev)).ToList();
+                var relevantEventsOfService = handleAsyncEvents.Where(ev =>
+                    service.PublishedEventTypes.Contains(ev)).ToList();
                 foreach (var relevantEvent in relevantEventsOfService)
                 {
                     var eventSchemata = service.PublishedEventTypes.Single(ev => ev.Equals(relevantEvent));
@@ -28,8 +29,24 @@ namespace Microwave.Application.Discovery
 
                     relevantEvents.Add(new EventSchema(relevantEvent.Name, notFoundProperties));
                 }
-                var relevantReadModels = readModels.Where(r =>
+
+                var relevantReadModels = new List<ReadModelSubscription>();
+                var relevantReadModelsService = readModels.Where(r =>
                     service.PublishedEventTypes.Contains(r.GetsCreatedOn)).ToList();
+                foreach (var readModel in relevantReadModelsService)
+                {
+                    var createdEvent = readModel.GetsCreatedOn;
+                    var eventSchemata = service.PublishedEventTypes.Single(ev => ev.Equals(createdEvent));
+                    var foundProperties = createdEvent.Properties.Where(p => eventSchemata.Properties.Contains(p));
+                    var notFoundProperties = createdEvent.Properties.Where(p => !eventSchemata.Properties.Contains(p)).ToList();
+
+                    var allProps = foundProperties.Select(p => new PropertyType(p.Name, p.Type, true)).ToList();
+                    notFoundProperties.AddRange(allProps);
+
+                    relevantReadModels.Add(new ReadModelSubscription(
+                        readModel.ReadModelName,
+                        new EventSchema(createdEvent.Name, notFoundProperties)));
+                }
 
                 if (!relevantEvents.Any() && !relevantReadModels.Any()) continue;
 

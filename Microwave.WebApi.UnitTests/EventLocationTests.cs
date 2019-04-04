@@ -96,6 +96,51 @@ namespace Microwave.WebApi.UnitTests
             Assert.AreEqual("String", propertyTypes[1].Type);
             Assert.IsTrue(propertyTypes[1].IsPresentInRemote);
         }
+
+        [TestMethod]
+        public void ReadmodelProperties_PropertyNotFound()
+        {
+            var eventLocation = new EventLocation(
+                new List<PublisherEventConfig>
+                {
+                    new PublisherEventConfig(
+                        new Uri("http://jeah.de"), new []
+                        {
+                            new EventSchema("Event2",
+                                new []{ new PropertyType("VorName", "String"),
+                                    new PropertyType("LastName", "Int")
+                                })
+                        })
+                },
+                new SubscribedEventCollection(
+                    new List<EventSchema>(),
+                    new []{ new ReadModelSubscription("ReadModel2", new EventSchema("Event2",
+                        new []
+                        {
+                            new PropertyType("VorNameNotInService", "String"),
+                            new PropertyType("VorName", "String")
+                        }))}));
+
+            var service = eventLocation.GetServiceForReadModel(typeof(ReadModel2));
+
+            Assert.AreEqual(nameof(ReadModel2), service.ReadModels.Single().ReadModelName);
+            var getsCreatedOn = service.ReadModels.Single().GetsCreatedOn;
+            var propertyTypes = getsCreatedOn.Properties.ToList();
+            Assert.AreEqual(2, propertyTypes.Count);
+            Assert.AreEqual(nameof(Event2), getsCreatedOn.Name);
+
+            Assert.AreEqual("VorNameNotInService", propertyTypes[0].Name);
+            Assert.AreEqual("String", propertyTypes[0].Type);
+            Assert.IsFalse(propertyTypes[0].IsPresentInRemote);
+
+            Assert.AreEqual("VorName", propertyTypes[1].Name);
+            Assert.AreEqual("String", propertyTypes[1].Type);
+            Assert.IsTrue(propertyTypes[1].IsPresentInRemote);
+        }
+    }
+
+    public class ReadModel2
+    {
     }
 
     public class Event2

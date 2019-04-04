@@ -72,7 +72,7 @@
                                                         <div class="text-secondary">
                                                             @Html.DisplayFor(modelItem => property.Type)
                                                         </div>
-                                                        @if (property.IsPresentInRemote)
+                                                        @if (!property.IsPresentInRemote)
                                                         {
                                                             <em class="fas fa-exclamation-triangle pt-1 pl-3"
                                                                 data-toggle="tooltip"
