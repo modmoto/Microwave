@@ -1,11 +1,10 @@
 using System.Collections.Generic;
-using Microwave.Application.Discovery;
 
-namespace Microwave.Application
+namespace Microwave.Application.Discovery
 {
-    public class SubscribedEventCollection
+    public class EventsSubscribedByService
     {
-        public SubscribedEventCollection(
+        public EventsSubscribedByService(
             IEnumerable<EventSchema> events,
             IEnumerable<ReadModelSubscription> readModelSubcriptions)
         {

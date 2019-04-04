@@ -5,9 +5,9 @@ namespace Microwave.Application.Discovery
 {
     public interface IEventLocation
     {
-        SubscriberEventAndReadmodelConfig GetServiceForEvent(Type eventType);
-        SubscriberEventAndReadmodelConfig GetServiceForReadModel(Type readModel);
-        IEnumerable<SubscriberEventAndReadmodelConfig> Services { get; }
+        MicrowaveService GetServiceForEvent(Type eventType);
+        MicrowaveService GetServiceForReadModel(Type readModel);
+        IEnumerable<MicrowaveService> Services { get; }
 
         IEnumerable<EventSchema> UnresolvedEventSubscriptions { get; }
         IEnumerable<ReadModelSubscription> UnresolvedReadModeSubscriptions { get; }

@@ -18,15 +18,15 @@ namespace Microwave.Persistence.MongoDb.UnitTests.Querries
         {
             var statusRepository = new StatusRepository(EventDatabase);
 
-            List<PublisherEventConfig> services = new List<PublisherEventConfig> {
-                new PublisherEventConfig(new Uri("http://service1.de"), new []
+            List<EventsPublishedByService> services = new List<EventsPublishedByService> {
+                new EventsPublishedByService(new Uri("http://service1.de"), new []
                 {
                     new EventSchema("Event1"),
                     new EventSchema("Event2"),
                     new EventSchema("Event3")
                 })
             };
-            var subscribedEventCollection = new SubscribedEventCollection(
+            var subscribedEventCollection = new EventsSubscribedByService(
                 new []
                 {
                     new EventSchema("Event1"),
@@ -57,14 +57,14 @@ namespace Microwave.Persistence.MongoDb.UnitTests.Querries
         {
             var statusRepository = new StatusRepository(EventDatabase);
 
-            List<PublisherEventConfig> services = new List<PublisherEventConfig> {
-                new PublisherEventConfig(new Uri("http://service1.de"), new []
+            List<EventsPublishedByService> services = new List<EventsPublishedByService> {
+                new EventsPublishedByService(new Uri("http://service1.de"), new []
                 {
                     new EventSchema("Event1"),
                     new EventSchema("Event3")
                 })
             };
-            var subscribedEventCollection = new SubscribedEventCollection(
+            var subscribedEventCollection = new EventsSubscribedByService(
                 new []
                 {
                     new EventSchema("Event1"),
@@ -85,14 +85,14 @@ namespace Microwave.Persistence.MongoDb.UnitTests.Querries
         {
             var statusRepository = new StatusRepository(EventDatabase);
 
-            List<PublisherEventConfig> services = new List<PublisherEventConfig> {
-                new PublisherEventConfig(new Uri("http://service1.de"), new []
+            List<EventsPublishedByService> services = new List<EventsPublishedByService> {
+                new EventsPublishedByService(new Uri("http://service1.de"), new []
                 {
                     new EventSchema("Event1"),
                     new EventSchema("Event2")
                 })
             };
-            var subscribedEventCollection = new SubscribedEventCollection(
+            var subscribedEventCollection = new EventsSubscribedByService(
                 new []
                 {
                     new EventSchema("Event1"),

@@ -16,20 +16,20 @@ namespace Microwave.WebApi
         {
             _factory = factory;
         }
-        public async Task<PublisherEventConfig> GetPublishedEventTypes(Uri serviceAdress)
+        public async Task<EventsPublishedByService> GetPublishedEventTypes(Uri serviceAdress)
         {
             var client = _factory.GetClient(serviceAdress);
             try
             {
                 var response = await client.GetAsync("Dicovery/PublishedEvents");
                 var content = await response.Content.ReadAsStringAsync();
-                var events = JsonConvert.DeserializeObject<ServicePublishingConfig>(content);
+                var events = JsonConvert.DeserializeObject<PublishedEventsByServiceDto>(content);
 
-                return new PublisherEventConfig(serviceAdress, events.PublishedEvents, true, events.ServiceName);
+                return new EventsPublishedByService(serviceAdress, events.PublishedEvents, true, events.ServiceName);
             }
             catch (HttpRequestException)
             {
-                return new PublisherEventConfig(serviceAdress, new List<EventSchema>(), false);
+                return new EventsPublishedByService(serviceAdress, new List<EventSchema>(), false);
             }
         }
     }

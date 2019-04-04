@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace Microwave.Application.Discovery
 {
-    public class PublisherEventConfig
+    public class EventsPublishedByService
     {
-        public PublisherEventConfig(Uri serviceBaseAddress,
+        public EventsPublishedByService(Uri serviceBaseAddress,
             IEnumerable<EventSchema> publishedEventTypes,
             bool isReachable = true,
             string serviceName = null)

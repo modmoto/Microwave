@@ -63,9 +63,9 @@ namespace Microwave
                 readModelSubscriptions.AddRange(notAddedYet);
             }
 
-            var subscribedEventCollection = new SubscribedEventCollection(iHandleAsyncEvents, readModelSubscriptions);
+            var subscribedEventCollection = new EventsSubscribedByService(iHandleAsyncEvents, readModelSubscriptions);
             services.AddSingleton(subscribedEventCollection);
-            services.AddSingleton<IEventLocation>(new EventLocation(new List<PublisherEventConfig>(), subscribedEventCollection));
+            services.AddSingleton<IEventLocation>(new EventLocation(new List<EventsPublishedByService>(), subscribedEventCollection));
 
         }
 
@@ -152,7 +152,7 @@ namespace Microwave
         private static void AddPublishedEventCollection(IServiceCollection services,
             IEnumerable<Assembly> domainEventAssemblies, MicrowaveConfiguration microwaveConfiguration)
         {
-            var publishedEventCollection = new ServicePublishingConfig { ServiceName = microwaveConfiguration.ServiceName };
+            var publishedEventCollection = new PublishedEventsByServiceDto { ServiceName = microwaveConfiguration.ServiceName };
             foreach (var assembly in domainEventAssemblies)
             {
                 var eventsForPublish = GetEventsForPublish(assembly);

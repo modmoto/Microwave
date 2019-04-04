@@ -129,7 +129,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
 
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
-            var publishingEventRegistration = buildServiceProvider.GetServices<ServicePublishingConfig>().Single()
+            var publishingEventRegistration = buildServiceProvider.GetServices<PublishedEventsByServiceDto>().Single()
             .PublishedEvents.ToList();
             Assert.AreEqual(nameof(TestDomainEvent_PublishedEvent1), publishingEventRegistration[0].Name);
             Assert.AreEqual(nameof(TestDomainEvent_PublishedEvent3), publishingEventRegistration[1].Name);
@@ -147,7 +147,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
 
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
-            var publishingEventRegistration = buildServiceProvider.GetServices<SubscribedEventCollection>().Single();
+            var publishingEventRegistration = buildServiceProvider.GetServices<EventsSubscribedByService>().Single();
             var ihandleAsyncEvents = publishingEventRegistration.Events.OrderBy(r => r.Name).ToList();
             Assert.AreEqual(nameof(TestDomainEvent_PublishedEvent1), ihandleAsyncEvents[0].Name);
             Assert.AreEqual(nameof(TestDomainEvent_PublishedEvent2), ihandleAsyncEvents[1].Name);
@@ -165,7 +165,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
 
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
-            var publishingEventRegistration = buildServiceProvider.GetServices<SubscribedEventCollection>().Single();
+            var publishingEventRegistration = buildServiceProvider.GetServices<EventsSubscribedByService>().Single();
             var readModelSubscription = publishingEventRegistration.ReadModelSubcriptions.OrderBy(r => r.ReadModelName).ToList();
             Assert.AreEqual(nameof(TestDomainEvent_PublishedEvent1), readModelSubscription[4].GetsCreatedOn.Name);
             Assert.AreEqual(nameof(TestReadModelSubscriptions), readModelSubscription[4].ReadModelName);
@@ -195,7 +195,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
 
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
-            var services = buildServiceProvider.GetServices<ServicePublishingConfig>().Single();
+            var services = buildServiceProvider.GetServices<PublishedEventsByServiceDto>().Single();
             
             Assert.AreEqual("TestService", services.ServiceName);
         }

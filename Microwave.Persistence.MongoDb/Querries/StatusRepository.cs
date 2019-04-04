@@ -50,7 +50,7 @@ namespace Microwave.Persistence.MongoDb.Querries
 
     public class EventLocationDbo
     {
-        public IEnumerable<SubscriberEventAndReadmodelConfig> Services { get; set; }
+        public IEnumerable<MicrowaveService> Services { get; set; }
         public IEnumerable<EventSchema> UnresolvedEventSubscriptions { get; set; }
         public IEnumerable<ReadModelSubscription> UnresolvedReadModeSubscriptions { get; set; }
         public Guid Id { get; set; }

@@ -6,18 +6,18 @@ namespace Microwave.Application.Discovery
     public class DiscoveryHandler
     {
         private readonly ServiceBaseAddressCollection _serviceBaseAddressCollection;
-        private readonly SubscribedEventCollection _subscribedEventCollection;
+        private readonly EventsSubscribedByService _eventsSubscribedByService;
         private readonly IServiceDiscoveryRepository _discoveryRepository;
         private readonly IStatusRepository _statusRepository;
 
         public DiscoveryHandler(
             ServiceBaseAddressCollection serviceBaseAddressCollection,
-            SubscribedEventCollection subscribedEventCollection,
+            EventsSubscribedByService eventsSubscribedByService,
             IServiceDiscoveryRepository discoveryRepository,
             IStatusRepository statusRepository)
         {
             _serviceBaseAddressCollection = serviceBaseAddressCollection;
-            _subscribedEventCollection = subscribedEventCollection;
+            _eventsSubscribedByService = eventsSubscribedByService;
             _discoveryRepository = discoveryRepository;
             _statusRepository = statusRepository;
         }
@@ -30,14 +30,14 @@ namespace Microwave.Application.Discovery
 
         public async Task DiscoverConsumingServices()
         {
-            var allServices = new List<PublisherEventConfig>();
+            var allServices = new List<EventsPublishedByService>();
             foreach (var serviceAddress in _serviceBaseAddressCollection)
             {
                 var publishedEventTypes = await _discoveryRepository.GetPublishedEventTypes(serviceAddress);
                 allServices.Add(publishedEventTypes);
             }
 
-            var eventLocation = new EventLocation(allServices, _subscribedEventCollection);
+            var eventLocation = new EventLocation(allServices, _eventsSubscribedByService);
             await _statusRepository.SaveEventLocation(eventLocation);
         }
     }

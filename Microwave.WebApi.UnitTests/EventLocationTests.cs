@@ -14,15 +14,15 @@ namespace Microwave.WebApi.UnitTests
         public void AddFeedDoesReplaceOldOne()
         {
             var eventLocation = new EventLocation(
-                new List<PublisherEventConfig>
+                new List<EventsPublishedByService>
                 {
-                    new PublisherEventConfig(
+                    new EventsPublishedByService(
                         new Uri("http://jeah.de"), new []
                         {
                             new EventSchema("Event2")
                         })
                 },
-                new SubscribedEventCollection(
+                new EventsSubscribedByService(
                     new List<EventSchema> { new EventSchema("Event2")},
                     new []{ new ReadModelSubscription("ReadModel2", new EventSchema("Event1"))}));
 
@@ -37,9 +37,9 @@ namespace Microwave.WebApi.UnitTests
         public void SubscribedEventPropertiesArePropertiesOfConsumingService()
         {
             var eventLocation = new EventLocation(
-                new List<PublisherEventConfig>
+                new List<EventsPublishedByService>
                 {
-                    new PublisherEventConfig(
+                    new EventsPublishedByService(
                         new Uri("http://jeah.de"), new []
                         {
                             new EventSchema("Event2",
@@ -48,7 +48,7 @@ namespace Microwave.WebApi.UnitTests
                                     })
                         })
                 },
-                new SubscribedEventCollection(
+                new EventsSubscribedByService(
                     new List<EventSchema> { new EventSchema("Event2", new []{ new PropertyType("VorName", "String"),  })},
                     new []{ new ReadModelSubscription("ReadModel2", new EventSchema("Event1"))}));
 
@@ -63,9 +63,9 @@ namespace Microwave.WebApi.UnitTests
         public void SubscribedEventProperties_PropertyNotFound()
         {
             var eventLocation = new EventLocation(
-                new List<PublisherEventConfig>
+                new List<EventsPublishedByService>
                 {
-                    new PublisherEventConfig(
+                    new EventsPublishedByService(
                         new Uri("http://jeah.de"), new []
                         {
                             new EventSchema("Event2",
@@ -74,7 +74,7 @@ namespace Microwave.WebApi.UnitTests
                                 })
                         })
                 },
-                new SubscribedEventCollection(
+                new EventsSubscribedByService(
                     new List<EventSchema> { new EventSchema("Event2", new []
                     {
                         new PropertyType("VorNameNotInService", "String"),
@@ -101,9 +101,9 @@ namespace Microwave.WebApi.UnitTests
         public void ReadmodelProperties_PropertyNotFound()
         {
             var eventLocation = new EventLocation(
-                new List<PublisherEventConfig>
+                new List<EventsPublishedByService>
                 {
-                    new PublisherEventConfig(
+                    new EventsPublishedByService(
                         new Uri("http://jeah.de"), new []
                         {
                             new EventSchema("Event2",
@@ -112,7 +112,7 @@ namespace Microwave.WebApi.UnitTests
                                 })
                         })
                 },
-                new SubscribedEventCollection(
+                new EventsSubscribedByService(
                     new List<EventSchema>(),
                     new []{ new ReadModelSubscription("ReadModel2", new EventSchema("Event2",
                         new []
