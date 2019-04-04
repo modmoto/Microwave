@@ -17,14 +17,10 @@ namespace Microwave.Application.Discovery
             {
                 var relevantEventsOfService = handleAsyncEvents.Where(ev => service.PublishedEventTypes.Contains(ev)).ToList();
 
-                var relevantEvents = relevantEventsOfService.Select(relevantEvent =>
-                {
-                    var notFoundProperties = GetDiffOfProperties(relevantEvent, service);
-                    return new EventSchema(relevantEvent.Name, notFoundProperties);
-                }).ToList();
-
+                var relevantEvents = GetEventSchemata(relevantEventsOfService, service);
 
                 var relevantReadModelsService = readModels.Where(r => service.PublishedEventTypes.Contains(r.GetsCreatedOn)).ToList();
+
 
                 var relevantReadModels = relevantReadModelsService.Select(readModel =>
                 {
@@ -47,6 +43,16 @@ namespace Microwave.Application.Discovery
                 UnresolvedEventSubscriptions = UnresolvedEventSubscriptions.Except(relevantEvents);
                 UnresolvedReadModeSubscriptions = UnresolvedReadModeSubscriptions.Except(relevantReadModels);
             }
+        }
+
+        private static List<EventSchema> GetEventSchemata(List<EventSchema> relevantEventsOfService, PublisherEventConfig service)
+        {
+            var relevantEvents = relevantEventsOfService.Select(relevantEvent =>
+            {
+                var notFoundProperties = GetDiffOfProperties(relevantEvent, service);
+                return new EventSchema(relevantEvent.Name, notFoundProperties);
+            }).ToList();
+            return relevantEvents;
         }
 
         private static List<PropertyType> GetDiffOfProperties(EventSchema relevantEvent, PublisherEventConfig service)
