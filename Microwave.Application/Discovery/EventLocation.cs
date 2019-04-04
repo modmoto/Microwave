@@ -21,11 +21,7 @@ namespace Microwave.Application.Discovery
                 foreach (var relevantEvent in relevantEventsOfService)
                 {
                     var eventSchemata = service.PublishedEventTypes.Single(ev => ev.Equals(relevantEvent));
-                    var foundProperties = relevantEvent.Properties.Where(p => eventSchemata.Properties.Contains(p));
-                    var notFoundProperties = relevantEvent.Properties.Where(p => !eventSchemata.Properties.Contains(p)).ToList();
-
-                    var allProps = foundProperties.Select(p => new PropertyType(p.Name, p.Type, true)).ToList();
-                    notFoundProperties.AddRange(allProps);
+                    var notFoundProperties = GetDiffOfProperties(relevantEvent, eventSchemata);
 
                     relevantEvents.Add(new EventSchema(relevantEvent.Name, notFoundProperties));
                 }
@@ -37,11 +33,7 @@ namespace Microwave.Application.Discovery
                 {
                     var createdEvent = readModel.GetsCreatedOn;
                     var eventSchemata = service.PublishedEventTypes.Single(ev => ev.Equals(createdEvent));
-                    var foundProperties = createdEvent.Properties.Where(p => eventSchemata.Properties.Contains(p));
-                    var notFoundProperties = createdEvent.Properties.Where(p => !eventSchemata.Properties.Contains(p)).ToList();
-
-                    var allProps = foundProperties.Select(p => new PropertyType(p.Name, p.Type, true)).ToList();
-                    notFoundProperties.AddRange(allProps);
+                    var notFoundProperties = GetDiffOfProperties(createdEvent, eventSchemata);
 
                     relevantReadModels.Add(new ReadModelSubscription(
                         readModel.ReadModelName,
@@ -58,6 +50,16 @@ namespace Microwave.Application.Discovery
                 UnresolvedEventSubscriptions = UnresolvedEventSubscriptions.Except(relevantEvents);
                 UnresolvedReadModeSubscriptions = UnresolvedReadModeSubscriptions.Except(relevantReadModels);
             }
+        }
+
+        private static List<PropertyType> GetDiffOfProperties(EventSchema createdEvent, EventSchema eventSchemata)
+        {
+            var foundProperties = createdEvent.Properties.Where(p => eventSchemata.Properties.Contains(p));
+            var notFoundProperties = createdEvent.Properties.Where(p => !eventSchemata.Properties.Contains(p)).ToList();
+
+            var allProps = foundProperties.Select(p => new PropertyType(p.Name, p.Type, true)).ToList();
+            notFoundProperties.AddRange(allProps);
+            return notFoundProperties;
         }
 
         public EventLocation(
