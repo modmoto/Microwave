@@ -15,7 +15,7 @@ namespace Microwave.Application.Discovery
 
             foreach (var service in allServices)
             {
-                var relevantEvents = service.PublishedEventTypes.Where(ev => handleAsyncEvents.Contains(ev)).ToList();
+                var relevantEvents = handleAsyncEvents.Where(ev => service.PublishedEventTypes.Contains(ev)).ToList();
                 var relevantReadModels = readModels.Where(r =>
                     service.PublishedEventTypes.Contains(r.GetsCreatedOn)).ToList();
 

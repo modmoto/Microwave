@@ -102,6 +102,7 @@ namespace ReadService1
 
         public int Age { get; }
         public string Name { get; }
+        public string WeirdName { get; }
 
         public Identity EntityId { get; }
     }

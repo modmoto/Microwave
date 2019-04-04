@@ -32,6 +32,32 @@ namespace Microwave.WebApi.UnitTests
             Assert.AreEqual(nameof(Event2), serviceAfter2.SubscribedEvents.Single().Name);
             Assert.IsNull(serviceAfter1);
         }
+
+        [TestMethod]
+        public void SubscribedEventPropertiesArePropertiesOfConsumingService()
+        {
+            var eventLocation = new EventLocation(
+                new List<PublisherEventConfig>
+                {
+                    new PublisherEventConfig(
+                        new Uri("http://jeah.de"), new []
+                        {
+                            new EventSchema("Event2",
+                                new []{ new PropertyType("VorName", "String"),
+                                        new PropertyType("LastName", "Int")
+                                    })
+                        })
+                },
+                new SubscribedEventCollection(
+                    new List<EventSchema> { new EventSchema("Event2", new []{ new PropertyType("VorName", "String"),  })},
+                    new []{ new ReadModelSubscription("ReadModel2", new EventSchema("Event1"))}));
+
+            var serviceAfter2 = eventLocation.GetServiceForEvent(typeof(Event2));
+
+            Assert.AreEqual(nameof(Event2), serviceAfter2.SubscribedEvents.Single().Name);
+            Assert.AreEqual("VorName", serviceAfter2.SubscribedEvents.Single().Properties.Single().Name);
+            Assert.AreEqual("String", serviceAfter2.SubscribedEvents.Single().Properties.Single().Type);
+        }
     }
 
     public class Event2
