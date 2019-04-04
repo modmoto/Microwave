@@ -15,27 +15,26 @@ namespace Microwave.Application.Discovery
 
             foreach (var service in allServices)
             {
-                var relevantEvents = new List<EventSchema>();
                 var relevantEventsOfService = handleAsyncEvents.Where(ev => service.PublishedEventTypes.Contains(ev)).ToList();
 
-                foreach (var relevantEvent in relevantEventsOfService)
+                var relevantEvents = relevantEventsOfService.Select(relevantEvent =>
                 {
                     var notFoundProperties = GetDiffOfProperties(relevantEvent, service);
+                    return new EventSchema(relevantEvent.Name, notFoundProperties);
+                }).ToList();
 
-                    relevantEvents.Add(new EventSchema(relevantEvent.Name, notFoundProperties));
-                }
 
-                var relevantReadModels = new List<ReadModelSubscription>();
                 var relevantReadModelsService = readModels.Where(r => service.PublishedEventTypes.Contains(r.GetsCreatedOn)).ToList();
-                foreach (var readModel in relevantReadModelsService)
+
+                var relevantReadModels = relevantReadModelsService.Select(readModel =>
                 {
                     var createdEvent = readModel.GetsCreatedOn;
                     var notFoundProperties = GetDiffOfProperties(createdEvent, service);
 
-                    relevantReadModels.Add(new ReadModelSubscription(
+                    return new ReadModelSubscription(
                         readModel.ReadModelName,
-                        new EventSchema(createdEvent.Name, notFoundProperties)));
-                }
+                        new EventSchema(createdEvent.Name, notFoundProperties));
+                }).ToList();
 
                 if (!relevantEvents.Any() && !relevantReadModels.Any()) continue;
 
@@ -44,6 +43,7 @@ namespace Microwave.Application.Discovery
                     relevantEvents,
                     relevantReadModels,
                     service.ServiceName));
+
                 UnresolvedEventSubscriptions = UnresolvedEventSubscriptions.Except(relevantEvents);
                 UnresolvedReadModeSubscriptions = UnresolvedReadModeSubscriptions.Except(relevantReadModels);
             }
