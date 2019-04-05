@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microwave.Application;
 using Microwave.Application.Results;
 using Microwave.Domain;
 
-namespace Microwave.EventStores.Ports
+namespace Microwave.Application
 {
     public interface IEventRepository
     {

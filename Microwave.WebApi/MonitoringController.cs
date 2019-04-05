@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microwave.Application.Monitoring;
 using Microwave.EventStores.Ports;
 
 namespace Microwave.WebApi
@@ -7,9 +8,9 @@ namespace Microwave.WebApi
     [Route("Monitoring")]
     public class MonitoringController : Controller
     {
-        private readonly IEventRepository _eventRepository;
+        private readonly MonitoringHandler _eventRepository;
 
-        public MonitoringController(IEventRepository eventRepository)
+        public MonitoringController(MonitoringHandler eventRepository)
         {
             _eventRepository = eventRepository;
         }
@@ -18,7 +19,7 @@ namespace Microwave.WebApi
         public async Task<ActionResult> GetStreamVersion(string eventType)
         {
             var streamVersion = await _eventRepository.GetEventTypeCount(eventType);
-            return Ok(new StreamVersion(eventType, streamVersion.Value));
+            return Ok(new StreamVersion(eventType, streamVersion));
         }
     }
 }
