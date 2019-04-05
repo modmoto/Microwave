@@ -25,27 +25,15 @@ namespace Microwave
 
         public static void AddBsonMapFor<T>() where T : IDomainEvent
         {
-            if (!BsonClassMap.IsClassMapRegistered(typeof(T))) BsonClassMap.RegisterClassMap<T>(c =>
+            if (!BsonClassMap.IsClassMapRegistered(typeof(T))) BsonClassMap.RegisterClassMap<T>(map =>
             {
                 var eventType = typeof(T);
-                var constructorInfo = GetConstructorWithMostMatchingParameters(eventType);
-
-                foreach (var property in eventType.GetProperties()) c.MapProperty(property.Name);
-
                 var lambdaParameter = Expression.Parameter(eventType, "domainEvent");
 
-                var expressions = new List<Expression>();
-                var entityIdFound = false;
-                foreach (var parameter in constructorInfo.GetParameters())
-                {
-                    var parameterName = GetParameterNameForProperty(parameter.Name, eventType.GetProperties());
-                    if (parameterName == null) throw new IllegalDomainEventContructorException($"Can not find identically named property for parameter: {parameter.Name} in DomainEvent {typeof(T).Name}. Rename the parameter to match a Property!");
-                    if (parameter.Name.ToLower() == nameof(IDomainEvent.EntityId).ToLower()) entityIdFound = true;
+                var constructorInfo = GetConstructorWithMostMatchingParameters(eventType);
+                MapProperties(eventType.GetProperties(), map);
 
-                    expressions.Add(ExtractExpression(lambdaParameter, parameter));
-                }
-
-                if (!entityIdFound) throw new IllegalDomainEventContructorException($"Not parameter with entityId defined in constructor for DomainEvent {typeof(T).Name}. Can not initialize DomainEvent correctly");
+                var expressions = CreateExpressionsFromConstructorParameters<T>(constructorInfo, eventType, lambdaParameter);
 
                 var body = Expression.New(constructorInfo, expressions);
 
@@ -58,8 +46,38 @@ namespace Microwave
                 {
                     expressionType
                 });
-                mapCreatorFunction.Invoke(c, new[] {lambda});
+                mapCreatorFunction.Invoke(map, new[] {lambda});
             });
+        }
+
+        private static List<Expression> CreateExpressionsFromConstructorParameters<T>(
+            ConstructorInfo constructorInfo,
+            Type eventType,
+            ParameterExpression lambdaParameter)
+            where T : IDomainEvent
+        {
+            var expressions = new List<Expression>();
+            var entityIdFound = false;
+            foreach (var parameter in constructorInfo.GetParameters())
+            {
+                var parameterName = GetParameterNameForProperty(parameter.Name, eventType.GetProperties());
+                if (parameterName == null)
+                    throw new IllegalDomainEventContructorException(
+                        $"Can not find identically named property for parameter: {parameter.Name} in DomainEvent {typeof(T).Name}. Rename the parameter to match a Property!");
+                if (parameter.Name.ToLower() == nameof(IDomainEvent.EntityId).ToLower()) entityIdFound = true;
+
+                expressions.Add(ExtractExpression(lambdaParameter, parameter));
+            }
+
+            if (!entityIdFound)
+                throw new IllegalDomainEventContructorException(
+                    $"Not parameter with entityId defined in constructor for DomainEvent {typeof(T).Name}. Can not initialize DomainEvent correctly");
+            return expressions;
+        }
+
+        private static void MapProperties<T>(PropertyInfo[] propertyInfos, BsonClassMap<T> c) where T : IDomainEvent
+        {
+            foreach (var property in propertyInfos) c.MapProperty(property.Name);
         }
 
         private static Expression ExtractExpression(ParameterExpression lambdaParameter, ParameterInfo parameter)
