@@ -13,7 +13,7 @@ namespace Microwave.Persistence.MongoDb.UnitTests.Eventstores
         {
             var writeModelConfiguration = new MicrowaveConfiguration
             {
-                DatabaseConfigDatabase = new DatabaseConfig
+                DatabaseConfiguration = new DatabaseConfiguration
                 {
                     DatabaseName = "IntegrationTest"
                 }

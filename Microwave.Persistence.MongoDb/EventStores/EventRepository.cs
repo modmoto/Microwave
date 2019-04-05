@@ -5,8 +5,6 @@ using System.Threading.Tasks;
 using Microwave.Application;
 using Microwave.Application.Results;
 using Microwave.Domain;
-using Microwave.EventStores;
-using Microwave.EventStores.Ports;
 using Microwave.Persistence.MongoDb.Querries;
 using MongoDB.Driver;
 

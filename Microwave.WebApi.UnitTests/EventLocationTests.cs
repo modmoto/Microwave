@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microwave.Application;
 using Microwave.Application.Discovery;
 
 namespace Microwave.WebApi.UnitTests

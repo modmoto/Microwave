@@ -206,7 +206,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
             var collection = (IServiceCollection) new ServiceCollection();
             var storeDependencies = collection.AddMicrowave(new MicrowaveConfiguration
             {
-                DatabaseConfigDatabase = new DatabaseConfig
+                DatabaseConfiguration = new DatabaseConfiguration
                 {
                     DatabaseName = "IntegrationTest",
                 },

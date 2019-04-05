@@ -6,7 +6,6 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Application.Exceptions;
 using Microwave.Application.Results;
 using Microwave.Domain;
-using Microwave.EventStores;
 using Microwave.Persistence.MongoDb.EventStores;
 using MongoDB.Driver;
 
