@@ -91,13 +91,11 @@ namespace Microwave.Persistence.MongoDb.EventStores
             return Result<IEnumerable<DomainEventWrapper>>.Ok(domainEvents);
         }
 
-        public async Task<Result<long>> GetEventTypeCount(string domainEventType)
+        public async Task<Result<DateTimeOffset>> GetLastEventOccuredOn(string domainEventType)
         {
             var mongoCollection = _database.GetCollection<DomainEventDbo>(_eventCollectionName);
-            var dbo = await mongoCollection
-                .CountDocumentsAsync(e => e.EventType == domainEventType);
-            if (dbo == 0) return Result<long>.NotFound(StringIdentity.Create(domainEventType));
-            return Result<long>.Ok(dbo);
+            var dbo = await mongoCollection.Aggregate().SortByDescending(a => a.Created).FirstOrDefaultAsync();
+            return dbo == null ? Result<DateTimeOffset>.NotFound(StringIdentity.Create(domainEventType)) : Result<DateTimeOffset>.Ok(dbo.Created);
         }
 
         public async Task<Result> AppendAsync(IEnumerable<IDomainEvent> domainEvents, long currentEntityVersion)

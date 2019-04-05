@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 
 namespace Microwave.Application.Monitoring
@@ -10,9 +11,9 @@ namespace Microwave.Application.Monitoring
         {
             _eventRepository = eventRepository;
         }
-        public async Task<long> GetEventTypeCount(string eventType)
+        public async Task<DateTimeOffset> GetEventTypeCount(string eventType)
         {
-            var result = await _eventRepository.GetEventTypeCount(eventType);
+            var result = await _eventRepository.GetLastEventOccuredOn(eventType);
             return result.Value;
         }
     }

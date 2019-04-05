@@ -1,14 +1,16 @@
+using System;
+
 namespace Microwave.EventStores.Ports
 {
     public class StreamVersion
     {
-        public StreamVersion(string domainEventType, long version)
+        public StreamVersion(string domainEventType, DateTimeOffset lastOccured)
         {
             DomainEventType = domainEventType;
-            Version = version;
+            LastOccured = lastOccured;
         }
 
         public string DomainEventType { get; }
-        public long Version { get; }
+        public DateTimeOffset LastOccured { get; }
     }
 }

@@ -203,6 +203,27 @@ namespace Microwave.Persistence.MongoDb.UnitTests.Eventstores
         }
 
         [TestMethod]
+        public async Task FindLastOccuredOnOfType()
+        {
+            var eventRepository = new EventRepository(EventDatabase, new VersionCache(EventDatabase));
+
+            var newGuid = GuidIdentity.Create();
+            var events = new List<IDomainEvent> { new TestEvent2(newGuid)};
+
+            await eventRepository.AppendAsync(events, 0);
+            var result = await eventRepository.GetLastEventOccuredOn(nameof(TestEvent2));
+
+            await Task.Delay(1000);
+            await eventRepository.AppendAsync(events, 1);
+
+            var resultAddedAfter = await eventRepository.GetLastEventOccuredOn(nameof(TestEvent2));
+
+            Assert.AreNotEqual(resultAddedAfter.Value, result.Value);
+            Assert.AreEqual(DateTimeOffset.Now.Day, result.Value.Day);
+            Assert.AreEqual(DateTimeOffset.Now.Hour, result.Value.Hour);
+        }
+
+        [TestMethod]
         public async Task LoadEntityId_NotFoundTIsCorrect()
         {
             var eventRepository = new EventRepository(EventDatabase, new VersionCache(EventDatabase));
@@ -446,8 +467,8 @@ namespace Microwave.Persistence.MongoDb.UnitTests.Eventstores
 
             await eventRepository.AppendAsync(events, 0);
 
-            var result = await eventRepository.GetEventTypeCount(nameof(TestEvent1));
-            var result2 = await eventRepository.GetEventTypeCount(nameof(TestEvent2));
+            var result = await eventRepository.GetLastEventOccuredOn(nameof(TestEvent1));
+            var result2 = await eventRepository.GetLastEventOccuredOn(nameof(TestEvent2));
 
             Assert.AreEqual(2, result.Value);
             Assert.AreEqual(3, result2.Value);
@@ -463,7 +484,7 @@ namespace Microwave.Persistence.MongoDb.UnitTests.Eventstores
 
             await eventRepository.AppendAsync(events, 0);
 
-            var result = await eventRepository.GetEventTypeCount(nameof(TestEvent3));
+            var result = await eventRepository.GetLastEventOccuredOn(nameof(TestEvent3));
 
             Assert.IsTrue(result.Is<NotFound>());
         }
