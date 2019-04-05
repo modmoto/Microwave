@@ -4,9 +4,6 @@
         <DebugType>full</DebugType>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="MongoDB.Driver" Version="2.7.3" />
-    </ItemGroup>
-    <ItemGroup>
       <ProjectReference Include="..\Microwave.Application\Microwave.Application.csproj" />
     </ItemGroup>
 </Project>

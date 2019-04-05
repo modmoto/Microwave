@@ -1,7 +1,7 @@
 ﻿using System;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace Microwave.Queries
+namespace Microwave.Persistence.MongoDb.Querries
 {
     public class ReadModelDbo<T>
     {
