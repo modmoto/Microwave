@@ -84,7 +84,8 @@ namespace Microwave
             {
                 try
                 {
-                    assemblies.Add(AppDomain.CurrentDomain.Load(AssemblyName.GetAssemblyName(path)));
+                    var assemblyName = AssemblyName.GetAssemblyName(path);
+                    assemblies.Add(AppDomain.CurrentDomain.Load(assemblyName));
                 }
                 catch (FileNotFoundException)
                 {
