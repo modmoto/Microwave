@@ -94,7 +94,10 @@ namespace Microwave.Persistence.MongoDb.EventStores
         public async Task<Result<DateTimeOffset>> GetLastEventOccuredOn(string domainEventType)
         {
             var mongoCollection = _database.GetCollection<DomainEventDbo>(_eventCollectionName);
-            var dbo = await mongoCollection.Aggregate().SortByDescending(a => a.Created).FirstOrDefaultAsync();
+            var dbo = await mongoCollection
+                .Find(e => e.EventType == domainEventType)
+                .SortByDescending(a => a.Created)
+                .FirstOrDefaultAsync();
             return dbo == null ? Result<DateTimeOffset>.NotFound(StringIdentity.Create(domainEventType)) : Result<DateTimeOffset>.Ok(dbo.Created);
         }
 

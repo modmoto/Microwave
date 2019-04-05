@@ -203,27 +203,6 @@ namespace Microwave.Persistence.MongoDb.UnitTests.Eventstores
         }
 
         [TestMethod]
-        public async Task FindLastOccuredOnOfType()
-        {
-            var eventRepository = new EventRepository(EventDatabase, new VersionCache(EventDatabase));
-
-            var newGuid = GuidIdentity.Create();
-            var events = new List<IDomainEvent> { new TestEvent2(newGuid)};
-
-            await eventRepository.AppendAsync(events, 0);
-            var result = await eventRepository.GetLastEventOccuredOn(nameof(TestEvent2));
-
-            await Task.Delay(1000);
-            await eventRepository.AppendAsync(events, 1);
-
-            var resultAddedAfter = await eventRepository.GetLastEventOccuredOn(nameof(TestEvent2));
-
-            Assert.AreNotEqual(resultAddedAfter.Value, result.Value);
-            Assert.AreEqual(DateTimeOffset.Now.Day, result.Value.Day);
-            Assert.AreEqual(DateTimeOffset.Now.Hour, result.Value.Hour);
-        }
-
-        [TestMethod]
         public async Task LoadEntityId_NotFoundTIsCorrect()
         {
             var eventRepository = new EventRepository(EventDatabase, new VersionCache(EventDatabase));
@@ -451,31 +430,28 @@ namespace Microwave.Persistence.MongoDb.UnitTests.Eventstores
         }
 
         [TestMethod]
-        public async Task GetLatestEvent_HappyPath()
+        public async Task FindLastOccuredOnOfType()
         {
             var eventRepository = new EventRepository(EventDatabase, new VersionCache(EventDatabase));
 
-            var newGuid = GuidIdentity.Create(Guid.NewGuid());
-            var events = new List<IDomainEvent>
-            {
-                new TestEvent1(newGuid),
-                new TestEvent2(newGuid),
-                new TestEvent1(newGuid),
-                new TestEvent2(newGuid),
-                new TestEvent2(newGuid)
-            };
+            var newGuid = GuidIdentity.Create();
+            var events = new List<IDomainEvent> { new TestEvent2(newGuid)};
 
             await eventRepository.AppendAsync(events, 0);
+            var result = await eventRepository.GetLastEventOccuredOn(nameof(TestEvent2));
 
-            var result = await eventRepository.GetLastEventOccuredOn(nameof(TestEvent1));
-            var result2 = await eventRepository.GetLastEventOccuredOn(nameof(TestEvent2));
+            await Task.Delay(1000);
+            await eventRepository.AppendAsync(events, 1);
 
-            Assert.AreEqual(2, result.Value);
-            Assert.AreEqual(3, result2.Value);
+            var resultAddedAfter = await eventRepository.GetLastEventOccuredOn(nameof(TestEvent2));
+
+            Assert.AreNotEqual(resultAddedAfter.Value.Ticks, result.Value.Ticks);
+            Assert.AreEqual(DateTimeOffset.Now.Day, result.Value.Day);
+            Assert.AreEqual(DateTimeOffset.Now.Hour, result.Value.Hour);
         }
 
         [TestMethod]
-        public async Task GetLatestEvent_NotFound()
+        public async Task FindLastOccuredOnOfType_NotFound()
         {
             var eventRepository = new EventRepository(EventDatabase, new VersionCache(EventDatabase));
 
