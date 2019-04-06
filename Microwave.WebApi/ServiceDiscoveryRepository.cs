@@ -31,6 +31,26 @@ namespace Microwave.WebApi
                 return new EventsPublishedByService(serviceAdress, new List<EventSchema>(), false);
             }
         }
+
+        public async Task<ServiceDependenciesDto> GetDependantServices(Uri serviceAdress)
+        {
+            var client = _factory.GetClient(serviceAdress);
+            try
+            {
+                var response = await client.GetAsync("Dicovery/ServiceDependencies");
+                var content = await response.Content.ReadAsStringAsync();
+                var serviceDependencies = JsonConvert.DeserializeObject<ServiceDependenciesDto>(content);
+                serviceDependencies.IsReachable = true;
+                return serviceDependencies;
+            }
+            catch (HttpRequestException)
+            {
+                return new ServiceDependenciesDto
+                {
+                    IsReachable = false
+                };
+            }
+        }
     }
 
     public class DiscoveryClientFactory : IDiscoveryClientFactory
