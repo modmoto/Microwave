@@ -41,6 +41,7 @@ namespace Microwave.WebApi
                 var content = await response.Content.ReadAsStringAsync();
                 var serviceDependencies = JsonConvert.DeserializeObject<ServiceDependenciesDto>(content);
                 serviceDependencies.IsReachable = true;
+                serviceDependencies.ServiceBaseAddress = serviceAdress;
                 return serviceDependencies;
             }
             catch (HttpRequestException)
