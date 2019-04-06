@@ -37,13 +37,38 @@ namespace Microwave.Persistence.MongoDb.Querries
         }
 
         private Guid EventLocationId => new Guid("78448B83-1BA9-44DF-935B-78EC9B3D1FA4");
+        private Guid ServiceMapId => new Guid("9C940AF7-411E-4E87-983F-83F77FF19E6D");
 
         public async Task<IEventLocation> GetEventLocation()
         {
             var mongoCollection = _database.GetCollection<EventLocationDbo>(StatusDbName);
             var location = await mongoCollection.FindSync(e => e.Id == EventLocationId).SingleOrDefaultAsync();
-            if (location == null) return null;
-            return new EventLocation(location.Services, location.UnresolvedEventSubscriptions, location.UnresolvedReadModeSubscriptions);
+            return location == null ? null : new EventLocation(location.Services, location.UnresolvedEventSubscriptions, location.UnresolvedReadModeSubscriptions);
+        }
+
+        public async Task SaveServiceMap(ServiceMap serviceMap)
+        {
+            var serviceMapDbo = new ServiceMapDbo()
+            {
+                Id = ServiceMapId,
+                AllServices = serviceMap.AllServices
+            };
+
+            var mongoCollection = _database.GetCollection<ServiceMapDbo>(StatusDbName);
+
+            var findOneAndReplaceOptions = new FindOneAndReplaceOptions<ServiceMapDbo>();
+            findOneAndReplaceOptions.IsUpsert = true;
+            await mongoCollection.FindOneAndReplaceAsync(
+                (Expression<Func<ServiceMapDbo, bool>>) (e => e.Id == serviceMapDbo.Id),
+                serviceMapDbo,
+                findOneAndReplaceOptions);
+        }
+
+        public async Task<ServiceMap> GetServiceMap()
+        {
+            var mongoCollection = _database.GetCollection<ServiceMapDbo>(StatusDbName);
+            var location = await mongoCollection.FindSync(e => e.Id == ServiceMapId).SingleOrDefaultAsync();
+            return location == null ? null : new ServiceMap(location.AllServices);
         }
     }
 
@@ -52,6 +77,12 @@ namespace Microwave.Persistence.MongoDb.Querries
         public IEnumerable<MicrowaveService> Services { get; set; }
         public IEnumerable<EventSchema> UnresolvedEventSubscriptions { get; set; }
         public IEnumerable<ReadModelSubscription> UnresolvedReadModeSubscriptions { get; set; }
+        public Guid Id { get; set; }
+    }
+
+    public class ServiceMapDbo
+    {
+        public IEnumerable<ServiceDependenciesDto> AllServices { get; set; }
         public Guid Id { get; set; }
     }
 }
