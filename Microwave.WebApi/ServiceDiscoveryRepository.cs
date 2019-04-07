@@ -32,21 +32,21 @@ namespace Microwave.WebApi
             }
         }
 
-        public async Task<ServiceDependenciesDto> GetDependantServices(Uri serviceAdress)
+        public async Task<ServiceNode> GetDependantServices(Uri serviceAdress)
         {
             var client = _factory.GetClient(serviceAdress);
             try
             {
                 var response = await client.GetAsync("Dicovery/ServiceDependencies");
                 var content = await response.Content.ReadAsStringAsync();
-                var serviceDependencies = JsonConvert.DeserializeObject<ServiceDependenciesDto>(content);
+                var serviceDependencies = JsonConvert.DeserializeObject<ServiceNode>(content);
                 serviceDependencies.IsReachable = true;
                 serviceDependencies.ServiceBaseAddress = serviceAdress;
                 return serviceDependencies;
             }
             catch (HttpRequestException)
             {
-                return new ServiceDependenciesDto
+                return new ServiceNode
                 {
                     IsReachable = false
                 };
