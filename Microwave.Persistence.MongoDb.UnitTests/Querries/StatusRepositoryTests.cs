@@ -110,31 +110,38 @@ namespace Microwave.Persistence.MongoDb.UnitTests.Querries
         }
 
         [TestMethod]
-        public async Task SaveAndLoadServiceMap()
+        public async Task LoadServiceMap()
         {
             var statusRepository = new StatusRepository(EventDatabase);
 
-            ServiceMap map = new ServiceMap(new List<ServiceDependenciesDto>
-            {
-                new ServiceDependenciesDto
+            var services = new List<EventsPublishedByService> {
+                new EventsPublishedByService(new Uri("http://service1.de"), new []
                 {
-                    ServiceName = "Name",
-                    ServiceBaseAddress = new Uri("http://www.uri1.de")
+                    new EventSchema("Event1"),
+                }, true, "Name1"),
+                new EventsPublishedByService(new Uri("http://service2.de"), new []
+                {
+                    new EventSchema("Event2")
+                }, true, "Name2")
+            };
+            var subscribedEventCollection = new EventsSubscribedByService(
+                new []
+                {
+                    new EventSchema("Event1"),
+                    new EventSchema("Event2")
                 },
-                new ServiceDependenciesDto
-                {
-                    ServiceName = "Name2",
-                    ServiceBaseAddress = new Uri("http://www.uri2.de")
-                }
-            });
-            await statusRepository.SaveServiceMap(map);
-            var mapLoaded = await statusRepository.GetServiceMap();
+                new List<ReadModelSubscription>());
 
-            var serviceDependenciesDtos = mapLoaded.AllServices.ToList();
-            Assert.AreEqual("Name", serviceDependenciesDtos[0].ServiceName);
-            Assert.AreEqual("Name2", serviceDependenciesDtos[1].ServiceName);
-            Assert.AreEqual(new Uri("http://www.uri1.de"), serviceDependenciesDtos[0].ServiceBaseAddress);
-            Assert.AreEqual(new Uri("http://www.uri2.de"), serviceDependenciesDtos[1].ServiceBaseAddress);
+            var eventLocation = new EventLocation(services, subscribedEventCollection);
+
+            await statusRepository.SaveEventLocation(eventLocation);
+            var map = await statusRepository.GetServiceMap();
+
+            var allServices = map.AllServices.ToList();
+            Assert.AreEqual("Name1", allServices[0].ServiceName);
+            Assert.AreEqual("Name2", allServices[1].ServiceName);
+            Assert.AreEqual(new Uri("http://service1.de"), allServices[0].ServiceBaseAddress);
+            Assert.AreEqual(new Uri("http://service2.de"), allServices[1].ServiceBaseAddress);
         }
     }
 }
