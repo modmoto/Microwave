@@ -37,6 +37,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microwave.Persistence.Mongo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microwave.Discovery", "Microwave.Discovery\Microwave.Discovery.csproj", "{80A57BBD-8D51-4638-9D74-E63785754CC7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microwave.Discovery.UnitTests", "Microwave.Discovery.UnitTests\Microwave.Discovery.UnitTests.csproj", "{D45D3575-38B3-408E-8693-A1E67D6406EA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -111,6 +113,10 @@ Global
 		{80A57BBD-8D51-4638-9D74-E63785754CC7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{80A57BBD-8D51-4638-9D74-E63785754CC7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{80A57BBD-8D51-4638-9D74-E63785754CC7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D45D3575-38B3-408E-8693-A1E67D6406EA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D45D3575-38B3-408E-8693-A1E67D6406EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D45D3575-38B3-408E-8693-A1E67D6406EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D45D3575-38B3-408E-8693-A1E67D6406EA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
