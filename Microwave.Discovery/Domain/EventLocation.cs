@@ -8,6 +8,11 @@ namespace Microwave.Discovery.Domain
 {
     public class EventLocation : IEventLocation
     {
+        public IEnumerable<ServiceNode> Services { get; private set; }
+            = new List<ServiceNode>();
+        public IEnumerable<EventSchema> UnresolvedEventSubscriptions { get; }
+        public IEnumerable<ReadModelSubscription> UnresolvedReadModeSubscriptions { get; }
+
         public EventLocation(IEnumerable<EventsPublishedByService> allServices, EventsSubscribedByService eventsSubscribedByService)
         {
             var readModels = eventsSubscribedByService.ReadModelSubcriptions.ToList();
@@ -20,8 +25,8 @@ namespace Microwave.Discovery.Domain
                 var relevantEventsOfService = handleAsyncEvents.Where(ev => service.PublishedEventTypes.Contains(ev)).ToList();
                 var relevantEvents = relevantEventsOfService.Select(relevantEvent =>
                 {
-                    var notFoundProperties2 = GetDiffOfProperties(relevantEvent, service);
-                    return new EventSchema(relevantEvent.Name, notFoundProperties2);
+                    var notFoundProperties = GetDiffOfProperties(relevantEvent, service);
+                    return new EventSchema(relevantEvent.Name, notFoundProperties);
                 }).ToList();
 
                 var relevantReadModelsService = readModels.Where(r => service.PublishedEventTypes.Contains(r.GetsCreatedOn)).ToList();
@@ -60,7 +65,7 @@ namespace Microwave.Discovery.Domain
         }
 
         public EventLocation(
-            IEnumerable<ServiceNode> services, 
+            IEnumerable<ServiceNode> services,
             IEnumerable<EventSchema> unresolvedEventSubscriptions,
             IEnumerable<ReadModelSubscription> unresolvedReadModeSubscriptions)
         {
@@ -68,11 +73,6 @@ namespace Microwave.Discovery.Domain
             UnresolvedEventSubscriptions = unresolvedEventSubscriptions;
             UnresolvedReadModeSubscriptions = unresolvedReadModeSubscriptions;
         }
-
-        public IEnumerable<ServiceNode> Services { get; private set; }
-            = new List<ServiceNode>();
-        public IEnumerable<EventSchema> UnresolvedEventSubscriptions { get; }
-        public IEnumerable<ReadModelSubscription> UnresolvedReadModeSubscriptions { get; }
 
         public ServiceNode GetServiceForEvent(Type eventType)
         {
