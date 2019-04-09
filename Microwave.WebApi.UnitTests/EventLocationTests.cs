@@ -17,7 +17,7 @@ namespace Microwave.WebApi.UnitTests
             var eventLocation = new EventLocation(
                 new List<EventsPublishedByService>
                 {
-                    new EventsPublishedByService(
+                    EventsPublishedByService.Reachable(
                         new ServiceEndPoint(new Uri("http://jeah.de")), new []
                         {
                             new EventSchema("Event2")
@@ -40,7 +40,7 @@ namespace Microwave.WebApi.UnitTests
             var eventLocation = new EventLocation(
                 new List<EventsPublishedByService>
                 {
-                    new EventsPublishedByService(
+                    EventsPublishedByService.Reachable(
                         new ServiceEndPoint(new Uri("http://jeah.de")), new []
                         {
                             new EventSchema("Event2",
@@ -66,7 +66,7 @@ namespace Microwave.WebApi.UnitTests
             var eventLocation = new EventLocation(
                 new List<EventsPublishedByService>
                 {
-                    new EventsPublishedByService(
+                    EventsPublishedByService.Reachable(
                         new ServiceEndPoint(new Uri("http://jeah.de")), new []
                         {
                             new EventSchema("Event2",
@@ -104,7 +104,7 @@ namespace Microwave.WebApi.UnitTests
             var eventLocation = new EventLocation(
                 new List<EventsPublishedByService>
                 {
-                    new EventsPublishedByService(
+                    EventsPublishedByService.Reachable(
                         new ServiceEndPoint(new Uri("http://jeah.de")), new []
                         {
                             new EventSchema("Event2",

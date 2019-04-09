@@ -27,12 +27,12 @@ namespace Microwave.WebApi.Discovery
                 var content = await response.Content.ReadAsStringAsync();
                 var events = JsonConvert.DeserializeObject<PublishedEventsByServiceDto>(content);
 
-                return new EventsPublishedByService(new ServiceEndPoint(serviceAdress, events.ServiceName)
+                return EventsPublishedByService.Reachable(new ServiceEndPoint(serviceAdress, events.ServiceName)
                     , events.PublishedEvents);
             }
             catch (HttpRequestException)
             {
-                return new EventsPublishedByService(new ServiceEndPoint(serviceAdress), new List<EventSchema>(), false);
+                return EventsPublishedByService.NotReachable(new ServiceEndPoint(serviceAdress));
             }
         }
 

@@ -52,11 +52,11 @@ namespace Microwave.WebApi.UnitTests
             var services = new List<MicrowaveService>()
             {
                 new MicrowaveService(
-                    new ServiceEndPoint(new Uri("http://service1.de"), "RemoteName1"),
+                    new ServiceEndPoint(new Uri("http://remoteservice1.de"), "RemoteName1"),
                     new List<EventSchema>(),
                     new List<ReadModelSubscription>()),
                 new MicrowaveService(
-                    new ServiceEndPoint(new Uri("http://service1.de"), "RemoteName1"),
+                    new ServiceEndPoint(new Uri("http://remoteservice2.de"), "RemoteName2"),
                     new List<EventSchema>(),
                     new List<ReadModelSubscription>())
             };

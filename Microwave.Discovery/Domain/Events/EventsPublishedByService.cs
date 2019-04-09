@@ -5,9 +5,22 @@ namespace Microwave.Discovery.Domain.Events
 {
     public class EventsPublishedByService
     {
-        public EventsPublishedByService(ServiceEndPoint serviceEndPoint,
+        public static EventsPublishedByService Reachable(
+            ServiceEndPoint serviceEndPoint,
+            IEnumerable<EventSchema> publishedEventTypes)
+        {
+            return new EventsPublishedByService(serviceEndPoint, publishedEventTypes, true);
+        }
+
+        public static EventsPublishedByService NotReachable(
+            ServiceEndPoint serviceEndPoint)
+        {
+            return new EventsPublishedByService(serviceEndPoint, new List<EventSchema>(), false);
+        }
+
+        private EventsPublishedByService(ServiceEndPoint serviceEndPoint,
             IEnumerable<EventSchema> publishedEventTypes,
-            bool isReachable = true)
+            bool isReachable)
         {
             ServiceEndPoint = serviceEndPoint;
             PublishedEventTypes = publishedEventTypes;

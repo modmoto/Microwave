@@ -20,7 +20,7 @@ namespace Microwave.Persistence.MongoDb.UnitTests.Querries
             var statusRepository = new StatusRepository(EventDatabase);
 
             List<EventsPublishedByService> services = new List<EventsPublishedByService> {
-                new EventsPublishedByService(new ServiceEndPoint(new Uri("http://service1.de"), "Name1"), new []
+                EventsPublishedByService.Reachable(new ServiceEndPoint(new Uri("http://service1.de"), "Name1"), new []
                 {
                     new EventSchema("Event1"),
                     new EventSchema("Event2"),
@@ -59,7 +59,7 @@ namespace Microwave.Persistence.MongoDb.UnitTests.Querries
             var statusRepository = new StatusRepository(EventDatabase);
 
             List<EventsPublishedByService> services = new List<EventsPublishedByService> {
-                new EventsPublishedByService(new ServiceEndPoint(new Uri("http://service1.de"), "Name1"), new []
+                EventsPublishedByService.Reachable(new ServiceEndPoint(new Uri("http://service1.de"), "Name1"), new []
                 {
                     new EventSchema("Event1"),
                     new EventSchema("Event3")
@@ -87,7 +87,7 @@ namespace Microwave.Persistence.MongoDb.UnitTests.Querries
             var statusRepository = new StatusRepository(EventDatabase);
 
             List<EventsPublishedByService> services = new List<EventsPublishedByService> {
-                new EventsPublishedByService(new ServiceEndPoint(new Uri("http://service1.de"), "Name1"), new []
+                EventsPublishedByService.Reachable(new ServiceEndPoint(new Uri("http://service1.de"), "Name1"), new []
                 {
                     new EventSchema("Event1"),
                     new EventSchema("Event2")
@@ -117,11 +117,11 @@ namespace Microwave.Persistence.MongoDb.UnitTests.Querries
             var statusRepository = new StatusRepository(EventDatabase);
 
             var services = new List<EventsPublishedByService> {
-                new EventsPublishedByService(new ServiceEndPoint(new Uri("http://service1.de"), "Name1"), new []
+                EventsPublishedByService.Reachable(new ServiceEndPoint(new Uri("http://service1.de"), "Name1"), new []
                 {
                     new EventSchema("Event1"),
                 }),
-                new EventsPublishedByService(new ServiceEndPoint(new Uri("http://service2.de"), "Name2"), new []
+                EventsPublishedByService.Reachable(new ServiceEndPoint(new Uri("http://service2.de"), "Name2"), new []
                 {
                     new EventSchema("Event2")
                 })
