@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microwave.Discovery;
+using Microwave.Discovery.Domain;
+using Microwave.Discovery.Domain.Events;
+using Microwave.Discovery.Domain.Services;
 using Microwave.Persistence.MongoDb.Querries;
 using Microwave.Persistence.MongoDb.UnitTests.Eventstores;
 
@@ -18,7 +20,7 @@ namespace Microwave.Persistence.MongoDb.UnitTests.Querries
             var statusRepository = new StatusRepository(EventDatabase);
 
             List<EventsPublishedByService> services = new List<EventsPublishedByService> {
-                new EventsPublishedByService(new NodeEntryPoint(new Uri("http://service1.de"), "Name1"), new []
+                new EventsPublishedByService(new ServiceEndPoint(new Uri("http://service1.de"), "Name1"), new []
                 {
                     new EventSchema("Event1"),
                     new EventSchema("Event2"),
@@ -57,7 +59,7 @@ namespace Microwave.Persistence.MongoDb.UnitTests.Querries
             var statusRepository = new StatusRepository(EventDatabase);
 
             List<EventsPublishedByService> services = new List<EventsPublishedByService> {
-                new EventsPublishedByService(new NodeEntryPoint(new Uri("http://service1.de"), "Name1"), new []
+                new EventsPublishedByService(new ServiceEndPoint(new Uri("http://service1.de"), "Name1"), new []
                 {
                     new EventSchema("Event1"),
                     new EventSchema("Event3")
@@ -85,7 +87,7 @@ namespace Microwave.Persistence.MongoDb.UnitTests.Querries
             var statusRepository = new StatusRepository(EventDatabase);
 
             List<EventsPublishedByService> services = new List<EventsPublishedByService> {
-                new EventsPublishedByService(new NodeEntryPoint(new Uri("http://service1.de"), "Name1"), new []
+                new EventsPublishedByService(new ServiceEndPoint(new Uri("http://service1.de"), "Name1"), new []
                 {
                     new EventSchema("Event1"),
                     new EventSchema("Event2")
@@ -115,11 +117,11 @@ namespace Microwave.Persistence.MongoDb.UnitTests.Querries
             var statusRepository = new StatusRepository(EventDatabase);
 
             var services = new List<EventsPublishedByService> {
-                new EventsPublishedByService(new NodeEntryPoint(new Uri("http://service1.de"), "Name1"), new []
+                new EventsPublishedByService(new ServiceEndPoint(new Uri("http://service1.de"), "Name1"), new []
                 {
                     new EventSchema("Event1"),
                 }),
-                new EventsPublishedByService(new NodeEntryPoint(new Uri("http://service2.de"), "Name2"), new []
+                new EventsPublishedByService(new ServiceEndPoint(new Uri("http://service2.de"), "Name2"), new []
                 {
                     new EventSchema("Event2")
                 })
@@ -138,10 +140,10 @@ namespace Microwave.Persistence.MongoDb.UnitTests.Querries
             var map = await statusRepository.GetServiceMap();
 
             var allServices = map.AllServices.ToList();
-            Assert.AreEqual("Name1", allServices[0].ServiceName);
-            Assert.AreEqual("Name2", allServices[1].ServiceName);
-            Assert.AreEqual(new Uri("http://service1.de"), allServices[0].ServiceBaseAddress);
-            Assert.AreEqual(new Uri("http://service2.de"), allServices[1].ServiceBaseAddress);
+            Assert.AreEqual("Name1", allServices[0].ServiceEndPoint.Name);
+            Assert.AreEqual("Name2", allServices[1].ServiceEndPoint.Name);
+            Assert.AreEqual(new Uri("http://service1.de"), allServices[0].ServiceEndPoint.ServiceBaseAddress);
+            Assert.AreEqual(new Uri("http://service2.de"), allServices[1].ServiceEndPoint.ServiceBaseAddress);
         }
     }
 }

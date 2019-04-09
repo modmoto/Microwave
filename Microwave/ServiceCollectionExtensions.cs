@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microwave.Application;
 using Microwave.Discovery;
+using Microwave.Discovery.Domain;
+using Microwave.Discovery.Domain.Events;
 using Microwave.Domain;
 using Microwave.EventStores;
 using Microwave.EventStores.Ports;

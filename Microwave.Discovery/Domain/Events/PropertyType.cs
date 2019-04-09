@@ -1,4 +1,4 @@
-namespace Microwave.Discovery
+namespace Microwave.Discovery.Domain.Events
 {
     public class PropertyType
     {

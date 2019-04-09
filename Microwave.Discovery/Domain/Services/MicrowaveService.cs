@@ -1,22 +1,20 @@
-using System;
 using System.Collections.Generic;
+using Microwave.Discovery.Domain.Events;
 
-namespace Microwave.Discovery
+namespace Microwave.Discovery.Domain.Services
 {
     public class MicrowaveService
     {
-        public Uri ServiceBaseAddress => NodeEntryPoint.ServiceBaseAddress;
-        public NodeEntryPoint NodeEntryPoint { get; }
+        public ServiceEndPoint ServiceEndPoint { get; }
         public IEnumerable<EventSchema> SubscribedEvents { get; }
         public IEnumerable<ReadModelSubscription> ReadModels { get; }
-        public string ServiceName => NodeEntryPoint.Name;
 
         public MicrowaveService(
-            NodeEntryPoint nodeEntryPoint,
+            ServiceEndPoint serviceEndPoint,
             IEnumerable<EventSchema> subscribedEvents,
             IEnumerable<ReadModelSubscription> readModels)
         {
-            NodeEntryPoint = nodeEntryPoint;
+            ServiceEndPoint = serviceEndPoint;
             SubscribedEvents = subscribedEvents;
             ReadModels = readModels;
         }

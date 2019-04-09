@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microwave.Discovery;
+using Microwave.Discovery.Domain;
+using Microwave.Discovery.Domain.Events;
+using Microwave.Discovery.Domain.Services;
 
 namespace Microwave.WebApi.UnitTests
 {
@@ -16,7 +18,7 @@ namespace Microwave.WebApi.UnitTests
                 new List<EventsPublishedByService>
                 {
                     new EventsPublishedByService(
-                        new NodeEntryPoint(new Uri("http://jeah.de")), new []
+                        new ServiceEndPoint(new Uri("http://jeah.de")), new []
                         {
                             new EventSchema("Event2")
                         })
@@ -39,7 +41,7 @@ namespace Microwave.WebApi.UnitTests
                 new List<EventsPublishedByService>
                 {
                     new EventsPublishedByService(
-                        new NodeEntryPoint(new Uri("http://jeah.de")), new []
+                        new ServiceEndPoint(new Uri("http://jeah.de")), new []
                         {
                             new EventSchema("Event2",
                                 new []{ new PropertyType("VorName", "String"),
@@ -65,7 +67,7 @@ namespace Microwave.WebApi.UnitTests
                 new List<EventsPublishedByService>
                 {
                     new EventsPublishedByService(
-                        new NodeEntryPoint(new Uri("http://jeah.de")), new []
+                        new ServiceEndPoint(new Uri("http://jeah.de")), new []
                         {
                             new EventSchema("Event2",
                                 new []{ new PropertyType("VorName", "String"),
@@ -103,7 +105,7 @@ namespace Microwave.WebApi.UnitTests
                 new List<EventsPublishedByService>
                 {
                     new EventsPublishedByService(
-                        new NodeEntryPoint(new Uri("http://jeah.de")), new []
+                        new ServiceEndPoint(new Uri("http://jeah.de")), new []
                         {
                             new EventSchema("Event2",
                                 new []{ new PropertyType("VorName", "String"),

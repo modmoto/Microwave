@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using Microwave.Discovery;
+using Microwave.Discovery.Domain.Events;
 
 namespace Microwave.WebApi.Discovery
 {

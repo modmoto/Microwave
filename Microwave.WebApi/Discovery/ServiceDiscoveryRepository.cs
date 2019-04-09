@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microwave.Discovery;
+using Microwave.Discovery.Domain;
+using Microwave.Discovery.Domain.Events;
+using Microwave.Discovery.Domain.Services;
 using Newtonsoft.Json;
 
 namespace Microwave.WebApi.Discovery
@@ -24,12 +27,12 @@ namespace Microwave.WebApi.Discovery
                 var content = await response.Content.ReadAsStringAsync();
                 var events = JsonConvert.DeserializeObject<PublishedEventsByServiceDto>(content);
 
-                return new EventsPublishedByService(new NodeEntryPoint(serviceAdress, events.ServiceName)
+                return new EventsPublishedByService(new ServiceEndPoint(serviceAdress, events.ServiceName)
                     , events.PublishedEvents);
             }
             catch (HttpRequestException)
             {
-                return new EventsPublishedByService(new NodeEntryPoint(serviceAdress), new List<EventSchema>(), false);
+                return new EventsPublishedByService(new ServiceEndPoint(serviceAdress), new List<EventSchema>(), false);
             }
         }
 
@@ -41,11 +44,11 @@ namespace Microwave.WebApi.Discovery
                 var response = await client.GetAsync("Dicovery/ServiceDependencies");
                 var content = await response.Content.ReadAsStringAsync();
                 var serviceDependencies = JsonConvert.DeserializeObject<EventLocationDto>(content);
-                return ServiceNode.Ok(new NodeEntryPoint(serviceAdress, serviceDependencies.ServiceName), serviceDependencies.Services);
+                return ServiceNode.Reachable(new ServiceEndPoint(serviceAdress, serviceDependencies.ServiceName), serviceDependencies.Services);
             }
             catch (HttpRequestException)
             {
-                return ServiceNode.NotReachable(new NodeEntryPoint(serviceAdress));
+                return ServiceNode.NotReachable(new ServiceEndPoint(serviceAdress));
             }
         }
     }

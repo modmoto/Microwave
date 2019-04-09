@@ -4,6 +4,9 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microwave.Discovery;
+using Microwave.Discovery.Domain;
+using Microwave.Discovery.Domain.Events;
+using Microwave.Discovery.Domain.Services;
 using MongoDB.Driver;
 
 namespace Microwave.Persistence.MongoDb.Querries
@@ -50,7 +53,7 @@ namespace Microwave.Persistence.MongoDb.Querries
             var mongoCollection = _database.GetCollection<EventLocationDbo>(StatusDbName);
             var location = await mongoCollection.FindSync(e => e.Id == EventLocationId).SingleOrDefaultAsync();
             return location == null ? null : new ServiceMap(location.Services.Select(s =>
-                new MicrowaveService(s.NodeEntryPoint, s.SubscribedEvents, s.ReadModels)));
+                new MicrowaveService(s.ServiceEndPoint, s.SubscribedEvents, s.ReadModels)));
         }
     }
 

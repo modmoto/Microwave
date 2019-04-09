@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microwave.Discovery.Domain.Events;
+using Microwave.Discovery.Domain.Services;
 
-namespace Microwave.Discovery
+namespace Microwave.Discovery.Domain
 {
     public class EventLocation : IEventLocation
     {
@@ -36,7 +38,7 @@ namespace Microwave.Discovery
                 if (!relevantEvents.Any() && !relevantReadModels.Any()) continue;
 
                 SetDomainEventLocation(new MicrowaveService(
-                    service.NodeEntryPoint,
+                    service.ServiceEndPoint,
                     relevantEvents,
                     relevantReadModels));
 
@@ -84,7 +86,7 @@ namespace Microwave.Discovery
 
         private void SetDomainEventLocation(MicrowaveService service)
         {
-            var servicesWithoutAddedService = Services.Where(s => s.ServiceBaseAddress != service.ServiceBaseAddress);
+            var servicesWithoutAddedService = Services.Where(s => s.ServiceEndPoint.ServiceBaseAddress != service.ServiceEndPoint.ServiceBaseAddress);
             var services = servicesWithoutAddedService.Append(service);
             Services = services;
         }

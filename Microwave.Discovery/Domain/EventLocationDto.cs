@@ -1,6 +1,8 @@
 using System.Collections.Generic;
+using Microwave.Discovery.Domain.Events;
+using Microwave.Discovery.Domain.Services;
 
-namespace Microwave.Discovery
+namespace Microwave.Discovery.Domain
 {
     public class EventLocationDto
     {

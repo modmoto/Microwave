@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using Microwave.Discovery.Domain;
 
 namespace Microwave.Discovery
 {

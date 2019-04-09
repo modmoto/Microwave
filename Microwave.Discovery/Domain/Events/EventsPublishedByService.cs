@@ -1,24 +1,22 @@
-using System;
 using System.Collections.Generic;
+using Microwave.Discovery.Domain.Services;
 
-namespace Microwave.Discovery
+namespace Microwave.Discovery.Domain.Events
 {
     public class EventsPublishedByService
     {
-        public EventsPublishedByService(NodeEntryPoint nodeEntryPoint,
+        public EventsPublishedByService(ServiceEndPoint serviceEndPoint,
             IEnumerable<EventSchema> publishedEventTypes,
             bool isReachable = true)
         {
-            NodeEntryPoint = nodeEntryPoint;
+            ServiceEndPoint = serviceEndPoint;
             PublishedEventTypes = publishedEventTypes;
             IsReachable = isReachable;
         }
 
-        public NodeEntryPoint NodeEntryPoint { get; }
+        public ServiceEndPoint ServiceEndPoint { get; }
         public IEnumerable<EventSchema> PublishedEventTypes { get; }
         public bool IsReachable { get; }
-        public Uri ServiceBaseAddress => NodeEntryPoint.ServiceBaseAddress;
-        public string ServiceName => NodeEntryPoint.Name;
     }
 
 }

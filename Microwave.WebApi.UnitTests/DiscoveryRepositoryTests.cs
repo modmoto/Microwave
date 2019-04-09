@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microwave.Discovery;
+using Microwave.Discovery.Domain;
+using Microwave.Discovery.Domain.Events;
+using Microwave.Discovery.Domain.Services;
 using Microwave.WebApi.Discovery;
 using Moq;
 using Newtonsoft.Json;
@@ -36,12 +38,12 @@ namespace Microwave.WebApi.UnitTests
             var publishedEventTypes = serviceDiscoveryRepository.GetPublishedEventTypes(serviceAdress);
 
             var publisherEventConfig = publishedEventTypes.Result;
-            Assert.AreEqual(serviceAdress, publisherEventConfig.ServiceBaseAddress);
+            Assert.AreEqual(serviceAdress, publisherEventConfig.ServiceEndPoint.ServiceBaseAddress);
             var eventTypes = publisherEventConfig.PublishedEventTypes.ToList();
             Assert.AreEqual(2, eventTypes.Count);
             Assert.AreEqual("event1", eventTypes[0].Name);
             Assert.AreEqual("event2", eventTypes[1].Name);
-            Assert.AreEqual("MeinService", publisherEventConfig.ServiceName);
+            Assert.AreEqual("MeinService", publisherEventConfig.ServiceEndPoint.Name);
         }
 
         [TestMethod]
@@ -50,11 +52,11 @@ namespace Microwave.WebApi.UnitTests
             var services = new List<MicrowaveService>()
             {
                 new MicrowaveService(
-                    new NodeEntryPoint(new Uri("http://service1.de"), "RemoteName1"),
+                    new ServiceEndPoint(new Uri("http://service1.de"), "RemoteName1"),
                     new List<EventSchema>(),
                     new List<ReadModelSubscription>()),
                 new MicrowaveService(
-                    new NodeEntryPoint(new Uri("http://service1.de"), "RemoteName1"),
+                    new ServiceEndPoint(new Uri("http://service1.de"), "RemoteName1"),
                     new List<EventSchema>(),
                     new List<ReadModelSubscription>())
             };
@@ -81,12 +83,12 @@ namespace Microwave.WebApi.UnitTests
             var serviceNode = await serviceDiscoveryRepository.GetDependantServices(serviceAdress);
             var dependantServices = serviceNode.Services.ToList();
             Assert.AreEqual(2, dependantServices.Count);
-            Assert.AreEqual(new Uri("http://localhost:5000/"), serviceNode.NodeEntryPoint.ServiceBaseAddress);
-            Assert.AreEqual("TestName", serviceNode.NodeEntryPoint.Name);
-            Assert.AreEqual("RemoteName1", dependantServices[0].ServiceName);
-            Assert.AreEqual("RemoteName2", dependantServices[1].ServiceName);
-            Assert.AreEqual(new Uri("http://remoteservice1.de"), dependantServices[0].ServiceBaseAddress);
-            Assert.AreEqual(new Uri("http://remoteservice2.de"), dependantServices[1].ServiceBaseAddress);
+            Assert.AreEqual(new Uri("http://localhost:5000/"), serviceNode.ServiceEndPoint.ServiceBaseAddress);
+            Assert.AreEqual("TestName", serviceNode.ServiceEndPoint.Name);
+            Assert.AreEqual("RemoteName1", dependantServices[0].ServiceEndPoint.Name);
+            Assert.AreEqual("RemoteName2", dependantServices[1].ServiceEndPoint.Name);
+            Assert.AreEqual(new Uri("http://remoteservice1.de"), dependantServices[0].ServiceEndPoint.ServiceBaseAddress);
+            Assert.AreEqual(new Uri("http://remoteservice2.de"), dependantServices[1].ServiceEndPoint.ServiceBaseAddress);
         }
     }
 }
