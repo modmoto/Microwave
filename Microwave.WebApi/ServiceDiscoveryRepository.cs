@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Microwave.Application.Discovery;
+using Microwave.Discovery;
 using Newtonsoft.Json;
 
 namespace Microwave.WebApi

@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Application;
-using Microwave.Application.Discovery;
+using Microwave.Discovery;
 using Microwave.Domain;
 using Microwave.EventStores.Ports;
 using Microwave.Queries;

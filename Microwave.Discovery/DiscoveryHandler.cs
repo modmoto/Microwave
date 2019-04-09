@@ -1,7 +1,8 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microwave.Application;
 
-namespace Microwave.Application.Discovery
+namespace Microwave.Discovery
 {
     public class DiscoveryHandler
     {

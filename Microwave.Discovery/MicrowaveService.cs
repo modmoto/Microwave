@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Microwave.Application.Discovery
+namespace Microwave.Discovery
 {
     public class MicrowaveService
     {

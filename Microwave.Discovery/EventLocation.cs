@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Microwave.Application.Discovery
+namespace Microwave.Discovery
 {
     public class EventLocation : IEventLocation
     {

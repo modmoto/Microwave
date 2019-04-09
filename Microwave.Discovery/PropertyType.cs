@@ -1,4 +1,4 @@
-namespace Microwave.Application.Discovery
+namespace Microwave.Discovery
 {
     public class PropertyType
     {

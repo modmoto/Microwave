@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using Microwave.Application.Discovery;
+using Microwave.Discovery;
 using MongoDB.Driver;
 
 namespace Microwave.Persistence.MongoDb.Querries

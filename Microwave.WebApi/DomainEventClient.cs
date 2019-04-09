@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
 using System.Net.Http;
-using Microwave.Application.Discovery;
+using Microwave.Discovery;
 using Microwave.Queries;
 
 namespace Microwave.WebApi

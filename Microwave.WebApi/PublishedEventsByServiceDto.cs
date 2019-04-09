@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using Microwave.Application.Discovery;
+using Microwave.Discovery;
 
 namespace Microwave.WebApi
 {

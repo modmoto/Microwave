@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microwave.Application.Discovery;
+using Microwave.Discovery;
 
 namespace Microwave.Pages
 {

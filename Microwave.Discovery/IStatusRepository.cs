@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 
-namespace Microwave.Application.Discovery
+namespace Microwave.Discovery
 {
     public interface IStatusRepository
     {
