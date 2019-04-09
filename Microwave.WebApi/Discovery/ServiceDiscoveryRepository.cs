@@ -39,17 +39,12 @@ namespace Microwave.WebApi.Discovery
             {
                 var response = await client.GetAsync("Dicovery/ServiceDependencies");
                 var content = await response.Content.ReadAsStringAsync();
-                var serviceDependencies = JsonConvert.DeserializeObject<ServiceNode>(content);
-                serviceDependencies.IsReachable = true;
-                serviceDependencies.ServiceBaseAddress = serviceAdress;
-                return serviceDependencies;
+                var serviceDependencies = JsonConvert.DeserializeObject<EventLocationDto>(content);
+                return ServiceNode.Ok(new NodeEntryPoint(serviceAdress, serviceDependencies.ServiceName), serviceDependencies.Services);
             }
             catch (HttpRequestException)
             {
-                return new ServiceNode
-                {
-                    IsReachable = false
-                };
+                return ServiceNode.NotReachable(new NodeEntryPoint(serviceAdress));
             }
         }
     }

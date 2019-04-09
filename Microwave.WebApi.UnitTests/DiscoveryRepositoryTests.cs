@@ -61,7 +61,11 @@ namespace Microwave.WebApi.UnitTests
                     "RemoteName2")
             };
 
-            var eventLocationMock = new EventLocationMock(services);
+            var eventLocationMock = new EventLocationDto(
+                services,
+                new List<EventSchema>(),
+                new List<ReadModelSubscription>(),
+                "TestName" );
 
             var mockHttp = new MockHttpMessageHandler();
             var serializeObject = JsonConvert.SerializeObject(eventLocationMock);
@@ -79,33 +83,12 @@ namespace Microwave.WebApi.UnitTests
             var serviceNode = await serviceDiscoveryRepository.GetDependantServices(serviceAdress);
             var dependantServices = serviceNode.Services.ToList();
             Assert.AreEqual(2, dependantServices.Count);
-            Assert.AreEqual(new Uri("http://localhost:5000/"), serviceNode.ServiceBaseAddress);
+            Assert.AreEqual(new Uri("http://localhost:5000/"), serviceNode.NodeEntryPoint.ServiceBaseAddress);
+            Assert.AreEqual("TestName", serviceNode.NodeEntryPoint.Name);
             Assert.AreEqual("RemoteName1", dependantServices[0].ServiceName);
             Assert.AreEqual("RemoteName2", dependantServices[1].ServiceName);
             Assert.AreEqual(new Uri("http://remoteservice1.de"), dependantServices[0].ServiceBaseAddress);
             Assert.AreEqual(new Uri("http://remoteservice2.de"), dependantServices[1].ServiceBaseAddress);
         }
-    }
-
-    public class EventLocationMock : IEventLocation
-    {
-        public EventLocationMock(IEnumerable<MicrowaveService> services)
-        {
-            Services = services;
-        }
-
-        public MicrowaveService GetServiceForEvent(Type eventType)
-        {
-            return null;
-        }
-
-        public MicrowaveService GetServiceForReadModel(Type readModel)
-        {
-            return null;
-        }
-
-        public IEnumerable<MicrowaveService> Services { get; }
-        public IEnumerable<EventSchema> UnresolvedEventSubscriptions => new List<EventSchema>();
-        public IEnumerable<ReadModelSubscription> UnresolvedReadModeSubscriptions => new List<ReadModelSubscription>();
     }
 }
