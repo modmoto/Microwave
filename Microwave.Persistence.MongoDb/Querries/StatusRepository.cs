@@ -50,7 +50,7 @@ namespace Microwave.Persistence.MongoDb.Querries
             var mongoCollection = _database.GetCollection<EventLocationDbo>(StatusDbName);
             var location = await mongoCollection.FindSync(e => e.Id == EventLocationId).SingleOrDefaultAsync();
             return location == null ? null : new ServiceMap(location.Services.Select(s =>
-                new MicrowaveService(s.ServiceBaseAddress, s.SubscribedEvents, s.ReadModels, s.ServiceName)));
+                new MicrowaveService(s.NodeEntryPoint, s.SubscribedEvents, s.ReadModels)));
         }
     }
 

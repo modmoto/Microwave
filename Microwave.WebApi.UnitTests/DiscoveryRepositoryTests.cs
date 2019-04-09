@@ -50,15 +50,13 @@ namespace Microwave.WebApi.UnitTests
             var services = new List<MicrowaveService>()
             {
                 new MicrowaveService(
-                    new Uri("http://remoteservice1.de"),
+                    new NodeEntryPoint(new Uri("http://service1.de"), "RemoteName1"),
                     new List<EventSchema>(),
-                    new List<ReadModelSubscription>(),
-                    "RemoteName1"),
+                    new List<ReadModelSubscription>()),
                 new MicrowaveService(
-                    new Uri("http://remoteservice2.de"),
+                    new NodeEntryPoint(new Uri("http://service1.de"), "RemoteName1"),
                     new List<EventSchema>(),
-                    new List<ReadModelSubscription>(),
-                    "RemoteName2")
+                    new List<ReadModelSubscription>())
             };
 
             var eventLocationMock = new EventLocationDto(

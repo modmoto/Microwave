@@ -16,7 +16,7 @@ namespace Microwave.WebApi.UnitTests
                 new List<EventsPublishedByService>
                 {
                     new EventsPublishedByService(
-                        new Uri("http://jeah.de"), new []
+                        new NodeEntryPoint(new Uri("http://jeah.de")), new []
                         {
                             new EventSchema("Event2")
                         })
@@ -39,7 +39,7 @@ namespace Microwave.WebApi.UnitTests
                 new List<EventsPublishedByService>
                 {
                     new EventsPublishedByService(
-                        new Uri("http://jeah.de"), new []
+                        new NodeEntryPoint(new Uri("http://jeah.de")), new []
                         {
                             new EventSchema("Event2",
                                 new []{ new PropertyType("VorName", "String"),
@@ -65,7 +65,7 @@ namespace Microwave.WebApi.UnitTests
                 new List<EventsPublishedByService>
                 {
                     new EventsPublishedByService(
-                        new Uri("http://jeah.de"), new []
+                        new NodeEntryPoint(new Uri("http://jeah.de")), new []
                         {
                             new EventSchema("Event2",
                                 new []{ new PropertyType("VorName", "String"),
@@ -103,7 +103,7 @@ namespace Microwave.WebApi.UnitTests
                 new List<EventsPublishedByService>
                 {
                     new EventsPublishedByService(
-                        new Uri("http://jeah.de"), new []
+                        new NodeEntryPoint(new Uri("http://jeah.de")), new []
                         {
                             new EventSchema("Event2",
                                 new []{ new PropertyType("VorName", "String"),

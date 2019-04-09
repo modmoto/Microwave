@@ -5,21 +5,20 @@ namespace Microwave.Discovery
 {
     public class MicrowaveService
     {
-        public Uri ServiceBaseAddress { get; }
+        public Uri ServiceBaseAddress => NodeEntryPoint.ServiceBaseAddress;
+        public NodeEntryPoint NodeEntryPoint { get; }
         public IEnumerable<EventSchema> SubscribedEvents { get; }
         public IEnumerable<ReadModelSubscription> ReadModels { get; }
-        public string ServiceName { get; }
+        public string ServiceName => NodeEntryPoint.Name;
 
         public MicrowaveService(
-            Uri serviceBaseAddress,
+            NodeEntryPoint nodeEntryPoint,
             IEnumerable<EventSchema> subscribedEvents,
-            IEnumerable<ReadModelSubscription> readModels,
-            string serviceName = null)
+            IEnumerable<ReadModelSubscription> readModels)
         {
-            ServiceBaseAddress = serviceBaseAddress;
+            NodeEntryPoint = nodeEntryPoint;
             SubscribedEvents = subscribedEvents;
             ReadModels = readModels;
-            ServiceName = serviceName ?? serviceBaseAddress.ToString();
         }
     }
 }

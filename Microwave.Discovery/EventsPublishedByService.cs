@@ -5,21 +5,20 @@ namespace Microwave.Discovery
 {
     public class EventsPublishedByService
     {
-        public EventsPublishedByService(Uri serviceBaseAddress,
+        public EventsPublishedByService(NodeEntryPoint nodeEntryPoint,
             IEnumerable<EventSchema> publishedEventTypes,
-            bool isReachable = true,
-            string serviceName = null)
+            bool isReachable = true)
         {
-            ServiceBaseAddress = serviceBaseAddress;
-            ServiceName = serviceName ?? serviceBaseAddress.ToString();
+            NodeEntryPoint = nodeEntryPoint;
             PublishedEventTypes = publishedEventTypes;
             IsReachable = isReachable;
         }
 
-        public Uri ServiceBaseAddress { get; }
-        public string ServiceName { get; }
+        public NodeEntryPoint NodeEntryPoint { get; }
         public IEnumerable<EventSchema> PublishedEventTypes { get; }
         public bool IsReachable { get; }
+        public Uri ServiceBaseAddress => NodeEntryPoint.ServiceBaseAddress;
+        public string ServiceName => NodeEntryPoint.Name;
     }
 
 }

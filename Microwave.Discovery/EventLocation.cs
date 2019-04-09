@@ -36,10 +36,9 @@ namespace Microwave.Discovery
                 if (!relevantEvents.Any() && !relevantReadModels.Any()) continue;
 
                 SetDomainEventLocation(new MicrowaveService(
-                    service.ServiceBaseAddress,
+                    service.NodeEntryPoint,
                     relevantEvents,
-                    relevantReadModels,
-                    service.ServiceName));
+                    relevantReadModels));
 
                 UnresolvedEventSubscriptions = UnresolvedEventSubscriptions.Except(relevantEvents);
                 UnresolvedReadModeSubscriptions = UnresolvedReadModeSubscriptions.Except(relevantReadModels);
