@@ -53,13 +53,13 @@ namespace Microwave.Persistence.MongoDb.Querries
             var mongoCollection = _database.GetCollection<EventLocationDbo>(StatusDbName);
             var location = await mongoCollection.FindSync(e => e.Id == EventLocationId).SingleOrDefaultAsync();
             return location == null ? null : new ServiceMap(location.Services.Select(s =>
-                new MicrowaveService(s.ServiceEndPoint, s.SubscribedEvents, s.ReadModels)));
+                new ServiceNode(s.ServiceEndPoint, s.SubscribedEvents, s.ReadModels)));
         }
     }
 
     public class EventLocationDbo
     {
-        public IEnumerable<MicrowaveService> Services { get; set; }
+        public IEnumerable<ServiceNode> Services { get; set; }
         public IEnumerable<EventSchema> UnresolvedEventSubscriptions { get; set; }
         public IEnumerable<ReadModelSubscription> UnresolvedReadModeSubscriptions { get; set; }
         public Guid Id { get; set; }

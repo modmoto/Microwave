@@ -1,28 +1,22 @@
 using System.Collections.Generic;
+using Microwave.Discovery.Domain.Events;
 
 namespace Microwave.Discovery.Domain.Services
 {
     public class ServiceNode
     {
-        public static ServiceNode Reachable(ServiceEndPoint serviceEndPoint, IEnumerable<MicrowaveService> services)
-        {
-            return new ServiceNode(serviceEndPoint, true, services);
-        }
+        public ServiceEndPoint ServiceEndPoint { get; }
+        public IEnumerable<EventSchema> SubscribedEvents { get; }
+        public IEnumerable<ReadModelSubscription> ReadModels { get; }
 
-        public static ServiceNode NotReachable(ServiceEndPoint serviceEndPoint)
-        {
-            return new ServiceNode(serviceEndPoint, true, new List<MicrowaveService>());
-        }
-
-        private ServiceNode(ServiceEndPoint serviceEndPoint, bool isReachable, IEnumerable<MicrowaveService> services)
+        public ServiceNode(
+            ServiceEndPoint serviceEndPoint,
+            IEnumerable<EventSchema> subscribedEvents,
+            IEnumerable<ReadModelSubscription> readModels)
         {
             ServiceEndPoint = serviceEndPoint;
-            IsReachable = isReachable;
-            Services = services;
+            SubscribedEvents = subscribedEvents;
+            ReadModels = readModels;
         }
-
-        public ServiceEndPoint ServiceEndPoint { get; }
-        public bool IsReachable { get; }
-        public IEnumerable<MicrowaveService> Services { get; }
     }
 }

@@ -8,6 +8,6 @@ namespace Microwave.Discovery
     public interface IServiceDiscoveryRepository
     {
         Task<EventsPublishedByService> GetPublishedEventTypes(Uri serviceAdress);
-        Task<ServiceNode> GetDependantServices(Uri serviceAdress);
+        Task<ServiceNodeWithDependentServices> GetDependantServices(Uri serviceAdress);
     }
 }

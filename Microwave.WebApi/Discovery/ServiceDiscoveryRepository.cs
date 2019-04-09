@@ -36,7 +36,7 @@ namespace Microwave.WebApi.Discovery
             }
         }
 
-        public async Task<ServiceNode> GetDependantServices(Uri serviceAdress)
+        public async Task<ServiceNodeWithDependentServices> GetDependantServices(Uri serviceAdress)
         {
             var client = _factory.GetClient(serviceAdress);
             try
@@ -44,11 +44,11 @@ namespace Microwave.WebApi.Discovery
                 var response = await client.GetAsync("Dicovery/ServiceDependencies");
                 var content = await response.Content.ReadAsStringAsync();
                 var serviceDependencies = JsonConvert.DeserializeObject<EventLocationDto>(content);
-                return ServiceNode.Reachable(new ServiceEndPoint(serviceAdress, serviceDependencies.ServiceName), serviceDependencies.Services);
+                return ServiceNodeWithDependentServices.Reachable(new ServiceEndPoint(serviceAdress, serviceDependencies.ServiceName), serviceDependencies.Services);
             }
             catch (HttpRequestException)
             {
-                return ServiceNode.NotReachable(new ServiceEndPoint(serviceAdress));
+                return ServiceNodeWithDependentServices.NotReachable(new ServiceEndPoint(serviceAdress));
             }
         }
     }

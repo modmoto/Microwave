@@ -7,12 +7,12 @@ namespace Microwave.Discovery.Domain
     public class EventLocationDto
     {
         public string ServiceName { get; }
-        public IEnumerable<MicrowaveService> Services { get; }
+        public IEnumerable<ServiceNode> Services { get; }
         public IEnumerable<EventSchema> UnresolvedEventSubscriptions { get; }
         public IEnumerable<ReadModelSubscription> UnresolvedReadModeSubscriptions { get; }
 
         public EventLocationDto(
-            IEnumerable<MicrowaveService> services,
+            IEnumerable<ServiceNode> services,
             IEnumerable<EventSchema> unresolvedEventSubscriptions,
             IEnumerable<ReadModelSubscription> unresolvedReadModeSubscriptions,
             string serviceName)

@@ -16,7 +16,7 @@ namespace Microwave.WebApi.UnitTests
         public void ClientForQueries()
         {
             var mock = new Mock<IEventLocation>();
-            mock.Setup(m => m.GetServiceForEvent(typeof(Ev1))).Returns(new MicrowaveService(new ServiceEndPoint(new Uri
+            mock.Setup(m => m.GetServiceForEvent(typeof(Ev1))).Returns(new ServiceNode(new ServiceEndPoint(new Uri
             ("http://luls.de/")), null, null));
             var domainEventClient = new DomainEventClient<QueryEventHandler<Q1, Ev1>>(mock.Object);
             Assert.AreEqual("http://luls.de/Api/DomainEventTypeStreams/Ev1", domainEventClient.BaseAddress.ToString());
@@ -26,7 +26,7 @@ namespace Microwave.WebApi.UnitTests
         public void ClientForAsyncHandles()
         {
             var mock = new Mock<IEventLocation>();
-            mock.Setup(m => m.GetServiceForEvent(typeof(Ev2))).Returns(new MicrowaveService(new ServiceEndPoint(new Uri
+            mock.Setup(m => m.GetServiceForEvent(typeof(Ev2))).Returns(new ServiceNode(new ServiceEndPoint(new Uri
                 ("http://troll.de/")), null, null));
 
             var domainEventClient = new DomainEventClient<AsyncEventHandler<Ev2>>(mock.Object);
@@ -37,7 +37,7 @@ namespace Microwave.WebApi.UnitTests
         public void ClientForReadModels()
         {
             var mock = new Mock<IEventLocation>();
-            mock.Setup(m => m.GetServiceForReadModel(typeof(IdQuery))).Returns(new MicrowaveService(new ServiceEndPoint(new Uri
+            mock.Setup(m => m.GetServiceForReadModel(typeof(IdQuery))).Returns(new ServiceNode(new ServiceEndPoint(new Uri
                 ("http://troll2.de/")), null, null));
 
             var domainEventClient = new DomainEventClient<ReadModelHandler<IdQuery>>(mock.Object);

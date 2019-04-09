@@ -49,13 +49,13 @@ namespace Microwave.WebApi.UnitTests
         [TestMethod]
         public async Task GetServiceDependencies()
         {
-            var services = new List<MicrowaveService>()
+            var services = new List<ServiceNode>()
             {
-                new MicrowaveService(
+                new ServiceNode(
                     new ServiceEndPoint(new Uri("http://remoteservice1.de"), "RemoteName1"),
                     new List<EventSchema>(),
                     new List<ReadModelSubscription>()),
-                new MicrowaveService(
+                new ServiceNode(
                     new ServiceEndPoint(new Uri("http://remoteservice2.de"), "RemoteName2"),
                     new List<EventSchema>(),
                     new List<ReadModelSubscription>())

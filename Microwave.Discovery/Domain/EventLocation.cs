@@ -37,7 +37,7 @@ namespace Microwave.Discovery.Domain
 
                 if (!relevantEvents.Any() && !relevantReadModels.Any()) continue;
 
-                SetDomainEventLocation(new MicrowaveService(
+                SetDomainEventLocation(new ServiceNode(
                     service.ServiceEndPoint,
                     relevantEvents,
                     relevantReadModels));
@@ -60,7 +60,7 @@ namespace Microwave.Discovery.Domain
         }
 
         public EventLocation(
-            IEnumerable<MicrowaveService> services, 
+            IEnumerable<ServiceNode> services, 
             IEnumerable<EventSchema> unresolvedEventSubscriptions,
             IEnumerable<ReadModelSubscription> unresolvedReadModeSubscriptions)
         {
@@ -69,25 +69,25 @@ namespace Microwave.Discovery.Domain
             UnresolvedReadModeSubscriptions = unresolvedReadModeSubscriptions;
         }
 
-        public IEnumerable<MicrowaveService> Services { get; private set; }
-            = new List<MicrowaveService>();
+        public IEnumerable<ServiceNode> Services { get; private set; }
+            = new List<ServiceNode>();
         public IEnumerable<EventSchema> UnresolvedEventSubscriptions { get; }
         public IEnumerable<ReadModelSubscription> UnresolvedReadModeSubscriptions { get; }
 
-        public MicrowaveService GetServiceForEvent(Type eventType)
+        public ServiceNode GetServiceForEvent(Type eventType)
         {
             return Services.FirstOrDefault(s => s.SubscribedEvents.Any(e => e.Name == eventType.Name));
         }
 
-        public MicrowaveService GetServiceForReadModel(Type readModel)
+        public ServiceNode GetServiceForReadModel(Type readModel)
         {
             return Services.FirstOrDefault(s => s.ReadModels.Any(rm => rm.ReadModelName == readModel.Name));
         }
 
-        private void SetDomainEventLocation(MicrowaveService service)
+        private void SetDomainEventLocation(ServiceNode serviceNode)
         {
-            var servicesWithoutAddedService = Services.Where(s => s.ServiceEndPoint.ServiceBaseAddress != service.ServiceEndPoint.ServiceBaseAddress);
-            var services = servicesWithoutAddedService.Append(service);
+            var servicesWithoutAddedService = Services.Where(s => s.ServiceEndPoint.ServiceBaseAddress != serviceNode.ServiceEndPoint.ServiceBaseAddress);
+            var services = servicesWithoutAddedService.Append(serviceNode);
             Services = services;
         }
     }

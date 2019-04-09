@@ -52,9 +52,9 @@ namespace Microwave.Discovery
 
     public class ServiceMap
     {
-        public IEnumerable<MicrowaveService> AllServices { get; }
+        public IEnumerable<ServiceNode> AllServices { get; }
 
-        public ServiceMap(IEnumerable<MicrowaveService> allServices)
+        public ServiceMap(IEnumerable<ServiceNode> allServices)
         {
             AllServices = allServices;
         }
