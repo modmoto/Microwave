@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microwave.Application.Monitoring;
 using Microwave.EventStores.Ports;
 
-namespace Microwave.WebApi
+namespace Microwave.WebApi.Monitoring
 {
     [Route("Monitoring")]
     public class MonitoringController : Controller

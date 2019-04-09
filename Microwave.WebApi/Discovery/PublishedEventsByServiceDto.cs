@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Microwave.Discovery;
 
-namespace Microwave.WebApi
+namespace Microwave.WebApi.Discovery
 {
     public class PublishedEventsByServiceDto
     {

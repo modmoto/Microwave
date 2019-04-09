@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Discovery;
+using Microwave.WebApi.Discovery;
 using Moq;
 using Newtonsoft.Json;
 using RichardSzalay.MockHttp;

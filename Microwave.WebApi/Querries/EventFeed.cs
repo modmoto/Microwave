@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Microwave.Application;
 using Microwave.Queries;
 
-namespace Microwave.WebApi
+namespace Microwave.WebApi.Querries
 {
     public class EventFeed<T> : IEventFeed<T>
     {

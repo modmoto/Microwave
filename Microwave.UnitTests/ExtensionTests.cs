@@ -9,7 +9,8 @@ using Microwave.Domain;
 using Microwave.EventStores.Ports;
 using Microwave.Queries;
 using Microwave.UnitTests.PublishedEventsDll;
-using Microwave.WebApi;
+using Microwave.WebApi.Discovery;
+using Microwave.WebApi.Querries;
 using MongoDB.Bson.Serialization;
 
 namespace Microwave.DependencyInjectionExtensions.UnitTests

@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microwave.Queries;
 
-namespace Microwave.WebApi
+namespace Microwave.WebApi.Monitoring
 {
     [Route("Monitoring")]
     public class MonitoringAsyncHandlingController : Controller

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microwave.Discovery;
 using Newtonsoft.Json;
 
-namespace Microwave.WebApi
+namespace Microwave.WebApi.Discovery
 {
     public class ServiceDiscoveryRepository : IServiceDiscoveryRepository
     {

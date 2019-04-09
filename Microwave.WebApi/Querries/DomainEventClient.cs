@@ -4,7 +4,7 @@ using System.Net.Http;
 using Microwave.Discovery;
 using Microwave.Queries;
 
-namespace Microwave.WebApi
+namespace Microwave.WebApi.Querries
 {
     public class DomainEventClient<T> : HttpClient
     {

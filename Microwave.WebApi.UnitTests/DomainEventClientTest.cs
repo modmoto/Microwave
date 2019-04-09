@@ -3,6 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Discovery;
 using Microwave.Domain;
 using Microwave.Queries;
+using Microwave.WebApi.Querries;
 using Moq;
 
 namespace Microwave.WebApi.UnitTests

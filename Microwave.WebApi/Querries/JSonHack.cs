@@ -3,7 +3,7 @@ using System.Reflection;
 using Microwave.Domain;
 using Newtonsoft.Json.Linq;
 
-namespace Microwave.WebApi
+namespace Microwave.WebApi.Querries
 {
     public class JSonHack
     {

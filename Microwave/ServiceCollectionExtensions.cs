@@ -14,11 +14,13 @@ using Microwave.EventStores.Ports;
 using Microwave.Persistence.MongoDb.EventStores;
 using Microwave.Persistence.MongoDb.Querries;
 using Microwave.Queries;
-using Microwave.WebApi;
 using Microwave.WebApi.ApiFormatting;
 using Microwave.WebApi.ApiFormatting.DateTimeOffsets;
 using Microwave.WebApi.ApiFormatting.Identities;
+using Microwave.WebApi.Discovery;
 using Microwave.WebApi.Filters;
+using Microwave.WebApi.Monitoring;
+using Microwave.WebApi.Querries;
 using MongoDB.Bson.Serialization;
 
 namespace Microwave

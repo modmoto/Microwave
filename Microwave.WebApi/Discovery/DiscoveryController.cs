@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microwave.Discovery;
 
-namespace Microwave.WebApi
+namespace Microwave.WebApi.Discovery
 {
     [Route("Dicovery")]
     public class DiscoveryController : Controller

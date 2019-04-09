@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microwave.Application;
 using Microwave.Domain;
 
-namespace Microwave.WebApi
+namespace Microwave.WebApi.Querries
 {
     [Route("Api")]
     public class DomainEventController : Controller
