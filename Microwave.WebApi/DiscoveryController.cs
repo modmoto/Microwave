@@ -23,9 +23,10 @@ namespace Microwave.WebApi
         }
 
         [HttpGet("ConsumingServices")]
-        public ActionResult GetConsumingServices()
+        public async Task<ActionResult> GetConsumingServices()
         {
-            return Ok(_discoveryHandler.GetConsumingServices());
+            var consumingServices = await _discoveryHandler.GetConsumingServices();
+            return Ok(consumingServices);
         }
 
         [HttpPut("ConsumingServices/Update")]

@@ -10,7 +10,7 @@ namespace Microwave.Pages
     {
         private readonly DiscoveryHandler _discoveryHandler;
 
-        public IEventLocation ConsumingServices { get; set; }
+        public EventLocationDto ConsumingServices { get; set; }
 
         public bool HasMissingEvents => ConsumingServices.UnresolvedEventSubscriptions.Any()
                                         || ConsumingServices.UnresolvedReadModeSubscriptions.Any();
