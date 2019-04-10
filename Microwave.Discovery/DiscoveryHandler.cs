@@ -36,7 +36,7 @@ namespace Microwave.Discovery
                 "TestName");
         }
 
-        public async Task<ServiceMap> GetServicesMap()
+        public async Task<ServiceMap> GetServiceMap()
         {
             var serviceMap = await _statusRepository.GetServiceMap();
             return serviceMap;

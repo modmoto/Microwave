@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microwave.Discovery;
+using Microwave.Discovery.Domain.Services;
 
 namespace Microwave.WebApi.Discovery
 {
@@ -27,6 +28,14 @@ namespace Microwave.WebApi.Discovery
         {
             var consumingServices = await _discoveryHandler.GetConsumingServices();
             return Ok(consumingServices);
+        }
+
+        [HttpGet("ServiceDependencies")]
+        public async Task<ActionResult> GetServiceDependencies()
+        {
+            var consumingServices = await _discoveryHandler.GetConsumingServices();
+            var serviceDepenencies = ServiceNodeWithDependentServices.Reachable(null, null);
+            return Ok(serviceDepenencies);
         }
 
         [HttpPut("ConsumingServices/Update")]
