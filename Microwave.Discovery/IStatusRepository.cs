@@ -8,5 +8,6 @@ namespace Microwave.Discovery
         Task SaveEventLocation(EventLocation eventLocation);
         Task<IEventLocation> GetEventLocation();
         Task<ServiceMap> GetServiceMap();
+        Task SaveServiceMap(ServiceMap map);
     }
 }

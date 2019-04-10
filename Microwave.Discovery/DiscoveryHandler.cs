@@ -36,6 +36,12 @@ namespace Microwave.Discovery
                 "TestName");
         }
 
+        public async Task<ServiceMap> GetServicesMap()
+        {
+            var serviceMap = await _statusRepository.GetServiceMap();
+            return serviceMap;
+        }
+
         public async Task DiscoverConsumingServices()
         {
             var allServices = new List<EventsPublishedByService>();
@@ -48,13 +54,26 @@ namespace Microwave.Discovery
             var eventLocation = new EventLocation(allServices, _eventsSubscribedByService);
             await _statusRepository.SaveEventLocation(eventLocation);
         }
+
+        public async Task DiscoverServiceMap()
+        {
+            var allServices = new List<ServiceNodeWithDependentServices>();
+            foreach (var serviceAddress in _serviceBaseAddressCollection)
+            {
+                var publishedEventTypes = await _discoveryRepository.GetDependantServices(serviceAddress);
+                allServices.Add(publishedEventTypes);
+            }
+
+            var map = new ServiceMap(allServices);
+            await _statusRepository.SaveServiceMap(map);
+        }
     }
 
     public class ServiceMap
     {
-        public IEnumerable<ServiceNode> AllServices { get; }
+        public IEnumerable<ServiceNodeWithDependentServices> AllServices { get; }
 
-        public ServiceMap(IEnumerable<ServiceNode> allServices)
+        public ServiceMap(IEnumerable<ServiceNodeWithDependentServices> allServices)
         {
             AllServices = allServices;
         }

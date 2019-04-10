@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microwave.Discovery;
 using Microwave.Discovery.Domain;
 using Microwave.Discovery.Domain.Events;
 using Microwave.Discovery.Domain.Services;
@@ -111,39 +112,33 @@ namespace Microwave.Persistence.MongoDb.UnitTests.Querries
             Assert.IsTrue(!location.UnresolvedEventSubscriptions.Any());
         }
 
+
         [TestMethod]
-        public async Task LoadServiceMap()
+        public async Task SaveAndLoadServiceMap()
         {
             var statusRepository = new StatusRepository(EventDatabase);
 
-            var services = new List<EventsPublishedByService> {
-                EventsPublishedByService.Reachable(new ServiceEndPoint(new Uri("http://service1.de"), "Name1"), new []
-                {
-                    new EventSchema("Event1"),
-                }),
-                EventsPublishedByService.Reachable(new ServiceEndPoint(new Uri("http://service2.de"), "Name2"), new []
-                {
-                    new EventSchema("Event2")
-                })
-            };
-            var subscribedEventCollection = new EventsSubscribedByService(
-                new []
-                {
-                    new EventSchema("Event1"),
-                    new EventSchema("Event2")
-                },
-                new List<ReadModelSubscription>());
+            var map = new ServiceMap(new List<ServiceNodeWithDependentServices>
+            {
+                ServiceNodeWithDependentServices.Reachable(
+                    new ServiceEndPoint(new Uri("http://www.uri1.de")),
+                    new List<ServiceNode>
+                    {
+                        new ServiceNode(new ServiceEndPoint(new Uri("http://www.uri2.de")), null, null)
+                    }),
+                ServiceNodeWithDependentServices.Reachable(
+                    new ServiceEndPoint(new Uri("http://www.uri2.de")),
+                    new List<ServiceNode>())
+            });
+            await statusRepository.SaveServiceMap(map);
+            var mapLoaded = await statusRepository.GetServiceMap();
 
-            var eventLocation = new EventLocation(services, subscribedEventCollection);
-
-            await statusRepository.SaveEventLocation(eventLocation);
-            var map = await statusRepository.GetServiceMap();
-
-            var allServices = map.AllServices.ToList();
-            Assert.AreEqual("Name1", allServices[0].ServiceEndPoint.Name);
-            Assert.AreEqual("Name2", allServices[1].ServiceEndPoint.Name);
-            Assert.AreEqual(new Uri("http://service1.de"), allServices[0].ServiceEndPoint.ServiceBaseAddress);
-            Assert.AreEqual(new Uri("http://service2.de"), allServices[1].ServiceEndPoint.ServiceBaseAddress);
+            var serviceDependenciesDtos = mapLoaded.AllServices.ToList();
+            Assert.AreEqual("Name", serviceDependenciesDtos[0].ServiceEndPoint.Name);
+            Assert.AreEqual("Name2", serviceDependenciesDtos[1].ServiceEndPoint.Name);
+            Assert.AreEqual(new Uri("http://www.uri1.de"), serviceDependenciesDtos[0].ServiceEndPoint.ServiceBaseAddress);
+            Assert.AreEqual(new Uri("http://www.uri2.de"), serviceDependenciesDtos[1].ServiceEndPoint.ServiceBaseAddress);
+            Assert.AreEqual(new Uri("http://www.uri2.de"), serviceDependenciesDtos[0].Services.Single().ServiceEndPoint.ServiceBaseAddress);
         }
     }
 }

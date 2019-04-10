@@ -15,6 +15,8 @@ namespace Microwave.Persistence.MongoDb.Querries
     {
         private readonly IMongoDatabase _database;
         private const string StatusDbName = "MicrowaveStatusCollection";
+        private Guid EventLocationId => new Guid("78448B83-1BA9-44DF-935B-78EC9B3D1FA4");
+        private Guid ServiceMapId => new Guid("7DF86BEB-92FF-401A-9415-106AD83DED90");
 
         public StatusRepository(MicrowaveDatabase database)
         {
@@ -30,17 +32,21 @@ namespace Microwave.Persistence.MongoDb.Querries
                 UnresolvedReadModeSubscriptions = eventLocation.UnresolvedReadModeSubscriptions
             };
 
-            var mongoCollection = _database.GetCollection<EventLocationDbo>(StatusDbName);
+            await InsertOrUpdate(eventLocationDbo);
+        }
 
-            var findOneAndReplaceOptions = new FindOneAndReplaceOptions<EventLocationDbo>();
+        private async Task InsertOrUpdate<T>(T eventLocationDbo) where T : IIdentifiable
+        {
+            var mongoCollection = _database.GetCollection<T>(StatusDbName);
+
+            var findOneAndReplaceOptions = new FindOneAndReplaceOptions<T>();
             findOneAndReplaceOptions.IsUpsert = true;
             await mongoCollection.FindOneAndReplaceAsync(
-                (Expression<Func<EventLocationDbo, bool>>) (e => e.Id == eventLocationDbo.Id),
+                (Expression<Func<T, bool>>) (e => e.Id == eventLocationDbo.Id),
                 eventLocationDbo,
                 findOneAndReplaceOptions);
         }
 
-        private Guid EventLocationId => new Guid("78448B83-1BA9-44DF-935B-78EC9B3D1FA4");
         public async Task<IEventLocation> GetEventLocation()
         {
             var mongoCollection = _database.GetCollection<EventLocationDbo>(StatusDbName);
@@ -50,18 +56,42 @@ namespace Microwave.Persistence.MongoDb.Querries
 
         public async Task<ServiceMap> GetServiceMap()
         {
-            var mongoCollection = _database.GetCollection<EventLocationDbo>(StatusDbName);
-            var location = await mongoCollection.FindSync(e => e.Id == EventLocationId).SingleOrDefaultAsync();
+            var mongoCollection = _database.GetCollection<ServiceMapDbo>(StatusDbName);
+            var location = await mongoCollection.FindSync(e => e.Id == ServiceMapId).SingleOrDefaultAsync();
             return location == null ? null : new ServiceMap(location.Services.Select(s =>
-                new ServiceNode(s.ServiceEndPoint, s.SubscribedEvents, s.ReadModels)));
+                ServiceNodeWithDependentServices.Reachable(s.ServiceEndPoint, s.Services)));
+        }
+
+        public async Task SaveServiceMap(ServiceMap map)
+        {
+            var serviceMapDbo = new ServiceMapDbo
+            {
+                Id = ServiceMapId,
+                Services = map.AllServices
+            };
+
+
+            await InsertOrUpdate(serviceMapDbo);
         }
     }
 
-    public class EventLocationDbo
+    internal interface IIdentifiable
+    {
+        Guid Id { get; }
+    }
+
+    public class EventLocationDbo : IIdentifiable
     {
         public IEnumerable<ServiceNode> Services { get; set; }
         public IEnumerable<EventSchema> UnresolvedEventSubscriptions { get; set; }
         public IEnumerable<ReadModelSubscription> UnresolvedReadModeSubscriptions { get; set; }
+        public Guid Id { get; set; }
+    }
+
+    public class ServiceMapDbo : IIdentifiable
+    {
+        public ServiceEndPoint ServiceEndPoint { get; set; }
+        public IEnumerable<ServiceNodeWithDependentServices> Services { get; set; }
         public Guid Id { get; set; }
     }
 }

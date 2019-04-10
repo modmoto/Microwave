@@ -14,7 +14,10 @@ namespace Microwave.Discovery.Domain.Services
             return new ServiceNodeWithDependentServices(serviceEndPoint, true, new List<ServiceNode>());
         }
 
-        private ServiceNodeWithDependentServices(ServiceEndPoint serviceEndPoint, bool isReachable, IEnumerable<ServiceNode> services)
+        private ServiceNodeWithDependentServices(
+            ServiceEndPoint serviceEndPoint,
+            bool isReachable,
+            IEnumerable<ServiceNode> services)
         {
             ServiceEndPoint = serviceEndPoint;
             IsReachable = isReachable;
