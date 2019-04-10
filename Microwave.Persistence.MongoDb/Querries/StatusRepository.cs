@@ -57,9 +57,13 @@ namespace Microwave.Persistence.MongoDb.Querries
         public async Task<ServiceMap> GetServiceMap()
         {
             var mongoCollection = _database.GetCollection<ServiceMapDbo>(StatusDbName);
-            var location = await mongoCollection.FindSync(e => e.Id == ServiceMapId).SingleOrDefaultAsync();
-            return location == null ? null : new ServiceMap(location.Services.Select(s =>
-                ServiceNodeWithDependentServices.Reachable(s.ServiceEndPoint, s.Services)));
+            var mapDbo = await mongoCollection.FindSync(e => e.Id == ServiceMapId).SingleOrDefaultAsync();
+            var services = mapDbo?.Services.Select(s =>
+            {
+                var serviceEndPoints = s.Services.Select(se => new ServiceNode(se, new List<EventSchema>(), new List<ReadModelSubscription>() ));
+                return ServiceNodeWithDependentServices.Reachable(s.ServiceEndPoint, serviceEndPoints);
+            });
+            return mapDbo == null ? null : new ServiceMap(services);
         }
 
         public async Task SaveServiceMap(ServiceMap map)
@@ -67,9 +71,12 @@ namespace Microwave.Persistence.MongoDb.Querries
             var serviceMapDbo = new ServiceMapDbo
             {
                 Id = ServiceMapId,
-                Services = map.AllServices
+                Services = map.AllServices.Select(s => new ServiceNodeWithDependentServicesDbo
+                {
+                    ServiceEndPoint = s.ServiceEndPoint,
+                    Services = s.Services.Select(re => re.ServiceEndPoint)
+                })
             };
-
 
             await InsertOrUpdate(serviceMapDbo);
         }
@@ -90,8 +97,13 @@ namespace Microwave.Persistence.MongoDb.Querries
 
     public class ServiceMapDbo : IIdentifiable
     {
-        public ServiceEndPoint ServiceEndPoint { get; set; }
-        public IEnumerable<ServiceNodeWithDependentServices> Services { get; set; }
+        public IEnumerable<ServiceNodeWithDependentServicesDbo> Services { get; set; }
         public Guid Id { get; set; }
+    }
+
+    public class ServiceNodeWithDependentServicesDbo
+    {
+        public ServiceEndPoint ServiceEndPoint { get; set; }
+        public IEnumerable<ServiceEndPoint> Services { get; set; }
     }
 }

@@ -121,13 +121,13 @@ namespace Microwave.Persistence.MongoDb.UnitTests.Querries
             var map = new ServiceMap(new List<ServiceNodeWithDependentServices>
             {
                 ServiceNodeWithDependentServices.Reachable(
-                    new ServiceEndPoint(new Uri("http://www.uri1.de")),
+                    new ServiceEndPoint(new Uri("http://www.uri1.de"), "Name"),
                     new List<ServiceNode>
                     {
                         new ServiceNode(new ServiceEndPoint(new Uri("http://www.uri2.de")), null, null)
                     }),
                 ServiceNodeWithDependentServices.Reachable(
-                    new ServiceEndPoint(new Uri("http://www.uri2.de")),
+                    new ServiceEndPoint(new Uri("http://www.uri2.de"), "Name2"),
                     new List<ServiceNode>())
             });
             await statusRepository.SaveServiceMap(map);
