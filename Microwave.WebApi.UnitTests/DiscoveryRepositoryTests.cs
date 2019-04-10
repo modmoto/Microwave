@@ -33,7 +33,7 @@ namespace Microwave.WebApi.UnitTests
 
             var mock = new Mock<IDiscoveryClientFactory>();
             mock.Setup(m => m.GetClient(It.IsAny<Uri>())).Returns(client);
-            var serviceDiscoveryRepository = new ServiceDiscoveryRepository(mock.Object);
+            var serviceDiscoveryRepository = new DiscoveryRepository(mock.Object);
             var serviceAdress = new Uri("http://localhost:5000/");
             var publishedEventTypes = serviceDiscoveryRepository.GetPublishedEventTypes(serviceAdress);
 
@@ -77,7 +77,7 @@ namespace Microwave.WebApi.UnitTests
 
             var mock = new Mock<IDiscoveryClientFactory>();
             mock.Setup(m => m.GetClient(It.IsAny<Uri>())).Returns(client);
-            var serviceDiscoveryRepository = new ServiceDiscoveryRepository(mock.Object);
+            var serviceDiscoveryRepository = new DiscoveryRepository(mock.Object);
             var serviceAdress = new Uri("http://localhost:5000/");
 
             var serviceNode = await serviceDiscoveryRepository.GetDependantServices(serviceAdress);

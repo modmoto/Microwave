@@ -10,11 +10,11 @@ using Newtonsoft.Json;
 
 namespace Microwave.WebApi.Discovery
 {
-    public class ServiceDiscoveryRepository : IServiceDiscoveryRepository
+    public class DiscoveryRepository : IServiceDiscoveryRepository
     {
         private readonly IDiscoveryClientFactory _factory;
 
-        public ServiceDiscoveryRepository(IDiscoveryClientFactory factory)
+        public DiscoveryRepository(IDiscoveryClientFactory factory)
         {
             _factory = factory;
         }
