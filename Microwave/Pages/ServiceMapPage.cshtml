@@ -10,7 +10,29 @@
             <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Discover Map</button>
         </form>
     </div>
-    <div class="container">
-
+    <div class="container pb-2">
+        @if (Model.ServiceMap != null)
+        {
+            foreach (var node in Model.ServiceMap.AllServices)
+             {
+                 <div>
+                     <div>
+                         @Html.DisplayFor(modelItem => node.ServiceEndPoint.Name)
+                     </div>
+                     @foreach (var n in node.Services)
+                     {
+                         <div>
+                             uses @Html.DisplayFor(modelItem => n.ServiceEndPoint.ServiceBaseAddress)
+                         </div>
+                     }
+                 </div>
+             }
+        }
+        else
+        {
+            <div class="alert alert-warning" role="alert">
+                Service Map not discovered yet!
+            </div>
+        }
     </div>
 </div>

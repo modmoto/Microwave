@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microwave.Application;
 using Microwave.Discovery.Domain;
@@ -13,17 +14,20 @@ namespace Microwave.Discovery
         private readonly EventsSubscribedByService _eventsSubscribedByService;
         private readonly IServiceDiscoveryRepository _discoveryRepository;
         private readonly IStatusRepository _statusRepository;
+        private readonly MicrowaveConfiguration _configuration;
 
         public DiscoveryHandler(
             ServiceBaseAddressCollection serviceBaseAddressCollection,
             EventsSubscribedByService eventsSubscribedByService,
             IServiceDiscoveryRepository discoveryRepository,
-            IStatusRepository statusRepository)
+            IStatusRepository statusRepository,
+            MicrowaveConfiguration configuration)
         {
             _serviceBaseAddressCollection = serviceBaseAddressCollection;
             _eventsSubscribedByService = eventsSubscribedByService;
             _discoveryRepository = discoveryRepository;
             _statusRepository = statusRepository;
+            _configuration = configuration;
         }
 
         public async Task<EventLocationDto> GetConsumingServices()
@@ -66,6 +70,14 @@ namespace Microwave.Discovery
 
             var map = new ServiceMap(allServices);
             await _statusRepository.SaveServiceMap(map);
+        }
+
+        public async Task<ServiceNodeWithDependentServicesDto> GetConsumingServiceNodes()
+        {
+            var eventLocation = await _statusRepository.GetEventLocation();
+            return new ServiceNodeWithDependentServicesDto(
+                _configuration.ServiceName,
+                eventLocation.Services.Select(s => s.ServiceEndPoint));
         }
     }
 

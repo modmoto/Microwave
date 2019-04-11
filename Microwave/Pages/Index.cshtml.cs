@@ -31,7 +31,7 @@ namespace Microwave.Pages
         public async Task<IActionResult> OnPostAsync()
         {
             await _discoveryHandler.DiscoverConsumingServices();
-            return Redirect("#");
+            return Redirect("Index");
         }
     }
 }

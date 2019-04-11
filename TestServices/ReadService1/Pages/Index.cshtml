@@ -23,7 +23,7 @@
                     @foreach (var readModel in Model.ConsumingServices.UnresolvedReadModeSubscriptions)
                     {
                         <a class="dropdown-item" href="#"><em class="fas fa-book pr-3"></em>
-                            @Html.DisplayFor(modelItem => readModel.ReadModelName)</a>
+                            @Html.DisplayFor(modelItem => readModel.GetsCreatedOn.Name) (@Html.DisplayFor(modelItem => readModel.ReadModelName))</a>
                     }
                 </div>
             </div>

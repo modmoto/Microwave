@@ -34,10 +34,8 @@ namespace Microwave.WebApi.Discovery
         [HttpGet("ServiceDependencies")]
         public async Task<ActionResult> GetServiceDependencies()
         {
-            var consumingServices = await _discoveryHandler.GetConsumingServices();
-//            new ServiceNodeWithDependentServices(new ServiceEndPoint(consumingServices.ServiceName), )
-//            var serviceDepenencies = new EventLocationDto(new ServiceNode(), );
-            return Ok(null);
+            var consumingServices = await _discoveryHandler.GetConsumingServiceNodes();
+            return Ok(consumingServices);
         }
 
         [HttpPut("ConsumingServices/Update")]
