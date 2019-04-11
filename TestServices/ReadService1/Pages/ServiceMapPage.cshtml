@@ -16,9 +16,9 @@
             foreach (var node in Model.ReachableServices)
             {
                 <div>
-                    <div>
-                        @Html.DisplayFor(modelItem => node.ServiceEndPoint.Name) @Html.DisplayFor(modelItem => node.ServiceEndPoint.ServiceBaseAddress)
-                    </div>
+                    <a class="btn btn-dark" href="@node.ServiceEndPoint.ServiceBaseAddress">
+                        @Html.DisplayFor(modelItem => node.ServiceEndPoint.Name)
+                    </a>
                     @foreach (var n in node.Services)
                     {
                         <div>
@@ -34,9 +34,9 @@
                     <div>
                         Not discovered:
                     </div>
-                    <div>
+                    <button type="button" class="btn btn-danger" disabled>
                         @Html.DisplayFor(modelItem => node.ServiceEndPoint.ServiceBaseAddress)
-                    </div>
+                    </button>
                 </div>
             }
         }
