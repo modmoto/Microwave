@@ -1,15 +1,23 @@
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microwave.Discovery;
+using Microwave.Discovery.Domain.Services;
 
 namespace Microwave.Pages
 {
     public class ServiceMapPage : PageModel
     {
         private readonly DiscoveryHandler _handler;
+        private ServiceMap _serviceMap;
 
-        public ServiceMap ServiceMap { get; private set; }
+        public IEnumerable<ServiceNodeWithDependentServicesDto> ReachableServices =>
+            _serviceMap.AllServices.Where(s => s.IsReachable);
+        public IEnumerable<ServiceNodeWithDependentServicesDto> UnreachableServices =>
+            _serviceMap.AllServices.Where(s => !s.IsReachable);
+        public bool MapIsDiscovered => _serviceMap != null;
 
         public ServiceMapPage(DiscoveryHandler handler)
         {
@@ -19,7 +27,7 @@ namespace Microwave.Pages
         public async Task OnGetAsync()
         {
             var serviceMap = await _handler.GetServiceMap();
-            ServiceMap = serviceMap;
+            _serviceMap = serviceMap;
         }
 
         public async Task<IActionResult> OnPostAsync()

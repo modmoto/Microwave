@@ -11,9 +11,9 @@
         </form>
     </div>
     <div class="container pb-2">
-        @if (Model.ServiceMap != null)
+        @if (Model.MapIsDiscovered)
         {
-            foreach (var node in Model.ServiceMap.AllServices)
+            foreach (var node in Model.ReachableServices)
             {
                 <div>
                     <div>
@@ -25,6 +25,18 @@
                             uses @Html.DisplayFor(modelItem => n.ServiceBaseAddress) @Html.DisplayFor(modelItem => n.Name)
                         </div>
                     }
+                </div>
+            }
+
+            foreach (var node in Model.UnreachableServices)
+            {
+                <div>
+                    <div>
+                        Not discovered:
+                    </div>
+                    <div>
+                        @Html.DisplayFor(modelItem => node.ServiceName)
+                    </div>
                 </div>
             }
         }
