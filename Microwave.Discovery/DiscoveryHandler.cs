@@ -33,11 +33,16 @@ namespace Microwave.Discovery
         public async Task<EventLocationDto> GetConsumingServices()
         {
             var eventLocation = await _statusRepository.GetEventLocation();
-            return new EventLocationDto(
-                eventLocation.Services,
-                eventLocation.UnresolvedEventSubscriptions,
-                eventLocation.UnresolvedReadModeSubscriptions,
-                "TestName");
+            if (eventLocation != null)
+            {
+                return new EventLocationDto(
+                    eventLocation.Services,
+                    eventLocation.UnresolvedEventSubscriptions,
+                    eventLocation.UnresolvedReadModeSubscriptions,
+                    "TestName");
+            }
+
+            return null;
         }
 
         public async Task<ServiceMap> GetServiceMap()
@@ -67,7 +72,7 @@ namespace Microwave.Discovery
                 var publishedEventTypes = await _discoveryRepository.GetDependantServices(serviceAddress);
                 allServices.Add(new ServiceNodeWithDependentServicesDto(
                     _configuration.ServiceName,
-                    publishedEventTypes.Services.Select(s => s.ServiceEndPoint)));
+                    publishedEventTypes.Services));
             }
 
             var map = new ServiceMap(allServices);

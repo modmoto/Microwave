@@ -49,26 +49,16 @@ namespace Microwave.WebApi.UnitTests
         [TestMethod]
         public async Task GetServiceDependencies()
         {
-            var services = new List<ServiceNode>()
-            {
-                new ServiceNode(
+            var serviceNodeWithDependentServicesDto = new ServiceNodeWithDependentServicesDto(
+                "ServiceName",
+                new List<ServiceEndPoint>
+                {
                     new ServiceEndPoint(new Uri("http://remoteservice1.de"), "RemoteName1"),
-                    new List<EventSchema>(),
-                    new List<ReadModelSubscription>()),
-                new ServiceNode(
                     new ServiceEndPoint(new Uri("http://remoteservice2.de"), "RemoteName2"),
-                    new List<EventSchema>(),
-                    new List<ReadModelSubscription>())
-            };
-
-            var eventLocationMock = new EventLocationDto(
-                services,
-                new List<EventSchema>(),
-                new List<ReadModelSubscription>(),
-                "TestName" );
+                });
 
             var mockHttp = new MockHttpMessageHandler();
-            var serializeObject = JsonConvert.SerializeObject(eventLocationMock);
+            var serializeObject = JsonConvert.SerializeObject(serviceNodeWithDependentServicesDto);
             mockHttp.When("http://localhost:5000/Dicovery/ServiceDependencies")
                 .Respond("application/json", serializeObject);
 
@@ -83,12 +73,11 @@ namespace Microwave.WebApi.UnitTests
             var serviceNode = await serviceDiscoveryRepository.GetDependantServices(serviceAdress);
             var dependantServices = serviceNode.Services.ToList();
             Assert.AreEqual(2, dependantServices.Count);
-            Assert.AreEqual(new Uri("http://localhost:5000/"), serviceNode.ServiceEndPoint.ServiceBaseAddress);
-            Assert.AreEqual("TestName", serviceNode.ServiceEndPoint.Name);
-            Assert.AreEqual("RemoteName1", dependantServices[0].ServiceEndPoint.Name);
-            Assert.AreEqual("RemoteName2", dependantServices[1].ServiceEndPoint.Name);
-            Assert.AreEqual(new Uri("http://remoteservice1.de"), dependantServices[0].ServiceEndPoint.ServiceBaseAddress);
-            Assert.AreEqual(new Uri("http://remoteservice2.de"), dependantServices[1].ServiceEndPoint.ServiceBaseAddress);
+            Assert.AreEqual("ServiceName", serviceNode.ServiceName);
+            Assert.AreEqual("RemoteName1", dependantServices[0].Name);
+            Assert.AreEqual("RemoteName2", dependantServices[1].Name);
+            Assert.AreEqual(new Uri("http://remoteservice1.de"), dependantServices[0].ServiceBaseAddress);
+            Assert.AreEqual(new Uri("http://remoteservice2.de"), dependantServices[1].ServiceBaseAddress);
         }
     }
 }

@@ -15,8 +15,6 @@ namespace Microwave.Persistence.MongoDb.Querries
     {
         private readonly IMongoDatabase _database;
         private const string StatusDbName = "MicrowaveStatusCollection";
-        private Guid EventLocationId => new Guid("78448B83-1BA9-44DF-935B-78EC9B3D1FA4");
-        private Guid ServiceMapId => new Guid("7DF86BEB-92FF-401A-9415-106AD83DED90");
 
         public StatusRepository(MicrowaveDatabase database)
         {
@@ -26,7 +24,6 @@ namespace Microwave.Persistence.MongoDb.Querries
         {
             var eventLocationDbo = new EventLocationDbo
             {
-                Id = EventLocationId,
                 Services = eventLocation.Services,
                 UnresolvedEventSubscriptions = eventLocation.UnresolvedEventSubscriptions,
                 UnresolvedReadModeSubscriptions = eventLocation.UnresolvedReadModeSubscriptions
@@ -50,14 +47,14 @@ namespace Microwave.Persistence.MongoDb.Querries
         public async Task<IEventLocation> GetEventLocation()
         {
             var mongoCollection = _database.GetCollection<EventLocationDbo>(StatusDbName);
-            var location = await mongoCollection.FindSync(e => e.Id == EventLocationId).SingleOrDefaultAsync();
+            var location = await mongoCollection.FindSync(e => e.Id == nameof(EventLocation)).SingleOrDefaultAsync();
             return location == null ? null : new EventLocation(location.Services, location.UnresolvedEventSubscriptions, location.UnresolvedReadModeSubscriptions);
         }
 
         public async Task<ServiceMap> GetServiceMap()
         {
             var mongoCollection = _database.GetCollection<ServiceMapDbo>(StatusDbName);
-            var mapDbo = await mongoCollection.FindSync(e => e.Id == ServiceMapId).SingleOrDefaultAsync();
+            var mapDbo = await mongoCollection.FindSync(e => e.Id == nameof(ServiceMap)).SingleOrDefaultAsync();
             var services = mapDbo?.Services.Select(s => new ServiceNodeWithDependentServicesDto(s.ServiceName, s.Services));
             return mapDbo == null ? null : new ServiceMap(services);
         }
@@ -66,7 +63,6 @@ namespace Microwave.Persistence.MongoDb.Querries
         {
             var serviceMapDbo = new ServiceMapDbo
             {
-                Id = ServiceMapId,
                 Services = map.AllServices.Select(s => new ServiceNodeWithDependentServicesDbo
                 {
                     ServiceName = s.ServiceName,
@@ -80,7 +76,7 @@ namespace Microwave.Persistence.MongoDb.Querries
 
     internal interface IIdentifiable
     {
-        Guid Id { get; }
+        string Id { get; }
     }
 
     public class EventLocationDbo : IIdentifiable
@@ -88,13 +84,13 @@ namespace Microwave.Persistence.MongoDb.Querries
         public IEnumerable<ServiceNode> Services { get; set; }
         public IEnumerable<EventSchema> UnresolvedEventSubscriptions { get; set; }
         public IEnumerable<ReadModelSubscription> UnresolvedReadModeSubscriptions { get; set; }
-        public Guid Id { get; set; }
+        public string Id => nameof(EventLocation);
     }
 
     public class ServiceMapDbo : IIdentifiable
     {
         public IEnumerable<ServiceNodeWithDependentServicesDbo> Services { get; set; }
-        public Guid Id { get; set; }
+        public string Id => nameof(ServiceMap);
     }
 
     public class ServiceNodeWithDependentServicesDbo
