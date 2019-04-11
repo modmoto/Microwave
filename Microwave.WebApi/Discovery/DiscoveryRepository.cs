@@ -48,8 +48,7 @@ namespace Microwave.WebApi.Discovery
             }
             catch (HttpRequestException)
             {
-                return null;
-                // TODO hier not reachable service;
+                return ServiceNodeWithDependentServicesDto.NotReachable(serviceAdress);
             }
         }
     }
