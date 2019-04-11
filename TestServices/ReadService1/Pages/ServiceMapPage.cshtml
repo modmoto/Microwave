@@ -14,19 +14,19 @@
         @if (Model.ServiceMap != null)
         {
             foreach (var node in Model.ServiceMap.AllServices)
-             {
-                 <div>
-                     <div>
-                         @Html.DisplayFor(modelItem => node.ServiceEndPoint.Name)
-                     </div>
-                     @foreach (var n in node.Services)
-                     {
-                         <div>
-                             uses @Html.DisplayFor(modelItem => n.ServiceEndPoint.ServiceBaseAddress)
-                         </div>
-                     }
-                 </div>
-             }
+            {
+                <div>
+                    <div>
+                        @Html.DisplayFor(modelItem => node.ServiceName)
+                    </div>
+                    @foreach (var n in node.Services)
+                    {
+                        <div>
+                            uses @Html.DisplayFor(modelItem => n.ServiceBaseAddress)
+                        </div>
+                    }
+                </div>
+            }
         }
         else
         {
