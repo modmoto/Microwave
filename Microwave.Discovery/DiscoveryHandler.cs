@@ -66,13 +66,11 @@ namespace Microwave.Discovery
 
         public async Task DiscoverServiceMap()
         {
-            var allServices = new List<ServiceNodeWithDependentServicesDto>();
+            var allServices = new List<ServiceNodeConfig>();
             foreach (var serviceAddress in _serviceBaseAddressCollection)
             {
-                var publishedEventTypes = await _discoveryRepository.GetDependantServices(serviceAddress);
-                allServices.Add(new ServiceNodeWithDependentServicesDto(
-                    _configuration.ServiceName,
-                    publishedEventTypes.Services));
+                var node = await _discoveryRepository.GetDependantServices(serviceAddress);
+                allServices.Add(node);
             }
 
             var map = new ServiceMap(allServices);
@@ -90,9 +88,9 @@ namespace Microwave.Discovery
 
     public class ServiceMap
     {
-        public IEnumerable<ServiceNodeWithDependentServicesDto> AllServices { get; }
+        public IEnumerable<ServiceNodeConfig> AllServices { get; }
 
-        public ServiceMap(IEnumerable<ServiceNodeWithDependentServicesDto> allServices)
+        public ServiceMap(IEnumerable<ServiceNodeConfig> allServices)
         {
             AllServices = allServices;
         }

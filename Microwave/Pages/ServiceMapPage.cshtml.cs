@@ -13,9 +13,9 @@ namespace Microwave.Pages
         private readonly DiscoveryHandler _handler;
         private ServiceMap _serviceMap;
 
-        public IEnumerable<ServiceNodeWithDependentServicesDto> ReachableServices =>
+        public IEnumerable<ServiceNodeConfig> ReachableServices =>
             _serviceMap.AllServices.Where(s => s.IsReachable);
-        public IEnumerable<ServiceNodeWithDependentServicesDto> UnreachableServices =>
+        public IEnumerable<ServiceNodeConfig> UnreachableServices =>
             _serviceMap.AllServices.Where(s => !s.IsReachable);
         public bool MapIsDiscovered => _serviceMap != null;
 

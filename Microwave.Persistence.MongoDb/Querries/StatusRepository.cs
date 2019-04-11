@@ -55,7 +55,9 @@ namespace Microwave.Persistence.MongoDb.Querries
         {
             var mongoCollection = _database.GetCollection<ServiceMapDbo>(StatusDbName);
             var mapDbo = await mongoCollection.FindSync(e => e.Id == nameof(ServiceMap)).SingleOrDefaultAsync();
-            var services = mapDbo?.Services.Select(s => new ServiceNodeWithDependentServicesDto(s.ServiceName, s.Services));
+            var services = mapDbo?.Services.Select(s => new ServiceNodeConfig(
+                s.ServiceEndPoint,
+                s.Services, s.IsReachable));
             return mapDbo == null ? null : new ServiceMap(services);
         }
 
@@ -65,8 +67,9 @@ namespace Microwave.Persistence.MongoDb.Querries
             {
                 Services = map.AllServices.Select(s => new ServiceNodeWithDependentServicesDbo
                 {
-                    ServiceName = s.ServiceName,
-                    Services = s.Services
+                    ServiceEndPoint = s.ServiceEndPoint,
+                    Services = s.Services,
+                    IsReachable = s.IsReachable
                 })
             };
 
@@ -95,7 +98,8 @@ namespace Microwave.Persistence.MongoDb.Querries
 
     public class ServiceNodeWithDependentServicesDbo
     {
-        public string ServiceName { get; set; }
+        public ServiceEndPoint ServiceEndPoint { get; set; }
         public IEnumerable<ServiceEndPoint> Services { get; set; }
+        public bool IsReachable { get; set; }
     }
 }

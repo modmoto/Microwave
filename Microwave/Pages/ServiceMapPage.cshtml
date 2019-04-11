@@ -17,7 +17,7 @@
             {
                 <div>
                     <div>
-                        @Html.DisplayFor(modelItem => node.ServiceName)
+                        @Html.DisplayFor(modelItem => node.ServiceEndPoint.Name) @Html.DisplayFor(modelItem => node.ServiceEndPoint.ServiceBaseAddress)
                     </div>
                     @foreach (var n in node.Services)
                     {
@@ -35,7 +35,7 @@
                         Not discovered:
                     </div>
                     <div>
-                        @Html.DisplayFor(modelItem => node.ServiceName)
+                        @Html.DisplayFor(modelItem => node.ServiceEndPoint.ServiceBaseAddress)
                     </div>
                 </div>
             }

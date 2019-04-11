@@ -118,28 +118,36 @@ namespace Microwave.Persistence.MongoDb.UnitTests.Querries
         {
             var statusRepository = new StatusRepository(EventDatabase);
 
-            var map = new ServiceMap(new List<ServiceNodeWithDependentServicesDto>
+            var map = new ServiceMap(new List<ServiceNodeConfig>
             {
-                new ServiceNodeWithDependentServicesDto(
-                    "Name",
+                new ServiceNodeConfig(
+                    new ServiceEndPoint(new Uri("http://123.de"), "Name"),
                     new List<ServiceEndPoint>
                     {
                         new ServiceEndPoint(new Uri("http://www.uri1.de"), "Name")
-                    }),
-                new ServiceNodeWithDependentServicesDto(
-                    "Name2",
+                    },
+                    true),
+                new ServiceNodeConfig(
+                    new ServiceEndPoint(new Uri("http://123.de"), "Name2"),
                     new List<ServiceEndPoint>
                     {
                         new ServiceEndPoint(new Uri("http://www.uri2.de"), "Name2"),
                         new ServiceEndPoint(new Uri("http://www.uri1.de"), "Name")
-                    }),
+                    },
+                    true),
+                new ServiceNodeConfig(
+                    new ServiceEndPoint(new Uri("http://123.de")),
+                    new List<ServiceEndPoint>(),
+                    false)
             });
             await statusRepository.SaveServiceMap(map);
             var mapLoaded = await statusRepository.GetServiceMap();
 
             var serviceDependenciesDtos = mapLoaded.AllServices.ToList();
-            Assert.AreEqual("Name", serviceDependenciesDtos[0].ServiceName);
-            Assert.AreEqual("Name2", serviceDependenciesDtos[1].ServiceName);
+            Assert.AreEqual("Name", serviceDependenciesDtos[0].ServiceEndPoint.Name);
+            Assert.AreEqual("Name2", serviceDependenciesDtos[1].ServiceEndPoint.Name);
+            Assert.IsTrue(serviceDependenciesDtos[1].IsReachable);
+            Assert.IsFalse(serviceDependenciesDtos[2].IsReachable);
             Assert.AreEqual(new Uri("http://www.uri1.de"), serviceDependenciesDtos[0].Services.First().ServiceBaseAddress);
             Assert.AreEqual(new Uri("http://www.uri2.de"), serviceDependenciesDtos[1].Services.First().ServiceBaseAddress);
             Assert.AreEqual(new Uri("http://www.uri1.de"), serviceDependenciesDtos[1].Services.Skip(1).First().ServiceBaseAddress);

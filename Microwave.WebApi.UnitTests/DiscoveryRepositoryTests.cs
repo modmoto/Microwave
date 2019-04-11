@@ -73,7 +73,8 @@ namespace Microwave.WebApi.UnitTests
             var serviceNode = await serviceDiscoveryRepository.GetDependantServices(serviceAdress);
             var dependantServices = serviceNode.Services.ToList();
             Assert.AreEqual(2, dependantServices.Count);
-            Assert.AreEqual("ServiceName", serviceNode.ServiceName);
+            Assert.AreEqual("ServiceName", serviceNode.ServiceEndPoint.Name);
+            Assert.AreEqual(new Uri("http://localhost:5000/"), serviceNode.ServiceEndPoint.ServiceBaseAddress);
             Assert.AreEqual("RemoteName1", dependantServices[0].Name);
             Assert.AreEqual("RemoteName2", dependantServices[1].Name);
             Assert.AreEqual(new Uri("http://remoteservice1.de"), dependantServices[0].ServiceBaseAddress);
