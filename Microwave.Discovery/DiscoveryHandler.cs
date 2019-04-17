@@ -8,7 +8,7 @@ using Microwave.Discovery.Domain.Services;
 
 namespace Microwave.Discovery
 {
-    public class DiscoveryHandler
+    public class DiscoveryHandler : IDiscoveryHandler
     {
         private readonly ServiceBaseAddressCollection _serviceBaseAddressCollection;
         private readonly EventsSubscribedByService _eventsSubscribedByService;
