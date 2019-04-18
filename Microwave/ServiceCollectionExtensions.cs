@@ -99,7 +99,7 @@ namespace Microwave
             services.AddMicrowaveMvcExtensions();
 
             services.AddTransient<IServiceDiscoveryRepository, DiscoveryRepository>();
-            services.AddTransient<DiscoveryHandler>();
+            services.AddTransient<IDiscoveryHandler, DiscoveryHandler>();
             services.AddSingleton(new ServiceBaseAddressCollection());
 
             services.AddTransient<DomainEventController>();
