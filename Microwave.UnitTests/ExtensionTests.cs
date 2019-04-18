@@ -220,7 +220,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
 
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
-            var discoveryHandler = buildServiceProvider.CreateScope().ServiceProvider.GetService<DiscoveryHandler>();
+            var discoveryHandler = buildServiceProvider.CreateScope().ServiceProvider.GetService<IDiscoveryHandler>();
 
             await discoveryHandler.DiscoverConsumingServices();
 

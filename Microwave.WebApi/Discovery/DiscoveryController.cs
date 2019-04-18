@@ -10,9 +10,9 @@ namespace Microwave.WebApi.Discovery
     public class DiscoveryController : Controller
     {
         private readonly PublishedEventsByServiceDto _publishedEvents;
-        private readonly DiscoveryHandler _discoveryHandler;
+        private readonly IDiscoveryHandler _discoveryHandler;
 
-        public DiscoveryController(PublishedEventsByServiceDto publishedEvents, DiscoveryHandler discoveryHandler)
+        public DiscoveryController(PublishedEventsByServiceDto publishedEvents, IDiscoveryHandler discoveryHandler)
         {
             _publishedEvents = publishedEvents;
             _discoveryHandler = discoveryHandler;
