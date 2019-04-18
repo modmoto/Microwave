@@ -13,7 +13,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
     public class ServicePageMapTests
     {
         [TestMethod]
-        public void CalculateServicesByIncomingNodes()
+        public void GetNodesAndEdges()
         {
             var discoMock = new Mock<IDiscoveryHandler>();
             var map = new ServiceMap(new List<ServiceNodeConfig>
@@ -35,7 +35,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
                     },
                     true),
                 new ServiceNodeConfig(
-                    new ServiceEndPoint(new Uri("http://1234.de")),
+                    new ServiceEndPoint(new Uri("http://1234.de"), "MostFrequentService"),
                     new List<ServiceEndPoint>(),
                     true)
             });
@@ -43,12 +43,29 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
             var serviceMapPage = new ServiceMapPage(discoMock.Object);
 
             serviceMapPage.OnGetAsync().Wait();
-            var servicesSortedByIncomingNodes = serviceMapPage.ServicesSortedByIncomingNodes.ToList();
+            var nodes = serviceMapPage.OrderedNodes.ToList();
 
-            Assert.AreEqual(3, servicesSortedByIncomingNodes.Count);
-            Assert.AreEqual(new Uri("http://1234.de"), servicesSortedByIncomingNodes[0].ServiceEndPoint.ServiceBaseAddress);
-            Assert.AreEqual(new Uri("http://123.de"), servicesSortedByIncomingNodes[1].ServiceEndPoint.ServiceBaseAddress);
-            Assert.AreEqual(new Uri("http://12.de"), servicesSortedByIncomingNodes[2].ServiceEndPoint.ServiceBaseAddress);
+            Assert.AreEqual(3, nodes.Count);
+            Assert.AreEqual("http://1234.de/", nodes[0].serviceAddress);
+            Assert.AreEqual("MostFrequentService", nodes[0].label);
+            Assert.AreEqual("http://1234.de/", nodes[0].id);
+            Assert.AreEqual(0, nodes[0].x);
+            Assert.AreEqual(0, nodes[0].y);
+            Assert.AreEqual(new Uri("http://123.de"), nodes[1].serviceAddress);
+            Assert.AreEqual(new Uri("http://12.de"), nodes[2].serviceAddress);
+            Assert.AreEqual(0, nodes[2].x);
+            Assert.AreEqual(1, nodes[2].y);
+
+            var edges = serviceMapPage.Edges.ToList();
+            Assert.AreEqual(4, edges.Count);
+            Assert.AreEqual("http://12.de/", edges[0].source);
+            Assert.AreEqual("http://123.de/", edges[0].target);
+            Assert.AreEqual("http://12.de/", edges[1].source);
+            Assert.AreEqual("http://1234.de/", edges[1].target);
+            Assert.AreEqual("http://123.de/", edges[2].source);
+            Assert.AreEqual("http://12.de/", edges[2].target);
+            Assert.AreEqual("http://123.de/", edges[3].source);
+            Assert.AreEqual("http://1234.de/", edges[3].target);
         }
     }
 }

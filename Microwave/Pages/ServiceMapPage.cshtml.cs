@@ -19,7 +19,7 @@ namespace Microwave.Pages
             _serviceMap.AllServices.Where(s => s.IsReachable);
         public IEnumerable<ServiceNodeConfig> UnreachableServices =>
             _serviceMap.AllServices.Where(s => !s.IsReachable);
-        public IEnumerable<ServiceNodeConfig> ServicesSortedByIncomingNodes
+        private IEnumerable<ServiceNodeConfig> ServicesSortedByIncomingNodes
         {
             get
             {
