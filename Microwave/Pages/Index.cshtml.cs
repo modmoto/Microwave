@@ -9,7 +9,7 @@ namespace Microwave.Pages
 {
     public class IndexModel : PageModel
     {
-        private readonly DiscoveryHandler _discoveryHandler;
+        private readonly IDiscoveryHandler _discoveryHandler;
 
         public EventLocationDto ConsumingServices { get; set; }
 
@@ -17,7 +17,7 @@ namespace Microwave.Pages
                                         || ConsumingServices.UnresolvedReadModeSubscriptions.Any();
 
         public IndexModel(
-            DiscoveryHandler discoveryHandler)
+            IDiscoveryHandler discoveryHandler)
         {
             _discoveryHandler = discoveryHandler;
         }
