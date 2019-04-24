@@ -51,7 +51,7 @@ namespace Microwave.Persistence.MongoDb.UnitTests.Querries
 
             var location = await statusRepository.GetEventLocation();
 
-            Assert.IsNull(location);
+            Assert.IsNotNull(location);
         }
 
         [TestMethod]

@@ -19,6 +19,8 @@ namespace Microwave.Pages
             _serviceMap.AllServices.Where(s => s.IsReachable);
         public IEnumerable<ServiceNodeConfig> UnreachableServices =>
             _serviceMap.AllServices.Where(s => !s.IsReachable);
+        public bool MapIsDiscovered => _serviceMap != null;
+
         private IEnumerable<ServiceNodeConfig> ServicesSortedByIncomingNodes
         {
             get
@@ -85,8 +87,6 @@ namespace Microwave.Pages
                 return edges;
             }
         }
-
-        public bool MapIsDiscovered => _serviceMap != null;
 
         public ServiceMapPage(IDiscoveryHandler handler)
         {

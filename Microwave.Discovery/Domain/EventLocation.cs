@@ -64,6 +64,11 @@ namespace Microwave.Discovery.Domain
             return notFoundProperties;
         }
 
+        public static EventLocation Default()
+        {
+            return new EventLocation(new List<ServiceNode>(), new List<EventSchema>(), new List<ReadModelSubscription>());
+        }
+
         public EventLocation(
             IEnumerable<ServiceNode> services,
             IEnumerable<EventSchema> unresolvedEventSubscriptions,

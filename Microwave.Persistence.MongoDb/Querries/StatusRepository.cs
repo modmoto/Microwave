@@ -48,7 +48,8 @@ namespace Microwave.Persistence.MongoDb.Querries
         {
             var mongoCollection = _database.GetCollection<EventLocationDbo>(StatusDbName);
             var location = await mongoCollection.FindSync(e => e.Id == nameof(EventLocation)).SingleOrDefaultAsync();
-            return location == null ? null : new EventLocation(location.Services, location.UnresolvedEventSubscriptions, location.UnresolvedReadModeSubscriptions);
+            return location == null ? EventLocation.Default() : new EventLocation(location.Services, location
+            .UnresolvedEventSubscriptions, location.UnresolvedReadModeSubscriptions);
         }
 
         public async Task<ServiceMap> GetServiceMap()

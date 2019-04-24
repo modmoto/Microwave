@@ -17,11 +17,5 @@
     <ProjectReference Include="..\Microwave.Queries\Microwave.Queries.csproj" />
     <ProjectReference Include="..\Microwave.WebApi\Microwave.WebApi.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <Content Include="Pages\Index.cshtml" />
-    <Content Include="Pages\Shared\_Layout.cshtml" />
-    <Content Include="Pages\_ViewImports.cshtml" />
-    <Content Include="Pages\_ViewStart.cshtml" />
-  </ItemGroup>
   
 </Project>

@@ -38,6 +38,20 @@ namespace Microwave.WebApi.Discovery
             return Ok(consumingServices);
         }
 
+        [HttpPut("ServiceMap/Update")]
+        public async Task<ActionResult> UpdateServiceMap()
+        {
+            await _discoveryHandler.DiscoverServiceMap();
+            return Ok();
+        }
+
+        [HttpPut("ServiceMap")]
+        public async Task<ActionResult> GetServiceMap()
+        {
+            var serviceMap = await _discoveryHandler.GetServiceMap();
+            return Ok(serviceMap);
+        }
+
         [HttpPut("ConsumingServices/Update")]
         public async Task<ActionResult> UpdateConsumingServices()
         {
