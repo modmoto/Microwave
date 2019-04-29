@@ -7,7 +7,7 @@ namespace Microwave.Application
     {
         public DateTimeOffset Created { get; set; }
         public long Version { get; set; }
-        public string DomainEventType => DomainEvent.GetType().Name;
+        public string DomainEventType => DomainEvent.GetType().FullName;
         public IDomainEvent DomainEvent { get; set; }
     }
 }
