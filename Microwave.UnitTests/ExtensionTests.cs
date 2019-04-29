@@ -229,6 +229,13 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
         }
     }
 
+    public class EntityWithSameDomainEvent : Entity, IApply<TestDomainEvent_PublishedEvent1>
+    {
+        public void Apply(TestDomainEvent_PublishedEvent1 domainEvent)
+        {
+        }
+    }
+
     public class TestIdQuery : ReadModel, IHandle<TestDomainEvent1>, IHandle<TestDomainEvent2>
     {
         public void Handle(TestDomainEvent1 domainEvent)

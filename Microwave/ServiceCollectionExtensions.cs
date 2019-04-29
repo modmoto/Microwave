@@ -251,7 +251,9 @@ namespace Microwave
             var domainEventTypes = assembly.GetTypes().Where(ev => ev.GetInterfaces().Contains(typeof(IDomainEvent)));
             foreach (var domainEventType in domainEventTypes)
             {
-                eventRegistration.Add(domainEventType.Name, domainEventType);
+                var eventName = domainEventType.Name;
+                if (eventRegistration.ContainsKey(eventName)) throw new DuplicateDomainEventException(eventName);
+                eventRegistration.Add(eventName, domainEventType);
             }
             return services;
         }
