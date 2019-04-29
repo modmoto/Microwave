@@ -22,7 +22,7 @@ namespace Microwave.Queries.UnitTests
             }};
 
             var serializeObject = JsonConvert.SerializeObject(domainEventWrapper);
-            var eventTypeRegistration = new EventRegistration { { typeof(Event1).FullName, typeof(Event1) } };
+            var eventTypeRegistration = new EventRegistration { { nameof(Event1), typeof(Event1) } };
             var domainEventFactory = new DomainEventFactory(eventTypeRegistration);
             var ev = domainEventFactory.Deserialize(serializeObject);
             var domainEventWrappers = ev.ToList();
@@ -46,7 +46,7 @@ namespace Microwave.Queries.UnitTests
             }};
 
             var serializeObject = JsonConvert.SerializeObject(domainEventWrapper);
-            var eventTypeRegistration = new EventRegistration { { typeof(Event2).FullName, typeof(Event2) } };
+            var eventTypeRegistration = new EventRegistration { { nameof(Event2), typeof(Event2) } };
             var domainEventFactory = new DomainEventFactory(eventTypeRegistration);
             var domainEventWrappers = domainEventFactory.Deserialize(serializeObject).ToList();
             var wrapperActual = domainEventWrappers.Single();
