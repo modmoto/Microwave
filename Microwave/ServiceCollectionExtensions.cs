@@ -252,7 +252,13 @@ namespace Microwave
             foreach (var domainEventType in domainEventTypes)
             {
                 var eventName = domainEventType.Name;
-                if (eventRegistration.ContainsKey(eventName)) throw new DuplicateDomainEventException(eventName);
+                if (eventRegistration.ContainsKey(eventName))
+                {
+                    if (eventRegistration[eventName] != domainEventType)
+                    {
+                        throw new DuplicateDomainEventException(eventName);
+                    }
+                }
                 eventRegistration.Add(eventName, domainEventType);
             }
             return services;
