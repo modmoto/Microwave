@@ -54,4 +54,15 @@ namespace WriteService2
 
         public Identity EntityId { get; }
     }
+
+    //Event that is not used by Entity for Test
+    public class Event1 : IDomainEvent
+    {
+        public Event1(Identity entityId)
+        {
+            EntityId = entityId;
+        }
+
+        public Identity EntityId { get; }
+    }
 }
