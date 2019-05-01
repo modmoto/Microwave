@@ -112,15 +112,27 @@ namespace Microwave.Eventstores.UnitTests
         }
 
         [TestMethod]
-        public void AddEvents_ConstructorBson_NotEntityIdInConstructor()
+        public async Task AddEvents_AutoProperty_NotNamedEntityId()
         {
-            Assert.ThrowsException<IllegalDomainEventContructorException>(() => BsonMapRegistrationHelpers.AddBsonMapFor<TestEvent_NotEntityIdDefined>());
-        }
+            BsonMapRegistrationHelpers.AddBsonMapFor<TestEvent_BsonBug_AutoProperty_NotWithEntityIdName>();
 
-        [TestMethod]
-        public void AddEvents_ConstructorBson_ParamDefinedWrong()
-        {
-            Assert.ThrowsException<IllegalDomainEventContructorException>(() => BsonMapRegistrationHelpers.AddBsonMapFor<TestEvent_ParamDefinedWrong>());
+            var eventRepository = new EventRepository(EventDatabase, new VersionCache(EventDatabase));
+            var snapShotRepo = new Mock<ISnapShotRepository>();
+            snapShotRepo.Setup(re => re.LoadSnapShot<TestEntity>(It.IsAny<Identity>()))
+                .ReturnsAsync(new DefaultSnapshot<TestEntity>());
+
+            var eventStore = new EventStore(eventRepository, snapShotRepo.Object);
+
+            await eventStore.AppendAsync(new List<IDomainEvent> { new TestEvent_BsonBug_AutoProperty_NotWithEntityIdName(StringIdentity
+                    .Create("whatever"), "Peter")},
+                0);
+
+            var result = await eventRepository.LoadEvents();
+
+            Assert.AreEqual(1, result.Value.Count());
+            var domainEvent = result.Value.Single().DomainEvent as TestEvent_BsonBug_AutoProperty_NotWithEntityIdName;
+            Assert.AreEqual("whatever", domainEvent.EntityId.Id);
+            Assert.AreEqual("Peter", domainEvent.Name);
         }
     }
 
@@ -197,5 +209,19 @@ namespace Microwave.Eventstores.UnitTests
 
         public Identity EntityId { get; }
         public string EntityIdAsString => EntityId.Id;
+    }
+
+    public class TestEvent_BsonBug_AutoProperty_NotWithEntityIdName : IDomainEvent
+    {
+        public StringIdentity AutoPropertyId { get; }
+        public string Name { get; }
+
+        public TestEvent_BsonBug_AutoProperty_NotWithEntityIdName(StringIdentity autoPropertyId, string name)
+        {
+            AutoPropertyId = autoPropertyId;
+            Name = name;
+        }
+
+        public Identity EntityId => AutoPropertyId;
     }
 }

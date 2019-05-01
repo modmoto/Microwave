@@ -33,7 +33,7 @@ namespace Microwave
                 var constructorInfo = GetConstructorWithMostMatchingParameters(eventType);
                 MapProperties(eventType.GetProperties(), map);
 
-                var expressions = CreateExpressionsFromConstructorParameters<T>(constructorInfo, eventType, lambdaParameter);
+                var expressions = CreateExpressionsFromConstructorParameters(constructorInfo, lambdaParameter);
 
                 var body = Expression.New(constructorInfo, expressions);
 
@@ -50,29 +50,11 @@ namespace Microwave
             });
         }
 
-        private static List<Expression> CreateExpressionsFromConstructorParameters<T>(
+        private static List<Expression> CreateExpressionsFromConstructorParameters(
             ConstructorInfo constructorInfo,
-            Type eventType,
             ParameterExpression lambdaParameter)
-            where T : IDomainEvent
         {
-            var expressions = new List<Expression>();
-            var entityIdFound = false;
-            foreach (var parameter in constructorInfo.GetParameters())
-            {
-                var parameterName = GetParameterNameForProperty(parameter.Name, eventType.GetProperties());
-                if (parameterName == null)
-                    throw new IllegalDomainEventContructorException(
-                        $"Can not find identically named property for parameter: {parameter.Name} in DomainEvent {typeof(T).Name}. Rename the parameter to match a Property!");
-                if (parameter.Name.ToLower() == nameof(IDomainEvent.EntityId).ToLower()) entityIdFound = true;
-
-                expressions.Add(ExtractExpression(lambdaParameter, parameter));
-            }
-
-            if (!entityIdFound)
-                throw new IllegalDomainEventContructorException(
-                    $"Not parameter with entityId defined in constructor for DomainEvent {typeof(T).Name}. Can not initialize DomainEvent correctly");
-            return expressions;
+            return constructorInfo.GetParameters().Select(parameter => ExtractExpression(lambdaParameter, parameter)).ToList();
         }
 
         private static void MapProperties<T>(PropertyInfo[] propertyInfos, BsonClassMap<T> c) where T : IDomainEvent
@@ -91,10 +73,8 @@ namespace Microwave
                 var idConverted = Expression.Convert(identity, parameter.ParameterType);
                 return idConverted;
             }
-            else
-            {
-                return Expression.Property(lambdaParameter, parameter.Name);
-            }
+
+            return Expression.Property(lambdaParameter, parameter.Name);
         }
 
         private static bool IsIdentityParameter(ParameterInfo parameter)
@@ -103,11 +83,6 @@ namespace Microwave
             return parameterType == typeof(GuidIdentity) || parameterType == typeof(StringIdentity) || parameterType ==
                    typeof
                        (Identity);
-        }
-
-        private static string GetParameterNameForProperty(string parameterName, PropertyInfo[] properties)
-        {
-            return properties.FirstOrDefault(p => p.Name.ToLower() == parameterName.ToLower())?.Name;
         }
 
         private static ConstructorInfo GetConstructorWithMostMatchingParameters(Type eventType)
