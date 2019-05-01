@@ -1,9 +1,8 @@
 ﻿using System.Threading.Tasks;
-using Microwave.Domain;
 
 namespace Microwave.Queries
 {
-    public interface IHandleAsync<in T> where T : IDomainEvent
+    public interface IHandleAsync<in T>
     {
         Task HandleAsync(T domainEvent);
     }

@@ -1,13 +1,11 @@
-﻿using Microwave.Domain;
-
-namespace Microwave.Queries
+﻿namespace Microwave.Queries
 {
-    public interface IHandle<in T> where T : IDomainEvent
+    public interface IHandle<in T>
     {
         void Handle(T domainEvent);
     }
 
-    public interface IHandleVersioned<in T> where T : IDomainEvent
+    public interface IHandleVersioned<in T>
     {
         void Handle(T domainEvent, long version);
     }
