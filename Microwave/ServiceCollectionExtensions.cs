@@ -129,11 +129,6 @@ namespace Microwave
             AddEventAndReadModelSubscriptions(services, assemblies);
             AddPublishedEventCollection(services, assemblies, microwaveConfiguration);
 
-            foreach (var assembly in assemblies)
-            {
-                BsonMapRegistrationHelpers.AddBsonMapsForMicrowave(assembly);
-            }
-
             var eventRegistration = new EventRegistration();
 
             foreach (var assembly in assemblies)
@@ -143,7 +138,6 @@ namespace Microwave
                 services.AddReadmodelHandling(assembly);
 
                 services.AddDomainEventRegistration(assembly, eventRegistration);
-                BsonMapRegistrationHelpers.AddBsonMapsForMicrowave(assembly);
             }
 
             services.AddSingleton(eventRegistration);
