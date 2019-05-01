@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microwave.Discovery;
 using Microwave.Queries;
 
 namespace Microwave
@@ -10,18 +11,21 @@ namespace Microwave
         private readonly IEnumerable<IAsyncEventHandler> _asyncEventHandlers;
         private readonly IEnumerable<IQueryEventHandler> _queryHandlers;
         private readonly IEnumerable<IReadModelHandler> _readModelHandlers;
+        private readonly DiscoveryHandler _discoveryHandler;
 
         public AsyncEventDelegator(
             IEnumerable<IAsyncEventHandler> asyncEventHandlers,
             IEnumerable<IQueryEventHandler> queryHandlers,
-            IEnumerable<IReadModelHandler> readModelHandlers)
+            IEnumerable<IReadModelHandler> readModelHandlers,
+            DiscoveryHandler discoveryHandler)
         {
             _asyncEventHandlers = asyncEventHandlers;
             _queryHandlers = queryHandlers;
             _readModelHandlers = readModelHandlers;
+            _discoveryHandler = discoveryHandler;
         }
 
-        public async Task Update()
+        public async Task StartEventPolling()
         {
             while (true)
             {
@@ -46,6 +50,15 @@ namespace Microwave
                 Console.Error.WriteLine("Exception was thrown during a Async Handler, this queue is stuck now");
                 Console.Error.WriteLine(e.ToString());
                 Console.ForegroundColor = currentForeground;
+            }
+        }
+
+        public async Task StartDependencyDiscovery()
+        {
+            while (true)
+            {
+                _discoveryHandler.DiscoverConsumingServices().Wait();
+                await Task.Delay(60000);
             }
         }
     }
