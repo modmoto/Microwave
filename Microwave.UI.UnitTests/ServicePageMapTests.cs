@@ -40,7 +40,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
                     true)
             });
             discoMock.Setup(m => m.GetServiceMap()).ReturnsAsync(map);
-            var serviceMapPage = new ServiceMapPage(discoMock.Object);
+            var serviceMapPage = new ServiceMapPage(discoMock.Object, null);
 
             serviceMapPage.OnGetAsync().Wait();
             var nodes = serviceMapPage.OrderedNodes.ToList();

@@ -1,13 +1,13 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microwave.Application;
 using Microwave.Discovery;
 using Microwave.Discovery.Domain;
 
 namespace Microwave.Pages
 {
-    public class IndexModel : PageModel
+    public class IndexModel : MicrowavePageModel
     {
         private readonly IDiscoveryHandler _discoveryHandler;
 
@@ -17,7 +17,8 @@ namespace Microwave.Pages
                                         || ConsumingServices.UnresolvedReadModeSubscriptions.Any();
 
         public IndexModel(
-            IDiscoveryHandler discoveryHandler)
+            IDiscoveryHandler discoveryHandler,
+            MicrowaveConfiguration configuration) : base(configuration)
         {
             _discoveryHandler = discoveryHandler;
         }

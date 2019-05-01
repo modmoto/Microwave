@@ -5,12 +5,13 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microwave.Application;
 using Microwave.Discovery;
 using Microwave.Discovery.Domain.Services;
 
 namespace Microwave.Pages
 {
-    public class ServiceMapPage : PageModel
+    public class ServiceMapPage : MicrowavePageModel
     {
         private readonly IDiscoveryHandler _handler;
         private ServiceMap _serviceMap;
@@ -88,7 +89,9 @@ namespace Microwave.Pages
             }
         }
 
-        public ServiceMapPage(IDiscoveryHandler handler)
+        public ServiceMapPage(
+            IDiscoveryHandler handler,
+            MicrowaveConfiguration configuration) : base(configuration)
         {
             _handler = handler;
         }

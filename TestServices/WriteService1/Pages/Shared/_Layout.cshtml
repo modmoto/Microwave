@@ -7,7 +7,7 @@
             margin: 50px;
         }
     </style>
-    <title>Microwave Dashboard</title>
+    <title>@ViewBag.ServiceNameAndTitle</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/solid.css" integrity="sha384-QokYePQSOwpBDuhlHOsX0ymF6R/vLk/UQVz3WHa6wygxI5oGTmDTv8wahFOSspdm" crossorigin="anonymous">
@@ -17,14 +17,14 @@
 <body>
 <div class="container">
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <a class="navbar-brand" href="Index">Microwave</a>
+        <a class="navbar-brand" href="Index">@ViewBag.ServiceName</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNavDropdown">
             <ul class="navbar-nav">
                 <li class="nav-item">
-                    <a class="nav-link" href="Index">Service<span class="sr-only">(current)</span></a>
+                    <a class="nav-link" href="Index">Dependencies<span class="sr-only">(current)</span></a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="ServiceMapPage">Map</a>

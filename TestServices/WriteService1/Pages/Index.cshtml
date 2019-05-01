@@ -1,7 +1,8 @@
 ﻿@page
 @model IndexModel
 @{
-    ViewData["Title"] = "Home page";
+    ViewData["ServiceName"] = Model.ServiceName;
+    ViewData["ServiceNameAndTitle"] = Model.ServiceName + " - Dependencies";
 }
 
 <div>

@@ -2,7 +2,8 @@
 @using Newtonsoft.Json
 @model Microwave.Pages.ServiceMapPage
 @{
-    ViewData["Title"] = "Service Map";
+    ViewData["ServiceName"] = Model.ServiceName;
+    ViewData["ServiceNameAndTitle"] = Model.ServiceName + " - Map";
 }
 
 <div>
