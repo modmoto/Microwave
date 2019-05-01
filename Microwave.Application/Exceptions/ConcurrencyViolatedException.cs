@@ -12,7 +12,7 @@ namespace Microwave.Application.Exceptions
         }
 
         public ConcurrencyViolatedException(long expectedVersion, long actualVersion) : base(
-            $"Concurrency fraud detected, could not update database. ExpectedVersion: {expectedVersion}, ActualVersion: {actualVersion}")
+            $"Concurrency violation detected, could not update database. ExpectedVersion: {expectedVersion}, ActualVersion: {actualVersion}")
         {
             ExpectedVersion = expectedVersion;
             ActualVersion = actualVersion;

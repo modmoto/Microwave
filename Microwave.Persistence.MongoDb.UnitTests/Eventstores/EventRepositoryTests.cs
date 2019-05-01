@@ -102,7 +102,7 @@ namespace Microwave.Persistence.MongoDb.UnitTests.Eventstores
             var allResults = await Task.WhenAll(t1, t2);
             var concurrencyException = Assert.ThrowsException<ConcurrencyViolatedException>(() => CheckAllResults(allResults));
             var concurrencyExceptionMessage = concurrencyException.Message;
-            Assert.AreEqual("Concurrency fraud detected, could not update database. ExpectedVersion: 0, ActualVersion: 2", concurrencyExceptionMessage);
+            Assert.AreEqual("Concurrency violation detected, could not update database. ExpectedVersion: 0, ActualVersion: 2", concurrencyExceptionMessage);
 
             var loadEvents = await eventRepository.LoadEvents();
             Assert.AreEqual(2, loadEvents.Value.Count());
