@@ -106,6 +106,23 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
         }
 
         [TestMethod]
+        public void AddMicrowaveDependencies()
+        {
+            var collection = (IServiceCollection) new ServiceCollection();
+
+            var storeDependencies = collection.AddMicrowave();
+
+            var buildServiceProvider = storeDependencies.BuildServiceProvider();
+
+            var store = buildServiceProvider.GetServices<IEventStore>().FirstOrDefault();
+            Assert.IsNotNull(store);
+
+            Assert.IsTrue(BsonClassMap.IsClassMapRegistered(typeof(TestDomainEvent1)));
+            Assert.IsTrue(BsonClassMap.IsClassMapRegistered(typeof(TestDomainEvent2)));
+            Assert.IsTrue(BsonClassMap.IsClassMapRegistered(typeof(TestDomainEvent3)));
+        }
+
+        [TestMethod]
         public void AddMicrowaveDependencies_PublishedEventsCorrect()
         {
             var collection = (IServiceCollection) new ServiceCollection();
