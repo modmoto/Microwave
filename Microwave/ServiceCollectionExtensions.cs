@@ -168,23 +168,12 @@ namespace Microwave
 
         private static IEnumerable<EventSchema> GetEventsForPublish(Assembly assembly)
         {
-            var entityTypes = assembly.GetTypes().Where(ev => ev.GetInterfaces().Contains(typeof(IApply)));
-            var domainEvents = new List<Type>();
-            foreach (var entityType in entityTypes)
-            {
-                var interfaces = entityType.GetInterfaces();
-                var domainEventTypes = interfaces.Where(i =>
-                    i.IsGenericType &&
-                    i.GetGenericArguments().Length == 1
-                    && i.GetGenericArguments().First().GetInterfaces().Contains(typeof(IDomainEvent)));
-                domainEvents.AddRange(domainEventTypes);
-            }
+            var domainEvents = assembly.GetTypes().Where(e => e.GetInterfaces().Contains(typeof(IDomainEvent)));
 
             return domainEvents.Select(e =>
             {
-                var first = e.GetGenericArguments().First();
-                var propertyTypes = first.GetProperties().Select(p => new PropertyType(p.Name, p.PropertyType.Name));
-                return new EventSchema(first.Name, propertyTypes);
+                var propertyTypes = e.GetProperties().Select(p => new PropertyType(p.Name, p.PropertyType.Name));
+                return new EventSchema(e.Name, propertyTypes);
             });
         }
 
@@ -202,8 +191,7 @@ namespace Microwave
                 var domainEventTypes = interfaces.Where(i =>
                     i.IsGenericType &&
                     i.GetGenericArguments().Length == 1
-                    && i.GetGenericTypeDefinition() == typeof(IHandleAsync<>)
-                    && i.GetGenericArguments().First().GetInterfaces().Contains(typeof(IDomainEvent)));
+                    && i.GetGenericTypeDefinition() == typeof(IHandleAsync<>));
                 domainEvents.AddRange(domainEventTypes);
             }
 

@@ -7,7 +7,7 @@ namespace Microwave.Domain
         void Apply(IEnumerable<IDomainEvent> domainEvents);
     }
 
-    public interface IApply<in T>
+    public interface IApply<in T> where T : IDomainEvent
     {
         void Apply(T domainEvent);
     }

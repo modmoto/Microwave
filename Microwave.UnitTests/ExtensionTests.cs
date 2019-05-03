@@ -28,7 +28,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
             var eventDelegateHandlers = buildServiceProvider.GetServices<IAsyncEventHandler>().ToList();
-            Assert.AreEqual(5, eventDelegateHandlers.Count);
+            Assert.AreEqual(6, eventDelegateHandlers.Count);
             Assert.IsNotNull(eventDelegateHandlers[0]);
             Assert.IsNotNull(eventDelegateHandlers[1]);
 
@@ -65,20 +65,22 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
             Assert.IsTrue(eventOverallClients4 is EventFeed<ReadModelHandler<TestIdQuery2>>);
 
             var qHandler1 = buildServiceProvider.GetServices<IQueryEventHandler>().ToList();
-            Assert.AreEqual(3, qHandler1.Count);
-            Assert.IsTrue(qHandler1[0] is QueryEventHandler<TestQuery1, TestDomainEvent1>);
-            Assert.IsTrue(qHandler1[1] is QueryEventHandler<TestQuery1, TestDomainEvent2>);
-            Assert.IsTrue(qHandler1[2] is QueryEventHandler<TestQuery2, TestDomainEvent1>);
+            Assert.AreEqual(4, qHandler1.Count);
+            Assert.IsTrue(qHandler1[0] is QueryEventHandler<TestQuerry_NotImplementingIApply, TestDomainEvent_OnlySubscribedEvent>);
+            Assert.IsTrue(qHandler1[1] is QueryEventHandler<TestQuery1, TestDomainEvent1>);
+            Assert.IsTrue(qHandler1[2] is QueryEventHandler<TestQuery1, TestDomainEvent2>);
+            Assert.IsTrue(qHandler1[3] is QueryEventHandler<TestQuery2, TestDomainEvent1>);
 
             var identHandler = buildServiceProvider.GetServices<IReadModelHandler>().OrderBy(r => r.GetType()
                 .GetGenericArguments().First().Name).ToList();
-            Assert.AreEqual(5, identHandler.Count);
+            Assert.AreEqual(6, identHandler.Count);
 
-            Assert.IsTrue(identHandler[4] is ReadModelHandler<TestReadModelSubscriptions>);
-            Assert.IsTrue(identHandler[3] is ReadModelHandler<TestReadModel>);
             Assert.IsTrue(identHandler[0] is ReadModelHandler<TestIdQuery>);
-            Assert.IsTrue(identHandler[2] is ReadModelHandler<TestIdQuerySingle>);
             Assert.IsTrue(identHandler[1] is ReadModelHandler<TestIdQuery2>);
+            Assert.IsTrue(identHandler[2] is ReadModelHandler<TestIdQuerySingle>);
+            Assert.IsTrue(identHandler[3] is ReadModelHandler<TestReadModel>);
+            Assert.IsTrue(identHandler[4] is ReadModelHandler<TestReadModel_NotImplementingIApply>);
+            Assert.IsTrue(identHandler[5] is ReadModelHandler<TestReadModelSubscriptions>);
 
             var eventRegister = buildServiceProvider.GetServices<EventRegistration>().Single();
             Assert.AreEqual(eventRegister[nameof(TestDomainEvent_PublishedEvent1)], typeof(TestDomainEvent_PublishedEvent1));
@@ -101,7 +103,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
             var identHandler = buildServiceProvider.GetServices<IReadModelHandler>().OrderBy(r => r.GetType()
             .GetGenericArguments().First().Name).ToList();
             Assert.IsTrue(identHandler[0] is ReadModelHandler<TestIdQuery>);
-            Assert.AreEqual(10, identHandler.Count); // double as just checking if no exception is done
+            Assert.AreEqual(12, identHandler.Count); // double as just checking if no exception is done
         }
 
         [TestMethod]
@@ -132,8 +134,11 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
             var publishingEventRegistration = buildServiceProvider.GetServices<PublishedEventsByServiceDto>().Single()
             .PublishedEvents.ToList();
             Assert.AreEqual(nameof(TestDomainEvent_PublishedEvent1), publishingEventRegistration[0].Name);
-            Assert.AreEqual(nameof(TestDomainEvent_PublishedEvent3), publishingEventRegistration[1].Name);
-            Assert.AreEqual(2, publishingEventRegistration.Count);
+            Assert.AreEqual(nameof(TestDomainEvent_PublishedEvent2), publishingEventRegistration[1].Name);
+            Assert.AreEqual(nameof(TestEntityThatShouldNotGoIntoReadModelRegistrationEvent), publishingEventRegistration[2].Name);
+            Assert.AreEqual(nameof(Ev), publishingEventRegistration[3].Name);
+
+            Assert.AreEqual(4, publishingEventRegistration.Count);
 
             var discoveryController = buildServiceProvider.GetServices<DiscoveryController>().Single();
             Assert.IsNotNull(discoveryController);
@@ -149,9 +154,12 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
 
             var publishingEventRegistration = buildServiceProvider.GetServices<EventsSubscribedByService>().Single();
             var ihandleAsyncEvents = publishingEventRegistration.Events.OrderBy(r => r.Name).ToList();
-            Assert.AreEqual(nameof(TestDomainEvent_PublishedEvent1), ihandleAsyncEvents[0].Name);
-            Assert.AreEqual(nameof(TestDomainEvent_PublishedEvent2), ihandleAsyncEvents[1].Name);
-            Assert.AreEqual(2, ihandleAsyncEvents.Count);
+            Assert.AreEqual(nameof(TestDomainEvent_OnlySubscribedEvent_HandleAsync), ihandleAsyncEvents[0].Name);
+            Assert.AreEqual(nameof(TestDomainEvent_PublishedEvent1), ihandleAsyncEvents[1].Name);
+            Assert.AreEqual(nameof(TestDomainEvent_PublishedEvent2), ihandleAsyncEvents[2].Name);
+            Assert.AreEqual(nameof(TestDomainEvent1), ihandleAsyncEvents[3].Name);
+            Assert.AreEqual(nameof(TestDomainEvent2), ihandleAsyncEvents[4].Name);
+            Assert.AreEqual(5, ihandleAsyncEvents.Count);
 
             var discoveryController = buildServiceProvider.GetServices<DiscoveryController>().Single();
             Assert.IsNotNull(discoveryController);
@@ -167,9 +175,9 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
 
             var publishingEventRegistration = buildServiceProvider.GetServices<EventsSubscribedByService>().Single();
             var readModelSubscription = publishingEventRegistration.ReadModelSubcriptions.OrderBy(r => r.ReadModelName).ToList();
-            Assert.AreEqual(nameof(TestDomainEvent_PublishedEvent1), readModelSubscription[4].GetsCreatedOn.Name);
-            Assert.AreEqual(nameof(TestReadModelSubscriptions), readModelSubscription[4].ReadModelName);
-            Assert.AreEqual(5, readModelSubscription.Count);
+            Assert.AreEqual(nameof(TestDomainEvent_PublishedEvent1), readModelSubscription[5].GetsCreatedOn.Name);
+            Assert.AreEqual(nameof(TestReadModelSubscriptions), readModelSubscription[5].ReadModelName);
+            Assert.AreEqual(6, readModelSubscription.Count);
         }
 
         [TestMethod]

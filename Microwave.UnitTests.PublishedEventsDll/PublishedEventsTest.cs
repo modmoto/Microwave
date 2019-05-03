@@ -16,12 +16,17 @@ namespace Microwave.UnitTests.PublishedEventsDll
         }
     }
 
-    public class TestEntity3 : Entity, IApply<TestDomainEvent_PublishedEvent3>
-    {
-        public void Apply(TestDomainEvent_PublishedEvent3 domainEvent)
+    public class TestEntityThatShouldNotGoIntoReadModelRegistration : IApply,
+    IApply<TestEntityThatShouldNotGoIntoReadModelRegistrationEvent>
         {
+            public void Apply(IEnumerable<IDomainEvent> domainEvents)
+            {
+            }
+
+            public void Apply(TestEntityThatShouldNotGoIntoReadModelRegistrationEvent domainEvent)
+            {
+            }
         }
-    }
 
     public class TestEntity1_AddedTwice : IApply, IApply<TestDomainEvent_PublishedEvent1>
     {
@@ -41,19 +46,24 @@ namespace Microwave.UnitTests.PublishedEventsDll
         }
     }
 
-    public class TestReadModel_NotImplementingIApply : ReadModel, IApply<TestDomainEvent_PublishedEvent3>
+    public class TestReadModel_NotImplementingIApply : ReadModel, IHandle<TestDomainEvent_OnlySubscribedEvent>
     {
-        public void Apply(TestDomainEvent_PublishedEvent3 domainEvent)
+        public void Handle(TestDomainEvent_OnlySubscribedEvent domainEvent)
         {
         }
 
-        public override Type GetsCreatedOn { get; }
+        public override Type GetsCreatedOn => typeof(TestDomainEvent_OnlySubscribedEvent);
     }
 
-    public class TestQuerry_NotImplementingIApply : Query, IApply<TestDomainEvent_PublishedEvent3>
+    public class TestQuerry_NotImplementingIApply : Query, IHandle<TestDomainEvent_OnlySubscribedEvent>
     {
-        public void Apply(TestDomainEvent_PublishedEvent3 domainEvent)
+        public void Handle(TestDomainEvent_OnlySubscribedEvent domainEvent)
         {
         }
+    }
+
+    public class TestEntityThatShouldNotGoIntoReadModelRegistrationEvent : IDomainEvent
+    {
+        public Identity EntityId { get; }
     }
 }
