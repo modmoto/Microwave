@@ -37,8 +37,16 @@ namespace Microwave
                 Task.Delay(10000).Wait();
                 var asyncEventDelegator = serviceScope.ServiceProvider.GetService<AsyncEventDelegator>();
                 #pragma warning disable 4014
-                asyncEventDelegator.StartDependencyDiscovery();
                 asyncEventDelegator.StartEventPolling();
+                #pragma warning restore 4014
+            });
+
+            Task.Run(() =>
+            {
+                Task.Delay(10000).Wait();
+                var asyncEventDelegator = serviceScope.ServiceProvider.GetService<AsyncEventDelegator>();
+                #pragma warning disable 4014
+                asyncEventDelegator.StartDependencyDiscovery();
                 #pragma warning restore 4014
             });
 
