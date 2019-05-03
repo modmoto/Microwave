@@ -4,12 +4,16 @@ using Microwave.Queries;
 
 namespace Microwave.UnitTests.PublishedEventsDll
 {
-    public class TestHandle : IHandleAsync<TestDomainEvent_PublishedEvent1>
+    public class TestHandle : IHandleAsync<TestDomainEvent_PublishedEvent1>, IWhatever
     {
         public Task HandleAsync(TestDomainEvent_PublishedEvent1 domainEvent)
         {
             return null;
         }
+    }
+
+    public interface IWhatever
+    {
     }
 
     public class TestHandle_Duplicate : IHandleAsync<TestDomainEvent_PublishedEvent1>

@@ -5,7 +5,7 @@ using Microwave.Domain;
 
 namespace Microwave.Queries
 {
-    public class QueryEventHandler<TQuerry, TEvent> : IQueryEventHandler where TQuerry : Query, new() where TEvent : IDomainEvent
+    public class QueryEventHandler<TQuerry, TEvent> : IQueryEventHandler where TQuerry : Query, new()
     {
         private readonly IReadModelRepository _readModelRepository;
         private readonly IEventFeed<QueryEventHandler<TQuerry, TEvent>> _eventFeed;

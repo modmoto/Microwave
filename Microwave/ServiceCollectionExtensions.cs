@@ -279,17 +279,12 @@ namespace Microwave
             return services;
         }
 
-        private static bool IsDomainEvent(Type i2)
-        {
-            return i2.GenericTypeArguments.Length == 1 && i2.GenericTypeArguments[0].GetInterfaces().Contains(typeof(IDomainEvent));
-        }
-
         private static IServiceCollection AddQuerryHandling(this IServiceCollection services, Assembly assembly)
         {
             var addTransient = AddTransient();
             var addTransientSingle = AddTransientSingle();
 
-            var queryInterfaces = assembly.GetTypes().Where(ImplementsIhandleInterfaceAndQuerry).ToList();
+            var queryInterfaces = assembly.GetTypes().Where(ImplementsIhandleInterfaceAndQuerry);
             var genericInterfaceTypeOfFeed = typeof(IEventFeed<>);
             var genericTypeOfFeed = typeof(EventFeed<>);
             var genericTypeOfHandler = typeof(QueryEventHandler<,>);
@@ -298,7 +293,7 @@ namespace Microwave
 
             foreach (var query in queryInterfaces)
             {
-                var types = query.GetInterfaces().Where(IsDomainEvent).ToList();
+                var types = query.GetInterfaces().Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IHandle<>));
                 foreach (var iHandleEvent in types)
                 {
                     //feed
@@ -329,7 +324,7 @@ namespace Microwave
             var addTransient = AddTransient();
             var addTransientSingle = AddTransientSingle();
 
-            var handleAsyncInterfaces = assembly.GetTypes().Where(ImplementsIhandleAsyncInterface).ToList();
+            var handleAsyncInterfaces = assembly.GetTypes().Where(ImplementsIhandleAsyncInterface);
             var genericInterfaceTypeOfFeed = typeof(IEventFeed<>);
             var genericTypeOfFeed = typeof(EventFeed<>);
             var genericTypeOfHandler = typeof(AsyncEventHandler<>);
@@ -339,7 +334,7 @@ namespace Microwave
 
             foreach (var handleAsync in handleAsyncInterfaces)
             {
-                var types = handleAsync.GetInterfaces().Where(IsDomainEvent).ToList();
+                var types = handleAsync.GetInterfaces().Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IHandleAsync<>));
                 bool added = false;
                 foreach (var iHandleEvent in types)
                 {

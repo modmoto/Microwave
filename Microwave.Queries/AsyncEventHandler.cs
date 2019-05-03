@@ -5,7 +5,7 @@ using Microwave.Domain;
 
 namespace Microwave.Queries
 {
-    public class AsyncEventHandler<T> : IAsyncEventHandler where T : IDomainEvent
+    public class AsyncEventHandler<T> : IAsyncEventHandler
     {
         private readonly IEventFeed<AsyncEventHandler<T>>  _eventFeed;
         private readonly IEnumerable<IHandleAsync<T>> _handles;

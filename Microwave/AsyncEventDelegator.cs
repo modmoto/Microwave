@@ -57,7 +57,7 @@ namespace Microwave
         {
             while (true)
             {
-                _discoveryHandler.DiscoverConsumingServices().Wait();
+                await _discoveryHandler.DiscoverConsumingServices();
                 await Task.Delay(60000);
             }
         }

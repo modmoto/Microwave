@@ -81,9 +81,8 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
             Assert.IsTrue(identHandler[1] is ReadModelHandler<TestIdQuery2>);
 
             var eventRegister = buildServiceProvider.GetServices<EventRegistration>().Single();
-            Assert.AreEqual(eventRegister[nameof(TestDomainEvent1)], typeof(TestDomainEvent1));
-            Assert.AreEqual(eventRegister[nameof(TestDomainEvent2)], typeof(TestDomainEvent2));
-            Assert.AreEqual(eventRegister[nameof(TestDomainEvent3)], typeof(TestDomainEvent3));
+            Assert.AreEqual(eventRegister[nameof(TestDomainEvent_PublishedEvent1)], typeof(TestDomainEvent_PublishedEvent1));
+            Assert.AreEqual(eventRegister[nameof(TestDomainEvent_PublishedEvent2)], typeof(TestDomainEvent_PublishedEvent2));
         }
 
         [TestMethod]
@@ -117,9 +116,8 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
             var store = buildServiceProvider.GetServices<IEventStore>().FirstOrDefault();
             Assert.IsNotNull(store);
 
-            Assert.IsTrue(BsonClassMap.IsClassMapRegistered(typeof(TestDomainEvent1)));
-            Assert.IsTrue(BsonClassMap.IsClassMapRegistered(typeof(TestDomainEvent2)));
-            Assert.IsTrue(BsonClassMap.IsClassMapRegistered(typeof(TestDomainEvent3)));
+            Assert.IsTrue(BsonClassMap.IsClassMapRegistered(typeof(TestDomainEvent_PublishedEvent1)));
+            Assert.IsTrue(BsonClassMap.IsClassMapRegistered(typeof(TestDomainEvent_PublishedEvent2)));
         }
 
         [TestMethod]
@@ -153,7 +151,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
             var ihandleAsyncEvents = publishingEventRegistration.Events.OrderBy(r => r.Name).ToList();
             Assert.AreEqual(nameof(TestDomainEvent_PublishedEvent1), ihandleAsyncEvents[0].Name);
             Assert.AreEqual(nameof(TestDomainEvent_PublishedEvent2), ihandleAsyncEvents[1].Name);
-            Assert.AreEqual(4, ihandleAsyncEvents.Count);
+            Assert.AreEqual(2, ihandleAsyncEvents.Count);
 
             var discoveryController = buildServiceProvider.GetServices<DiscoveryController>().Single();
             Assert.IsNotNull(discoveryController);
@@ -258,7 +256,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
         public override Type GetsCreatedOn => typeof(TestDomainEvent3);
     }
 
-    public class TestDomainEvent3 : IDomainEvent
+    public class TestDomainEvent3
     {
         public TestDomainEvent3(Identity entityId, int age)
         {
@@ -318,7 +316,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
         }
     }
 
-    public class TestDomainEvent2 : IDomainEvent
+    public class TestDomainEvent2
     {
         public TestDomainEvent2(GuidIdentity entityId, string otherName)
         {
@@ -330,7 +328,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
         public string OtherName { get; }
     }
 
-    public class TestDomainEvent1 : IDomainEvent
+    public class TestDomainEvent1
     {
         public TestDomainEvent1(GuidIdentity entityId, string name)
         {
