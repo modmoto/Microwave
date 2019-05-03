@@ -23,7 +23,7 @@ namespace ReadService1
         }
     }
 
-    public class EventNotPublished : IDomainEvent
+    public class EventNotPublished
     {
         public EventNotPublished(Identity entityId)
         {
@@ -55,7 +55,7 @@ namespace ReadService1
         }
     }
 
-    public class Event1 : IDomainEvent
+    public class Event1
     {
         public Event1(Identity entityId)
         {
@@ -66,7 +66,7 @@ namespace ReadService1
     }
 
 
-    public class Event2 : IDomainEvent
+    public class Event2
     {
         public Event2(Identity entityId)
         {
@@ -80,7 +80,7 @@ namespace ReadService1
         public Identity EntityId { get; }
     }
 
-    public class Event3 : IDomainEvent
+    public class Event3
     {
         public Event3(Identity entityId)
         {
@@ -93,7 +93,7 @@ namespace ReadService1
     }
 
 
-    public class Event4 : IDomainEvent
+    public class Event4
     {
         public Event4(Identity entityId)
         {
