@@ -45,7 +45,7 @@ namespace WriteService2
         public Identity EntityId { get; }
     }
     
-    public class Event2 : IDomainEvent
+    public class Event2
     {
         public Event2(Identity entityId)
         {
