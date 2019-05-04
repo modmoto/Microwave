@@ -15,22 +15,19 @@ namespace Microwave.Discovery
         private readonly IServiceDiscoveryRepository _discoveryRepository;
         private readonly IStatusRepository _statusRepository;
         private readonly MicrowaveConfiguration _configuration;
-        private readonly IEventLocation _eventLocation;
 
         public DiscoveryHandler(
             ServiceBaseAddressCollection serviceBaseAddressCollection,
             EventsSubscribedByService eventsSubscribedByService,
             IServiceDiscoveryRepository discoveryRepository,
             IStatusRepository statusRepository,
-            MicrowaveConfiguration configuration,
-            IEventLocation eventLocation)
+            MicrowaveConfiguration configuration)
         {
             _serviceBaseAddressCollection = serviceBaseAddressCollection;
             _eventsSubscribedByService = eventsSubscribedByService;
             _discoveryRepository = discoveryRepository;
             _statusRepository = statusRepository;
             _configuration = configuration;
-            _eventLocation = eventLocation;
         }
 
         public async Task<EventLocationDto> GetConsumingServices()

@@ -13,11 +13,13 @@ namespace Microwave.Persistence.MongoDb.Querries
 {
     public class StatusRepository : IStatusRepository
     {
+        private readonly EventLocationCache _cache;
         private readonly IMongoDatabase _database;
         private const string StatusDbName = "MicrowaveStatusCollection";
 
-        public StatusRepository(MicrowaveDatabase database)
+        public StatusRepository(MicrowaveDatabase database, EventLocationCache cache)
         {
+            _cache = cache;
             _database = database.Database;
         }
         public async Task SaveEventLocation(EventLocation eventLocation)
@@ -28,6 +30,7 @@ namespace Microwave.Persistence.MongoDb.Querries
                 UnresolvedEventSubscriptions = eventLocation.UnresolvedEventSubscriptions,
                 UnresolvedReadModeSubscriptions = eventLocation.UnresolvedReadModeSubscriptions
             };
+            _cache.Update(eventLocation);
 
             await InsertOrUpdate(eventLocationDbo);
         }
@@ -46,6 +49,7 @@ namespace Microwave.Persistence.MongoDb.Querries
 
         public async Task<IEventLocation> GetEventLocation()
         {
+            if (_cache.HasValue) return _cache.GetValue();
             var mongoCollection = _database.GetCollection<EventLocationDbo>(StatusDbName);
             var location = await mongoCollection.FindSync(e => e.Id == nameof(EventLocation)).SingleOrDefaultAsync();
             return location == null ? EventLocation.Default() : new EventLocation(location.Services, location
@@ -75,6 +79,22 @@ namespace Microwave.Persistence.MongoDb.Querries
             };
 
             await InsertOrUpdate(serviceMapDbo);
+        }
+    }
+
+    public class EventLocationCache
+    {
+        private EventLocation _eventLocation;
+        public bool HasValue => _eventLocation != null;
+
+        public void Update(EventLocation eventLocation)
+        {
+            _eventLocation = eventLocation;
+        }
+
+        public IEventLocation GetValue()
+        {
+            return _eventLocation;
         }
     }
 

@@ -127,9 +127,11 @@ namespace Microwave
             services.AddTransient<MicrowaveDatabase>();
             services.AddTransient<IDomainEventFactory, DomainEventFactory>();
             services.AddTransient<IDomainEventClientFactory, DomainEventClientFactory>();
+
             services.AddSingleton(microwaveConfiguration);
             services.AddSingleton(microwaveConfiguration.ServiceLocations);
             services.AddSingleton(microwaveConfiguration.DatabaseConfiguration);
+            services.AddSingleton(new EventLocationCache());
 
             AddEventAndReadModelSubscriptions(services, assemblies);
             AddPublishedEventCollection(services, assemblies, microwaveConfiguration);

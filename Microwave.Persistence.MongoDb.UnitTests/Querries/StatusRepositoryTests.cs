@@ -18,7 +18,7 @@ namespace Microwave.Persistence.MongoDb.UnitTests.Querries
         [TestMethod]
         public async Task StatusLoadAndSafe_HappyPath()
         {
-            var statusRepository = new StatusRepository(EventDatabase);
+            var statusRepository = new StatusRepository(EventDatabase, new EventLocationCache());
 
             List<EventsPublishedByService> services = new List<EventsPublishedByService> {
                 EventsPublishedByService.Reachable(new ServiceEndPoint(new Uri("http://service1.de"), "Name1"), new []
@@ -47,7 +47,7 @@ namespace Microwave.Persistence.MongoDb.UnitTests.Querries
         [TestMethod]
         public async Task StatusLoadAndSafe_NoSaveBeforeGet()
         {
-            var statusRepository = new StatusRepository(EventDatabase);
+            var statusRepository = new StatusRepository(EventDatabase, new EventLocationCache());
 
             var location = await statusRepository.GetEventLocation();
 
@@ -57,7 +57,7 @@ namespace Microwave.Persistence.MongoDb.UnitTests.Querries
         [TestMethod]
         public async Task StatusLoadAndSafe_OneUnresolvedEvent()
         {
-            var statusRepository = new StatusRepository(EventDatabase);
+            var statusRepository = new StatusRepository(EventDatabase, new EventLocationCache());
 
             List<EventsPublishedByService> services = new List<EventsPublishedByService> {
                 EventsPublishedByService.Reachable(new ServiceEndPoint(new Uri("http://service1.de"), "Name1"), new []
@@ -85,7 +85,7 @@ namespace Microwave.Persistence.MongoDb.UnitTests.Querries
         [TestMethod]
         public async Task StatusLoadAndSafe_OneUnresolvedReadModel()
         {
-            var statusRepository = new StatusRepository(EventDatabase);
+            var statusRepository = new StatusRepository(EventDatabase, new EventLocationCache());
 
             List<EventsPublishedByService> services = new List<EventsPublishedByService> {
                 EventsPublishedByService.Reachable(new ServiceEndPoint(new Uri("http://service1.de"), "Name1"), new []
@@ -116,7 +116,7 @@ namespace Microwave.Persistence.MongoDb.UnitTests.Querries
         [TestMethod]
         public async Task SaveAndLoadServiceMap()
         {
-            var statusRepository = new StatusRepository(EventDatabase);
+            var statusRepository = new StatusRepository(EventDatabase, new EventLocationCache());
 
             var map = new ServiceMap(new List<ServiceNodeConfig>
             {
