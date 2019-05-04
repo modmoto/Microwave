@@ -32,10 +32,11 @@ namespace Microwave
         public static IApplicationBuilder RunMicrowaveQueries(this IApplicationBuilder builder)
         {
             var serviceScope = builder.ApplicationServices.CreateScope();
+            var asyncEventDelegator = serviceScope.ServiceProvider.GetService<AsyncEventDelegator>();
+
             Task.Run(() =>
             {
                 Task.Delay(10000).Wait();
-                var asyncEventDelegator = serviceScope.ServiceProvider.GetService<AsyncEventDelegator>();
                 #pragma warning disable 4014
                 asyncEventDelegator.StartEventPolling();
                 #pragma warning restore 4014
@@ -44,7 +45,6 @@ namespace Microwave
             Task.Run(() =>
             {
                 Task.Delay(10000).Wait();
-                var asyncEventDelegator = serviceScope.ServiceProvider.GetService<AsyncEventDelegator>();
                 #pragma warning disable 4014
                 asyncEventDelegator.StartDependencyDiscovery();
                 #pragma warning restore 4014
@@ -75,8 +75,6 @@ namespace Microwave
 
             var subscribedEventCollection = new EventsSubscribedByService(iHandleAsyncEvents, readModelSubscriptions);
             services.AddSingleton(subscribedEventCollection);
-            services.AddSingleton<IEventLocation>(new EventLocation(new List<EventsPublishedByService>(), subscribedEventCollection));
-
         }
 
         public static IServiceCollection AddMicrowave(this IServiceCollection services)
@@ -128,6 +126,7 @@ namespace Microwave
             services.AddTransient<AsyncEventDelegator>();
             services.AddTransient<MicrowaveDatabase>();
             services.AddTransient<IDomainEventFactory, DomainEventFactory>();
+            services.AddTransient<IDomainEventClientFactory, DomainEventClientFactory>();
             services.AddSingleton(microwaveConfiguration);
             services.AddSingleton(microwaveConfiguration.ServiceLocations);
             services.AddSingleton(microwaveConfiguration.DatabaseConfiguration);
@@ -278,13 +277,11 @@ namespace Microwave
         private static IServiceCollection AddQuerryHandling(this IServiceCollection services, Assembly assembly)
         {
             var addTransient = AddTransient();
-            var addTransientSingle = AddTransientSingle();
 
             var queryInterfaces = assembly.GetTypes().Where(ImplementsIhandleInterfaceAndQuerry);
             var genericInterfaceTypeOfFeed = typeof(IEventFeed<>);
             var genericTypeOfFeed = typeof(EventFeed<>);
             var genericTypeOfHandler = typeof(QueryEventHandler<,>);
-            var clientType = typeof(DomainEventClient<>);
             var iHandleType = typeof(IQueryEventHandler);
 
             foreach (var query in queryInterfaces)
@@ -299,11 +296,6 @@ namespace Microwave
                     var feedInterface = genericInterfaceTypeOfFeed.MakeGenericType(genericHandler);
                     var addTransientCall = addTransient.MakeGenericMethod(feedInterface, feed);
                     addTransientCall.Invoke(null, new object[] { services });
-
-                    //client
-                    var genericClient = clientType.MakeGenericType(genericHandler);
-                    var addTransientCallClient = addTransientSingle.MakeGenericMethod(genericClient);
-                    addTransientCallClient.Invoke(null, new object[] {services});
 
                     //handler
                     var callToAddTransient = addTransient.MakeGenericMethod(iHandleType, genericHandler);
@@ -325,7 +317,6 @@ namespace Microwave
             var genericTypeOfFeed = typeof(EventFeed<>);
             var genericTypeOfHandler = typeof(AsyncEventHandler<>);
             var genericTypeOfHandlerInterface = typeof(IAsyncEventHandler);
-            var clientType = typeof(DomainEventClient<>);
             var handleAsyncType = typeof(IHandleAsync<>);
 
             foreach (var handleAsync in handleAsyncInterfaces)
@@ -341,11 +332,6 @@ namespace Microwave
                     var feedInterface = genericInterfaceTypeOfFeed.MakeGenericType(genericHandler);
                     var addTransientCall = addTransient.MakeGenericMethod(feedInterface, feed);
                     addTransientCall.Invoke(null, new object[] { services });
-
-                    //client
-                    var genericClient = clientType.MakeGenericType(genericHandler);
-                    var addTransientCallClient = addTransientSingle.MakeGenericMethod(genericClient);
-                    addTransientCallClient.Invoke(null, new object[] {services});
 
                     //handler
                     if (!added)
@@ -375,7 +361,6 @@ namespace Microwave
             var genericTypeOfFeed = typeof(EventFeed<>);
             var genericTypeOfHandler = typeof(ReadModelHandler<>);
             var interfaceReadModelHandler = typeof(IReadModelHandler);
-            var clientType = typeof(DomainEventClient<>);
 
             foreach (var readModel in readModels)
             {
@@ -386,11 +371,6 @@ namespace Microwave
                 var feedInterface = genericInterfaceTypeOfFeed.MakeGenericType(genericHandler);
                 var addTransientCall = addTransient.MakeGenericMethod(feedInterface, feed);
                 addTransientCall.Invoke(null, new object[] { services });
-
-                //client
-                var genericClient = clientType.MakeGenericType(genericHandler);
-                var addTransientCallClient = addTransientSingle.MakeGenericMethod(genericClient);
-                addTransientCallClient.Invoke(null, new object[] {services});
 
                 //handler
                 var callToAddTransient = addTransient.MakeGenericMethod(interfaceReadModelHandler, genericReadModelHandler);

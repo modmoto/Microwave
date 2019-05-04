@@ -11,13 +11,13 @@ namespace Microwave
         private readonly IEnumerable<IAsyncEventHandler> _asyncEventHandlers;
         private readonly IEnumerable<IQueryEventHandler> _queryHandlers;
         private readonly IEnumerable<IReadModelHandler> _readModelHandlers;
-        private readonly DiscoveryHandler _discoveryHandler;
+        private readonly IDiscoveryHandler _discoveryHandler;
 
         public AsyncEventDelegator(
             IEnumerable<IAsyncEventHandler> asyncEventHandlers,
             IEnumerable<IQueryEventHandler> queryHandlers,
             IEnumerable<IReadModelHandler> readModelHandlers,
-            DiscoveryHandler discoveryHandler)
+            IDiscoveryHandler discoveryHandler)
         {
             _asyncEventHandlers = asyncEventHandlers;
             _queryHandlers = queryHandlers;
@@ -27,6 +27,7 @@ namespace Microwave
 
         public async Task StartEventPolling()
         {
+
             while (true)
             {
                 await Task.Delay(1000);

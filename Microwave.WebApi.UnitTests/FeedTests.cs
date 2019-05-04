@@ -6,6 +6,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Domain;
 using Microwave.Queries;
 using Microwave.WebApi.Querries;
+using Moq;
 using RichardSzalay.MockHttp;
 
 namespace Microwave.WebApi.UnitTests
@@ -28,9 +29,13 @@ namespace Microwave.WebApi.UnitTests
             var domainOverallEventClient = new DomainEventClient<ReadModelHandler<TestReadModel>>(mockHttp);
             domainOverallEventClient.BaseAddress = new Uri("http://localost:5000/api/DomainEvents/");
 
+            var factoryMock = new Mock<IDomainEventClientFactory>();
+            factoryMock.Setup(m => m.GetClient<ReadModelHandler<TestReadModel>>()).ReturnsAsync(domainOverallEventClient);
             var domainEventFactory = new DomainEventFactory(_eventTypeRegistration);
             var domainEventWrapperListDeserializer = new DomainEventWrapperListDeserializer(new JSonHack(), domainEventFactory);
-            var readModelFeed = new EventFeed<ReadModelHandler<TestReadModel>>(domainEventWrapperListDeserializer, domainOverallEventClient);
+            var readModelFeed = new EventFeed<ReadModelHandler<TestReadModel>>(
+                domainEventWrapperListDeserializer,
+                factoryMock.Object);
             var domainEvents = await readModelFeed.GetEventsAsync();
             var domainEventWrappers = domainEvents.ToList();
             Assert.AreEqual(1, domainEventWrappers.Count);
@@ -47,9 +52,12 @@ namespace Microwave.WebApi.UnitTests
             var domainOverallEventClient = new DomainEventClient<ReadModelHandler<TestReadModel>>(mockHttp);
             domainOverallEventClient.BaseAddress = new Uri("http://localost:5000/api/DomainEvents/");
 
+            var factoryMock = new Mock<IDomainEventClientFactory>();
+            factoryMock.Setup(m => m.GetClient<ReadModelHandler<TestReadModel>>()).ReturnsAsync(domainOverallEventClient);
+
             var domainEventFactory = new DomainEventFactory(_eventTypeRegistration);
             var domainEventWrapperListDeserializer = new DomainEventWrapperListDeserializer(new JSonHack(), domainEventFactory);
-            var readModelFeed = new EventFeed<ReadModelHandler<TestReadModel>>(domainEventWrapperListDeserializer, domainOverallEventClient);
+            var readModelFeed = new EventFeed<ReadModelHandler<TestReadModel>>(domainEventWrapperListDeserializer, factoryMock.Object);
             var domainEvents = await readModelFeed.GetEventsAsync();
             var domainEventWrappers = domainEvents.ToList();
 

@@ -12,24 +12,25 @@ namespace Microwave.WebApi.Querries
     public class EventFeed<T> : IEventFeed<T>
     {
         private readonly DomainEventWrapperListDeserializer _objectConverter;
-        private readonly DomainEventClient<T> _domainEventClient;
+        private readonly IDomainEventClientFactory _clientFactory;
 
         public EventFeed(
             DomainEventWrapperListDeserializer objectConverter,
-            DomainEventClient<T> domainEventClient)
+            IDomainEventClientFactory clientFactory)
         {
             _objectConverter = objectConverter;
-            _domainEventClient = domainEventClient;
+            _clientFactory = clientFactory;
         }
 
         public async Task<IEnumerable<DomainEventWrapper>> GetEventsAsync(DateTimeOffset since = default(DateTimeOffset))
         {
             if (since == default(DateTimeOffset)) since = DateTimeOffset.MinValue;
             var isoString = since.ToString("o");
+            var client = await _clientFactory.GetClient<T>();
             try
             {
-                if (_domainEventClient.HasTheValidLocation) {
-                    var response = await _domainEventClient.GetAsync($"?timeStamp={isoString}");
+                if (client.HasTheValidLocation) {
+                    var response = await client.GetAsync($"?timeStamp={isoString}");
                     if (response.StatusCode != HttpStatusCode.OK) return new List<DomainEventWrapper>();
                     var content = await response.Content.ReadAsStringAsync();
                     var eventsByTypeAsync = _objectConverter.Deserialize(content);
