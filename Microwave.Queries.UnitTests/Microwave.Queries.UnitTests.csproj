@@ -13,6 +13,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Microwave.Domain\Microwave.Domain.csproj" />
       <ProjectReference Include="..\Microwave.Eventstores.UnitTests\Microwave.Eventstores.UnitTests.csproj" />
       <ProjectReference Include="..\Microwave.EventStores\Microwave.EventStores.csproj" />
       <ProjectReference Include="..\Microwave.Persistence.MongoDb.UnitTests\Microwave.Persistence.MongoDb.UnitTests.csproj" />

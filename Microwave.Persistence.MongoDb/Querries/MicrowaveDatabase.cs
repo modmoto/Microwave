@@ -1,4 +1,4 @@
-﻿using Microwave.Application;
+﻿using Microwave.Domain;
 using MongoDB.Driver;
 
 namespace Microwave.Persistence.MongoDb.Querries

@@ -1,5 +1,5 @@
 ﻿using System;
-using Microwave.Application;
+using Microwave.Domain;
 
 namespace ServerConfig
 {

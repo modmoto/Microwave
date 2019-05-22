@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microwave.Application.Results;
 using Microwave.Domain;
+using Microwave.Domain.Results;
 using Microwave.EventStores.Ports;
 
 namespace WriteService1

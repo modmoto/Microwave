@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microwave.Discovery.Domain;
 using Microwave.Discovery.Domain.Events;
 using Microwave.Discovery.Domain.Services;
 using Microwave.WebApi.Discovery;

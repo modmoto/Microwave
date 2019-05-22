@@ -1,4 +1,4 @@
-﻿namespace Microwave.Application.Results
+﻿namespace Microwave.Domain.Results
 {
     public class OkResult : Result
     {

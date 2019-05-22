@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microwave.Application;
 using Microwave.Discovery;
 using Microwave.Discovery.Domain.Events;
 using Microwave.Domain;

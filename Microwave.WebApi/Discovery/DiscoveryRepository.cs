@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microwave.Discovery;
-using Microwave.Discovery.Domain;
 using Microwave.Discovery.Domain.Events;
 using Microwave.Discovery.Domain.Services;
 using Newtonsoft.Json;

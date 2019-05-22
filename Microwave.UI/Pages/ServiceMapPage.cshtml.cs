@@ -2,12 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Xml.Linq;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microwave.Application;
 using Microwave.Discovery;
 using Microwave.Discovery.Domain.Services;
+using Microwave.Domain;
 
 namespace Microwave.Pages
 {

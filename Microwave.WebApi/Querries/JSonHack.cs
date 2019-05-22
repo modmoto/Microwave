@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reflection;
-using Microwave.Application;
 using Microwave.Domain;
+using Microwave.Queries;
 using Newtonsoft.Json.Linq;
 
 namespace Microwave.WebApi.Querries

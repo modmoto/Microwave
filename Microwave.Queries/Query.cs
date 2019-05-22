@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Linq;
-using Microwave.Application;
-using Microwave.Domain;
 
 namespace Microwave.Queries
 {

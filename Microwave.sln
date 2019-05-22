@@ -1,11 +1,9 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27703.2026
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microwave.Domain", "Microwave.Domain\Microwave.Domain.csproj", "{9A1885D9-77BB-45D4-99E5-A9FC15F9B6A5}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microwave.Application", "Microwave.Application\Microwave.Application.csproj", "{166E472C-7517-456A-94F2-60C4F8D4F36D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microwave.EventStores", "Microwave.EventStores\Microwave.EventStores.csproj", "{05981F37-6A08-4CC9-8020-B0B00BF5E622}"
 EndProject
@@ -22,8 +20,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microwave.UnitTests", "Microwave.UnitTests\Microwave.UnitTests.csproj", "{6DE4BD27-1E59-43F3-AF52-5925CEA1E9CA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microwave.Domain.UnitTests", "Microwave.Domain.UnitTests\Microwave.Domain.UnitTests.csproj", "{306D2634-E1A9-4C72-AEA5-AEB9FA26110F}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microwave.Application.UnitTests", "Microwave.Application.UnitTests\Microwave.Application.UnitTests.csproj", "{E692F31A-891F-4FCC-99DA-5BC9213A43F3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microwave.WebApi.UnitTests", "Microwave.WebApi.UnitTests\Microwave.WebApi.UnitTests.csproj", "{3622487E-A894-49FD-A8EF-5D11DAA01B62}"
 EndProject
@@ -45,6 +41,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microwave.UI", "Microwave.U
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microwave.UI.UnitTests", "Microwave.UI.UnitTests\Microwave.UI.UnitTests.csproj", "{10F2D68D-5EE4-4DC4-81AB-DAA30A6BF951}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReadService1", "TestServices\ReadService1\ReadService1.csproj", "{37CCE04E-C754-4F01-BF99-A4FE97F624DE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServerConfig", "TestServices\ServerConfig\ServerConfig.csproj", "{981D4D16-88E3-4E85-9038-41FAF813A0F6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WriteService1", "TestServices\WriteService1\WriteService1.csproj", "{ED77B8CD-D464-4F7A-955C-9B89CAA4A167}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WriteService2", "TestServices\WriteService2\WriteService2.csproj", "{F95DC020-1656-433D-811B-6146E07C449B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -55,10 +59,6 @@ Global
 		{9A1885D9-77BB-45D4-99E5-A9FC15F9B6A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9A1885D9-77BB-45D4-99E5-A9FC15F9B6A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9A1885D9-77BB-45D4-99E5-A9FC15F9B6A5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{166E472C-7517-456A-94F2-60C4F8D4F36D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{166E472C-7517-456A-94F2-60C4F8D4F36D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{166E472C-7517-456A-94F2-60C4F8D4F36D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{166E472C-7517-456A-94F2-60C4F8D4F36D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{05981F37-6A08-4CC9-8020-B0B00BF5E622}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{05981F37-6A08-4CC9-8020-B0B00BF5E622}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{05981F37-6A08-4CC9-8020-B0B00BF5E622}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -91,10 +91,6 @@ Global
 		{306D2634-E1A9-4C72-AEA5-AEB9FA26110F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{306D2634-E1A9-4C72-AEA5-AEB9FA26110F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{306D2634-E1A9-4C72-AEA5-AEB9FA26110F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E692F31A-891F-4FCC-99DA-5BC9213A43F3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E692F31A-891F-4FCC-99DA-5BC9213A43F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E692F31A-891F-4FCC-99DA-5BC9213A43F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E692F31A-891F-4FCC-99DA-5BC9213A43F3}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3622487E-A894-49FD-A8EF-5D11DAA01B62}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{3622487E-A894-49FD-A8EF-5D11DAA01B62}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3622487E-A894-49FD-A8EF-5D11DAA01B62}.Release|Any CPU.ActiveCfg = Release|Any CPU

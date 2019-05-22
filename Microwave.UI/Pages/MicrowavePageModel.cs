@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microwave.Application;
+using Microwave.Domain;
 
 namespace Microwave.Pages
 {

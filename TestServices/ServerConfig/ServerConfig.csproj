@@ -6,7 +6,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\Microwave.Application\Microwave.Application.csproj" />
+      <ProjectReference Include="..\..\Microwave.Domain\Microwave.Domain.csproj" />
     </ItemGroup>
-
 </Project>

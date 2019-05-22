@@ -1,6 +1,4 @@
-﻿using Microwave.Domain;
-
-namespace Microwave.Application.Results
+﻿namespace Microwave.Domain.Results
 {
     public abstract class Result
     {

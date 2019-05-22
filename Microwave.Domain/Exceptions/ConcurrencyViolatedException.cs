@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace Microwave.Application.Exceptions
+namespace Microwave.Domain.Exceptions
 {
     [Serializable]
     public class ConcurrencyViolatedException : Exception

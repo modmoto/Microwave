@@ -4,7 +4,6 @@
         <DebugType>full</DebugType>
     </PropertyGroup>
     <ItemGroup>
-      <ProjectReference Include="..\Microwave.Application\Microwave.Application.csproj" />
       <ProjectReference Include="..\Microwave.Discovery\Microwave.Discovery.csproj" />
       <ProjectReference Include="..\Microwave.EventStores\Microwave.EventStores.csproj" />
     </ItemGroup>

@@ -1,7 +1,7 @@
 using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microwave.Application.Exceptions;
 using Microwave.Domain;
+using Microwave.Domain.Exceptions;
 using Microwave.EventStores.Ports;
 using Microwave.Queries;
 

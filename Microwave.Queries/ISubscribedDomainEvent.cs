@@ -1,6 +1,6 @@
 using Microwave.Domain;
 
-namespace Microwave.Application
+namespace Microwave.Queries
 {
     public interface ISubscribedDomainEvent
     {

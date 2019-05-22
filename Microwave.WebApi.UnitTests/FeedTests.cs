@@ -3,7 +3,6 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microwave.Application;
 using Microwave.Domain;
 using Microwave.EventStores;
 using Microwave.Queries;

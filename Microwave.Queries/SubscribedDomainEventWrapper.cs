@@ -1,5 +1,4 @@
 using System;
-using Microwave.Application;
 
 namespace Microwave.Queries
 {

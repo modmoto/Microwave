@@ -1,8 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microwave.Discovery;
-using Microwave.Discovery.Domain;
-using Microwave.Discovery.Domain.Services;
 
 namespace Microwave.WebApi.Discovery
 {

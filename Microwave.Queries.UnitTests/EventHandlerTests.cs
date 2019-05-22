@@ -3,12 +3,10 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Domain;
-using Microwave.EventStores;
 using Microwave.Persistence.MongoDb.Querries;
 using Microwave.Persistence.MongoDb.UnitTests.Eventstores;
-using Microwave.Queries;
 
-namespace Microwave.Application.UnitTests
+namespace Microwave.Queries.UnitTests
 {
     [TestClass]
     public class EventHandlerTests : IntegrationTests
@@ -20,7 +18,7 @@ namespace Microwave.Application.UnitTests
             var domainEventWrapper = new SubscribedDomainEventWrapper
             {
                 Created = dateTimeOffset,
-                DomainEvent = new TestEv2()
+                DomainEvent = new TestEv2(GuidIdentity.Create())
             };
 
             var handleAsync = new Handler1();
@@ -80,15 +78,5 @@ namespace Microwave.Application.UnitTests
             TimesCalled = TimesCalled + 1;
             return Task.CompletedTask;
         }
-    }
-
-    public class TestEv1 : IDomainEvent
-    {
-        public Identity EntityId { get; }
-    }
-
-    public class TestEv2 : IDomainEvent, ISubscribedDomainEvent
-    {
-        public Identity EntityId { get; }
     }
 }

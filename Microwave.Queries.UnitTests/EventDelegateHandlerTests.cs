@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microwave.Application;
 using Microwave.Domain;
 using Microwave.EventStores;
 using Microwave.Persistence.MongoDb.Querries;

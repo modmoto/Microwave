@@ -1,6 +1,6 @@
 using System.Linq;
 using System.Threading.Tasks;
-using Microwave.Application.Results;
+using Microwave.Domain.Results;
 
 namespace Microwave.Queries
 {

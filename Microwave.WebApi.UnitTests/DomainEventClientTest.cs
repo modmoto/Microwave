@@ -1,6 +1,5 @@
 using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microwave.Application;
 using Microwave.Discovery.Domain;
 using Microwave.Discovery.Domain.Services;
 using Microwave.Domain;

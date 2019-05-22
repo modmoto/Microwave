@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microwave.Application.Results;
 using Microwave.Domain;
+using Microwave.Domain.Results;
 
 namespace Microwave.Queries
 {

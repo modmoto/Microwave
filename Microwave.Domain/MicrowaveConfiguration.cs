@@ -1,4 +1,4 @@
-﻿namespace Microwave.Application
+﻿namespace Microwave.Domain
 {
     public class MicrowaveConfiguration
     {

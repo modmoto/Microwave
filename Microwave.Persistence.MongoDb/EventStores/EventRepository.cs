@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microwave.Application;
-using Microwave.Application.Results;
 using Microwave.Domain;
+using Microwave.Domain.Results;
 using Microwave.EventStores;
 using Microwave.Persistence.MongoDb.Querries;
 using MongoDB.Driver;

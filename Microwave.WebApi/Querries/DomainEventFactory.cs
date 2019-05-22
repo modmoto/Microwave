@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Microwave.Application;
-using Microwave.Domain;
 using Microwave.Queries;
 using Microwave.WebApi.ApiFormatting.Identities;
 using Newtonsoft.Json;

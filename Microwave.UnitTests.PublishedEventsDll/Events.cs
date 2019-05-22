@@ -1,5 +1,4 @@
 using System.Threading.Tasks;
-using Microwave.Application;
 using Microwave.Domain;
 using Microwave.EventStores;
 using Microwave.Queries;

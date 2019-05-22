@@ -1,6 +1,6 @@
-﻿using Microwave.Application.Exceptions;
+﻿using Microwave.Domain.Exceptions;
 
-namespace Microwave.Application.Results
+namespace Microwave.Domain.Results
 {
     public class ConcurrencyErrorResult : Result
     {
