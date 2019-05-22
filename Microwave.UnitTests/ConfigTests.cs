@@ -2,6 +2,7 @@ using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Application;
 using Microwave.Domain;
+using Microwave.EventStores;
 using Microwave.Queries;
 
 namespace Microwave.DependencyInjectionExtensions.UnitTests

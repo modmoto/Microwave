@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microwave.Application;
 using Microwave.Domain;
+using Microwave.EventStores;
 
 namespace Microwave.WebApi.Querries
 {

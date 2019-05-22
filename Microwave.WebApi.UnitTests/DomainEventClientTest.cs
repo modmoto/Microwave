@@ -4,6 +4,7 @@ using Microwave.Application;
 using Microwave.Discovery.Domain;
 using Microwave.Discovery.Domain.Services;
 using Microwave.Domain;
+using Microwave.EventStores;
 using Microwave.Queries;
 using Microwave.WebApi.Querries;
 using Moq;

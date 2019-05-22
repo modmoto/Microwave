@@ -7,6 +7,7 @@ using Microwave.Application;
 using Microwave.Discovery;
 using Microwave.Discovery.Domain.Events;
 using Microwave.Domain;
+using Microwave.EventStores;
 using Microwave.EventStores.Ports;
 using Microwave.Queries;
 using Microwave.UnitTests.PublishedEventsDll;

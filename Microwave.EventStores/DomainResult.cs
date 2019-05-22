@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microwave.Domain;
 
-namespace Microwave.Domain
+namespace Microwave.EventStores
 {
     public class DomainResult
     {

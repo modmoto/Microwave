@@ -1,7 +1,6 @@
 ﻿using System;
-using Microwave.Domain;
 
-namespace Microwave.Application
+namespace Microwave.EventStores
 {
     public class DomainEventWrapper
     {

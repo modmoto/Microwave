@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Microwave.Application.Results;
 using Microwave.Domain;
 
-namespace Microwave.Application
+namespace Microwave.EventStores
 {
     public interface IEventRepository
     {

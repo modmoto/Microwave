@@ -6,4 +6,9 @@
   <ItemGroup>
     <ProjectReference Include="..\Microwave.Domain\Microwave.Domain.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Microwave.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\TestServices\WriteService1\bin\Debug\netcoreapp2.2\Microwave.Application.dll</HintPath>
+    </Reference>
+  </ItemGroup>
 </Project>

@@ -1,4 +1,5 @@
 using Microwave.Domain;
+using Microwave.EventStores;
 
 namespace WriteService1
 {

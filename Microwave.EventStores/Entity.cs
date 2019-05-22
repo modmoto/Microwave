@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace Microwave.Domain
+namespace Microwave.EventStores
 {
     public class Entity : IApply
     {

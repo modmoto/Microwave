@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Microwave.Domain
+namespace Microwave.EventStores
 {
     public interface IApply
     {

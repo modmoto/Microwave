@@ -4,6 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using Microwave.Domain;
+using Microwave.EventStores;
 using MongoDB.Bson.Serialization;
 
 namespace Microwave

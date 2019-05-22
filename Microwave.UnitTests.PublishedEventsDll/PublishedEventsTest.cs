@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Microwave.Domain;
+using Microwave.EventStores;
 using Microwave.Queries;
 
 namespace Microwave.UnitTests.PublishedEventsDll

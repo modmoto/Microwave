@@ -1,5 +1,6 @@
 ﻿using System;
 using Microwave.Domain;
+using Microwave.EventStores;
 
 namespace Microwave.Persistence.MongoDb.EventStores
 {
