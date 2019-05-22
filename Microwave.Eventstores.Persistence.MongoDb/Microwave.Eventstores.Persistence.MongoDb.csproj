@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <DebugType>full</DebugType>
+        <RootNamespace>Microwave.Persistence.MongoDb</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="MongoDB.Driver" Version="2.7.3" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Microwave.Discovery\Microwave.Discovery.csproj" />
+      <ProjectReference Include="..\Microwave.EventStores\Microwave.EventStores.csproj" />
+      <ProjectReference Include="..\Microwave.Queries\Microwave.Queries.csproj" />
+    </ItemGroup>
+
+</Project>

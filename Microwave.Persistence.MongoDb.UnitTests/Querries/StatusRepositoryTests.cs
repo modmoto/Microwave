@@ -7,8 +7,8 @@ using Microwave.Discovery;
 using Microwave.Discovery.Domain;
 using Microwave.Discovery.Domain.Events;
 using Microwave.Discovery.Domain.Services;
-using Microwave.Persistence.MongoDb.Querries;
 using Microwave.Persistence.MongoDb.UnitTests.Eventstores;
+using Microwave.Queries.Persistence.MongoDb;
 
 namespace Microwave.Persistence.MongoDb.UnitTests.Querries
 {

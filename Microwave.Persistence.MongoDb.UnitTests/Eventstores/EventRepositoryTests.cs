@@ -7,7 +7,6 @@ using Microwave.Domain;
 using Microwave.Domain.Exceptions;
 using Microwave.Domain.Results;
 using Microwave.EventStores;
-using Microwave.Persistence.MongoDb.EventStores;
 using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
 

@@ -6,9 +6,9 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Domain;
 using Microwave.Domain.Exceptions;
 using Microwave.Domain.Results;
-using Microwave.Persistence.MongoDb.Querries;
 using Microwave.Persistence.MongoDb.UnitTests.Eventstores;
 using Microwave.Queries;
+using Microwave.Queries.Persistence.MongoDb;
 
 namespace Microwave.Persistence.MongoDb.UnitTests.Querries
 {

@@ -15,7 +15,8 @@
     <ItemGroup>
       <ProjectReference Include="..\Microwave.Discovery\Microwave.Discovery.csproj" />
       <ProjectReference Include="..\Microwave.Domain\Microwave.Domain.csproj" />
-      <ProjectReference Include="..\Microwave.Persistence.MongoDb\Microwave.Persistence.MongoDb.csproj" />
+      <ProjectReference Include="..\Microwave.Eventstores.Persistence.MongoDb\Microwave.Eventstores.Persistence.MongoDb.csproj" />
+      <ProjectReference Include="..\Microwave.Queries.Persistence.MongoDb\Microwave.Queries.Persistence.MongoDb.csproj" />
       <ProjectReference Include="..\Microwave\Microwave.csproj" />
     </ItemGroup>
 

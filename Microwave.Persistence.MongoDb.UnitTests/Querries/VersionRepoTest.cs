@@ -1,9 +1,9 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microwave.Persistence.MongoDb.Querries;
 using Microwave.Persistence.MongoDb.UnitTests.Eventstores;
 using Microwave.Queries;
+using Microwave.Queries.Persistence.MongoDb;
 
 namespace Microwave.Persistence.MongoDb.UnitTests.Querries
 {

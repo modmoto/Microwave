@@ -11,9 +11,9 @@ using Microwave.Discovery.Domain.Events;
 using Microwave.Domain;
 using Microwave.EventStores;
 using Microwave.EventStores.Ports;
-using Microwave.Persistence.MongoDb.EventStores;
-using Microwave.Persistence.MongoDb.Querries;
+using Microwave.Persistence.MongoDb;
 using Microwave.Queries;
+using Microwave.Queries.Persistence.MongoDb;
 using Microwave.WebApi.ApiFormatting;
 using Microwave.WebApi.ApiFormatting.DateTimeOffsets;
 using Microwave.WebApi.ApiFormatting.Identities;
@@ -21,6 +21,7 @@ using Microwave.WebApi.Discovery;
 using Microwave.WebApi.Filters;
 using Microwave.WebApi.Querries;
 using MongoDB.Bson.Serialization;
+using MicrowaveDatabase = Microwave.Persistence.MongoDb.MicrowaveDatabase;
 
 namespace Microwave
 {

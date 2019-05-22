@@ -5,10 +5,9 @@ using System.Threading.Tasks;
 using Microwave.Domain;
 using Microwave.Domain.Results;
 using Microwave.EventStores;
-using Microwave.Persistence.MongoDb.Querries;
 using MongoDB.Driver;
 
-namespace Microwave.Persistence.MongoDb.EventStores
+namespace Microwave.Persistence.MongoDb
 {
     public class EventRepository : IEventRepository
     {

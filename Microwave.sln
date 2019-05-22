@@ -27,7 +27,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microwave.Eventstores.UnitT
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microwave.UnitTests.PublishedEventsDll", "Microwave.UnitTests.PublishedEventsDll\Microwave.UnitTests.PublishedEventsDll.csproj", "{5A17AEC8-F492-48F4-8C6F-4063489DA58F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microwave.Persistence.MongoDb", "Microwave.Persistence.MongoDb\Microwave.Persistence.MongoDb.csproj", "{6394F395-66C1-483D-B4BC-8B19007F7785}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microwave.Eventstores.Persistence.MongoDb", "Microwave.Eventstores.Persistence.MongoDb\Microwave.Eventstores.Persistence.MongoDb.csproj", "{6394F395-66C1-483D-B4BC-8B19007F7785}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microwave.Persistence.MongoDb.UnitTests", "Microwave.Persistence.MongoDb.UnitTests\Microwave.Persistence.MongoDb.UnitTests.csproj", "{52EC4F8C-6145-4E15-8FE3-388431BEF5FA}"
 EndProject

@@ -1,7 +1,7 @@
 ﻿using Microwave.Domain;
 using MongoDB.Driver;
 
-namespace Microwave.Persistence.MongoDb.Querries
+namespace Microwave.Persistence.MongoDb
 {
     public class MicrowaveDatabase
     {

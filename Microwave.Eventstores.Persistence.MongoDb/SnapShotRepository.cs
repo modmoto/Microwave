@@ -4,10 +4,9 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microwave.Domain;
 using Microwave.EventStores.Ports;
-using Microwave.Persistence.MongoDb.Querries;
 using MongoDB.Driver;
 
-namespace Microwave.Persistence.MongoDb.EventStores
+namespace Microwave.Persistence.MongoDb
 {
     public class SnapShotRepository : ISnapShotRepository
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using Microwave.EventStores;
 
-namespace Microwave.Persistence.MongoDb.EventStores
+namespace Microwave.Persistence.MongoDb
 {
     public class SnapShotDbo<T>
     {

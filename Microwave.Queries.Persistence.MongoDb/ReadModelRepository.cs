@@ -5,10 +5,10 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microwave.Domain;
 using Microwave.Domain.Results;
-using Microwave.Queries;
+using Microwave.Persistence.MongoDb;
 using MongoDB.Driver;
 
-namespace Microwave.Persistence.MongoDb.Querries
+namespace Microwave.Queries.Persistence.MongoDb
 {
     public class ReadModelRepository : IReadModelRepository
     {

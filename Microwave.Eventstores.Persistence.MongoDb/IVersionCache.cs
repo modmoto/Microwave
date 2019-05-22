@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using Microwave.Domain;
 
-namespace Microwave.Persistence.MongoDb.EventStores
+namespace Microwave.Persistence.MongoDb
 {
     public interface IVersionCache
     {

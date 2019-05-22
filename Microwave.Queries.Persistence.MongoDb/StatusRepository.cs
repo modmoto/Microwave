@@ -7,9 +7,10 @@ using Microwave.Discovery;
 using Microwave.Discovery.Domain;
 using Microwave.Discovery.Domain.Events;
 using Microwave.Discovery.Domain.Services;
+using Microwave.Persistence.MongoDb;
 using MongoDB.Driver;
 
-namespace Microwave.Persistence.MongoDb.Querries
+namespace Microwave.Queries.Persistence.MongoDb
 {
     public class StatusRepository : IStatusRepository
     {
