@@ -83,10 +83,34 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
             Assert.IsTrue(identHandler[3] is ReadModelHandler<TestReadModel>);
             Assert.IsTrue(identHandler[4] is ReadModelHandler<TestReadModel_NotImplementingIApply>);
             Assert.IsTrue(identHandler[5] is ReadModelHandler<TestReadModelSubscriptions>);
+        }
+
+        [TestMethod]
+        public void EventRegistrationIsCorrect_OneAssembly()
+        {
+            var collection = (IServiceCollection) new ServiceCollection();
+
+            var eventRegister = new EventRegistration();
+            var storeDependencies = collection.AddDomainEventRegistration(typeof(TestDomainEvent1).Assembly, eventRegister);
+
+            Assert.AreEqual(eventRegister[nameof(TestDomainEvent1)], typeof(TestDomainEvent1)); // IHandleAsyncEvent
+            Assert.AreEqual(eventRegister[nameof(TestDomainEvent2)], typeof(TestDomainEvent2)); // QuerryEvent
+        }
+
+        [TestMethod]
+        public void EventRegistrationIsCorrect()
+        {
+            var collection = (IServiceCollection) new ServiceCollection();
+
+            var storeDependencies = collection.AddMicrowave();
+            var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
             var eventRegister = buildServiceProvider.GetServices<EventRegistration>().Single();
             Assert.AreEqual(eventRegister[nameof(TestDomainEvent_PublishedEvent1)], typeof(TestDomainEvent_PublishedEvent1));
             Assert.AreEqual(eventRegister[nameof(TestDomainEvent_PublishedEvent2)], typeof(TestDomainEvent_PublishedEvent2));
+
+            Assert.AreEqual(eventRegister[nameof(TestDomainEvent1)], typeof(TestDomainEvent1)); // IHandleAsyncEvent
+            Assert.AreEqual(eventRegister[nameof(TestDomainEvent2)], typeof(TestDomainEvent2)); // QuerryEvent
         }
 
         [TestMethod]

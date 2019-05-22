@@ -240,11 +240,16 @@ namespace Microwave
             return subscriptions;
         }
 
-        private static IServiceCollection AddDomainEventRegistration(this IServiceCollection services,
+        public static IServiceCollection AddDomainEventRegistration(this IServiceCollection services,
             Assembly assembly, EventRegistration eventRegistration)
         {
-            var domainEventTypes = assembly.GetTypes().Where(ev => ev.GetInterfaces().Contains(typeof(IDomainEvent)));
-            foreach (var domainEventType in domainEventTypes)
+            var ifs = assembly.GetTypes().SelectMany(i => i.GetInterfaces()).Where(i => i.IsGenericType
+                                           &&
+                                           (    i.GetGenericTypeDefinition() == typeof(IHandle<>)
+                                                || i.GetGenericTypeDefinition() == typeof(IHandleAsync<>))).ToList();
+
+            var domaineventsInIHandles = ifs.Select(i => i.GenericTypeArguments.Single()).ToList();
+            foreach (var domainEventType in domaineventsInIHandles)
             {
                 var eventName = domainEventType.Name;
                 if (eventRegistration.ContainsKey(eventName))
@@ -254,9 +259,22 @@ namespace Microwave
                         throw new DuplicateDomainEventException(eventName);
                     }
                 }
-                eventRegistration.Add(eventName, domainEventType);
+                else
+                {
+                    eventRegistration.Add(eventName, domainEventType);
+                }
             }
             return services;
+        }
+
+        private static bool ContainsIHandleOrIHandleAsync(Type ev)
+        {
+            var interfaces = ev.GetInterfaces();
+            var any = interfaces.Any(i => i.IsGenericType
+                                          &&
+                                          (    i.GetGenericTypeDefinition() == typeof(IHandle<>)
+                                            || i.GetGenericTypeDefinition() == typeof(IHandleAsync<>)));
+            return any;
         }
 
         private static IServiceCollection AddMicrowaveMvcExtensions(this IServiceCollection services)

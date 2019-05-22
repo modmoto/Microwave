@@ -9,17 +9,17 @@ namespace ReadService1
     {
         public Task HandleAsync(Event2 domainEvent)
         {
-            return null;
+            return Task.CompletedTask;
         }
 
         public Task HandleAsync(Event4 domainEvent)
         {
-            return null;
+            return Task.CompletedTask;
         }
 
         public Task HandleAsync(EventNotPublished domainEvent)
         {
-            return null;
+            return Task.CompletedTask;
         }
     }
 
