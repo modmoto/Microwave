@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microwave.Application;
 using Microwave.Domain;
 using Microwave.Persistence.MongoDb.EventStores;
 using Microwave.Persistence.MongoDb.UnitTests.Eventstores;
@@ -94,7 +95,7 @@ namespace Microwave.Eventstores.UnitTests
         public Identity EntityId { get; }
     }
 
-    public class TestEv : IDomainEvent
+    public class TestEv : IDomainEvent, ISubscribedDomainEvent
     {
         public TestEv(Identity entityId)
         {
@@ -104,7 +105,7 @@ namespace Microwave.Eventstores.UnitTests
         public Identity EntityId { get; }
     }
 
-    public class TestEv_DifferentParamName : IDomainEvent
+    public class TestEv_DifferentParamName : IDomainEvent, ISubscribedDomainEvent
     {
         public TestEv_DifferentParamName(Identity NOTentityId, string secondProp)
         {

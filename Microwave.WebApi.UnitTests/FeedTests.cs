@@ -3,6 +3,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microwave.Application;
 using Microwave.Domain;
 using Microwave.Queries;
 using Microwave.WebApi.Querries;
@@ -76,7 +77,7 @@ namespace Microwave.WebApi.UnitTests
         public override Type GetsCreatedOn { get; }
     }
 
-    public class TestEv : IDomainEvent
+    public class TestEv : IDomainEvent, ISubscribedDomainEvent
     {
         public TestEv(GuidIdentity entityId)
         {

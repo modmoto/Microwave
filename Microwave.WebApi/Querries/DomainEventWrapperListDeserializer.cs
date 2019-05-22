@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microwave.Application;
+using Microwave.Queries;
 using Newtonsoft.Json.Linq;
 
 namespace Microwave.WebApi.Querries
@@ -17,7 +18,7 @@ namespace Microwave.WebApi.Querries
             _domainEventFactory = domainEventFactory;
         }
 
-        public IEnumerable<DomainEventWrapper> Deserialize(string payLoad)
+        public IEnumerable<SubscribedDomainEventWrapper> Deserialize(string payLoad)
         {
             var domainEventWrappers = _domainEventFactory.Deserialize(payLoad);
             var domainEventJobjectStuff = JToken.Parse(payLoad);

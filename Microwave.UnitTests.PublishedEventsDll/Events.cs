@@ -1,10 +1,11 @@
 using System.Threading.Tasks;
+using Microwave.Application;
 using Microwave.Domain;
 using Microwave.Queries;
 
 namespace Microwave.UnitTests.PublishedEventsDll
 {
-    public class TestDomainEvent_PublishedEvent1 : IDomainEvent
+    public class TestDomainEvent_PublishedEvent1 : IDomainEvent, ISubscribedDomainEvent
     {
         public TestDomainEvent_PublishedEvent1(Identity entityId)
         {
@@ -14,7 +15,7 @@ namespace Microwave.UnitTests.PublishedEventsDll
         public Identity EntityId { get; }
     }
 
-    public class TestDomainEvent_OnlySubscribedEvent
+    public class TestDomainEvent_OnlySubscribedEvent : ISubscribedDomainEvent
     {
         public TestDomainEvent_OnlySubscribedEvent(Identity entityId)
         {
@@ -24,7 +25,7 @@ namespace Microwave.UnitTests.PublishedEventsDll
         public Identity EntityId { get; }
     }
 
-    public class TestDomainEvent_OnlySubscribedEvent_HandleAsync
+    public class TestDomainEvent_OnlySubscribedEvent_HandleAsync : ISubscribedDomainEvent
     {
         public TestDomainEvent_OnlySubscribedEvent_HandleAsync(Identity entityId)
         {
@@ -42,7 +43,7 @@ namespace Microwave.UnitTests.PublishedEventsDll
         }
     }
     
-    public class TestDomainEvent_PublishedEvent2 : IDomainEvent
+    public class TestDomainEvent_PublishedEvent2 : IDomainEvent, ISubscribedDomainEvent
     {
         public TestDomainEvent_PublishedEvent2(Identity entityId)
         {

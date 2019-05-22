@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Linq;
+using Microwave.Application;
 using Microwave.Domain;
 
 namespace Microwave.Queries
 {
     public class Query
     {
-        public void Handle(IDomainEvent domainEvent, long version)
+        public void Handle(ISubscribedDomainEvent domainEvent, long version)
         {
             var type = domainEvent.GetType();
             var currentEntityType = GetType();

@@ -22,7 +22,7 @@ namespace Microwave.WebApi.Querries
             _clientFactory = clientFactory;
         }
 
-        public async Task<IEnumerable<DomainEventWrapper>> GetEventsAsync(DateTimeOffset since = default(DateTimeOffset))
+        public async Task<IEnumerable<SubscribedDomainEventWrapper>> GetEventsAsync(DateTimeOffset since = default(DateTimeOffset))
         {
             if (since == default(DateTimeOffset)) since = DateTimeOffset.MinValue;
             var isoString = since.ToString("o");
@@ -31,7 +31,7 @@ namespace Microwave.WebApi.Querries
             {
                 if (client.HasTheValidLocation) {
                     var response = await client.GetAsync($"?timeStamp={isoString}");
-                    if (response.StatusCode != HttpStatusCode.OK) return new List<DomainEventWrapper>();
+                    if (response.StatusCode != HttpStatusCode.OK) return new List<SubscribedDomainEventWrapper>();
                     var content = await response.Content.ReadAsStringAsync();
                     var eventsByTypeAsync = _objectConverter.Deserialize(content);
                     return eventsByTypeAsync;
@@ -44,7 +44,7 @@ namespace Microwave.WebApi.Querries
                 Console.WriteLine($"Could not reach service for: {readModel.Name}");
             }
 
-            return new List<DomainEventWrapper>();
+            return new List<SubscribedDomainEventWrapper>();
         }
     }
 }

@@ -73,7 +73,7 @@ namespace Microwave.Queries.UnitTests
         }
     }
 
-    public class Event1 : IDomainEvent
+    public class Event1 : IDomainEvent, ISubscribedDomainEvent
     {
         public Identity EntityId { get; }
         public string Name { get; }
@@ -85,7 +85,7 @@ namespace Microwave.Queries.UnitTests
         }
     }
 
-    public class Event2 : IDomainEvent
+    public class Event2 : IDomainEvent, ISubscribedDomainEvent
     {
         public Identity EntityId { get; }
         public string Name { get; }

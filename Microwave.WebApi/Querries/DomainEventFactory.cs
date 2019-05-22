@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Microwave.Application;
 using Microwave.Domain;
+using Microwave.Queries;
 using Microwave.WebApi.ApiFormatting.Identities;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -10,7 +11,7 @@ namespace Microwave.WebApi.Querries
 {
     public interface IDomainEventFactory
     {
-        IEnumerable<DomainEventWrapper> Deserialize(string serializeObject);
+        IEnumerable<SubscribedDomainEventWrapper> Deserialize(string serializeObject);
     }
 
     public class DomainEventFactory : IDomainEventFactory
@@ -22,7 +23,7 @@ namespace Microwave.WebApi.Querries
             _eventTypeRegistration = eventTypeRegistration;
         }
 
-        public IEnumerable<DomainEventWrapper> Deserialize(string serializeObject)
+        public IEnumerable<SubscribedDomainEventWrapper> Deserialize(string serializeObject)
         {
             JsonSerializer serializer = new JsonSerializer();
             serializer.Converters.Add(new IdentityConverter());
@@ -30,16 +31,17 @@ namespace Microwave.WebApi.Querries
             foreach (var jToken in jArray)
             {
                 var jObject = (JObject) jToken;
-                var value = jObject.GetValue(nameof(DomainEventWrapper.DomainEventType), StringComparison.OrdinalIgnoreCase).Value<string>();
+                var value = jObject.GetValue(nameof(SubscribedDomainEventWrapper.DomainEventType), StringComparison.OrdinalIgnoreCase).Value<string>();
                 if (!_eventTypeRegistration.ContainsKey(value)) continue;
                 var type = _eventTypeRegistration[value];
-                var version = jObject.GetValue(nameof(DomainEventWrapper.Version), StringComparison.OrdinalIgnoreCase).Value<long>();
-                var created = (DateTimeOffset) jObject.GetValue(nameof(DomainEventWrapper.Created), StringComparison
+                var version = jObject.GetValue(nameof(SubscribedDomainEventWrapper.Version), StringComparison.OrdinalIgnoreCase).Value<long>();
+                var created = (DateTimeOffset) jObject.GetValue(nameof(SubscribedDomainEventWrapper.Created), StringComparison
                 .OrdinalIgnoreCase);
-                var domainEventJObject = jObject.GetValue(nameof(DomainEventWrapper.DomainEvent), StringComparison.OrdinalIgnoreCase);
-                var domainevent = (IDomainEvent) domainEventJObject.ToObject(type, serializer);
+                var domainEventJObject = jObject.GetValue(nameof(SubscribedDomainEventWrapper.DomainEvent), StringComparison
+                .OrdinalIgnoreCase);
+                var domainevent = (ISubscribedDomainEvent) domainEventJObject.ToObject(type, serializer);
 
-                yield return new DomainEventWrapper
+                yield return new SubscribedDomainEventWrapper
                 {
                     Created = created,
                     Version = version,

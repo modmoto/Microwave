@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using Microwave.Application;
 using Microwave.Domain;
 using Microwave.Queries;
 
@@ -8,7 +9,7 @@ namespace WriteService2
     {
         public Task HandleAsync(Event2 domainEvent)
         {
-            return null;
+            return Task.CompletedTask;
         }
     }
     public class Entity2 : Entity, IApply<Event3>, IApply<Event4>
@@ -45,7 +46,7 @@ namespace WriteService2
         public Identity EntityId { get; }
     }
     
-    public class Event2
+    public class Event2 : ISubscribedDomainEvent
     {
         public Event2(Identity entityId)
         {

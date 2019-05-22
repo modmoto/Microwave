@@ -16,7 +16,7 @@ namespace Microwave.Application.UnitTests
         public async Task HandleIsOnlyCalledOnce()
         {
             var dateTimeOffset = DateTimeOffset.Now;
-            var domainEventWrapper = new DomainEventWrapper
+            var domainEventWrapper = new SubscribedDomainEventWrapper
             {
                 Created = dateTimeOffset,
                 DomainEvent = new TestEv2()
@@ -40,21 +40,21 @@ namespace Microwave.Application.UnitTests
     public class EventFeedMock : IEventFeed<AsyncEventHandler<TestEv2>>
     {
         private readonly DateTimeOffset _dateTimeOffset;
-        private readonly DomainEventWrapper _domainEventWrapper;
+        private readonly SubscribedDomainEventWrapper _domainEventWrapper;
 
-        public EventFeedMock(DateTimeOffset dateTimeOffset, DomainEventWrapper domainEventWrapper)
+        public EventFeedMock(DateTimeOffset dateTimeOffset, SubscribedDomainEventWrapper domainEventWrapper)
         {
             _dateTimeOffset = dateTimeOffset;
             _domainEventWrapper = domainEventWrapper;
         }
 
         #pragma warning disable 1998
-        public async Task<IEnumerable<DomainEventWrapper>> GetEventsAsync(DateTimeOffset since = default(DateTimeOffset))
+        public async Task<IEnumerable<SubscribedDomainEventWrapper>> GetEventsAsync(DateTimeOffset since = default(DateTimeOffset))
         #pragma warning restore 1998
         {
             if (since < _dateTimeOffset)
-                return new List<DomainEventWrapper> {_domainEventWrapper};
-            return new List<DomainEventWrapper>();
+                return new List<SubscribedDomainEventWrapper> {_domainEventWrapper};
+            return new List<SubscribedDomainEventWrapper>();
         }
     }
 
@@ -86,7 +86,7 @@ namespace Microwave.Application.UnitTests
         public Identity EntityId { get; }
     }
 
-    public class TestEv2 : IDomainEvent
+    public class TestEv2 : IDomainEvent, ISubscribedDomainEvent
     {
         public Identity EntityId { get; }
     }

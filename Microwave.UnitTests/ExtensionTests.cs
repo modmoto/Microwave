@@ -290,7 +290,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
         public override Type GetsCreatedOn => typeof(TestDomainEvent3);
     }
 
-    public class TestDomainEvent3
+    public class TestDomainEvent3 : ISubscribedDomainEvent
     {
         public TestDomainEvent3(Identity entityId, int age)
         {
@@ -350,7 +350,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
         }
     }
 
-    public class TestDomainEvent2
+    public class TestDomainEvent2 : ISubscribedDomainEvent
     {
         public TestDomainEvent2(GuidIdentity entityId, string otherName)
         {
@@ -362,7 +362,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
         public string OtherName { get; }
     }
 
-    public class TestDomainEvent1
+    public class TestDomainEvent1 : ISubscribedDomainEvent
     {
         public TestDomainEvent1(GuidIdentity entityId, string name)
         {

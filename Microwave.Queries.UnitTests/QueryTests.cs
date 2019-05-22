@@ -15,7 +15,7 @@ namespace Microwave.Queries.UnitTests
             var guidIdentity = GuidIdentity.Create();
             readModelTestForQuery.Handle(new TestEv(guidIdentity), 12);
 
-            Assert.AreEqual(guidIdentity, readModelTestForQuery.Id);
+            Assert.AreEqual(guidIdentity, readModelTestForQuery.EntityId);
         }
 
         [TestMethod]
@@ -26,7 +26,7 @@ namespace Microwave.Queries.UnitTests
             var guidIdentity = GuidIdentity.Create();
             readModelTestForQuery.Handle(new TestEv2(guidIdentity), 14);
 
-            Assert.AreEqual(guidIdentity, readModelTestForQuery.Id);
+            Assert.AreEqual(guidIdentity, readModelTestForQuery.EntityId);
             Assert.AreEqual(14, readModelTestForQuery.Version);
         }
     }
@@ -36,17 +36,17 @@ namespace Microwave.Queries.UnitTests
         public override Type GetsCreatedOn { get; }
         public void Handle(TestEv domainEvent)
         {
-            Id = domainEvent.EntityId;
+            EntityId = domainEvent.EntityId;
         }
 
         public void Handle(TestEv2 domainEvent, long version)
         {
-            Id = domainEvent.EntityId;
+            EntityId = domainEvent.EntityId;
             Version = version;
         }
 
         public long Version { get; set; }
 
-        public Identity Id { get; set; }
+        public Identity EntityId { get; set; }
     }
 }

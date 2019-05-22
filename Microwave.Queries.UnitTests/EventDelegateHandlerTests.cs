@@ -17,12 +17,12 @@ namespace Microwave.Queries.UnitTests
         public async Task MixedEventsInFeed()
         {
             var mock = new Mock<IEventFeed<AsyncEventHandler<TestEv>>>();
-            IEnumerable<DomainEventWrapper> list = new [] {
-                new DomainEventWrapper
+            IEnumerable<SubscribedDomainEventWrapper> list = new [] {
+                new SubscribedDomainEventWrapper
                 {
                     DomainEvent = new TestEv(GuidIdentity.Create(Guid.NewGuid()))
                 },
-                new DomainEventWrapper
+                new SubscribedDomainEventWrapper
                 {
                     DomainEvent = new TestEv2(GuidIdentity.Create(Guid.NewGuid()))
                 }
@@ -41,11 +41,11 @@ namespace Microwave.Queries.UnitTests
         public async Task MixedEventsInFeed_QuerryRepo()
         {
             var mock = new Mock<IEventFeed<QueryEventHandler<TestQ, TestEv>>>();
-            IEnumerable<DomainEventWrapper> list = new [] { new DomainEventWrapper
+            IEnumerable<SubscribedDomainEventWrapper> list = new [] { new SubscribedDomainEventWrapper
                 {
                     DomainEvent = new TestEv(GuidIdentity.Create(Guid.NewGuid()))
                 },
-                new DomainEventWrapper
+                new SubscribedDomainEventWrapper
                 {
                     DomainEvent = new TestEv2(GuidIdentity.Create(Guid.NewGuid()))
                 }
@@ -86,7 +86,7 @@ namespace Microwave.Queries.UnitTests
         public int WasCalled { get; set; }
     }
 
-    public class TestEv : IDomainEvent
+    public class TestEv : IDomainEvent, ISubscribedDomainEvent
     {
         public TestEv(GuidIdentity entityId)
         {
@@ -96,7 +96,7 @@ namespace Microwave.Queries.UnitTests
         public Identity EntityId { get; }
     }
 
-    public class TestEv2 : IDomainEvent
+    public class TestEv2 : IDomainEvent, ISubscribedDomainEvent
     {
         public TestEv2(GuidIdentity entityId)
         {

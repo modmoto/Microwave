@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using Microwave.Application;
 using Microwave.Domain;
 using Microwave.Queries;
 
@@ -23,7 +24,7 @@ namespace ReadService1
         }
     }
 
-    public class EventNotPublished
+    public class EventNotPublished : ISubscribedDomainEvent
     {
         public EventNotPublished(Identity entityId)
         {
@@ -55,7 +56,7 @@ namespace ReadService1
         }
     }
 
-    public class Event1
+    public class Event1 : ISubscribedDomainEvent
     {
         public Event1(Identity entityId)
         {
@@ -66,7 +67,7 @@ namespace ReadService1
     }
 
 
-    public class Event2
+    public class Event2 : ISubscribedDomainEvent
     {
         public Event2(Identity entityId)
         {
@@ -80,7 +81,7 @@ namespace ReadService1
         public Identity EntityId { get; }
     }
 
-    public class Event3
+    public class Event3 : ISubscribedDomainEvent
     {
         public Event3(Identity entityId)
         {
@@ -93,7 +94,7 @@ namespace ReadService1
     }
 
 
-    public class Event4
+    public class Event4 : ISubscribedDomainEvent
     {
         public Event4(Identity entityId)
         {

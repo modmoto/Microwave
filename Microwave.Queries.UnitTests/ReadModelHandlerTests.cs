@@ -124,7 +124,7 @@ namespace Microwave.Queries.UnitTests
             await readModelHandler.Update();
 
             var result = await queryRepository.Load<TestReadModelQuerries_VerionedHandle>(EntityGuid);
-            Assert.AreEqual(EntityGuid.Id, result.Value.Id.Id);
+            Assert.AreEqual(EntityGuid.Id, result.Value.EntityId.Id);
             Assert.AreEqual(12, result.Value.Version);
             Assert.AreEqual(14, result.Version);
         }
@@ -132,21 +132,21 @@ namespace Microwave.Queries.UnitTests
         public static GuidIdentity EntityGuid { get; set; }
         public static GuidIdentity EntityGuid2 { get; set; }
 
-        public static Task<IEnumerable<DomainEventWrapper>> MakeEvents()
+        public static Task<IEnumerable<SubscribedDomainEventWrapper>> MakeEvents()
         {
-            var wrapper1 = new DomainEventWrapper
+            var wrapper1 = new SubscribedDomainEventWrapper
             {
                 Version = 12,
                 DomainEvent = new TestEvnt1(EntityGuid, "testName")
             };
 
-            var wrapper2 = new DomainEventWrapper
+            var wrapper2 = new SubscribedDomainEventWrapper
             {
                 Version = 14,
                 DomainEvent = new TestEvnt2(EntityGuid2)
             };
-            var list = new List<DomainEventWrapper> {wrapper1, wrapper2};
-            return Task.FromResult((IEnumerable<DomainEventWrapper>) list);
+            var list = new List<SubscribedDomainEventWrapper> {wrapper1, wrapper2};
+            return Task.FromResult((IEnumerable<SubscribedDomainEventWrapper>) list);
         }
     }
 
@@ -171,11 +171,11 @@ namespace Microwave.Queries.UnitTests
     {
         public void Handle(TestEvnt2 domainEvent, long version)
         {
-            Id = domainEvent.EntityId;
+            EntityId = domainEvent.EntityId;
             Version = version;
         }
 
-        public Identity Id { get; set; }
+        public Identity EntityId { get; set; }
         public long Version { get; set; }
         public override Type GetsCreatedOn => typeof(TestEvnt2);
         public void Handle(TestEvnt3 domainEvent)
@@ -197,64 +197,64 @@ namespace Microwave.Queries.UnitTests
 
     public class FeedMock2 : IEventFeed<ReadModelHandler<TestReadModelQuerries>>
     {
-        public Task<IEnumerable<DomainEventWrapper>> GetEventsAsync(DateTimeOffset since = default(DateTimeOffset))
+        public Task<IEnumerable<SubscribedDomainEventWrapper>> GetEventsAsync(DateTimeOffset since = default(DateTimeOffset))
         {
-            var domainEventWrapper = new DomainEventWrapper
+            var domainEventWrapper = new SubscribedDomainEventWrapper
             {
                 Version = 12,
                 DomainEvent = new TestEvnt2(ReadModelHandlerTests.EntityGuid)
             };
-            var domainEventWrappe2 = new DomainEventWrapper
+            var domainEventWrappe2 = new SubscribedDomainEventWrapper
             {
                 Version = 14,
                 DomainEvent = new TestEvnt1(ReadModelHandlerTests.EntityGuid, "testName")
             };
-            var list = new List<DomainEventWrapper> {domainEventWrapper, domainEventWrappe2};
-            return Task.FromResult((IEnumerable<DomainEventWrapper>) list);
+            var list = new List<SubscribedDomainEventWrapper> {domainEventWrapper, domainEventWrappe2};
+            return Task.FromResult((IEnumerable<SubscribedDomainEventWrapper>) list);
         }
     }
 
     public class FeedMock5 : IEventFeed<ReadModelHandler<TestReadModelQuerries_OnlyOneEventAndVersionIsCounted>>
     {
-        public Task<IEnumerable<DomainEventWrapper>> GetEventsAsync(DateTimeOffset since = default(DateTimeOffset))
+        public Task<IEnumerable<SubscribedDomainEventWrapper>> GetEventsAsync(DateTimeOffset since = default(DateTimeOffset))
         {
-            var domainEventWrapper = new DomainEventWrapper
+            var domainEventWrapper = new SubscribedDomainEventWrapper
             {
                 Version = 12,
                 DomainEvent = new TestEvnt2(ReadModelHandlerTests.EntityGuid)
             };
-            var domainEventWrappe2 = new DomainEventWrapper
+            var domainEventWrappe2 = new SubscribedDomainEventWrapper
             {
                 Version = 14,
                 DomainEvent = new TestEvnt1(ReadModelHandlerTests.EntityGuid, "testName")
             };
-            var list = new List<DomainEventWrapper> {domainEventWrapper, domainEventWrappe2};
-            return Task.FromResult((IEnumerable<DomainEventWrapper>) list);
+            var list = new List<SubscribedDomainEventWrapper> {domainEventWrapper, domainEventWrappe2};
+            return Task.FromResult((IEnumerable<SubscribedDomainEventWrapper>) list);
         }
     }
 
     public class FeedMockVersioned : IEventFeed<ReadModelHandler<TestReadModelQuerries_VerionedHandle>>
     {
-        public Task<IEnumerable<DomainEventWrapper>> GetEventsAsync(DateTimeOffset since = default(DateTimeOffset))
+        public Task<IEnumerable<SubscribedDomainEventWrapper>> GetEventsAsync(DateTimeOffset since = default(DateTimeOffset))
         {
-            var domainEventWrapper = new DomainEventWrapper
+            var domainEventWrapper = new SubscribedDomainEventWrapper
             {
                 Version = 12,
                 DomainEvent = new TestEvnt2(ReadModelHandlerTests.EntityGuid)
             };
-            var domainEventWrappe2 = new DomainEventWrapper
+            var domainEventWrappe2 = new SubscribedDomainEventWrapper
             {
                 Version = 14,
                 DomainEvent = new TestEvnt3(ReadModelHandlerTests.EntityGuid)
             };
-            var list = new List<DomainEventWrapper> {domainEventWrapper, domainEventWrappe2};
-            return Task.FromResult((IEnumerable<DomainEventWrapper>) list);
+            var list = new List<SubscribedDomainEventWrapper> {domainEventWrapper, domainEventWrappe2};
+            return Task.FromResult((IEnumerable<SubscribedDomainEventWrapper>) list);
         }
     }
 
     public class FeedMock6 : IEventFeed<ReadModelHandler<TestReadModelQuerries_TwoParallelFeeds1>>
     {
-        public Task<IEnumerable<DomainEventWrapper>> GetEventsAsync(DateTimeOffset since = default(DateTimeOffset))
+        public Task<IEnumerable<SubscribedDomainEventWrapper>> GetEventsAsync(DateTimeOffset since = default(DateTimeOffset))
         {
             return ReadModelHandlerTests.MakeEvents();
         }
@@ -273,7 +273,7 @@ namespace Microwave.Queries.UnitTests
 
     public class FeedMock7 : IEventFeed<ReadModelHandler<TestReadModelQuerries_TwoParallelFeeds2>>
     {
-        public Task<IEnumerable<DomainEventWrapper>> GetEventsAsync(DateTimeOffset since = default(DateTimeOffset))
+        public Task<IEnumerable<SubscribedDomainEventWrapper>> GetEventsAsync(DateTimeOffset since = default(DateTimeOffset))
         {
             return ReadModelHandlerTests.MakeEvents();
         }
@@ -292,62 +292,62 @@ namespace Microwave.Queries.UnitTests
 
     public class FeedMock3 : IEventFeed<ReadModelHandler<TestReadModelQuerries>>
     {
-        public Task<IEnumerable<DomainEventWrapper>> GetEventsAsync(DateTimeOffset since = default(DateTimeOffset))
+        public Task<IEnumerable<SubscribedDomainEventWrapper>> GetEventsAsync(DateTimeOffset since = default(DateTimeOffset))
         {
-            var domainEventWrapper = new DomainEventWrapper
+            var domainEventWrapper = new SubscribedDomainEventWrapper
             {
                 Version = 12,
                 DomainEvent = new TestEvnt2(ReadModelHandlerTests.EntityGuid)
             };
-            var domainEventWrapper2 = new DomainEventWrapper
+            var domainEventWrapper2 = new SubscribedDomainEventWrapper
             {
                 Version = 12,
                 DomainEvent = new TestEvnt2(ReadModelHandlerTests.EntityGuid2)
             };
-            var list = new List<DomainEventWrapper> {domainEventWrapper, domainEventWrapper2};
-            return Task.FromResult((IEnumerable<DomainEventWrapper>) list);
+            var list = new List<SubscribedDomainEventWrapper> {domainEventWrapper, domainEventWrapper2};
+            return Task.FromResult((IEnumerable<SubscribedDomainEventWrapper>) list);
         }
     }
 
     public class FeedMock4 : IEventFeed<ReadModelHandler<TestReadModelQuerries>>
     {
-        public Task<IEnumerable<DomainEventWrapper>> GetEventsAsync(DateTimeOffset since = default(DateTimeOffset))
+        public Task<IEnumerable<SubscribedDomainEventWrapper>> GetEventsAsync(DateTimeOffset since = default(DateTimeOffset))
         {
-            var domainEventWrapper = new DomainEventWrapper
+            var domainEventWrapper = new SubscribedDomainEventWrapper
             {
                 Version = 12,
                 DomainEvent = new TestEvnt2(ReadModelHandlerTests.EntityGuid)
             };
-            var domainEventWrapper2 = new DomainEventWrapper
+            var domainEventWrapper2 = new SubscribedDomainEventWrapper
             {
                 Version = 12,
                 DomainEvent = new TestEvnt3(ReadModelHandlerTests.EntityGuid2)
             };
-            var list = new List<DomainEventWrapper> {domainEventWrapper, domainEventWrapper2};
-            return Task.FromResult((IEnumerable<DomainEventWrapper>) list);
+            var list = new List<SubscribedDomainEventWrapper> {domainEventWrapper, domainEventWrapper2};
+            return Task.FromResult((IEnumerable<SubscribedDomainEventWrapper>) list);
         }
     }
 
     public class FeedMock1 : IEventFeed<ReadModelHandler<TestReadModelQuerries>>
     {
-        public Task<IEnumerable<DomainEventWrapper>> GetEventsAsync(DateTimeOffset since = default(DateTimeOffset))
+        public Task<IEnumerable<SubscribedDomainEventWrapper>> GetEventsAsync(DateTimeOffset since = default(DateTimeOffset))
         {
-            var domainEventWrapper = new DomainEventWrapper
+            var domainEventWrapper = new SubscribedDomainEventWrapper
             {
                 Version = 15,
                 DomainEvent = new TestEvnt1(ReadModelHandlerTests.EntityGuid, "ersterName")
             };
-            var domainEventWrappe2 = new DomainEventWrapper
+            var domainEventWrappe2 = new SubscribedDomainEventWrapper
             {
                 Version = 17,
                 DomainEvent = new TestEvnt1(ReadModelHandlerTests.EntityGuid, "zweiterName")
             };
-            var list = new List<DomainEventWrapper> {domainEventWrapper, domainEventWrappe2};
-            return Task.FromResult((IEnumerable<DomainEventWrapper>) list);
+            var list = new List<SubscribedDomainEventWrapper> {domainEventWrapper, domainEventWrappe2};
+            return Task.FromResult((IEnumerable<SubscribedDomainEventWrapper>) list);
         }
     }
 
-    public class TestEvnt2 : IDomainEvent
+    public class TestEvnt2 : IDomainEvent, ISubscribedDomainEvent
     {
         public TestEvnt2(GuidIdentity entityId)
         {
@@ -357,7 +357,7 @@ namespace Microwave.Queries.UnitTests
         public Identity EntityId { get; }
     }
 
-    public class TestEvnt3 : IDomainEvent
+    public class TestEvnt3 : IDomainEvent, ISubscribedDomainEvent
     {
         public TestEvnt3(GuidIdentity entityId)
         {
@@ -367,7 +367,7 @@ namespace Microwave.Queries.UnitTests
         public Identity EntityId { get; }
     }
 
-    public class TestEvnt1 : IDomainEvent
+    public class TestEvnt1 : IDomainEvent, ISubscribedDomainEvent
     {
         public TestEvnt1(GuidIdentity entityId, string name)
         {

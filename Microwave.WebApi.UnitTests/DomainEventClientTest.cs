@@ -1,5 +1,6 @@
 using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microwave.Application;
 using Microwave.Discovery.Domain;
 using Microwave.Discovery.Domain.Services;
 using Microwave.Domain;
@@ -45,7 +46,7 @@ namespace Microwave.WebApi.UnitTests
         }
     }
 
-    public class Ev2 : IDomainEvent
+    public class Ev2 : IDomainEvent, ISubscribedDomainEvent
     {
         public Identity EntityId { get; }
     }

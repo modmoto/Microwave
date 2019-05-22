@@ -44,7 +44,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
         public override Type GetsCreatedOn => typeof(Ev);
     }
 
-    public class Ev : IDomainEvent
+    public class Ev : IDomainEvent, ISubscribedDomainEvent
     {
         public Ev(Identity entityId)
         {

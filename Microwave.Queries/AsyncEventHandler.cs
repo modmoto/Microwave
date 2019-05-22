@@ -1,11 +1,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microwave.Application;
 using Microwave.Domain;
 
 namespace Microwave.Queries
 {
-    public class AsyncEventHandler<T> : IAsyncEventHandler
+    public class AsyncEventHandler<T> : IAsyncEventHandler where T : ISubscribedDomainEvent
     {
         private readonly IEventFeed<AsyncEventHandler<T>>  _eventFeed;
         private readonly IEnumerable<IHandleAsync<T>> _handles;
