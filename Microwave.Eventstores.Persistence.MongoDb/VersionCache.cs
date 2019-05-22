@@ -1,7 +1,7 @@
 using System.Collections.Concurrent;
 using System.Linq;
 using System.Threading.Tasks;
-using Microwave.Domain;
+using Microwave.Domain.Identities;
 using MongoDB.Driver;
 
 namespace Microwave.Persistence.MongoDb

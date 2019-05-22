@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microwave.Domain;
+using Microwave.Domain.EventSourcing;
 using Microwave.Domain.Exceptions;
+using Microwave.Domain.Identities;
 using Microwave.Domain.Results;
-using Microwave.EventStores;
 using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
 

@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Microwave.Domain;
+using Microwave.Domain.Identities;
 
 namespace Microwave.WebApi.ApiFormatting.Identities
 {

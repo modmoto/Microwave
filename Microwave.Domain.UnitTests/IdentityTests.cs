@@ -1,4 +1,5 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microwave.Domain.Identities;
 
 namespace Microwave.Domain.UnitTests
 {

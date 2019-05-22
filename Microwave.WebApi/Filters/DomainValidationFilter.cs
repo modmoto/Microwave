@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Microwave.Domain;
+using Microwave.Domain.Validation;
 
 namespace Microwave.WebApi.Filters
 {

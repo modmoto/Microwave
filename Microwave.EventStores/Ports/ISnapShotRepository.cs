@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using Microwave.Domain;
+using Microwave.Domain.Identities;
 
 namespace Microwave.EventStores.Ports
 {

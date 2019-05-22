@@ -1,5 +1,5 @@
 using System;
-using Microwave.Domain;
+using Microwave.Domain.Identities;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 

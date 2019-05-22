@@ -1,6 +1,8 @@
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microwave.EventStores;
+using Microwave.Domain.EventSourcing;
+using Microwave.Domain.Identities;
+using Microwave.Domain.Validation;
 
 namespace Microwave.Domain.UnitTests
 {

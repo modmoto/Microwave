@@ -1,4 +1,4 @@
-﻿namespace Microwave.Domain
+﻿namespace Microwave.Domain.Validation
 {
     public class DomainError
     {

@@ -1,4 +1,4 @@
-using Microwave.Domain;
+using Microwave.Domain.Identities;
 
 namespace Microwave.Queries
 {

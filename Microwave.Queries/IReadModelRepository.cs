@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microwave.Domain;
+using Microwave.Domain.Identities;
 using Microwave.Domain.Results;
 
 namespace Microwave.Queries

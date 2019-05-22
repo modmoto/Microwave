@@ -1,5 +1,5 @@
-using Microwave.Domain;
-using Microwave.EventStores;
+using Microwave.Domain.EventSourcing;
+using Microwave.Domain.Identities;
 
 namespace WriteService1
 {

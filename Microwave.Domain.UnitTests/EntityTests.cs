@@ -1,7 +1,8 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microwave.EventStores;
+using Microwave.Domain.EventSourcing;
+using Microwave.Domain.Identities;
 
 namespace Microwave.Domain.UnitTests
 {

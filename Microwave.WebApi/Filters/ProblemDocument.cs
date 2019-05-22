@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
-using Microwave.Domain;
+using Microwave.Domain.Validation;
 using Newtonsoft.Json;
 
 namespace Microwave.WebApi.Filters

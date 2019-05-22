@@ -1,6 +1,6 @@
 using System;
 
-namespace Microwave.Domain
+namespace Microwave.Domain.Identities
 {
     public class GuidIdentity : Identity
     {

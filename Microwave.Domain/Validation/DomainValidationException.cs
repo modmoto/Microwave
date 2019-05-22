@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 
-namespace Microwave.Domain
+namespace Microwave.Domain.Validation
 {
     [Serializable]
     public class DomainValidationException : Exception

@@ -1,4 +1,6 @@
-﻿namespace Microwave.Domain.Results
+﻿using Microwave.Domain.Identities;
+
+namespace Microwave.Domain.Results
 {
     public abstract class Result
     {

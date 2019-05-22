@@ -1,5 +1,6 @@
 ﻿using System;
 using Microwave.Domain.Exceptions;
+using Microwave.Domain.Identities;
 
 namespace Microwave.Domain.Results
 {

@@ -1,7 +1,8 @@
 using System;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microwave.Domain;
+using Microwave.Domain.EventSourcing;
+using Microwave.Domain.Identities;
 using Microwave.EventStores;
 using Microwave.WebApi.Querries;
 using Newtonsoft.Json;

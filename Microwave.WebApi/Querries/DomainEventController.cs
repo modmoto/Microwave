@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microwave.Domain;
+using Microwave.Domain.Identities;
 using Microwave.EventStores;
 
 namespace Microwave.WebApi.Querries

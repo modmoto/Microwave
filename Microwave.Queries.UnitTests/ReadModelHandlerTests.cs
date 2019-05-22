@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microwave.Domain;
+using Microwave.Domain.EventSourcing;
+using Microwave.Domain.Identities;
 using Microwave.Domain.Results;
-using Microwave.EventStores;
 using Microwave.Persistence.MongoDb.UnitTests.Eventstores;
 using Microwave.Queries.Persistence.MongoDb;
 

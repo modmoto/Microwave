@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Reflection;
-using Microwave.Domain;
+using Microwave.Domain.Identities;
 using Microwave.Queries;
 using Newtonsoft.Json.Linq;
 

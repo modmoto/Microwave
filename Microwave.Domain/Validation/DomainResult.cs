@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microwave.Domain.EventSourcing;
 
-namespace Microwave.Domain
+namespace Microwave.Domain.Validation
 {
     public class DomainResult
     {
