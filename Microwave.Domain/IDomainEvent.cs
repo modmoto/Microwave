@@ -1,6 +1,4 @@
-using Microwave.Domain;
-
-namespace Microwave.EventStores
+namespace Microwave.Domain
 {
     public interface IDomainEvent
     {

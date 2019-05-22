@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Microwave.Domain;
 
 namespace Microwave.EventStores
 {
