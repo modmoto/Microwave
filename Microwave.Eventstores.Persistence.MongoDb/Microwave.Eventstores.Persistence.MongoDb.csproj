@@ -11,9 +11,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Microwave.Discovery\Microwave.Discovery.csproj" />
+      <ProjectReference Include="..\Microwave.Configuration.MongoDb\Microwave.Configuration.MongoDb.csproj" />
       <ProjectReference Include="..\Microwave.EventStores\Microwave.EventStores.csproj" />
-      <ProjectReference Include="..\Microwave.Queries\Microwave.Queries.csproj" />
     </ItemGroup>
 
 </Project>

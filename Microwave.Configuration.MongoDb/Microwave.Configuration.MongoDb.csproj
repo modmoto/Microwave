@@ -9,10 +9,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Microwave.Configuration.MongoDb\Microwave.Configuration.MongoDb.csproj" />
-      <ProjectReference Include="..\Microwave.Discovery\Microwave.Discovery.csproj" />
       <ProjectReference Include="..\Microwave.Domain\Microwave.Domain.csproj" />
-      <ProjectReference Include="..\Microwave.Queries\Microwave.Queries.csproj" />
     </ItemGroup>
 
 </Project>
