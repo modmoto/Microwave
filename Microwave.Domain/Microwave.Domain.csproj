@@ -1,6 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <ProjectGuid>7fe6755d-3fd5-4517-b4c0-be69f2bd6809</ProjectGuid>
     <TargetFramework>netstandard2.0</TargetFramework>
     <DebugType>full</DebugType>
   </PropertyGroup>
