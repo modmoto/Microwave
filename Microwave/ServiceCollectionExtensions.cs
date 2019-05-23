@@ -242,13 +242,10 @@ namespace Microwave
         public static IServiceCollection AddDomainEventRegistration(this IServiceCollection services,
             Assembly assembly, EventRegistration eventRegistration)
         {
-            var ifs = assembly.GetTypes().SelectMany(i => i.GetInterfaces()).Where(i => i.IsGenericType
-                                           &&
-                                           (    i.GetGenericTypeDefinition() == typeof(IHandle<>)
-                                                || i.GetGenericTypeDefinition() == typeof(IHandleAsync<>))).ToList();
+            var remoteEvents =
+                assembly.GetTypes().Where(t => t.GetInterfaces().Contains(typeof(ISubscribedDomainEvent)));
 
-            var domaineventsInIHandles = ifs.Select(i => i.GenericTypeArguments.Single()).ToList();
-            foreach (var domainEventType in domaineventsInIHandles)
+            foreach (var domainEventType in remoteEvents)
             {
                 var eventName = domainEventType.Name;
                 if (eventRegistration.ContainsKey(eventName))
