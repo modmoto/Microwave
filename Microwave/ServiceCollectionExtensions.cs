@@ -263,16 +263,6 @@ namespace Microwave
             return services;
         }
 
-        private static bool ContainsIHandleOrIHandleAsync(Type ev)
-        {
-            var interfaces = ev.GetInterfaces();
-            var any = interfaces.Any(i => i.IsGenericType
-                                          &&
-                                          (    i.GetGenericTypeDefinition() == typeof(IHandle<>)
-                                            || i.GetGenericTypeDefinition() == typeof(IHandleAsync<>)));
-            return any;
-        }
-
         private static IServiceCollection AddMicrowaveMvcExtensions(this IServiceCollection services)
         {
             services.AddMvcCore(config =>
