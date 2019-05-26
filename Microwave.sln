@@ -1,4 +1,4 @@
-
+﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27703.2026
@@ -40,14 +40,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microwave.UI", "Microwave.UI\Microwave.UI.csproj", "{573E39CB-D13B-41E9-9754-136344202C98}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microwave.UI.UnitTests", "Microwave.UI.UnitTests\Microwave.UI.UnitTests.csproj", "{10F2D68D-5EE4-4DC4-81AB-DAA30A6BF951}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReadService1", "TestServices\ReadService1\ReadService1.csproj", "{37CCE04E-C754-4F01-BF99-A4FE97F624DE}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServerConfig", "TestServices\ServerConfig\ServerConfig.csproj", "{981D4D16-88E3-4E85-9038-41FAF813A0F6}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WriteService1", "TestServices\WriteService1\WriteService1.csproj", "{ED77B8CD-D464-4F7A-955C-9B89CAA4A167}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WriteService2", "TestServices\WriteService2\WriteService2.csproj", "{F95DC020-1656-433D-811B-6146E07C449B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microwave.Queries.Persistence.MongoDb", "Microwave.Queries.Persistence.MongoDb\Microwave.Queries.Persistence.MongoDb.csproj", "{E245AB65-88DD-4CAC-BDCE-E923CB87067B}"
 EndProject
@@ -131,22 +123,6 @@ Global
 		{10F2D68D-5EE4-4DC4-81AB-DAA30A6BF951}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{10F2D68D-5EE4-4DC4-81AB-DAA30A6BF951}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{10F2D68D-5EE4-4DC4-81AB-DAA30A6BF951}.Release|Any CPU.Build.0 = Release|Any CPU
-		{37CCE04E-C754-4F01-BF99-A4FE97F624DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{37CCE04E-C754-4F01-BF99-A4FE97F624DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{37CCE04E-C754-4F01-BF99-A4FE97F624DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{37CCE04E-C754-4F01-BF99-A4FE97F624DE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{981D4D16-88E3-4E85-9038-41FAF813A0F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{981D4D16-88E3-4E85-9038-41FAF813A0F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{981D4D16-88E3-4E85-9038-41FAF813A0F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{981D4D16-88E3-4E85-9038-41FAF813A0F6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{ED77B8CD-D464-4F7A-955C-9B89CAA4A167}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{ED77B8CD-D464-4F7A-955C-9B89CAA4A167}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{ED77B8CD-D464-4F7A-955C-9B89CAA4A167}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{ED77B8CD-D464-4F7A-955C-9B89CAA4A167}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F95DC020-1656-433D-811B-6146E07C449B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F95DC020-1656-433D-811B-6146E07C449B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F95DC020-1656-433D-811B-6146E07C449B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F95DC020-1656-433D-811B-6146E07C449B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E245AB65-88DD-4CAC-BDCE-E923CB87067B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E245AB65-88DD-4CAC-BDCE-E923CB87067B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E245AB65-88DD-4CAC-BDCE-E923CB87067B}.Release|Any CPU.ActiveCfg = Release|Any CPU
