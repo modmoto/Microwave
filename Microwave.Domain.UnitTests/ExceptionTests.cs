@@ -5,7 +5,7 @@ using Microwave.Domain.Identities;
 using Microwave.EventStores.Ports;
 using Microwave.Queries;
 
-namespace Microwave.Application.UnitTests
+namespace Microwave.Domain.UnitTests
 {
     [TestClass]
     public class ExceptionTests

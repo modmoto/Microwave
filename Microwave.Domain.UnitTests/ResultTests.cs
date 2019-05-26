@@ -3,7 +3,7 @@ using Microwave.Domain.Exceptions;
 using Microwave.Domain.Identities;
 using Microwave.Domain.Results;
 
-namespace Microwave.Application.UnitTests
+namespace Microwave.Domain.UnitTests
 {
     [TestClass]
     public class ResultTests
