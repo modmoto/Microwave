@@ -316,7 +316,6 @@ namespace Microwave
         assembly)
         {
             var addTransient = AddTransient();
-            var addTransientSingle = AddTransientSingle();
 
             var handleAsyncInterfaces = assembly.GetTypes().Where(ImplementsIhandleAsyncInterface);
             var genericInterfaceTypeOfFeed = typeof(IEventFeed<>);
@@ -360,7 +359,6 @@ namespace Microwave
         private static IServiceCollection AddReadmodelHandling(this IServiceCollection services, Assembly assembly)
         {
             var addTransient = AddTransient();
-            var addTransientSingle = AddTransientSingle();
 
             var readModels = assembly.GetTypes().Where(ImplementsIhandleInterfaceAndReadModel).ToList();
             var genericInterfaceTypeOfFeed = typeof(IEventFeed<>);
@@ -402,13 +400,6 @@ namespace Microwave
         {
             return myType.GetInterfaces()
                        .Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IHandle<>)) && myType.BaseType == typeof(ReadModel);
-        }
-
-        private static MethodInfo AddTransientSingle()
-        {
-            return typeof(ServiceCollectionServiceExtensions).GetMethods().Single(m =>
-                m.Name == "AddTransient" && m.GetGenericArguments().Length == 1 &&
-                m.GetParameters().Length == 1);
         }
 
         private static MethodInfo AddTransient()
