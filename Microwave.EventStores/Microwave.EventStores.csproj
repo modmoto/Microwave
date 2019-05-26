@@ -2,7 +2,6 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <DebugType>full</DebugType>
-    <ProjectGuid>{b071b87a-27a1-4710-b6b2-d3c571dceb9c}</ProjectGuid>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Microwave.Domain\Microwave.Domain.csproj" />

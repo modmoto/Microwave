@@ -3,7 +3,6 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <DebugType>full</DebugType>
     <RootNamespace>Microwave</RootNamespace>
-    <ProjectGuid>{6224c484-3e23-4f06-a749-195c1e478110}</ProjectGuid>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60">
