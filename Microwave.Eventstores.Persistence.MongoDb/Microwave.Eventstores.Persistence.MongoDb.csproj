@@ -4,6 +4,7 @@
         <TargetFramework>netstandard2.0</TargetFramework>
         <DebugType>full</DebugType>
         <RootNamespace>Microwave.Persistence.MongoDb</RootNamespace>
+        <ProjectGuid>{27809ea3-795e-468a-afaf-f343e739b505}</ProjectGuid>
     </PropertyGroup>
 
     <ItemGroup>
