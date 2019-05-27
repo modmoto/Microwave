@@ -247,14 +247,13 @@ namespace Microwave.Persistence.MongoDb.UnitTests.Eventstores
         }
 
         [TestMethod]
-        public async Task LoadType_NotFoundTIsCorrect()
+        public async Task LoadType_EmptyListWhenNoEventsPresentButAreBeingPublished()
         {
             var eventRepository = new EventRepository(EventDatabase, new VersionCache(EventDatabase));
 
-            var result = await eventRepository.LoadEventsByTypeAsync("TypeNotInserted");
+            var result = await eventRepository.LoadEventsByTypeAsync("TypeNotInsertedButSubscribed");
 
-            var notFoundException = Assert.ThrowsException<NotFoundException>(() => result.Value);
-            Assert.AreEqual("Could not find DomainEvents with ID TypeNotInserted", notFoundException.Message);
+            Assert.AreEqual(0, result.Value.Count());
         }
 
         [TestMethod]

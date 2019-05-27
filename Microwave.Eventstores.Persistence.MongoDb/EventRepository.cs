@@ -72,13 +72,6 @@ namespace Microwave.Persistence.MongoDb
             var mongoCollection = _database.GetCollection<DomainEventDbo>(_eventCollectionName);
             var domainEventTypeDbos = (await mongoCollection.FindAsync(ev => ev.EventType == eventType && ev.Created > tickSince)).ToList();
 
-            if (!domainEventTypeDbos.Any())
-            {
-                var eventDbos = await mongoCollection.Find(ev => ev.EventType == eventType).FirstOrDefaultAsync();
-                if (eventDbos == null) return Result<IEnumerable<DomainEventWrapper>>.NotFound(StringIdentity.Create(eventType));
-                return Result<IEnumerable<DomainEventWrapper>>.Ok(new List<DomainEventWrapper>());
-            }
-
             var domainEvents = domainEventTypeDbos.Select(dbo =>
             {
                 return new DomainEventWrapper
