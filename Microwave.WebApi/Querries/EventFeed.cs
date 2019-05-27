@@ -10,14 +10,14 @@ namespace Microwave.WebApi.Querries
 {
     public class EventFeed<T> : IEventFeed<T>
     {
-        private readonly DomainEventWrapperListDeserializer _objectConverter;
+        private readonly IDomainEventFactory _eventFactory;
         private readonly IDomainEventClientFactory _clientFactory;
 
         public EventFeed(
-            DomainEventWrapperListDeserializer objectConverter,
+            IDomainEventFactory eventFactory,
             IDomainEventClientFactory clientFactory)
         {
-            _objectConverter = objectConverter;
+            _eventFactory = eventFactory;
             _clientFactory = clientFactory;
         }
 
@@ -32,7 +32,7 @@ namespace Microwave.WebApi.Querries
                     var response = await client.GetAsync($"?timeStamp={isoString}");
                     if (response.StatusCode != HttpStatusCode.OK) return new List<SubscribedDomainEventWrapper>();
                     var content = await response.Content.ReadAsStringAsync();
-                    var eventsByTypeAsync = _objectConverter.Deserialize(content);
+                    var eventsByTypeAsync = _eventFactory.Deserialize(content);
                     return eventsByTypeAsync;
                 }
             }

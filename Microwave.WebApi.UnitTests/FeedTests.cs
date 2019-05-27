@@ -33,9 +33,8 @@ namespace Microwave.WebApi.UnitTests
             var factoryMock = new Mock<IDomainEventClientFactory>();
             factoryMock.Setup(m => m.GetClient<ReadModelHandler<TestReadModel>>()).ReturnsAsync(domainOverallEventClient);
             var domainEventFactory = new DomainEventFactory(_eventTypeRegistration);
-            var domainEventWrapperListDeserializer = new DomainEventWrapperListDeserializer(new JSonHack(), domainEventFactory);
             var readModelFeed = new EventFeed<ReadModelHandler<TestReadModel>>(
-                domainEventWrapperListDeserializer,
+                domainEventFactory,
                 factoryMock.Object);
             var domainEvents = await readModelFeed.GetEventsAsync();
             var domainEventWrappers = domainEvents.ToList();
@@ -57,8 +56,7 @@ namespace Microwave.WebApi.UnitTests
             factoryMock.Setup(m => m.GetClient<ReadModelHandler<TestReadModel>>()).ReturnsAsync(domainOverallEventClient);
 
             var domainEventFactory = new DomainEventFactory(_eventTypeRegistration);
-            var domainEventWrapperListDeserializer = new DomainEventWrapperListDeserializer(new JSonHack(), domainEventFactory);
-            var readModelFeed = new EventFeed<ReadModelHandler<TestReadModel>>(domainEventWrapperListDeserializer, factoryMock.Object);
+            var readModelFeed = new EventFeed<ReadModelHandler<TestReadModel>>(domainEventFactory, factoryMock.Object);
             var domainEvents = await readModelFeed.GetEventsAsync();
             var domainEventWrappers = domainEvents.ToList();
 

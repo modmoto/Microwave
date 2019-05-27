@@ -111,15 +111,11 @@ namespace Microwave
             services.AddTransient<IDiscoveryClientFactory, DiscoveryClientFactory>();
             services.AddTransient<IStatusRepository, StatusRepository>();
 
-            services.AddTransient<JSonHack>();
-            services.AddTransient<DomainEventWrapperListDeserializer>();
-
             services.AddTransient<IEventStore, EventStore>();
             services.AddTransient<IEventRepository, EventRepository>();
             services.AddSingleton<IVersionCache, VersionCache>();
             services.AddTransient<ISnapShotRepository, SnapShotRepository>();
 
-            services.AddTransient<JSonHack>();
             services.AddTransient<IVersionRepository, VersionRepository>();
             services.AddTransient<IReadModelRepository, ReadModelRepository>();
             services.AddTransient<AsyncEventDelegator>();
