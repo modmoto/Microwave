@@ -10,6 +10,7 @@
       <Content Include="Pages\ServiceMapPage.cshtml" />
       <Content Include="Pages\Shared\_Layout.cshtml" />
       <Content Include="Pages\_ViewImports.cshtml" />
+      <Content Include="Pages\_ViewStart.cshtml" />
     </ItemGroup>
 
     <ItemGroup>
