@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <TargetFramework>netcoreapp2.2</TargetFramework>
-
+        <DebugType>None</DebugType>
         <IsPackable>false</IsPackable>
     </PropertyGroup>
 
@@ -19,6 +19,34 @@
       <ProjectReference Include="..\Microwave.Eventstores.Persistence.MongoDb\Microwave.Eventstores.Persistence.MongoDb.csproj" />
       <ProjectReference Include="..\Microwave.Queries.Persistence.MongoDb\Microwave.Queries.Persistence.MongoDb.csproj" />
       <ProjectReference Include="..\Microwave\Microwave.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <_UnmanagedRegistrationCache Remove="obj\Microwave.Persistence.MongoDb.UnitTests.csproj.UnmanagedRegistration.cache" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <_ResolveComReferenceCache Remove="obj\Debug\netcoreapp2.2\Microwave.Persistence.MongoDb.UnitTests.csproj.ResolveComReference.cache" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <IntermediateAssembly Remove="obj\Debug\netcoreapp2.2\Microwave.Persistence.MongoDb.UnitTests.dll" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <_DebugSymbolsIntermediatePath Remove="obj\Debug\netcoreapp2.2\Microwave.Persistence.MongoDb.UnitTests.pdb" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <_DeploymentManifestEntryPoint Remove="obj\Debug\netcoreapp2.2\Microwave.Persistence.MongoDb.UnitTests.dll" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ApplicationManifest Remove="obj\Debug\netcoreapp2.2\Native.Microwave.Persistence.MongoDb.UnitTests.manifest" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <DeployManifest Remove="obj\Debug\netcoreapp2.2\Microwave.Persistence.MongoDb.UnitTests.application" />
     </ItemGroup>
 
 </Project>
