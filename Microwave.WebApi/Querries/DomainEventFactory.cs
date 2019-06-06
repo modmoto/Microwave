@@ -39,6 +39,7 @@ namespace Microwave.WebApi.Querries
                 .OrdinalIgnoreCase);
                 var domainevent = (ISubscribedDomainEvent) domainEventJObject.ToObject(type, serializer);
 
+                if (domainevent.EntityId == null) throw new DomainEventNotAssignableToEntityException(domainevent);
                 yield return new SubscribedDomainEventWrapper
                 {
                     Created = created,

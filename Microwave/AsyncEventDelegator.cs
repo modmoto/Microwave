@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microwave.Discovery;
 using Microwave.Queries;
+using Microwave.WebApi.Querries;
 
 namespace Microwave
 {
@@ -43,6 +44,13 @@ namespace Microwave
             try
             {
                 await action.Invoke();
+            }
+            catch (DomainEventNotAssignableToEntityException notAssignableToEntityException)
+            {
+                var currentForeground = Console.ForegroundColor;
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.Error.WriteLine(notAssignableToEntityException.Message);
+                Console.ForegroundColor = currentForeground;
             }
             catch (Exception e)
             {
