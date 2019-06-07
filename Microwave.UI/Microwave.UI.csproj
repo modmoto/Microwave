@@ -1,23 +1,13 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
     <PropertyGroup>
         <TargetFramework>netstandard2.0</TargetFramework>
         <DebugType>full</DebugType>
     </PropertyGroup>
 
-    <ItemGroup>
-      <Content Include="Pages\Index.cshtml" />
-      <Content Include="Pages\ServiceMapPage.cshtml" />
-      <Content Include="Pages\Shared\_Layout.cshtml" />
-      <Content Include="Pages\_ViewImports.cshtml" />
-      <Content Include="Pages\_ViewStart.cshtml" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <PackageReference Include="Microsoft.AspNetCore.Mvc">
-            <Version>2.2.0</Version>
-        </PackageReference>
-    </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
+  </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\Microwave.Discovery\Microwave.Discovery.csproj" />
