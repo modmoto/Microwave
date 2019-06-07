@@ -23,7 +23,6 @@ using Microwave.WebApi.Discovery;
 using Microwave.WebApi.Filters;
 using Microwave.WebApi.Querries;
 using MongoDB.Bson.Serialization;
-using MicrowaveDatabase = Microwave.Persistence.MongoDb.MicrowaveDatabase;
 
 namespace Microwave
 {
