@@ -49,6 +49,18 @@ namespace Microwave.Domain.Validation
             return new DomainResult(new List<DomainError> { domainDomainError });
         }
 
+        public static DomainResult Error(string domainDomainErrorKey)
+        {
+            var domainError = new TypelessDomainError(domainDomainErrorKey);
+            return new DomainResult(new List<DomainError> { domainError });
+        }
+
+        public static DomainResult Error(Enum domainDomainErrorKey)
+        {
+            var domainError = new EnumDomainError(domainDomainErrorKey);
+            return new DomainResult(new List<DomainError> { domainError });
+        }
+
         public static DomainResult Error(IEnumerable<DomainError> domainErrors)
         {
             return new DomainResult(domainErrors);

@@ -29,6 +29,32 @@ namespace Microwave.Domain.UnitTests
 
             Assert.ThrowsException<DomainValidationException>(() => changeId.DomainEvents.Count());
         }
+
+        [TestMethod]
+        public void CreatTypelessErrorResult()
+        {
+            var domainDomainErrorKey = "errorKey";
+            var domainResult = DomainResult.Error(domainDomainErrorKey);
+
+            var domainError = domainResult.DomainErrors.Single();
+
+            Assert.AreEqual(domainError.ErrorType, domainDomainErrorKey);
+        }
+
+        [TestMethod]
+        public void CreatEnumErrorResult()
+        {
+            var domainResult = DomainResult.Error(MyTestEnum.WhateverError);
+
+            var domainError = domainResult.DomainErrors.Single();
+
+            Assert.AreEqual(domainError.ErrorType, MyTestEnum.WhateverError.ToString());
+        }
+    }
+
+    public enum MyTestEnum
+    {
+        WhateverError
     }
 
     public class TestEntity : Entity
