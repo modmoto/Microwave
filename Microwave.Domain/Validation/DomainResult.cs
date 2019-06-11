@@ -55,10 +55,22 @@ namespace Microwave.Domain.Validation
             return new DomainResult(new List<DomainError> { domainError });
         }
 
+        public static DomainResult Error(IEnumerable<string> domainDomainErrorKeys)
+        {
+            var enumDomainErrors = domainDomainErrorKeys.Select(e => new TypelessDomainError(e));
+            return new DomainResult(enumDomainErrors);
+        }
+
         public static DomainResult Error(Enum domainDomainErrorKey)
         {
             var domainError = new EnumDomainError(domainDomainErrorKey);
             return new DomainResult(new List<DomainError> { domainError });
+        }
+
+        public static DomainResult Error(IEnumerable<Enum> domainDomainErrorKeys)
+        {
+            var enumDomainErrors = domainDomainErrorKeys.Select(e => new EnumDomainError(e));
+            return new DomainResult(enumDomainErrors);
         }
 
         public static DomainResult Error(IEnumerable<DomainError> domainErrors)

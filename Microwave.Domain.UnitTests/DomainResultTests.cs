@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Domain.EventSourcing;
@@ -39,6 +41,27 @@ namespace Microwave.Domain.UnitTests
             var domainError = domainResult.DomainErrors.Single();
 
             Assert.AreEqual(domainError.ErrorType, domainDomainErrorKey);
+        }
+
+        [TestMethod]
+        public void CreatTypelessErrorResultList()
+        {
+            var domainDomainErrorKey = "errorKey";
+            var domainResult = DomainResult.Error(new List<string> {domainDomainErrorKey, domainDomainErrorKey});
+
+            var domainError = domainResult.DomainErrors.First();
+
+            Assert.AreEqual(domainError.ErrorType, domainDomainErrorKey);
+        }
+
+        [TestMethod]
+        public void CreatEnumErrorResultList()
+        {
+            var domainResult = DomainResult.Error(new List<Enum> {MyTestEnum.WhateverError, MyTestEnum.WhateverError});
+
+            var domainError = domainResult.DomainErrors.First();
+
+            Assert.AreEqual(domainError.ErrorType, MyTestEnum.WhateverError.ToString());
         }
 
         [TestMethod]
