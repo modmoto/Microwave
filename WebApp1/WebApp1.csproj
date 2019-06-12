@@ -11,8 +11,7 @@
 
 
   <ItemGroup>
-    <ProjectReference Include="..\RazorUIClassLib\RazorUIClassLib.csproj" />
+    <ProjectReference Include="..\Microwave.UI\Microwave.UI.csproj" />
   </ItemGroup>
-
-
+  
 </Project>

@@ -47,7 +47,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServerConfig", "TestService
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApp1", "WebApp1\WebApp1.csproj", "{D297B9D2-16DC-4AB3-B117-FDA590865BC0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RazorUIClassLib", "RazorUIClassLib\RazorUIClassLib.csproj", "{446A53A9-B95A-4B3E-B067-6FBC126173E4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microwave.UI", "Microwave.UI\Microwave.UI.csproj", "{446A53A9-B95A-4B3E-B067-6FBC126173E4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
