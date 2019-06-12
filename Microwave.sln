@@ -45,8 +45,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microwave.Configuration.Mon
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServerConfig", "TestServices\ServerConfig\ServerConfig.csproj", "{B05625BB-B451-4490-B712-5F954B41909E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApp1", "WebApp1\WebApp1.csproj", "{D297B9D2-16DC-4AB3-B117-FDA590865BC0}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microwave.UI", "Microwave.UI\Microwave.UI.csproj", "{446A53A9-B95A-4B3E-B067-6FBC126173E4}"
 EndProject
 Global
@@ -135,10 +133,6 @@ Global
 		{B05625BB-B451-4490-B712-5F954B41909E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B05625BB-B451-4490-B712-5F954B41909E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B05625BB-B451-4490-B712-5F954B41909E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D297B9D2-16DC-4AB3-B117-FDA590865BC0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D297B9D2-16DC-4AB3-B117-FDA590865BC0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D297B9D2-16DC-4AB3-B117-FDA590865BC0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D297B9D2-16DC-4AB3-B117-FDA590865BC0}.Release|Any CPU.Build.0 = Release|Any CPU
 		{446A53A9-B95A-4B3E-B067-6FBC126173E4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{446A53A9-B95A-4B3E-B067-6FBC126173E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{446A53A9-B95A-4B3E-B067-6FBC126173E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
