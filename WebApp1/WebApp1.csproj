@@ -13,5 +13,5 @@
   <ItemGroup>
     <ProjectReference Include="..\Microwave.UI\Microwave.UI.csproj" />
   </ItemGroup>
-  
+
 </Project>
