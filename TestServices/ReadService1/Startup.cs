@@ -22,13 +22,13 @@ namespace ReadService1
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
-            services.AddMicrowave(_microwaveConfiguration);
+           // services.AddMicrowave(_microwaveConfiguration);
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             app.UseMvc();
-            app.RunMicrowaveQueries();
+           // app.RunMicrowaveQueries();
         }
     }
 }
