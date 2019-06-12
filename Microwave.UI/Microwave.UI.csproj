@@ -8,5 +8,10 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Microwave.Discovery\Microwave.Discovery.csproj" />
+    <ProjectReference Include="..\Microwave.Domain\Microwave.Domain.csproj" />
+  </ItemGroup>
   
 </Project>
