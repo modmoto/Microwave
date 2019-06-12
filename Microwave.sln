@@ -43,8 +43,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microwave.Queries.Persisten
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microwave.Configuration.MongoDb", "Microwave.Configuration.MongoDb\Microwave.Configuration.MongoDb.csproj", "{6F7E86A7-2124-4995-A748-0BD78D98576F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServerConfig", "TestServices\ServerConfig\ServerConfig.csproj", "{B05625BB-B451-4490-B712-5F954B41909E}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microwave.UI", "Microwave.UI\Microwave.UI.csproj", "{446A53A9-B95A-4B3E-B067-6FBC126173E4}"
 EndProject
 Global
@@ -129,10 +127,6 @@ Global
 		{6F7E86A7-2124-4995-A748-0BD78D98576F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6F7E86A7-2124-4995-A748-0BD78D98576F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6F7E86A7-2124-4995-A748-0BD78D98576F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B05625BB-B451-4490-B712-5F954B41909E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B05625BB-B451-4490-B712-5F954B41909E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B05625BB-B451-4490-B712-5F954B41909E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B05625BB-B451-4490-B712-5F954B41909E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{446A53A9-B95A-4B3E-B067-6FBC126173E4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{446A53A9-B95A-4B3E-B067-6FBC126173E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{446A53A9-B95A-4B3E-B067-6FBC126173E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
