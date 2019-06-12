@@ -260,7 +260,7 @@ namespace Microwave
 
         private static IServiceCollection AddMicrowaveMvcExtensions(this IServiceCollection services)
         {
-            services.AddMvcCore(config =>
+            services.AddMvc(config =>
             {
                 config.Filters.Add(new DomainValidationFilter());
                 config.Filters.Add(new NotFoundFilter());
