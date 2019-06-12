@@ -11,7 +11,10 @@
 
 
   <ItemGroup>
+    <ProjectReference Include="..\Microwave.Queries\Microwave.Queries.csproj" />
     <ProjectReference Include="..\Microwave.UI\Microwave.UI.csproj" />
+    <ProjectReference Include="..\Microwave\Microwave.csproj" />
+    <ProjectReference Include="..\TestServices\ServerConfig\ServerConfig.csproj" />
   </ItemGroup>
 
 </Project>
