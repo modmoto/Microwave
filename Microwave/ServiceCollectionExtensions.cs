@@ -10,7 +10,6 @@ using Microwave.Discovery;
 using Microwave.Discovery.Domain.Events;
 using Microwave.Domain;
 using Microwave.Domain.EventSourcing;
-using Microwave.Domain.Identities;
 using Microwave.EventStores;
 using Microwave.EventStores.Ports;
 using Microwave.Persistence.MongoDb;
@@ -22,7 +21,6 @@ using Microwave.WebApi.ApiFormatting.Identities;
 using Microwave.WebApi.Discovery;
 using Microwave.WebApi.Filters;
 using Microwave.WebApi.Querries;
-using MongoDB.Bson.Serialization;
 
 namespace Microwave
 {
@@ -144,13 +142,9 @@ namespace Microwave
                 services.AddReadmodelHandling(assembly);
 
                 services.AddDomainEventRegistration(assembly, eventRegistration);
-                BsonMapRegistrationHelpers.AddBsonMapsForMicrowave(assembly);
             }
 
             services.AddSingleton(eventRegistration);
-
-            if (!BsonClassMap.IsClassMapRegistered(typeof(GuidIdentity))) BsonClassMap.RegisterClassMap<GuidIdentity>();
-            if (!BsonClassMap.IsClassMapRegistered(typeof(StringIdentity))) BsonClassMap.RegisterClassMap<StringIdentity>();
 
             return services;
         }

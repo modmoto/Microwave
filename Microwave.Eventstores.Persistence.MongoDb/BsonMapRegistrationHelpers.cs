@@ -7,7 +7,7 @@ using Microwave.Domain.EventSourcing;
 using Microwave.Domain.Identities;
 using MongoDB.Bson.Serialization;
 
-namespace Microwave
+namespace Microwave.Persistence.MongoDb
 {
     public static class BsonMapRegistrationHelpers
     {
@@ -19,43 +19,47 @@ namespace Microwave
 
             foreach (var domainEventType in domainEventTypes)
             {
-                var addBsonMap = addBsonMapGeneric.MakeGenericMethod(domainEventType);
-                addBsonMap.Invoke(null, new object[] { });
+                var addBsonMap = addBsonMapGeneric?.MakeGenericMethod(domainEventType);
+                addBsonMap?.Invoke(null, new object[] { });
             }
+
+            if (!BsonClassMap.IsClassMapRegistered(typeof(GuidIdentity))) BsonClassMap.RegisterClassMap<GuidIdentity>();
+            if (!BsonClassMap.IsClassMapRegistered(typeof(StringIdentity))) BsonClassMap.RegisterClassMap<StringIdentity>();
         }
 
         public static void AddBsonMapFor<T>() where T : IDomainEvent
         {
-            if (!BsonClassMap.IsClassMapRegistered(typeof(T))) BsonClassMap.RegisterClassMap<T>(map =>
-            {
-                var eventType = typeof(T);
-                var lambdaParameter = Expression.Parameter(eventType, "domainEvent");
-
-                var constructorInfo = GetConstructorWithMostMatchingParameters(eventType);
-                MapProperties(eventType.GetProperties(), map);
-
-                var expressions = CreateExpressionsFromConstructorParameters(constructorInfo, lambdaParameter);
-
-                var body = Expression.New(constructorInfo, expressions);
-
-                var funcType = typeof(Func<,>).MakeGenericType(eventType, eventType);
-                var lambda = Expression.Lambda(funcType, body, lambdaParameter);
-
-                var expressionType = typeof(Expression<>).MakeGenericType(funcType);
-                var genericClassMap = typeof(BsonClassMap<>).MakeGenericType(eventType);
-                var mapCreatorFunction = genericClassMap.GetMethod(nameof(BsonClassMap.MapCreator), new[]
+            if (!BsonClassMap.IsClassMapRegistered(typeof(T)))
+                BsonClassMap.RegisterClassMap<T>(map =>
                 {
-                    expressionType
+                    var eventType = typeof(T);
+                    var lambdaParameter = Expression.Parameter(eventType, "domainEvent");
+
+                    var constructorInfo = GetConstructorWithMostMatchingParameters(eventType);
+                    MapProperties(eventType.GetProperties(), map);
+
+                    var expressions = CreateExpressionsFromConstructorParameters(constructorInfo, lambdaParameter);
+
+                    var body = Expression.New(constructorInfo, expressions);
+
+                    var funcType = typeof(Func<,>).MakeGenericType(eventType, eventType);
+                    var lambda = Expression.Lambda(funcType, body, lambdaParameter);
+
+                    var expressionType = typeof(Expression<>).MakeGenericType(funcType);
+                    var genericClassMap = typeof(BsonClassMap<>).MakeGenericType(eventType);
+                    var mapCreatorFunction = genericClassMap.GetMethod(nameof(BsonClassMap.MapCreator), new[]
+                    {
+                        expressionType
+                    });
+                    mapCreatorFunction?.Invoke(map, new object[] { lambda });
                 });
-                mapCreatorFunction.Invoke(map, new[] {lambda});
-            });
         }
 
-        private static List<Expression> CreateExpressionsFromConstructorParameters(
+        private static IEnumerable<Expression> CreateExpressionsFromConstructorParameters(
             ConstructorInfo constructorInfo,
             ParameterExpression lambdaParameter)
         {
-            return constructorInfo.GetParameters().Select(parameter => ExtractExpression(lambdaParameter, parameter)).ToList();
+            return constructorInfo.GetParameters().Select(parameter => ExtractExpression(lambdaParameter, parameter));
         }
 
         private static void MapProperties<T>(PropertyInfo[] propertyInfos, BsonClassMap<T> c) where T : IDomainEvent
@@ -81,9 +85,9 @@ namespace Microwave
         private static bool IsIdentityParameter(ParameterInfo parameter)
         {
             var parameterType = parameter.ParameterType;
-            return parameterType == typeof(GuidIdentity) || parameterType == typeof(StringIdentity) || parameterType ==
-                   typeof
-                       (Identity);
+            return parameterType == typeof(GuidIdentity)
+                || parameterType == typeof(StringIdentity)
+                || parameterType == typeof (Identity);
         }
 
         private static ConstructorInfo GetConstructorWithMostMatchingParameters(Type eventType)
