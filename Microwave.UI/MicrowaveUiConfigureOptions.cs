@@ -27,7 +27,7 @@ namespace Microwave.UI
 
             options.FileProvider = options.FileProvider ?? _environment.WebRootFileProvider;
 
-            var filesProvider = new ManifestEmbeddedFileProvider(GetType().Assembly, "resources");
+            var filesProvider = new ManifestEmbeddedFileProvider(GetType().Assembly, "Resources");
             options.FileProvider = new CompositeFileProvider(options.FileProvider, filesProvider);
         }
     }
