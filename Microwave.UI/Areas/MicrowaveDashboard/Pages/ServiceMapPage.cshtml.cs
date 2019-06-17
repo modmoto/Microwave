@@ -7,7 +7,7 @@ using Microwave.Discovery;
 using Microwave.Discovery.Domain.Services;
 using Microwave.Domain;
 
-namespace Microwave.Pages
+namespace Microwave.UI.Areas.MicrowaveDashboard.Pages
 {
     public class ServiceMapPage : MicrowavePageModel
     {

@@ -5,7 +5,7 @@ using Microwave.Discovery;
 using Microwave.Discovery.Domain;
 using Microwave.Domain;
 
-namespace Microwave.Pages
+namespace Microwave.UI.Areas.MicrowaveDashboard.Pages
 {
     public class IndexModel : MicrowavePageModel
     {

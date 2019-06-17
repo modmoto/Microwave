@@ -4,7 +4,7 @@ using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Discovery;
 using Microwave.Discovery.Domain.Services;
-using Microwave.Pages;
+using Microwave.UI.Areas.MicrowaveDashboard.Pages;
 using Moq;
 
 namespace Microwave.UI.UnitTests
