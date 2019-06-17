@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microwave;
 using Microwave.Domain;
+using RazorUIClassLib;
 using ServerConfig;
 
 namespace WriteService1
@@ -23,12 +24,15 @@ namespace WriteService1
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddMicrowaveUi();
+
             services.AddMicrowave(_microwaveConfiguration);
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             app.UseMvc();
+            app.UseMicrowaveUi();
             app.RunMicrowaveQueries();
         }
     }
