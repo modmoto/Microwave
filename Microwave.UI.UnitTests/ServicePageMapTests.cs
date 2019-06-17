@@ -7,7 +7,7 @@ using Microwave.Discovery.Domain.Services;
 using Microwave.Pages;
 using Moq;
 
-namespace Microwave.DependencyInjectionExtensions.UnitTests
+namespace Microwave.UI.UnitTests
 {
     [TestClass]
     public class ServicePageMapTests

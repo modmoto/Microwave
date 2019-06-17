@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Options;
 
-namespace RazorUIClassLib
+namespace Microwave.UI
 {
     internal class MicrowaveUiConfigureOptions : IPostConfigureOptions<StaticFileOptions>
     {

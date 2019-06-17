@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microwave;
 using Microwave.Domain;
-using RazorUIClassLib;
+using Microwave.UI;
 using ServerConfig;
 
 namespace ReadService1
