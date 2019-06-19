@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -245,7 +246,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
                 {
                     DatabaseName = "IntegrationTest",
                 },
-                ServiceLocations = new ServiceBaseAddressCollection
+                ServiceLocations = new ServiceBaseAddressCollection()
                 {
                     new Uri("http://localhost:1234")
                 }

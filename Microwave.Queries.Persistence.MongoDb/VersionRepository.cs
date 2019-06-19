@@ -1,7 +1,7 @@
 using System;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using Microwave.Persistence.MongoDb;
+using Microwave.Configuration.MongoDb;
 using MongoDB.Driver;
 
 namespace Microwave.Queries.Persistence.MongoDb

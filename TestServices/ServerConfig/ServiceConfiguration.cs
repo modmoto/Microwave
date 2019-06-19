@@ -1,11 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
+using Microwave;
 using Microwave.Domain;
 
 namespace ServerConfig
 {
     public class ServiceConfiguration
     {
-        public static ServiceBaseAddressCollection ServiceAdresses => new ServiceBaseAddressCollection
+        public static IServiceBaseAddressCollection ServiceAdresses => new ServiceBaseAddressCollection
         {
             new Uri("http://localhost:5010"),
             new Uri("http://localhost:5012"),

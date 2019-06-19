@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using Microwave.Configuration.MongoDb;
 using Microwave.Domain.Identities;
 using Microwave.EventStores.Ports;
 using MongoDB.Driver;

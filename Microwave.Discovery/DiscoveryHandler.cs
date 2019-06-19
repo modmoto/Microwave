@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -10,18 +11,18 @@ namespace Microwave.Discovery
 {
     public class DiscoveryHandler : IDiscoveryHandler
     {
-        private readonly ServiceBaseAddressCollection _serviceBaseAddressCollection;
+        private readonly IEnumerable<Uri> _serviceBaseAddressCollection;
         private readonly EventsSubscribedByService _eventsSubscribedByService;
         private readonly IServiceDiscoveryRepository _discoveryRepository;
         private readonly IStatusRepository _statusRepository;
-        private readonly MicrowaveConfiguration _configuration;
+        private readonly IMicrowaveConfiguration _configuration;
 
         public DiscoveryHandler(
-            ServiceBaseAddressCollection serviceBaseAddressCollection,
+            IEnumerable<Uri> serviceBaseAddressCollection,
             EventsSubscribedByService eventsSubscribedByService,
             IServiceDiscoveryRepository discoveryRepository,
             IStatusRepository statusRepository,
-            MicrowaveConfiguration configuration)
+            IMicrowaveConfiguration configuration)
         {
             _serviceBaseAddressCollection = serviceBaseAddressCollection;
             _eventsSubscribedByService = eventsSubscribedByService;

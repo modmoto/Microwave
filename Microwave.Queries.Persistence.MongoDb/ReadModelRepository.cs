@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using Microwave.Configuration.MongoDb;
 using Microwave.Domain.Identities;
 using Microwave.Domain.Results;
-using Microwave.Persistence.MongoDb;
 using MongoDB.Driver;
 
 namespace Microwave.Queries.Persistence.MongoDb

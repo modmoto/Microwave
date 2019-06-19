@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
+using Microwave.Configuration.MongoDb;
 using Microwave.Discovery;
 using Microwave.Discovery.Domain.Events;
 using Microwave.Domain;
@@ -81,7 +82,7 @@ namespace Microwave
         }
 
         public static IServiceCollection AddMicrowave(this IServiceCollection services,
-            MicrowaveConfiguration microwaveConfiguration)
+            IMicrowaveConfiguration microwaveConfiguration)
         {
             var assemblies = new List<Assembly>();
             var referencedPaths = Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory, "*.dll", SearchOption.AllDirectories).ToList();
@@ -101,7 +102,7 @@ namespace Microwave
 
             services.AddTransient<IServiceDiscoveryRepository, DiscoveryRepository>();
             services.AddTransient<IDiscoveryHandler, DiscoveryHandler>();
-            services.AddSingleton(new ServiceBaseAddressCollection());
+            services.AddSingleton(new ServiceBaseAddressCollection() as IServiceBaseAddressCollection);
 
             services.AddTransient<DomainEventController>();
             services.AddTransient<DiscoveryController>();
@@ -150,7 +151,7 @@ namespace Microwave
         }
 
         private static void AddPublishedEventCollection(IServiceCollection services,
-            IEnumerable<Assembly> domainEventAssemblies, MicrowaveConfiguration microwaveConfiguration)
+            IEnumerable<Assembly> domainEventAssemblies, IMicrowaveConfiguration microwaveConfiguration)
         {
             var publishedEventCollection = new PublishedEventsByServiceDto { ServiceName = microwaveConfiguration.ServiceName };
             foreach (var assembly in domainEventAssemblies)

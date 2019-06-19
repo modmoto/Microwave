@@ -1,12 +1,12 @@
 ﻿using Microwave.Domain;
 using MongoDB.Driver;
 
-namespace Microwave.Persistence.MongoDb
+namespace Microwave.Configuration.MongoDb
 {
     public class MicrowaveDatabase
     {
         public IMongoDatabase Database { get; }
-        public MicrowaveDatabase(MicrowaveConfiguration config)
+        public MicrowaveDatabase(IMicrowaveConfiguration config)
         {
             var dbConfig = config.DatabaseConfiguration;
             var client = new MongoClient(dbConfig.ConnectionString);

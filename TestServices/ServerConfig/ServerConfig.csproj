@@ -8,5 +8,6 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\Microwave.Domain\Microwave.Domain.csproj" />
+      <ProjectReference Include="..\..\Microwave\Microwave.csproj" />
     </ItemGroup>
 </Project>

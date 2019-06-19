@@ -9,11 +9,13 @@ namespace ReadService1
     {
         public Task HandleAsync(Event2 domainEvent)
         {
+            Console.WriteLine("Event2 was handled");
             return Task.CompletedTask;
         }
 
         public Task HandleAsync(Event4 domainEvent)
         {
+            Console.WriteLine("Event4 was handled");
             return Task.CompletedTask;
         }
 

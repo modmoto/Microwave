@@ -1,4 +1,5 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microwave.Configuration.MongoDb;
 using Microwave.Domain;
 
 namespace Microwave.Persistence.MongoDb.UnitTests.Eventstores
