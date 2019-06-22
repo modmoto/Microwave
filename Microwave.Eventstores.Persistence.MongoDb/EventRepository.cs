@@ -9,7 +9,7 @@ using Microwave.Domain.Results;
 using Microwave.EventStores;
 using MongoDB.Driver;
 
-namespace Microwave.Persistence.MongoDb
+namespace Microwave.Eventstores.Persistence.MongoDb
 {
     public class EventRepository : IEventRepository
     {

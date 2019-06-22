@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using Microwave.Domain.Identities;
 
-namespace Microwave.Persistence.MongoDb
+namespace Microwave.Eventstores.Persistence.MongoDb
 {
     public interface IVersionCache
     {

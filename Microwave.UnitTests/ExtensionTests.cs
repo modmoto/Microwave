@@ -10,6 +10,7 @@ using Microwave.Domain;
 using Microwave.Domain.EventSourcing;
 using Microwave.Domain.Identities;
 using Microwave.EventStores.Ports;
+using Microwave.Persistence.MongoDb.Extensions;
 using Microwave.Queries;
 using Microwave.UnitTests.PublishedEventsDll;
 using Microwave.WebApi.Discovery;
@@ -26,7 +27,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
         {
             var collection = (IServiceCollection) new ServiceCollection();
 
-            var storeDependencies = collection.AddMicrowave();
+            var storeDependencies = collection.AddMicrowave(new MongoDbPersistenceLayer());
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
             var eventDelegateHandlers = buildServiceProvider.GetServices<IAsyncEventHandler>().ToList();
@@ -104,7 +105,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
         {
             var collection = (IServiceCollection) new ServiceCollection();
 
-            var storeDependencies = collection.AddMicrowave();
+            var storeDependencies = collection.AddMicrowave(new MongoDbPersistenceLayer());
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
             var eventRegister = buildServiceProvider.GetServices<EventRegistration>().Single();
@@ -121,8 +122,8 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
             var collection = (IServiceCollection) new ServiceCollection();
 
             var storeDependencies = collection
-                .AddMicrowave()
-                .AddMicrowave();
+                .AddMicrowave(new MongoDbPersistenceLayer())
+                .AddMicrowave(new MongoDbPersistenceLayer());
 
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
@@ -139,7 +140,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
         {
             var collection = (IServiceCollection) new ServiceCollection();
 
-            var storeDependencies = collection.AddMicrowave();
+            var storeDependencies = collection.AddMicrowave(new MongoDbPersistenceLayer());
 
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
@@ -155,7 +156,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
         {
             var collection = (IServiceCollection) new ServiceCollection();
 
-            var storeDependencies = collection.AddMicrowave();
+            var storeDependencies = collection.AddMicrowave(new MongoDbPersistenceLayer());
 
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
@@ -176,7 +177,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
         public void AddMicrowaveDependencies_SubscribedEventsCorrect()
         {
             var collection = (IServiceCollection) new ServiceCollection();
-            var storeDependencies = collection.AddMicrowave();
+            var storeDependencies = collection.AddMicrowave(new MongoDbPersistenceLayer());
 
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
@@ -197,7 +198,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
         public void AddMicrowaveDependencies_ReadModelsCorrect()
         {
             var collection = (IServiceCollection) new ServiceCollection();
-            var storeDependencies = collection.AddMicrowave();
+            var storeDependencies = collection.AddMicrowave(new MongoDbPersistenceLayer());
 
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
@@ -212,7 +213,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
         public void AddMicrowaveDependencies_DepedencyControllerIsResolved()
         {
             var collection = (IServiceCollection) new ServiceCollection();
-            var storeDependencies = collection.AddMicrowave();
+            var storeDependencies = collection.AddMicrowave(new MongoDbPersistenceLayer());
 
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
@@ -227,7 +228,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
             var storeDependencies = collection.AddMicrowave(new MicrowaveConfiguration
             {
                 ServiceName = "TestService"
-            });
+            }, new MongoDbPersistenceLayer());
 
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
@@ -250,7 +251,7 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
                 {
                     new Uri("http://localhost:1234")
                 }
-            });
+            }, new MongoDbPersistenceLayer());
 
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 

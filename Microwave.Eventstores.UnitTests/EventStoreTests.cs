@@ -7,6 +7,7 @@ using Microwave.Domain.Exceptions;
 using Microwave.Domain.Identities;
 using Microwave.Domain.Results;
 using Microwave.EventStores;
+using Microwave.Eventstores.Persistence.MongoDb;
 using Microwave.EventStores.Ports;
 using Microwave.Persistence.MongoDb;
 using Microwave.Persistence.MongoDb.UnitTests.Eventstores;

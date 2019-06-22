@@ -6,16 +6,13 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
-using Microwave.Configuration.MongoDb;
 using Microwave.Discovery;
 using Microwave.Discovery.Domain.Events;
 using Microwave.Domain;
 using Microwave.Domain.EventSourcing;
 using Microwave.EventStores;
 using Microwave.EventStores.Ports;
-using Microwave.Persistence.MongoDb;
 using Microwave.Queries;
-using Microwave.Queries.Persistence.MongoDb;
 using Microwave.WebApi.ApiFormatting;
 using Microwave.WebApi.ApiFormatting.DateTimeOffsets;
 using Microwave.WebApi.ApiFormatting.Identities;
@@ -75,14 +72,18 @@ namespace Microwave
             services.AddSingleton(subscribedEventCollection);
         }
 
-        public static IServiceCollection AddMicrowave(this IServiceCollection services)
+        public static IServiceCollection AddMicrowave(
+            this IServiceCollection services,
+            IPersistenceLayer persistenceLayer)
         {
-            services.AddMicrowave(new MicrowaveConfiguration());
+            services.AddMicrowave(new MicrowaveConfiguration(), persistenceLayer);
             return services;
         }
 
-        public static IServiceCollection AddMicrowave(this IServiceCollection services,
-            IMicrowaveConfiguration microwaveConfiguration)
+        public static IServiceCollection AddMicrowave(
+            this IServiceCollection services,
+            IMicrowaveConfiguration microwaveConfiguration,
+            IPersistenceLayer persistenceLayer)
         {
             var assemblies = new List<Assembly>();
             var referencedPaths = Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory, "*.dll", SearchOption.AllDirectories).ToList();
@@ -98,6 +99,8 @@ namespace Microwave
                 }
             });
 
+            persistenceLayer.AddPersistenceLayer(services, assemblies);
+
             services.AddMicrowaveMvcExtensions();
 
             services.AddTransient<IServiceDiscoveryRepository, DiscoveryRepository>();
@@ -107,32 +110,19 @@ namespace Microwave
             services.AddTransient<DomainEventController>();
             services.AddTransient<DiscoveryController>();
             services.AddTransient<IDiscoveryClientFactory, DiscoveryClientFactory>();
-            services.AddTransient<IStatusRepository, StatusRepository>();
 
             services.AddTransient<IEventStore, EventStore>();
-            services.AddTransient<IEventRepository, EventRepository>();
-            services.AddSingleton<IVersionCache, VersionCache>();
-            services.AddTransient<ISnapShotRepository, SnapShotRepository>();
 
-            services.AddTransient<IVersionRepository, VersionRepository>();
-            services.AddTransient<IReadModelRepository, ReadModelRepository>();
             services.AddTransient<AsyncEventDelegator>();
-            services.AddTransient<MicrowaveDatabase>();
             services.AddTransient<IDomainEventFactory, DomainEventFactory>();
             services.AddTransient<IDomainEventClientFactory, DomainEventClientFactory>();
 
             services.AddSingleton(microwaveConfiguration);
             services.AddSingleton(microwaveConfiguration.ServiceLocations);
             services.AddSingleton(microwaveConfiguration.DatabaseConfiguration);
-            services.AddSingleton(new EventLocationCache());
 
             AddEventAndReadModelSubscriptions(services, assemblies);
             AddPublishedEventCollection(services, assemblies, microwaveConfiguration);
-
-            foreach (var assembly in assemblies)
-            {
-                BsonMapRegistrationHelpers.AddBsonMapsForMicrowave(assembly);
-            }
 
             var eventRegistration = new EventRegistration();
 

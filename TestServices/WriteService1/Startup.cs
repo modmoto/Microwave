@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microwave;
 using Microwave.Domain;
+using Microwave.Persistence.MongoDb.Extensions;
 using Microwave.UI;
 using ServerConfig;
 
@@ -26,7 +27,7 @@ namespace WriteService1
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.AddMicrowaveUi();
 
-            services.AddMicrowave(_microwaveConfiguration);
+            services.AddMicrowave(_microwaveConfiguration, new MongoDbPersistenceLayer());
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)

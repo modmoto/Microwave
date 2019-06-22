@@ -12,6 +12,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\Microwave.Persistence.MongoDb.Extensions\Microwave.Persistence.MongoDb.Extensions.csproj" />
       <ProjectReference Include="..\..\Microwave.UI\Microwave.UI.csproj" />
       <ProjectReference Include="..\..\Microwave\Microwave.csproj" />
       <ProjectReference Include="..\ServerConfig\ServerConfig.csproj" />

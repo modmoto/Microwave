@@ -7,7 +7,7 @@ using Microwave.Domain.Identities;
 using Microwave.EventStores.Ports;
 using MongoDB.Driver;
 
-namespace Microwave.Persistence.MongoDb
+namespace Microwave.Eventstores.Persistence.MongoDb
 {
     public class SnapShotRepository : ISnapShotRepository
     {
