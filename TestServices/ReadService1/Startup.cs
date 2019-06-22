@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microwave;
-using Microwave.Domain;
 using Microwave.Persistence.MongoDb.Extensions;
 using Microwave.UI;
 using ServerConfig;

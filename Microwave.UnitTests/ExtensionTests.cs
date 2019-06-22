@@ -1,12 +1,10 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Discovery;
 using Microwave.Discovery.Domain.Events;
-using Microwave.Domain;
 using Microwave.Domain.EventSourcing;
 using Microwave.Domain.Identities;
 using Microwave.EventStores.Ports;
