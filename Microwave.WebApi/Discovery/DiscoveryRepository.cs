@@ -42,7 +42,7 @@ namespace Microwave.WebApi.Discovery
             {
                 var response = await client.GetAsync("Dicovery/ServiceDependencies");
                 var content = await response.Content.ReadAsStringAsync();
-                var serviceDependencies = JsonConvert.DeserializeObject<ServiceNodeWithDependentServicesDto>(content);
+                var serviceDependencies = JsonConvert.DeserializeObject<ServiceNodeWithDependantServices>(content);
                 return new ServiceNodeConfig(
                     new ServiceEndPoint(serviceAdress, serviceDependencies.ServiceName),
                     serviceDependencies.Services,

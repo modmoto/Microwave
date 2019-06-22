@@ -48,7 +48,7 @@ namespace Microwave.WebApi.UnitTests
         [TestMethod]
         public async Task GetServiceDependencies()
         {
-            var serviceNodeWithDependentServicesDto = new ServiceNodeWithDependentServicesDto(
+            var serviceNodeWithDependentServicesDto = new ServiceNodeWithDependantServices(
                 "ServiceName",
                 new List<ServiceEndPoint>
                 {

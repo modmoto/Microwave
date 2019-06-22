@@ -10,6 +10,6 @@ namespace Microwave.Discovery
         Task<ServiceMap> GetServiceMap();
         Task DiscoverConsumingServices();
         Task DiscoverServiceMap();
-        Task<ServiceNodeWithDependentServicesDto> GetConsumingServiceNodes();
+        Task<ServiceNodeWithDependantServices> GetConsumingServiceNodes();
     }
 }

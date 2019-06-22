@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microwave.Discovery;
+using Microwave.Discovery.Domain;
 using Microwave.Discovery.Domain.Services;
 using Microwave.Domain;
 

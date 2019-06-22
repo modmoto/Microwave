@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace Microwave.Discovery.Domain.Services
 {
-    public class ServiceNodeWithDependentServicesDto
+    public class ServiceNodeWithDependantServices
     {
-        public ServiceNodeWithDependentServicesDto(
+        public ServiceNodeWithDependantServices(
             string serviceName,
             IEnumerable<ServiceEndPoint> services)
         {
@@ -14,7 +14,7 @@ namespace Microwave.Discovery.Domain.Services
             IsReachable = true;
         }
 
-        private ServiceNodeWithDependentServicesDto(string serviceName,
+        private ServiceNodeWithDependantServices(string serviceName,
             IEnumerable<ServiceEndPoint> services, bool isReachable)
         {
             ServiceName = serviceName;
@@ -26,9 +26,9 @@ namespace Microwave.Discovery.Domain.Services
         public bool IsReachable { get; }
         public IEnumerable<ServiceEndPoint> Services { get; }
 
-        public static ServiceNodeWithDependentServicesDto NotReachable(Uri serviceAdress)
+        public static ServiceNodeWithDependantServices NotReachable(Uri serviceAdress)
         {
-            return new ServiceNodeWithDependentServicesDto(serviceAdress.ToString(), new List<ServiceEndPoint>(), false);
+            return new ServiceNodeWithDependantServices(serviceAdress.ToString(), new List<ServiceEndPoint>(), false);
         }
     }
 }

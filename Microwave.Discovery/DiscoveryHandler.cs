@@ -77,22 +77,12 @@ namespace Microwave.Discovery
             await _statusRepository.SaveServiceMap(map);
         }
 
-        public async Task<ServiceNodeWithDependentServicesDto> GetConsumingServiceNodes()
+        public async Task<ServiceNodeWithDependantServices> GetConsumingServiceNodes()
         {
             var eventLocation = await _statusRepository.GetEventLocation();
-            return new ServiceNodeWithDependentServicesDto(
+            return new ServiceNodeWithDependantServices(
                 _configuration.ServiceName,
                 eventLocation.Services.Select(s => s.ServiceEndPoint));
-        }
-    }
-
-    public class ServiceMap
-    {
-        public IEnumerable<ServiceNodeConfig> AllServices { get; }
-
-        public ServiceMap(IEnumerable<ServiceNodeConfig> allServices)
-        {
-            AllServices = allServices;
         }
     }
 }
