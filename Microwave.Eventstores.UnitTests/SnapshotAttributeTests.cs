@@ -17,6 +17,7 @@ namespace Microwave.Eventstores.UnitTests
         public void SnapshotConstructor(long last, long current, bool expected)
         {
             var snapShotAfter = new SnapShotAfterAttribute(3);
+
             var doesNeedSnapshot = snapShotAfter.DoesNeedSnapshot(last, current);
             Assert.AreEqual(expected, doesNeedSnapshot);
         }
