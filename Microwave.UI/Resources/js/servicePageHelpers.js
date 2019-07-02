@@ -47,8 +47,8 @@ s.bind('overNode',
         const adjacentEdges = s.graph.adjacentEdges(nodeId);
         adjacentEdges.forEach(
             function (edge) {
-                const f1 = adjacentEdges.filter(function(e) { return e.target === edge.source && e.source === edge
-                    .target});
+                const f1 = adjacentEdges.filter(function(ev) {
+                    return ev.target === edge.source && ev.source === edge.target});
                 if (f1.length === 1) {
                     edge.color = '#28a745';
                 }
