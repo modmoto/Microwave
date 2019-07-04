@@ -18,4 +18,11 @@
       <ProjectReference Include="..\Microwave.UI\Microwave.UI.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+        <PackageReference Include="coverlet.msbuild" Version="2.5.1">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+        </PackageReference>
+    </ItemGroup>
+
 </Project>

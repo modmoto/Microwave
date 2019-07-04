@@ -22,31 +22,10 @@
     </ItemGroup>
 
     <ItemGroup>
-      <_UnmanagedRegistrationCache Remove="obj\Microwave.Persistence.MongoDb.UnitTests.csproj.UnmanagedRegistration.cache" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <_ResolveComReferenceCache Remove="obj\Debug\netcoreapp2.2\Microwave.Persistence.MongoDb.UnitTests.csproj.ResolveComReference.cache" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <IntermediateAssembly Remove="obj\Debug\netcoreapp2.2\Microwave.Persistence.MongoDb.UnitTests.dll" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <_DebugSymbolsIntermediatePath Remove="obj\Debug\netcoreapp2.2\Microwave.Persistence.MongoDb.UnitTests.pdb" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <_DeploymentManifestEntryPoint Remove="obj\Debug\netcoreapp2.2\Microwave.Persistence.MongoDb.UnitTests.dll" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <ApplicationManifest Remove="obj\Debug\netcoreapp2.2\Native.Microwave.Persistence.MongoDb.UnitTests.manifest" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <DeployManifest Remove="obj\Debug\netcoreapp2.2\Microwave.Persistence.MongoDb.UnitTests.application" />
+        <PackageReference Include="coverlet.msbuild" Version="2.5.1">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+        </PackageReference>
     </ItemGroup>
 
 </Project>
