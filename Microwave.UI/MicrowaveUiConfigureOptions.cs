@@ -1,10 +1,12 @@
 using System;
+using System.Runtime.CompilerServices;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Options;
 
+[assembly: InternalsVisibleTo("Microwave.UI.UnitTests")]
 namespace Microwave.UI
 {
     internal class MicrowaveUiConfigureOptions : IPostConfigureOptions<StaticFileOptions>
