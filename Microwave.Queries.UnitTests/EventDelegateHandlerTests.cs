@@ -27,6 +27,7 @@ namespace Microwave.Queries.UnitTests
                     DomainEvent = new TestEv2(GuidIdentity.Create(Guid.NewGuid()))
                 }
             };
+
             mock.Setup(feed => feed.GetEventsAsync(It.IsAny<DateTimeOffset>())).ReturnsAsync(list);
             var versionRepo = new Mock<IVersionRepository>();
             versionRepo.Setup(repo => repo.SaveVersion(It.IsAny<LastProcessedVersion>())).Returns(Task.CompletedTask);
