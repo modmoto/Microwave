@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Microwave.Discovery.Domain.Events
+namespace Microwave.Discovery.EventLocations
 {
     public class EventsSubscribedByService
     {

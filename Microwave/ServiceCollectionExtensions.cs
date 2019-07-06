@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microwave.Discovery;
-using Microwave.Discovery.Domain.Events;
+using Microwave.Discovery.EventLocations;
 using Microwave.Domain;
 using Microwave.Domain.EventSourcing;
 using Microwave.EventStores;

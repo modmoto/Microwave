@@ -1,9 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microwave.Discovery.Domain;
-using Microwave.Discovery.Domain.Events;
-using Microwave.Discovery.Domain.Services;
+using Microwave.Discovery.EventLocations;
+using Microwave.Discovery.ServiceMaps;
 using Microwave.Domain;
 
 namespace Microwave.Discovery

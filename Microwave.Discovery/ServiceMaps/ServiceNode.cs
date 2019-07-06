@@ -1,7 +1,7 @@
 using System.Collections.Generic;
-using Microwave.Discovery.Domain.Events;
+using Microwave.Discovery.EventLocations;
 
-namespace Microwave.Discovery.Domain.Services
+namespace Microwave.Discovery.ServiceMaps
 {
     public class ServiceNode
     {

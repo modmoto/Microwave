@@ -1,6 +1,6 @@
 using System;
 
-namespace Microwave.Discovery.Domain.Services
+namespace Microwave.Discovery.ServiceMaps
 {
     public class ServiceEndPoint
     {

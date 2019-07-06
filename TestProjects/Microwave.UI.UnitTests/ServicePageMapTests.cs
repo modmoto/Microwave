@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Discovery;
-using Microwave.Discovery.Domain;
-using Microwave.Discovery.Domain.Services;
+using Microwave.Discovery.ServiceMaps;
 using Microwave.UI.Areas.MicrowaveDashboard.Pages;
 using Moq;
 

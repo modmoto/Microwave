@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Microwave.Discovery.Domain.Services
+namespace Microwave.Discovery.ServiceMaps
 {
     public class ServiceNodeConfig
     {
