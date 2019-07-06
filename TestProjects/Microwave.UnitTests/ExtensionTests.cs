@@ -241,10 +241,6 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
             var collection = (IServiceCollection) new ServiceCollection();
             var storeDependencies = collection.AddMicrowave(new MicrowaveConfiguration
             {
-                DatabaseConfiguration = new DatabaseConfiguration
-                {
-                    DatabaseName = "IntegrationTest",
-                },
                 ServiceLocations = new ServiceBaseAddressCollection()
                 {
                     new Uri("http://localhost:1234")
@@ -373,5 +369,24 @@ namespace Microwave.DependencyInjectionExtensions.UnitTests
 
         public Identity EntityId { get; }
         public string Name { get; }
+    }
+
+    public class TestReadModel : ReadModel, IHandle<Ev>
+    {
+        public void Handle(Ev domainEvent)
+        {
+        }
+
+        public override Type GetsCreatedOn => typeof(Ev);
+    }
+
+    public class Ev : IDomainEvent, ISubscribedDomainEvent
+    {
+        public Ev(Identity entityId)
+        {
+            EntityId = entityId;
+        }
+
+        public Identity EntityId { get; }
     }
 }

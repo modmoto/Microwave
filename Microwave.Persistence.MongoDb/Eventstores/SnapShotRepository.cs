@@ -13,7 +13,7 @@ namespace Microwave.Persistence.MongoDb.Eventstores
         private readonly IMongoDatabase _context;
         private readonly string _snapShotCollectionName = "SnapShotDbos";
 
-        public SnapShotRepository(MicrowaveDatabase context)
+        public SnapShotRepository(MicrowaveMongoDb context)
         {
             _context = context.Database;
         }

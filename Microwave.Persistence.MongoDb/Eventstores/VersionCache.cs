@@ -12,9 +12,9 @@ namespace Microwave.Persistence.MongoDb.Eventstores
         private readonly IMongoDatabase _database;
         private readonly string _eventCollectionName = "DomainEventDbos";
 
-        public VersionCache(MicrowaveDatabase database)
+        public VersionCache(MicrowaveMongoDb mongoDb)
         {
-            _database = database.Database;
+            _database = mongoDb.Database;
         }
 
         public async Task<long> Get(Identity entityId)

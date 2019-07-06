@@ -11,7 +11,7 @@ namespace Microwave.Persistence.MongoDb.Querries
         private readonly IMongoDatabase _dataBase;
         private readonly string _lastProcessedVersions = "LastProcessedVersions";
 
-        public VersionRepository(MicrowaveDatabase dataBase)
+        public VersionRepository(MicrowaveMongoDb dataBase)
         {
             _dataBase = dataBase.Database;
         }

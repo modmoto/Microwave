@@ -17,10 +17,10 @@ namespace Microwave.Persistence.MongoDb.Querries
         private readonly IMongoDatabase _database;
         private const string StatusDbName = "MicrowaveStatusCollection";
 
-        public StatusRepository(MicrowaveDatabase database, EventLocationCache cache)
+        public StatusRepository(MicrowaveMongoDb mongoDb, EventLocationCache cache)
         {
             _cache = cache;
-            _database = database.Database;
+            _database = mongoDb.Database;
         }
         public async Task SaveEventLocation(EventLocation eventLocation)
         {

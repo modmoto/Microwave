@@ -16,10 +16,10 @@ namespace Microwave.Persistence.MongoDb.Eventstores
         private readonly string _eventCollectionName = "DomainEventDbos";
         private readonly IVersionCache _versions;
 
-        public EventRepository(MicrowaveDatabase database, IVersionCache versions)
+        public EventRepository(MicrowaveMongoDb mongoDb, IVersionCache versions)
         {
             _versions = versions;
-            _database = database.Database;
+            _database = mongoDb.Database;
         }
 
         public async Task<Result<IEnumerable<DomainEventWrapper>>> LoadEventsByEntity(Identity entityId, long from = 0)

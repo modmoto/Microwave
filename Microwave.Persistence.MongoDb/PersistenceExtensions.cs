@@ -18,13 +18,13 @@ namespace Microwave.Persistence.MongoDb
 
             services.AddTransient<IVersionRepository, VersionRepository>();
             services.AddTransient<IReadModelRepository, ReadModelRepository>();
-            services.AddTransient<MicrowaveDatabase>();
+            services.AddTransient<MicrowaveMongoDb>();
             services.AddSingleton(new EventLocationCache());
 
             services.AddTransient<IEventRepository, EventRepository>();
             services.AddSingleton<IVersionCache, VersionCache>();
             services.AddTransient<ISnapShotRepository, SnapShotRepository>();
-            services.AddTransient<MicrowaveDatabase>();
+            services.AddTransient<MicrowaveMongoDb>();
 
             foreach (var assembly in assemblies)
             {

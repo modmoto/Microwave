@@ -16,9 +16,9 @@ namespace Microwave.Persistence.MongoDb.Querries
         private string GetReadModelCollectionName<T>() => $"ReadModelDbos_{typeof(T).Name}";
         private string GetQuerryCollectionName<T>() => $"QueryDbos_{typeof(T).Name}";
 
-        public ReadModelRepository(MicrowaveDatabase database)
+        public ReadModelRepository(MicrowaveMongoDb mongoDb)
         {
-            _database = database.Database;
+            _database = mongoDb.Database;
         }
 
         public async Task<Result<T>> Load<T>() where T : Query

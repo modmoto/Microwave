@@ -12,23 +12,15 @@ namespace Microwave.Persistence.MongoDb.UnitTestsSetup
     {
         public MongoDbTestSetup()
         {
-            var writeModelConfiguration = new MicrowaveConfiguration
-            {
-                DatabaseConfiguration = new DatabaseConfiguration
-                {
-                    DatabaseName = "IntegrationTest"
-                }
-            };
-
-            EventDatabase = new MicrowaveDatabase(writeModelConfiguration);
-            EventDatabase.Database.Client.DropDatabase("IntegrationTest");
+            EventMongoDb = new MicrowaveMongoDb("IntegrationTest");
+            EventMongoDb.Database.Client.DropDatabase("IntegrationTest");
         }
 
-        public MicrowaveDatabase EventDatabase { get; }
-        public IVersionRepository VersionRepository => new VersionRepository(EventDatabase);
-        public IStatusRepository StatusRepository => new StatusRepository(EventDatabase, new EventLocationCache());
-        public IReadModelRepository ReadModelRepository => new ReadModelRepository(EventDatabase);
-        public ISnapShotRepository SnapShotRepository => new SnapShotRepository(EventDatabase);
-        public IEventRepository EventRepository => new EventRepository(EventDatabase, new VersionCache(EventDatabase));
+        public MicrowaveMongoDb EventMongoDb { get; }
+        public IVersionRepository VersionRepository => new VersionRepository(EventMongoDb);
+        public IStatusRepository StatusRepository => new StatusRepository(EventMongoDb, new EventLocationCache());
+        public IReadModelRepository ReadModelRepository => new ReadModelRepository(EventMongoDb);
+        public ISnapShotRepository SnapShotRepository => new SnapShotRepository(EventMongoDb);
+        public IEventRepository EventRepository => new EventRepository(EventMongoDb, new VersionCache(EventMongoDb));
     }
 }

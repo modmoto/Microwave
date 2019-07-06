@@ -24,7 +24,7 @@ namespace Microwave.Queries.UnitTests
             var handleAsync = new Handler1();
             var handleAsync2 = new Handler2();
             var eventDelegateHandler = new AsyncEventHandler<TestEv2>(
-                new VersionRepository(EventDatabase),
+                new VersionRepository(EventMongoDb),
                 new EventFeedMock(dateTimeOffset, domainEventWrapper),
                 new List<IHandleAsync<TestEv2>> {handleAsync, handleAsync2});
 

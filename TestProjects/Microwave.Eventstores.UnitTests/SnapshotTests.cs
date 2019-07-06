@@ -18,10 +18,10 @@ namespace Microwave.Eventstores.UnitTests
         [TestMethod]
         public async Task SnapshotRealized()
         {
-            var mongoCollection = EventDatabase.Database.GetCollection<SnapShotDbo<User>>("SnapShotDbos");
+            var mongoCollection = EventMongoDb.Database.GetCollection<SnapShotDbo<User>>("SnapShotDbos");
 
-            var repo = new EventRepository(EventDatabase, new VersionCache(EventDatabase));
-            var eventStore = new EventStore(repo, new SnapShotRepository(EventDatabase));
+            var repo = new EventRepository(EventMongoDb, new VersionCache(EventMongoDb));
+            var eventStore = new EventStore(repo, new SnapShotRepository(EventMongoDb));
 
             var entityId = GuidIdentity.Create(Guid.NewGuid());
             await eventStore.AppendAsync(new List<IDomainEvent>
@@ -65,8 +65,8 @@ namespace Microwave.Eventstores.UnitTests
         [TestMethod]
         public async Task SnapshotExactlyOnSnapShotTime_DoesNotReturnNotFoundBug()
         {
-            var repo = new EventRepository(EventDatabase, new VersionCache(EventDatabase));
-            var eventStore = new EventStore(repo, new SnapShotRepository(EventDatabase));
+            var repo = new EventRepository(EventMongoDb, new VersionCache(EventMongoDb));
+            var eventStore = new EventStore(repo, new SnapShotRepository(EventMongoDb));
 
             var entityId = GuidIdentity.Create(Guid.NewGuid());
             await eventStore.AppendAsync(new List<IDomainEvent>
