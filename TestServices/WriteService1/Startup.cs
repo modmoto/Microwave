@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microwave;
-using Microwave.Persistence.MongoDb.Extensions;
+using Microwave.Persistence.MongoDb;
 using Microwave.UI;
 using ServerConfig;
 
@@ -15,10 +15,6 @@ namespace WriteService1
         {
             ServiceName = "WriteService1",
             ServiceLocations = ServiceConfiguration.ServiceAdresses,
-            DatabaseConfiguration = new DatabaseConfiguration
-            {
-                DatabaseName = "TestWriteService1ReadDb"
-            }
         };
 
         public void ConfigureServices(IServiceCollection services)
@@ -26,7 +22,7 @@ namespace WriteService1
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.AddMicrowaveUi();
 
-            services.AddMicrowave(_microwaveConfiguration, new MongoDbPersistenceLayer());
+            services.AddMicrowave(_microwaveConfiguration, new MongoDbPersistenceLayer(new MicrowaveMongoDb("TestWriteService1ReadDb")));
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
