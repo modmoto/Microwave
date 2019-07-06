@@ -18,6 +18,7 @@
       <ProjectReference Include="..\Microwave.Eventstores.Persistence.MongoDb\Microwave.Eventstores.Persistence.MongoDb.csproj" />
       <ProjectReference Include="..\Microwave.Eventstores.UnitTests\Microwave.Eventstores.UnitTests.csproj" />
       <ProjectReference Include="..\Microwave.EventStores\Microwave.EventStores.csproj" />
+      <ProjectReference Include="..\Microwave.Persistence.MongoDb.UnitTestsSetup\Microwave.Persistence.MongoDb.UnitTestsSetup.csproj" />
       <ProjectReference Include="..\Microwave.Persistence.UnitTests\Microwave.Persistence.UnitTests.csproj" />
       <ProjectReference Include="..\Microwave.Queries.Persistence.MongoDb\Microwave.Queries.Persistence.MongoDb.csproj" />
       <ProjectReference Include="..\Microwave.Queries\Microwave.Queries.csproj" />

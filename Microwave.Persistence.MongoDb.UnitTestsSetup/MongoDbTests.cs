@@ -8,14 +8,40 @@ using Microwave.Domain.Identities;
 using Microwave.EventStores;
 using Microwave.Eventstores.Persistence.MongoDb;
 using Microwave.EventStores.Ports;
-using Microwave.Persistence.UnitTests;
+using MongoDB.Bson.Serialization;
 using Moq;
 
-namespace Microwave.Eventstores.UnitTests.DomainEvents
+namespace Microwave.Persistence.MongoDb.UnitTestsSetup
 {
     [TestClass]
-    public class BsonMapRegistrationHelperTestsWithGoodEvents : IntegrationTests
+    public class MongoDbTests : IntegrationTests
     {
+        [TestMethod]
+        public async Task AddAndLoadEvents_AutoProperty()
+        {
+            var eventRepository = new EventRepository(EventDatabase, new VersionCache(EventDatabase));
+            var stringIdentity = StringIdentity.Create("TestId");
+
+            BsonClassMap.RegisterClassMap<DomainEventWithAutoProperty>(cm =>
+            {
+                cm.MapCreator(ev => new DomainEventWithAutoProperty(ev.CreateId, ev.TestProperty));
+                cm.MapProperty(nameof(DomainEventWithAutoProperty.CreateId));
+                cm.MapProperty(nameof(DomainEventWithAutoProperty.TestProperty));
+            });
+
+            await eventRepository.AppendAsync(new List<IDomainEvent>
+            {
+                new DomainEventWithAutoProperty(stringIdentity, "TestProperty")
+            }, 0);
+
+            var loadEventsByEntity = await eventRepository.LoadEventsByEntity(stringIdentity);
+
+            var loadedEvent = loadEventsByEntity.Value.Single().DomainEvent as DomainEventWithAutoProperty;
+            Assert.AreEqual(loadedEvent.CreateId, stringIdentity);
+            Assert.AreEqual(loadedEvent.EntityId, stringIdentity);
+            Assert.AreEqual(loadedEvent.TestProperty, "TestProperty");
+        }
+
         [TestMethod]
         public async Task AddEvents_ForeachMethod()
         {
@@ -56,5 +82,20 @@ namespace Microwave.Eventstores.UnitTests.DomainEvents
 
         public Identity EntityId { get; }
         public string Name { get; }
+    }
+
+    public class DomainEventWithAutoProperty : IDomainEvent
+    {
+        public StringIdentity CreateId { get; }
+        public string TestProperty { get; }
+
+        public Identity EntityId => CreateId;
+
+        public DomainEventWithAutoProperty(StringIdentity createId, string testProperty)
+        {
+            CreateId = createId;
+            TestProperty = testProperty;
+        }
+
     }
 }

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Domain.EventSourcing;
 using Microwave.Domain.Identities;
+using Microwave.Persistence.UnitTestSetupPorts;
 
 namespace Microwave.Persistence.UnitTests.Eventstores
 {

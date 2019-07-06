@@ -6,6 +6,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Domain.Exceptions;
 using Microwave.Domain.Identities;
 using Microwave.Domain.Results;
+using Microwave.Persistence.UnitTestSetupPorts;
 using Microwave.Queries;
 
 namespace Microwave.Persistence.UnitTests.Querries

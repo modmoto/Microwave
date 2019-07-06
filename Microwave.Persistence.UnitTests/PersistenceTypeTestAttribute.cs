@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Reflection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microwave.Persistence.MongoDb.UnitTestsSetup;
 
 namespace Microwave.Persistence.UnitTests
 {
