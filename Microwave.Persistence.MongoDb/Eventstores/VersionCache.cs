@@ -1,11 +1,10 @@
 using System.Collections.Concurrent;
 using System.Linq;
 using System.Threading.Tasks;
-using Microwave.Configuration.MongoDb;
 using Microwave.Domain.Identities;
 using MongoDB.Driver;
 
-namespace Microwave.Eventstores.Persistence.MongoDb
+namespace Microwave.Persistence.MongoDb.Eventstores
 {
     public class VersionCache : IVersionCache
     {

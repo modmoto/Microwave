@@ -1,4 +1,4 @@
-
+﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27703.2026
@@ -25,7 +25,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microwave.WebApi.UnitTests"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microwave.UnitTests.PublishedEventsDll", "TestProjects\Microwave.UnitTests.PublishedEventsDll\Microwave.UnitTests.PublishedEventsDll.csproj", "{5A17AEC8-F492-48F4-8C6F-4063489DA58F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microwave.Eventstores.Persistence.MongoDb", "Microwave.Eventstores.Persistence.MongoDb\Microwave.Eventstores.Persistence.MongoDb.csproj", "{6394F395-66C1-483D-B4BC-8B19007F7785}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microwave.Persistence.MongoDb", "Microwave.Persistence.MongoDb\Microwave.Persistence.MongoDb.csproj", "{6394F395-66C1-483D-B4BC-8B19007F7785}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microwave.Persistence.UnitTests", "TestProjects\Microwave.Persistence.UnitTests\Microwave.Persistence.UnitTests.csproj", "{52EC4F8C-6145-4E15-8FE3-388431BEF5FA}"
 EndProject
@@ -35,13 +35,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestServices", "TestService
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microwave.UI.UnitTests", "TestProjects\Microwave.UI.UnitTests\Microwave.UI.UnitTests.csproj", "{10F2D68D-5EE4-4DC4-81AB-DAA30A6BF951}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microwave.Queries.Persistence.MongoDb", "Microwave.Queries.Persistence.MongoDb\Microwave.Queries.Persistence.MongoDb.csproj", "{E245AB65-88DD-4CAC-BDCE-E923CB87067B}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microwave.Configuration.MongoDb", "Microwave.Configuration.MongoDb\Microwave.Configuration.MongoDb.csproj", "{6F7E86A7-2124-4995-A748-0BD78D98576F}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microwave.UI", "Microwave.UI\Microwave.UI.csproj", "{446A53A9-B95A-4B3E-B067-6FBC126173E4}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microwave.Persistence.MongoDb.Extensions", "Microwave.Persistence.MongoDb.Extensions\Microwave.Persistence.MongoDb.Extensions.csproj", "{BF34D55C-37E7-4FB8-B051-4FB0C56B4D64}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microwave.Persistence.MongoDb.UnitTestsSetup", "TestProjects\Microwave.Persistence.MongoDb.UnitTestsSetup\Microwave.Persistence.MongoDb.UnitTestsSetup.csproj", "{A7A69C69-F8D1-4866-A812-96FE7548F5D8}"
 EndProject
@@ -115,22 +109,10 @@ Global
 		{10F2D68D-5EE4-4DC4-81AB-DAA30A6BF951}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{10F2D68D-5EE4-4DC4-81AB-DAA30A6BF951}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{10F2D68D-5EE4-4DC4-81AB-DAA30A6BF951}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E245AB65-88DD-4CAC-BDCE-E923CB87067B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E245AB65-88DD-4CAC-BDCE-E923CB87067B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E245AB65-88DD-4CAC-BDCE-E923CB87067B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E245AB65-88DD-4CAC-BDCE-E923CB87067B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6F7E86A7-2124-4995-A748-0BD78D98576F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6F7E86A7-2124-4995-A748-0BD78D98576F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6F7E86A7-2124-4995-A748-0BD78D98576F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6F7E86A7-2124-4995-A748-0BD78D98576F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{446A53A9-B95A-4B3E-B067-6FBC126173E4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{446A53A9-B95A-4B3E-B067-6FBC126173E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{446A53A9-B95A-4B3E-B067-6FBC126173E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{446A53A9-B95A-4B3E-B067-6FBC126173E4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BF34D55C-37E7-4FB8-B051-4FB0C56B4D64}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BF34D55C-37E7-4FB8-B051-4FB0C56B4D64}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BF34D55C-37E7-4FB8-B051-4FB0C56B4D64}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BF34D55C-37E7-4FB8-B051-4FB0C56B4D64}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A7A69C69-F8D1-4866-A812-96FE7548F5D8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{A7A69C69-F8D1-4866-A812-96FE7548F5D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A7A69C69-F8D1-4866-A812-96FE7548F5D8}.Release|Any CPU.ActiveCfg = Release|Any CPU

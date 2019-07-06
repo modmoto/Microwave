@@ -2,14 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microwave.Configuration.MongoDb;
 using Microwave.Domain.EventSourcing;
 using Microwave.Domain.Identities;
 using Microwave.Domain.Results;
 using Microwave.EventStores;
 using MongoDB.Driver;
 
-namespace Microwave.Eventstores.Persistence.MongoDb
+namespace Microwave.Persistence.MongoDb.Eventstores
 {
     public class EventRepository : IEventRepository
     {

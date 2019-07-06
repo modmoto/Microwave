@@ -3,14 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using Microwave.Configuration.MongoDb;
 using Microwave.Discovery;
 using Microwave.Discovery.Domain;
 using Microwave.Discovery.Domain.Events;
 using Microwave.Discovery.Domain.Services;
 using MongoDB.Driver;
 
-namespace Microwave.Queries.Persistence.MongoDb
+namespace Microwave.Persistence.MongoDb.Querries
 {
     public class StatusRepository : IStatusRepository
     {

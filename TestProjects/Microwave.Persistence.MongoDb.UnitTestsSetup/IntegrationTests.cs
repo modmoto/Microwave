@@ -1,5 +1,4 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microwave.Configuration.MongoDb;
 
 namespace Microwave.Persistence.MongoDb.UnitTestsSetup
 {

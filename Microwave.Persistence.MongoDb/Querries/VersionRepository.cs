@@ -1,10 +1,10 @@
 using System;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using Microwave.Configuration.MongoDb;
+using Microwave.Queries;
 using MongoDB.Driver;
 
-namespace Microwave.Queries.Persistence.MongoDb
+namespace Microwave.Persistence.MongoDb.Querries
 {
     public class VersionRepository : IVersionRepository
     {

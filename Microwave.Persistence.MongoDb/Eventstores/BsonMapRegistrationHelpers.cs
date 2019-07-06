@@ -7,7 +7,7 @@ using Microwave.Domain.EventSourcing;
 using Microwave.Domain.Identities;
 using MongoDB.Bson.Serialization;
 
-namespace Microwave.Eventstores.Persistence.MongoDb
+namespace Microwave.Persistence.MongoDb.Eventstores
 {
     public static class BsonMapRegistrationHelpers
     {

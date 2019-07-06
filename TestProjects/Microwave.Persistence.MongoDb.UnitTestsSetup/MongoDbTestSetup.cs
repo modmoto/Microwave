@@ -1,11 +1,10 @@
-using Microwave.Configuration.MongoDb;
 using Microwave.Discovery;
 using Microwave.EventStores;
-using Microwave.Eventstores.Persistence.MongoDb;
 using Microwave.EventStores.Ports;
+using Microwave.Persistence.MongoDb.Eventstores;
+using Microwave.Persistence.MongoDb.Querries;
 using Microwave.Persistence.UnitTestSetupPorts;
 using Microwave.Queries;
-using Microwave.Queries.Persistence.MongoDb;
 
 namespace Microwave.Persistence.MongoDb.UnitTestsSetup
 {

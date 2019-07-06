@@ -2,6 +2,7 @@
 
     <PropertyGroup>
         <TargetFramework>netstandard2.0</TargetFramework>
+        <DebugType>full</DebugType>
     </PropertyGroup>
 
     <ItemGroup>
@@ -9,10 +10,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Microwave.Discovery\Microwave.Discovery.csproj" />
-      <ProjectReference Include="..\Microwave.Domain\Microwave.Domain.csproj" />
       <ProjectReference Include="..\Microwave.EventStores\Microwave.EventStores.csproj" />
-      <ProjectReference Include="..\Microwave.Queries\Microwave.Queries.csproj" />
+      <ProjectReference Include="..\Microwave\Microwave.csproj" />
     </ItemGroup>
 
     <ItemGroup>

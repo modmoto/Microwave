@@ -1,15 +1,14 @@
 using System.Collections.Generic;
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
-using Microwave.Configuration.MongoDb;
 using Microwave.Discovery;
 using Microwave.EventStores;
-using Microwave.Eventstores.Persistence.MongoDb;
 using Microwave.EventStores.Ports;
+using Microwave.Persistence.MongoDb.Eventstores;
+using Microwave.Persistence.MongoDb.Querries;
 using Microwave.Queries;
-using Microwave.Queries.Persistence.MongoDb;
 
-namespace Microwave.Persistence.MongoDb.Extensions
+namespace Microwave.Persistence.MongoDb
 {
     public class MongoDbPersistenceLayer : IPersistenceLayer
     {

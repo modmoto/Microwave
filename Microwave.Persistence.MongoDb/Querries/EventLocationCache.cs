@@ -1,6 +1,6 @@
 using Microwave.Discovery.Domain;
 
-namespace Microwave.Queries.Persistence.MongoDb
+namespace Microwave.Persistence.MongoDb.Querries
 {
     public class EventLocationCache
     {

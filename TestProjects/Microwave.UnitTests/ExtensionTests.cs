@@ -8,7 +8,7 @@ using Microwave.Discovery.Domain.Events;
 using Microwave.Domain.EventSourcing;
 using Microwave.Domain.Identities;
 using Microwave.EventStores.Ports;
-using Microwave.Persistence.MongoDb.Extensions;
+using Microwave.Persistence.MongoDb;
 using Microwave.Queries;
 using Microwave.UnitTests.PublishedEventsDll;
 using Microwave.WebApi.Discovery;
