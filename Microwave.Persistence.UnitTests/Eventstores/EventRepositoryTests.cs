@@ -7,19 +7,18 @@ using Microwave.Domain.EventSourcing;
 using Microwave.Domain.Exceptions;
 using Microwave.Domain.Identities;
 using Microwave.Domain.Results;
-using Microwave.Eventstores.Persistence.MongoDb;
 using MongoDB.Bson.Serialization;
-using MongoDB.Driver;
 
-namespace Microwave.Persistence.MongoDb.UnitTests.Eventstores
+namespace Microwave.Persistence.UnitTests.Eventstores
 {
     [TestClass]
-    public class EventRepositoryTests : IntegrationTests
+    public class EventRepositoryTests
     {
-        [TestMethod]
-        public async Task AddAndLoadEvents()
+        [DataTestMethod]
+        [PersistenceTypeTest]
+        public async Task AddAndLoadEvents(IPersistenceDefinition definition)
         {
-            var eventRepository = new EventRepository(EventDatabase, new VersionCache(EventDatabase));
+            var eventRepository = definition.EventRepository;
 
             var newGuid = GuidIdentity.Create(Guid.NewGuid());
             var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid), new TestEvent3(newGuid, "TestName")};
@@ -35,10 +34,11 @@ namespace Microwave.Persistence.MongoDb.UnitTests.Eventstores
             Assert.AreEqual(2, loadEventsByEntity.Value.ToList()[1].Version);
         }
 
-        [TestMethod]
-        public async Task AddAndLoadEvents_Twice()
+        [DataTestMethod]
+        [PersistenceTypeTest]
+        public async Task AddAndLoadEvents_Twice(IPersistenceDefinition definition)
         {
-            var eventRepository = new EventRepository(EventDatabase, new VersionCache(EventDatabase));
+            var eventRepository = definition.EventRepository;
 
             var newGuid = GuidIdentity.Create(Guid.NewGuid());
             var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid), new TestEvent3(newGuid, "TestName")};
@@ -52,10 +52,11 @@ namespace Microwave.Persistence.MongoDb.UnitTests.Eventstores
         }
 
         // this is because of mongodb, constructor has to be named the same
-        [TestMethod]
-        public async Task AddAndLoadEvents_ParamCalledWrong()
+        [DataTestMethod]
+        [PersistenceTypeTest]
+        public async Task AddAndLoadEvents_ParamCalledWrong(IPersistenceDefinition definition)
         {
-            var eventRepository = new EventRepository(EventDatabase, new VersionCache(EventDatabase));
+            var eventRepository = definition.EventRepository;
 
             var newGuid = GuidIdentity.Create(Guid.NewGuid());
             var events = new List<IDomainEvent> { new TestEvent_ParameterCalledWrong(newGuid)};
@@ -66,10 +67,11 @@ namespace Microwave.Persistence.MongoDb.UnitTests.Eventstores
             Assert.AreEqual(null, loadEventsByEntity.Value.ToList()[0].DomainEvent.EntityId);
         }
 
-        [TestMethod]
-        public async Task LoadDomainEvents_IdAndStuffIsSetCorreclty()
+        [DataTestMethod]
+        [PersistenceTypeTest]
+        public async Task LoadDomainEvents_IdAndStuffIsSetCorreclty(IPersistenceDefinition definition)
         {
-            var eventRepository = new EventRepository(EventDatabase, new VersionCache(EventDatabase));
+            var eventRepository = definition.EventRepository;
 
             var newGuid = GuidIdentity.Create(Guid.NewGuid());
             var testEvent1 = new TestEvent1(newGuid);
@@ -88,10 +90,11 @@ namespace Microwave.Persistence.MongoDb.UnitTests.Eventstores
             Assert.IsTrue(newGuid == loadEventsByEntity.Value.ToList()[0].DomainEvent.EntityId);
         }
 
-        [TestMethod]
-        public async Task AddAndLoadEventsConcurrent()
+        [DataTestMethod]
+        [PersistenceTypeTest]
+        public async Task AddAndLoadEventsConcurrent(IPersistenceDefinition definition)
         {
-            var eventRepository = new EventRepository(EventDatabase, new VersionCache(EventDatabase));
+            var eventRepository = definition.EventRepository;
 
             var newGuid = GuidIdentity.Create(Guid.NewGuid());
             var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid)};
@@ -109,10 +112,11 @@ namespace Microwave.Persistence.MongoDb.UnitTests.Eventstores
             Assert.AreEqual(2, loadEvents.Value.Count());
         }
 
-        [TestMethod]
-        public async Task AddAndLoadEventsConcurrent_AfterNormalAdd()
+        [DataTestMethod]
+        [PersistenceTypeTest]
+        public async Task AddAndLoadEventsConcurrent_AfterNormalAdd(IPersistenceDefinition definition)
         {
-            var eventRepository = new EventRepository(EventDatabase, new VersionCache(EventDatabase));
+            var eventRepository = definition.EventRepository;
 
             var newGuid = GuidIdentity.Create(Guid.NewGuid());
             var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid)};
@@ -129,10 +133,11 @@ namespace Microwave.Persistence.MongoDb.UnitTests.Eventstores
             Assert.AreEqual(4, loadEvents.Value.Count());
         }
 
-        [TestMethod]
-        public async Task AddAndLoadEventsConcurrent_AddAfterwardsAgain()
+        [DataTestMethod]
+        [PersistenceTypeTest]
+        public async Task AddAndLoadEventsConcurrent_AddAfterwardsAgain(IPersistenceDefinition definition)
         {
-            var eventRepository = new EventRepository(EventDatabase, new VersionCache(EventDatabase));
+            var eventRepository = definition.EventRepository;
 
             var newGuid = GuidIdentity.Create(Guid.NewGuid());
             var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid)};
@@ -148,66 +153,67 @@ namespace Microwave.Persistence.MongoDb.UnitTests.Eventstores
             Assert.IsTrue(res.Is<Ok>());
         }
 
-        [TestMethod]
-        public async Task AddAndLoadEventsConcurrent_AddAfterwardsAgain_DifferentRepo()
+//        [TestMethod]
+//        public async Task AddAndLoadEventsConcurrent_AddAfterwardsAgain_DifferentRepo()
+//        {
+//            var versionCache = new VersionCache(EventDatabase);
+//            var eventRepository = new EventRepository(EventDatabase, versionCache);
+//            var eventRepository2 = new EventRepository(EventDatabase, versionCache);
+//
+//            var newGuid = GuidIdentity.Create(Guid.NewGuid());
+//            var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid)};
+//            var events2 = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid)};
+//
+//            var t1 = eventRepository.AppendAsync(events, 0);
+//            var t2 = eventRepository2.AppendAsync(events2, 0);
+//
+//            await Task.WhenAll(t1, t2);
+//
+//            var res = await eventRepository.AppendAsync(events2, 2);
+//
+//            Assert.IsTrue(res.Is<Ok>());
+//        }
+//
+//        [TestMethod]
+//        public async Task AddAndLoadEventsConcurrent_CacheEmpty()
+//        {
+//            var eventRepository = new EventRepository(EventDatabase, new VersionCache(EventDatabase));
+//            var eventRepository2 = new EventRepository(EventDatabase, new VersionCache(EventDatabase));
+//
+//            var newGuid = GuidIdentity.Create(Guid.NewGuid());
+//            var newGuid2 = GuidIdentity.Create(Guid.NewGuid());
+//            var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid)};
+//            var events2 = new List<IDomainEvent> { new TestEvent1(newGuid2), new TestEvent2(newGuid2)};
+//
+//            await eventRepository.AppendAsync(events, 0);
+//            await eventRepository2.AppendAsync(events2, 0);
+//
+//            var result = await eventRepository.LoadEvents();
+//            Assert.AreEqual(4, result.Value.Count());
+//        }
+//
+//        [TestMethod]
+//        public async Task AddAndLoadEventsConcurrent_CacheEmpty2()
+//        {
+//            var eventRepository = new EventRepository(EventDatabase, new VersionCache(EventDatabase));
+//            var eventRepository2 = new EventRepository(EventDatabase, new VersionCache(EventDatabase));
+//
+//            var newGuid = GuidIdentity.Create(Guid.NewGuid());
+//            var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid)};
+//            var events2 = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid)};
+//
+//            await eventRepository.AppendAsync(events, 0);
+//            await eventRepository2.AppendAsync(events2, 2);
+//
+//            var result = await eventRepository.LoadEvents();
+//            Assert.AreEqual(4, result.Value.Count());
+//        }
+
+        [DataTestMethod]
+        [PersistenceTypeTest]
+        public async Task LoadEntityId_NotFoundTIsCorrect(IPersistenceDefinition definition)
         {
-            var versionCache = new VersionCache(EventDatabase);
-            var eventRepository = new EventRepository(EventDatabase, versionCache);
-            var eventRepository2 = new EventRepository(EventDatabase, versionCache);
-
-            var newGuid = GuidIdentity.Create(Guid.NewGuid());
-            var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid)};
-            var events2 = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid)};
-
-            var t1 = eventRepository.AppendAsync(events, 0);
-            var t2 = eventRepository2.AppendAsync(events2, 0);
-
-            await Task.WhenAll(t1, t2);
-
-            var res = await eventRepository.AppendAsync(events2, 2);
-
-            Assert.IsTrue(res.Is<Ok>());
-        }
-
-        [TestMethod]
-        public async Task AddAndLoadEventsConcurrent_CacheEmpty()
-        {
-            var eventRepository = new EventRepository(EventDatabase, new VersionCache(EventDatabase));
-            var eventRepository2 = new EventRepository(EventDatabase, new VersionCache(EventDatabase));
-
-            var newGuid = GuidIdentity.Create(Guid.NewGuid());
-            var newGuid2 = GuidIdentity.Create(Guid.NewGuid());
-            var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid)};
-            var events2 = new List<IDomainEvent> { new TestEvent1(newGuid2), new TestEvent2(newGuid2)};
-
-            await eventRepository.AppendAsync(events, 0);
-            await eventRepository2.AppendAsync(events2, 0);
-
-            var result = await eventRepository.LoadEvents();
-            Assert.AreEqual(4, result.Value.Count());
-        }
-
-        [TestMethod]
-        public async Task AddAndLoadEventsConcurrent_CacheEmpty2()
-        {
-            var eventRepository = new EventRepository(EventDatabase, new VersionCache(EventDatabase));
-            var eventRepository2 = new EventRepository(EventDatabase, new VersionCache(EventDatabase));
-
-            var newGuid = GuidIdentity.Create(Guid.NewGuid());
-            var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid)};
-            var events2 = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid)};
-
-            await eventRepository.AppendAsync(events, 0);
-            await eventRepository2.AppendAsync(events2, 2);
-
-            var result = await eventRepository.LoadEvents();
-            Assert.AreEqual(4, result.Value.Count());
-        }
-
-        [TestMethod]
-        public async Task LoadEntityId_NotFoundTIsCorrect()
-        {
-            var eventRepository = new EventRepository(EventDatabase, new VersionCache(EventDatabase));
+            var eventRepository = definition.EventRepository;
 
             var entityId = Identity.Create(Guid.NewGuid());
             var result = await eventRepository.LoadEventsByEntity(entityId);
@@ -216,10 +222,11 @@ namespace Microwave.Persistence.MongoDb.UnitTests.Eventstores
             Assert.AreEqual($"Could not find DomainEvents with ID {entityId.Id}", notFoundException.Message);
         }
 
-        [TestMethod]
-        public async Task LoadEntityId_VersionTooHIgh_NotFoundIsOk()
+        [DataTestMethod]
+        [PersistenceTypeTest]
+        public async Task LoadEntityId_VersionTooHIgh_NotFoundIsOk(IPersistenceDefinition definition)
         {
-            var eventRepository = new EventRepository(EventDatabase, new VersionCache(EventDatabase));
+            var eventRepository = definition.EventRepository;
 
             var entityId = Identity.Create(new Guid());
             var events = new List<IDomainEvent> { new TestEvent1(entityId), new TestEvent2(entityId)};
@@ -231,10 +238,11 @@ namespace Microwave.Persistence.MongoDb.UnitTests.Eventstores
             Assert.AreEqual(0, result.Value.Count());
         }
 
-        [TestMethod]
-        public async Task LoadType_VersionTooHIgh_NotFoundIsOk()
+        [DataTestMethod]
+        [PersistenceTypeTest]
+        public async Task LoadType_VersionTooHIgh_NotFoundIsOk(IPersistenceDefinition definition)
         {
-            var eventRepository = new EventRepository(EventDatabase, new VersionCache(EventDatabase));
+            var eventRepository = definition.EventRepository;
 
             var entityId = Identity.Create(new Guid());
             var events = new List<IDomainEvent> { new TestEvent1(entityId), new TestEvent2(entityId)};
@@ -247,20 +255,22 @@ namespace Microwave.Persistence.MongoDb.UnitTests.Eventstores
             Assert.AreEqual(0, result.Value.Count());
         }
 
-        [TestMethod]
-        public async Task LoadType_EmptyListWhenNoEventsPresentButAreBeingPublished()
+        [DataTestMethod]
+        [PersistenceTypeTest]
+        public async Task LoadType_EmptyListWhenNoEventsPresentButAreBeingPublished(IPersistenceDefinition definition)
         {
-            var eventRepository = new EventRepository(EventDatabase, new VersionCache(EventDatabase));
+            var eventRepository = definition.EventRepository;
 
             var result = await eventRepository.LoadEventsByTypeAsync("TypeNotInsertedButSubscribed");
 
             Assert.AreEqual(0, result.Value.Count());
         }
 
-        [TestMethod]
-        public async Task AddAndLoadEvents_AutoProperty()
+        [DataTestMethod]
+        [PersistenceTypeTest]
+        public async Task AddAndLoadEvents_AutoProperty(IPersistenceDefinition definition)
         {
-            var eventRepository = new EventRepository(EventDatabase, new VersionCache(EventDatabase));
+            var eventRepository = definition.EventRepository;
             var stringIdentity = StringIdentity.Create("TestId");
 
             BsonClassMap.RegisterClassMap<DomainEventWithAutoProperty>(cm =>
@@ -283,19 +293,21 @@ namespace Microwave.Persistence.MongoDb.UnitTests.Eventstores
             Assert.AreEqual(loadedEvent.TestProperty, "TestProperty");
         }
 
-        [TestMethod]
-        public async Task AddEmptyEventList()
+        [DataTestMethod]
+        [PersistenceTypeTest]
+        public async Task AddEmptyEventList(IPersistenceDefinition definition)
         {
-            var eventRepository = new EventRepository(EventDatabase, new VersionCache(EventDatabase));
+            var eventRepository = definition.EventRepository;
 
             var appendAsync = await eventRepository.AppendAsync(new List<IDomainEvent>(), 0);
             appendAsync.Check();
         }
 
-        [TestMethod]
-        public async Task LoadEventsByTypeAsync()
+        [DataTestMethod]
+        [PersistenceTypeTest]
+        public async Task LoadEventsByTypeAsync(IPersistenceDefinition definition)
         {
-            var eventRepository = new EventRepository(EventDatabase, new VersionCache(EventDatabase));
+            var eventRepository = definition.EventRepository;
 
             var newGuid = GuidIdentity.Create(Guid.NewGuid());
             var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid), new TestEvent2(newGuid)};
@@ -306,37 +318,11 @@ namespace Microwave.Persistence.MongoDb.UnitTests.Eventstores
             Assert.AreEqual(2, eventsLoaded.Value.Count());
         }
 
-        [TestMethod]
-        public async Task Context_DoubleKeyException()
+        [DataTestMethod]
+        [PersistenceTypeTest]
+        public async Task AddAndLoadEventsByTimeStamp(IPersistenceDefinition definition)
         {
-            var entityId = GuidIdentity.Create(Guid.NewGuid()).ToString();
-            var domainEventDbo = new DomainEventDbo
-            {
-                Key = new DomainEventKey
-                {
-                    EntityId = entityId,
-                    Version = 1
-                }
-            };
-
-            var domainEventDbo2 = new DomainEventDbo
-            {
-                Key = new DomainEventKey
-                {
-                    EntityId = entityId,
-                    Version = 1
-                }
-            };
-
-            var mongoCollection = EventDatabase.Database.GetCollection<DomainEventDbo>("DomainEventDbos");
-            await mongoCollection.InsertOneAsync(domainEventDbo);
-            await Assert.ThrowsExceptionAsync<MongoWriteException>(async () => await mongoCollection.InsertOneAsync(domainEventDbo2));
-        }
-
-        [TestMethod]
-        public async Task AddAndLoadEventsByTimeStamp()
-        {
-            var eventRepository = new EventRepository(EventDatabase, new VersionCache(EventDatabase));
+            var eventRepository = definition.EventRepository;
 
             var newGuid = GuidIdentity.Create(Guid.NewGuid());
             var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid), new TestEvent1(newGuid), new TestEvent2(newGuid)};
@@ -349,10 +335,11 @@ namespace Microwave.Persistence.MongoDb.UnitTests.Eventstores
             Assert.AreEqual(newGuid.Id, result.Value.ToList()[0].DomainEvent.EntityId.Id);
         }
 
-        [TestMethod]
-        public async Task AddEvents_FirstEventAfterCreationHasWrongRowVersionBug()
+        [DataTestMethod]
+        [PersistenceTypeTest]
+        public async Task AddEvents_FirstEventAfterCreationHasWrongRowVersionBug(IPersistenceDefinition definition)
         {
-            var eventRepository = new EventRepository(EventDatabase, new VersionCache(EventDatabase));
+            var eventRepository = definition.EventRepository;
 
             var newGuid = GuidIdentity.Create(Guid.NewGuid());
             var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid), new TestEvent1(newGuid), new TestEvent2(newGuid)};
@@ -367,10 +354,11 @@ namespace Microwave.Persistence.MongoDb.UnitTests.Eventstores
             Assert.AreEqual(newGuid.Id, result.Value.ToList()[0].DomainEvent.EntityId.Id);
         }
 
-        [TestMethod]
-        public async Task AddEvents_VersionTooHigh()
+        [DataTestMethod]
+        [PersistenceTypeTest]
+        public async Task AddEvents_VersionTooHigh(IPersistenceDefinition definition)
         {
-            var eventRepository = new EventRepository(EventDatabase, new VersionCache(EventDatabase));
+            var eventRepository = definition.EventRepository;
 
             var newGuid = GuidIdentity.Create(Guid.NewGuid());
             var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid), new TestEvent1(newGuid), new TestEvent2(newGuid)};
@@ -380,10 +368,11 @@ namespace Microwave.Persistence.MongoDb.UnitTests.Eventstores
             Assert.IsTrue(result.Is<ConcurrencyError>());
         }
 
-        [TestMethod]
-        public async Task AddEvents_VersionWayTooHigh()
+        [DataTestMethod]
+        [PersistenceTypeTest]
+        public async Task AddEvents_VersionWayTooHigh(IPersistenceDefinition definition)
         {
-            var eventRepository = new EventRepository(EventDatabase, new VersionCache(EventDatabase));
+            var eventRepository = definition.EventRepository;
 
             var newGuid = GuidIdentity.Create(Guid.NewGuid());
             var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid), new TestEvent1(newGuid), new TestEvent2(newGuid)};
@@ -392,10 +381,11 @@ namespace Microwave.Persistence.MongoDb.UnitTests.Eventstores
             Assert.IsTrue(result.Is<ConcurrencyError>());
         }
 
-        [TestMethod]
-        public async Task AddAndLoadEventsByTimeStamp_SavedAsType()
+        [DataTestMethod]
+        [PersistenceTypeTest]
+        public async Task AddAndLoadEventsByTimeStamp_SavedAsType(IPersistenceDefinition definition)
         {
-            var eventRepository = new EventRepository(EventDatabase, new VersionCache(EventDatabase));
+            var eventRepository = definition.EventRepository;
 
             var newGuid = GuidIdentity.Create(Guid.NewGuid());
             var domainEvent = new TestEvent1(newGuid);
@@ -409,10 +399,11 @@ namespace Microwave.Persistence.MongoDb.UnitTests.Eventstores
             Assert.AreEqual(typeof(TestEvent1), result.Value.ToList()[0].DomainEvent.GetType());
         }
 
-        [TestMethod]
-        public async Task AddEvents_IdSet()
+        [DataTestMethod]
+        [PersistenceTypeTest]
+        public async Task AddEvents_IdSet(IPersistenceDefinition definition)
         {
-            var eventRepository = new EventRepository(EventDatabase, new VersionCache(EventDatabase));
+            var eventRepository = definition.EventRepository;
 
             var testEvent1 = new TestEvent1(GuidIdentity.Create(Guid.NewGuid()));
             await eventRepository.AppendAsync(new[] {testEvent1}, 0);
@@ -423,10 +414,11 @@ namespace Microwave.Persistence.MongoDb.UnitTests.Eventstores
             Assert.IsTrue(domainEvent.EntityId.Equals(testEvent1.EntityId));
         }
 
-        [TestMethod]
-        public async Task AddEvents_IdOfTypeSet()
+        [DataTestMethod]
+        [PersistenceTypeTest]
+        public async Task AddEvents_IdOfTypeSet(IPersistenceDefinition definition)
         {
-            var eventRepository = new EventRepository(EventDatabase, new VersionCache(EventDatabase));
+            var eventRepository = definition.EventRepository;
 
             var testEvent1 = new TestEvent1(GuidIdentity.Create(Guid.NewGuid()));
             await eventRepository.AppendAsync(new List<IDomainEvent> { testEvent1 }, 0);
@@ -437,10 +429,11 @@ namespace Microwave.Persistence.MongoDb.UnitTests.Eventstores
             Assert.IsTrue(domainEvent.EntityId == testEvent1.EntityId);
         }
 
-        [TestMethod]
-        public async Task AddEvents_RunTypeProjection()
+        [DataTestMethod]
+        [PersistenceTypeTest]
+        public async Task AddEvents_RunTypeProjection(IPersistenceDefinition definition)
         {
-            var eventRepository = new EventRepository(EventDatabase, new VersionCache(EventDatabase));
+            var eventRepository = definition.EventRepository;
 
             var newGuid = GuidIdentity.Create(Guid.NewGuid());
             var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid), new TestEvent1(newGuid), new TestEvent2(newGuid)};
@@ -456,10 +449,11 @@ namespace Microwave.Persistence.MongoDb.UnitTests.Eventstores
             Assert.AreEqual(typeof(TestEvent1), result.Value.ToList()[0].DomainEvent.GetType());
         }
 
-        [TestMethod]
-        public async Task FindLastOccuredOnOfType()
+        [DataTestMethod]
+        [PersistenceTypeTest]
+        public async Task FindLastOccuredOnOfType(IPersistenceDefinition definition)
         {
-            var eventRepository = new EventRepository(EventDatabase, new VersionCache(EventDatabase));
+            var eventRepository = definition.EventRepository;
 
             var newGuid = GuidIdentity.Create();
             var events = new List<IDomainEvent> { new TestEvent2(newGuid)};
@@ -477,10 +471,11 @@ namespace Microwave.Persistence.MongoDb.UnitTests.Eventstores
             Assert.AreEqual(DateTimeOffset.Now.Hour, result.Value.Hour);
         }
 
-        [TestMethod]
-        public async Task FindLastOccuredOnOfType_NotFound()
+        [DataTestMethod]
+        [PersistenceTypeTest]
+        public async Task FindLastOccuredOnOfType_NotFound(IPersistenceDefinition definition)
         {
-            var eventRepository = new EventRepository(EventDatabase, new VersionCache(EventDatabase));
+            var eventRepository = definition.EventRepository;
 
             var newGuid = GuidIdentity.Create(Guid.NewGuid());
             var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid), new TestEvent1(newGuid), new TestEvent2(newGuid), new TestEvent2(newGuid)};

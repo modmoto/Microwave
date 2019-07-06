@@ -8,8 +8,7 @@ using Microwave.Domain.Identities;
 using Microwave.EventStores;
 using Microwave.Eventstores.Persistence.MongoDb;
 using Microwave.EventStores.Ports;
-using Microwave.Persistence.MongoDb.UnitTests;
-using Microwave.Persistence.MongoDb.UnitTests.Eventstores;
+using Microwave.Persistence.UnitTests;
 using Moq;
 
 namespace Microwave.Eventstores.UnitTests.DomainEvents

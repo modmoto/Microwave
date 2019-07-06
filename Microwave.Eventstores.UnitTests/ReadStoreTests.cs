@@ -5,8 +5,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Domain.EventSourcing;
 using Microwave.Domain.Identities;
 using Microwave.Eventstores.Persistence.MongoDb;
-using Microwave.Persistence.MongoDb.UnitTests;
-using Microwave.Persistence.MongoDb.UnitTests.Eventstores;
+using Microwave.Persistence.UnitTests;
 
 namespace Microwave.Eventstores.UnitTests
 {

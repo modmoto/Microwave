@@ -6,19 +6,19 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Domain.Exceptions;
 using Microwave.Domain.Identities;
 using Microwave.Domain.Results;
-using Microwave.Persistence.MongoDb.UnitTests.Eventstores;
 using Microwave.Queries;
-using Microwave.Queries.Persistence.MongoDb;
 
-namespace Microwave.Persistence.MongoDb.UnitTests.Querries
+namespace Microwave.Persistence.UnitTests.Querries
 {
     [TestClass]
-    public class ReadModelRepositoryTests : IntegrationTests
+    public class ReadModelRepositoryTests
     {
-        [TestMethod]
-        public async Task IdentifiableQuerySaveAndLoad()
+        [DataTestMethod]
+        [PersistenceTypeTest]
+
+        public async Task IdentifiableQuerySaveAndLoad(IPersistenceDefinition definition)
         {
-            var queryRepository = new ReadModelRepository(EventDatabase);
+            var queryRepository = definition.ReadModelRepository;
 
             var guid = GuidIdentity.Create(Guid.NewGuid());
             var testQuerry = new TestReadModel();
@@ -32,10 +32,11 @@ namespace Microwave.Persistence.MongoDb.UnitTests.Querries
             Assert.AreEqual("Jeah", querry1.Value.Strings.First());
         }
 
-        [TestMethod]
-        public async Task IdentifiableQuerySaveAndLoadAll()
+        [DataTestMethod]
+        [PersistenceTypeTest]
+        public async Task IdentifiableQuerySaveAndLoadAll(IPersistenceDefinition definition)
         {
-            var queryRepository = new ReadModelRepository(EventDatabase);
+            var queryRepository = definition.ReadModelRepository;
 
             var testQuerry = new TestReadModel();
             var testQuerry2 = new TestReadModel();
@@ -50,10 +51,11 @@ namespace Microwave.Persistence.MongoDb.UnitTests.Querries
             Assert.AreEqual("Test", querry1.Value.First().UserName);
         }
 
-        [TestMethod]
-        public async Task IdentifiableQuerySaveAndLoadAll_UnknownType()
+        [DataTestMethod]
+        [PersistenceTypeTest]
+        public async Task IdentifiableQuerySaveAndLoadAll_UnknownType(IPersistenceDefinition definition)
         {
-            var queryRepository = new ReadModelRepository(EventDatabase);
+            var queryRepository = definition.ReadModelRepository;
 
             var testQuerry = new TestReadModel();
             var testQuerry2 = new TestReadModel();
@@ -66,10 +68,11 @@ namespace Microwave.Persistence.MongoDb.UnitTests.Querries
             Assert.IsTrue(loadAll.Is<NotFound>());
         }
 
-        [TestMethod]
-        public async Task InsertQuery()
+        [DataTestMethod]
+        [PersistenceTypeTest]
+        public async Task InsertQuery(IPersistenceDefinition definition)
         {
-            var queryRepository = new ReadModelRepository(EventDatabase);
+            var queryRepository = definition.ReadModelRepository;
             var testQuery = new TestQuerry { UserName = "Test"};
             await queryRepository.Save(testQuery);
             var query = (await queryRepository.Load<TestQuerry>()).Value;
@@ -77,10 +80,11 @@ namespace Microwave.Persistence.MongoDb.UnitTests.Querries
             Assert.AreEqual("Test", query.UserName);
         }
 
-        [TestMethod]
-        public async Task InsertQuery_ConcurrencyProblem()
+        [DataTestMethod]
+        [PersistenceTypeTest]
+        public async Task InsertQuery_ConcurrencyProblem(IPersistenceDefinition definition)
         {
-            var queryRepository = new ReadModelRepository(EventDatabase);
+            var queryRepository = definition.ReadModelRepository;
             var testQuery = new TestQuerry { UserName = "Test1"};
             var testQuery2 = new TestQuerry { UserName = "Test2"};
             var save = queryRepository.Save(testQuery);
@@ -89,10 +93,11 @@ namespace Microwave.Persistence.MongoDb.UnitTests.Querries
             await Task.WhenAll(new List<Task> { save, save2 });
         }
 
-        [TestMethod]
-        public async Task UpdateQuery()
+        [DataTestMethod]
+        [PersistenceTypeTest]
+        public async Task UpdateQuery(IPersistenceDefinition definition)
         {
-            var queryRepository = new ReadModelRepository(EventDatabase);
+            var queryRepository = definition.ReadModelRepository;
             await queryRepository.Save(new TestQuerry { UserName = "Test"});
             await queryRepository.Save(new TestQuerry { UserName = "NewName"});
             var query = (await queryRepository.Load<TestQuerry>()).Value;
@@ -100,10 +105,11 @@ namespace Microwave.Persistence.MongoDb.UnitTests.Querries
             Assert.AreEqual("NewName", query.UserName);
         }
 
-        [TestMethod]
-        public async Task LoadTwoTypesOfReadModels_Bug()
+        [DataTestMethod]
+        [PersistenceTypeTest]
+        public async Task LoadTwoTypesOfReadModels_Bug(IPersistenceDefinition definition)
         {
-            var queryRepository = new ReadModelRepository(EventDatabase);
+            var queryRepository = definition.ReadModelRepository;
             var guid2 = GuidIdentity.Create(Guid.NewGuid());
             var testQuery2 = new TestReadModel2();
             testQuery2.SetVars("Test2", new []{ "Jeah", "jeah2"});
@@ -115,10 +121,11 @@ namespace Microwave.Persistence.MongoDb.UnitTests.Querries
             Assert.IsTrue(loadAll2.Is<NotFound>());
         }
 
-        [TestMethod]
-        public async Task ReadModelNotFoundEceptionHasCorrectT()
+        [DataTestMethod]
+        [PersistenceTypeTest]
+        public async Task ReadModelNotFoundEceptionHasCorrectT(IPersistenceDefinition definition)
         {
-            var queryRepository = new ReadModelRepository(EventDatabase);
+            var queryRepository = definition.ReadModelRepository;
             var guid2 = GuidIdentity.Create(Guid.NewGuid());
             var result = await queryRepository.Load<TestReadModel>(guid2);
 

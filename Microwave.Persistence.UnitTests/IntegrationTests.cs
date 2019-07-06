@@ -1,7 +1,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Configuration.MongoDb;
 
-namespace Microwave.Persistence.MongoDb.UnitTests
+namespace Microwave.Persistence.UnitTests
 {
     public class IntegrationTests
     {

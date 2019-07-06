@@ -5,20 +5,17 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Domain.EventSourcing;
 using Microwave.Domain.Identities;
-using Microwave.Eventstores.Persistence.MongoDb;
-using Microwave.Persistence.MongoDb.UnitTests;
-using Microwave.Persistence.MongoDb.UnitTests.Eventstores;
 
-namespace Microwave.Eventstores.UnitTests
+namespace Microwave.Persistence.UnitTests.Eventstores
 {
     [TestClass]
-    public class MongoDbTests : IntegrationTests
+    public class EventRepositoryDeserialisationTests
     {
         // This is not supported and might never be
         [TestMethod]
-        public async Task TestDeserializationOfIdInInterface_OwnBackingField()
+        public async Task TestDeserializationOfIdInInterface_OwnBackingField(IPersistenceDefinition definition)
         {
-            var entityStreamRepository = new EventRepository(EventDatabase, new VersionCache(EventDatabase));
+            var entityStreamRepository = definition.EventRepository;
             var domainEvent = new TestEv_CustomBackingField(GuidIdentity.Create(Guid.NewGuid()));
 
             await entityStreamRepository.AppendAsync(new List<IDomainEvent> {domainEvent}, 0);
@@ -27,9 +24,9 @@ namespace Microwave.Eventstores.UnitTests
         }
 
         [TestMethod]
-        public async Task TestDeserializationOfIdInInterface_GetAutoProperty()
+        public async Task TestDeserializationOfIdInInterface_GetAutoProperty(IPersistenceDefinition definition)
         {
-            var entityStreamRepository = new EventRepository(EventDatabase, new VersionCache(EventDatabase));
+            var entityStreamRepository = definition.EventRepository;
 
             var domainEvent = new TestEv_AutoProperty(GuidIdentity.Create(Guid.NewGuid()));
             await entityStreamRepository.AppendAsync(new List<IDomainEvent> {domainEvent}, 0);
@@ -39,9 +36,9 @@ namespace Microwave.Eventstores.UnitTests
         }
 
         [TestMethod]
-        public async Task TestDeserializationOfIdInInterface()
+        public async Task TestDeserializationOfIdInInterface(IPersistenceDefinition definition)
         {
-            var entityStreamRepository = new EventRepository(EventDatabase, new VersionCache(EventDatabase));
+            var entityStreamRepository = definition.EventRepository;
 
             var domainEvent = new TestEv2(GuidIdentity.Create(Guid.NewGuid()));
             await entityStreamRepository.AppendAsync(new List<IDomainEvent> {domainEvent}, 0);

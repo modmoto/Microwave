@@ -5,18 +5,18 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Domain.EventSourcing;
 using Microwave.Domain.Identities;
-using Microwave.Eventstores.Persistence.MongoDb;
 using Microwave.EventStores.Ports;
 
-namespace Microwave.Persistence.MongoDb.UnitTests.Eventstores
+namespace Microwave.Persistence.UnitTests.Eventstores
 {
     [TestClass]
-    public class SnapshotRepoTests : IntegrationTests
+    public class SnapshotRepoTests
     {
-        [TestMethod]
-        public async Task LoadAndSaveSnapshotWithGuidList()
+        [DataTestMethod]
+        [PersistenceTypeTest]
+        public async Task LoadAndSaveSnapshotWithGuidList(IPersistenceDefinition definition)
         {
-            var repo = new SnapShotRepository(EventDatabase);
+            var repo = definition.SnapShotRepository;
             var userSnapshot = new UserSnapshot();
 
             var entityId = GuidIdentity.Create(Guid.NewGuid());

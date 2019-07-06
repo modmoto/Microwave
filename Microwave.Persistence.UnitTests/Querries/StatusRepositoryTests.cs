@@ -6,18 +6,17 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Discovery.Domain;
 using Microwave.Discovery.Domain.Events;
 using Microwave.Discovery.Domain.Services;
-using Microwave.Persistence.MongoDb.UnitTests.Eventstores;
-using Microwave.Queries.Persistence.MongoDb;
 
-namespace Microwave.Persistence.MongoDb.UnitTests.Querries
+namespace Microwave.Persistence.UnitTests.Querries
 {
     [TestClass]
-    public class StatusRepositoryTests : IntegrationTests
+    public class StatusRepositoryTests
     {
-        [TestMethod]
-        public async Task StatusLoadAndSafe_HappyPath()
+        [DataTestMethod]
+        [PersistenceTypeTest]
+        public async Task StatusLoadAndSafe_HappyPath(IPersistenceDefinition definition)
         {
-            var statusRepository = new StatusRepository(EventDatabase, new EventLocationCache());
+            var statusRepository = definition.StatusRepository;
 
             List<EventsPublishedByService> services = new List<EventsPublishedByService> {
                 EventsPublishedByService.Reachable(new ServiceEndPoint(new Uri("http://service1.de"), "Name1"), new []
@@ -43,20 +42,22 @@ namespace Microwave.Persistence.MongoDb.UnitTests.Querries
             Assert.IsTrue(!location.UnresolvedReadModeSubscriptions.Any());
         }
 
-        [TestMethod]
-        public async Task StatusLoadAndSafe_NoSaveBeforeGet()
+        [DataTestMethod]
+        [PersistenceTypeTest]
+        public async Task StatusLoadAndSafe_NoSaveBeforeGet(IPersistenceDefinition definition)
         {
-            var statusRepository = new StatusRepository(EventDatabase, new EventLocationCache());
+            var statusRepository = definition.StatusRepository;
 
             var location = await statusRepository.GetEventLocation();
 
             Assert.IsNotNull(location);
         }
 
-        [TestMethod]
-        public async Task StatusLoadAndSafe_OneUnresolvedEvent()
+        [DataTestMethod]
+        [PersistenceTypeTest]
+        public async Task StatusLoadAndSafe_OneUnresolvedEvent(IPersistenceDefinition definition)
         {
-            var statusRepository = new StatusRepository(EventDatabase, new EventLocationCache());
+            var statusRepository = definition.StatusRepository;
 
             List<EventsPublishedByService> services = new List<EventsPublishedByService> {
                 EventsPublishedByService.Reachable(new ServiceEndPoint(new Uri("http://service1.de"), "Name1"), new []
@@ -81,10 +82,11 @@ namespace Microwave.Persistence.MongoDb.UnitTests.Querries
             Assert.IsTrue(!location.UnresolvedReadModeSubscriptions.Any());
         }
 
-        [TestMethod]
-        public async Task StatusLoadAndSafe_OneUnresolvedReadModel()
+        [DataTestMethod]
+        [PersistenceTypeTest]
+        public async Task StatusLoadAndSafe_OneUnresolvedReadModel(IPersistenceDefinition definition)
         {
-            var statusRepository = new StatusRepository(EventDatabase, new EventLocationCache());
+            var statusRepository = definition.StatusRepository;
 
             List<EventsPublishedByService> services = new List<EventsPublishedByService> {
                 EventsPublishedByService.Reachable(new ServiceEndPoint(new Uri("http://service1.de"), "Name1"), new []
@@ -112,10 +114,11 @@ namespace Microwave.Persistence.MongoDb.UnitTests.Querries
         }
 
 
-        [TestMethod]
-        public async Task SaveAndLoadServiceMap()
+        [DataTestMethod]
+        [PersistenceTypeTest]
+        public async Task SaveAndLoadServiceMap(IPersistenceDefinition definition)
         {
-            var statusRepository = new StatusRepository(EventDatabase, new EventLocationCache());
+            var statusRepository = definition.StatusRepository;
 
             var map = new ServiceMap(new List<ServiceNodeConfig>
             {

@@ -1,19 +1,18 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microwave.Persistence.MongoDb.UnitTests.Eventstores;
 using Microwave.Queries;
-using Microwave.Queries.Persistence.MongoDb;
 
-namespace Microwave.Persistence.MongoDb.UnitTests.Querries
+namespace Microwave.Persistence.UnitTests.Querries
 {
     [TestClass]
-    public class VersionRepoTest : IntegrationTests
+    public class VersionRepoTest
     {
-        [TestMethod]
-        public async Task VersionRepo_DuplicateUpdate()
+        [DataTestMethod]
+        [PersistenceTypeTest]
+        public async Task VersionRepo_DuplicateUpdate(IPersistenceDefinition definition)
         {
-            var versionRepository = new VersionRepository(EventDatabase);
+            var versionRepository = definition.VersionRepository;
 
             var dateTimeOffset = DateTimeOffset.Now;
             await versionRepository.SaveVersion(new LastProcessedVersion("Type", dateTimeOffset));
@@ -21,6 +20,6 @@ namespace Microwave.Persistence.MongoDb.UnitTests.Querries
 
             var count = await versionRepository.GetVersionAsync("Type");
             Assert.AreEqual(dateTimeOffset, count);
-         }
+        }
     }
 }
