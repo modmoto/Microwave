@@ -12,7 +12,8 @@ namespace Microwave.Persistence.UnitTests.Eventstores
     public class EventRepositoryDeserialisationTests
     {
         // This is not supported and might never be
-        [TestMethod]
+        [DataTestMethod]
+        [PersistenceTypeTest]
         public async Task TestDeserializationOfIdInInterface_OwnBackingField(IPersistenceDefinition definition)
         {
             var entityStreamRepository = definition.EventRepository;
@@ -23,7 +24,8 @@ namespace Microwave.Persistence.UnitTests.Eventstores
             Assert.IsNull(deserialize.EntityId);
         }
 
-        [TestMethod]
+        [DataTestMethod]
+        [PersistenceTypeTest]
         public async Task TestDeserializationOfIdInInterface_GetAutoProperty(IPersistenceDefinition definition)
         {
             var entityStreamRepository = definition.EventRepository;
@@ -35,7 +37,8 @@ namespace Microwave.Persistence.UnitTests.Eventstores
             Assert.AreNotEqual(deserialize.EntityId, Guid.Empty);
         }
 
-        [TestMethod]
+        [DataTestMethod]
+        [PersistenceTypeTest]
         public async Task TestDeserializationOfIdInInterface(IPersistenceDefinition definition)
         {
             var entityStreamRepository = definition.EventRepository;
