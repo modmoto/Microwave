@@ -14,12 +14,12 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Microwave.Configuration.MongoDb\Microwave.Configuration.MongoDb.csproj" />
-      <ProjectReference Include="..\Microwave.Domain\Microwave.Domain.csproj" />
-      <ProjectReference Include="..\Microwave.Eventstores.Persistence.MongoDb\Microwave.Eventstores.Persistence.MongoDb.csproj" />
+      <ProjectReference Include="..\..\Microwave.Configuration.MongoDb\Microwave.Configuration.MongoDb.csproj" />
+      <ProjectReference Include="..\..\Microwave.Domain\Microwave.Domain.csproj" />
+      <ProjectReference Include="..\..\Microwave.Eventstores.Persistence.MongoDb\Microwave.Eventstores.Persistence.MongoDb.csproj" />
       <ProjectReference Include="..\Microwave.Persistence.UnitTestSetupPorts\Microwave.Persistence.UnitTestSetupPorts.csproj" />
-      <ProjectReference Include="..\Microwave.Queries.Persistence.MongoDb\Microwave.Queries.Persistence.MongoDb.csproj" />
-      <ProjectReference Include="..\Microwave\Microwave.csproj" />
+      <ProjectReference Include="..\..\Microwave.Queries.Persistence.MongoDb\Microwave.Queries.Persistence.MongoDb.csproj" />
+      <ProjectReference Include="..\..\Microwave\Microwave.csproj" />
     </ItemGroup>
 
     <ItemGroup>
