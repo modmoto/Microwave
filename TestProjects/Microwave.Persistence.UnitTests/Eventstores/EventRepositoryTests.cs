@@ -153,61 +153,63 @@ namespace Microwave.Persistence.UnitTests.Eventstores
             Assert.IsTrue(res.Is<Ok>());
         }
 
-//        [TestMethod]
-//        public async Task AddAndLoadEventsConcurrent_AddAfterwardsAgain_DifferentRepo()
-//        {
-//            var versionCache = new VersionCache(EventDatabase);
-//            var eventRepository = new EventRepository(EventDatabase, versionCache);
-//            var eventRepository2 = new EventRepository(EventDatabase, versionCache);
-//
-//            var newGuid = GuidIdentity.Create(Guid.NewGuid());
-//            var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid)};
-//            var events2 = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid)};
-//
-//            var t1 = eventRepository.AppendAsync(events, 0);
-//            var t2 = eventRepository2.AppendAsync(events2, 0);
-//
-//            await Task.WhenAll(t1, t2);
-//
-//            var res = await eventRepository.AppendAsync(events2, 2);
-//
-//            Assert.IsTrue(res.Is<Ok>());
-//        }
-//
-//        [TestMethod]
-//        public async Task AddAndLoadEventsConcurrent_CacheEmpty()
-//        {
-//            var eventRepository = new EventRepository(EventDatabase, new VersionCache(EventDatabase));
-//            var eventRepository2 = new EventRepository(EventDatabase, new VersionCache(EventDatabase));
-//
-//            var newGuid = GuidIdentity.Create(Guid.NewGuid());
-//            var newGuid2 = GuidIdentity.Create(Guid.NewGuid());
-//            var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid)};
-//            var events2 = new List<IDomainEvent> { new TestEvent1(newGuid2), new TestEvent2(newGuid2)};
-//
-//            await eventRepository.AppendAsync(events, 0);
-//            await eventRepository2.AppendAsync(events2, 0);
-//
-//            var result = await eventRepository.LoadEvents();
-//            Assert.AreEqual(4, result.Value.Count());
-//        }
-//
-//        [TestMethod]
-//        public async Task AddAndLoadEventsConcurrent_CacheEmpty2()
-//        {
-//            var eventRepository = new EventRepository(EventDatabase, new VersionCache(EventDatabase));
-//            var eventRepository2 = new EventRepository(EventDatabase, new VersionCache(EventDatabase));
-//
-//            var newGuid = GuidIdentity.Create(Guid.NewGuid());
-//            var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid)};
-//            var events2 = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid)};
-//
-//            await eventRepository.AppendAsync(events, 0);
-//            await eventRepository2.AppendAsync(events2, 2);
-//
-//            var result = await eventRepository.LoadEvents();
-//            Assert.AreEqual(4, result.Value.Count());
-//        }
+        [DataTestMethod]
+        [PersistenceTypeTest]
+        public async Task AddAndLoadEventsConcurrent_AddAfterwardsAgain_DifferentRepo(IPersistenceDefinition definition)
+        {
+            var eventRepository = definition.EventRepository;
+            var eventRepository2 = definition.EventRepository;
+
+            var newGuid = GuidIdentity.Create(Guid.NewGuid());
+            var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid)};
+            var events2 = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid)};
+
+            var t1 = eventRepository.AppendAsync(events, 0);
+            var t2 = eventRepository2.AppendAsync(events2, 0);
+
+            await Task.WhenAll(t1, t2);
+
+            var res = await eventRepository.AppendAsync(events2, 2);
+
+            Assert.IsTrue(res.Is<Ok>());
+        }
+
+        [DataTestMethod]
+        [PersistenceTypeTest]
+        public async Task AddAndLoadEventsConcurrent_CacheEmpty(IPersistenceDefinition definition)
+        {
+            var eventRepository = definition.EventRepository;
+            var eventRepository2 = definition.EventRepository;
+
+            var newGuid = GuidIdentity.Create(Guid.NewGuid());
+            var newGuid2 = GuidIdentity.Create(Guid.NewGuid());
+            var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid)};
+            var events2 = new List<IDomainEvent> { new TestEvent1(newGuid2), new TestEvent2(newGuid2)};
+
+            await eventRepository.AppendAsync(events, 0);
+            await eventRepository2.AppendAsync(events2, 0);
+
+            var result = await eventRepository.LoadEvents();
+            Assert.AreEqual(4, result.Value.Count());
+        }
+
+        [DataTestMethod]
+        [PersistenceTypeTest]
+        public async Task AddAndLoadEventsConcurrent_CacheEmpty2(IPersistenceDefinition definition)
+        {
+            var eventRepository = definition.EventRepository;
+            var eventRepository2 = definition.EventRepository;
+
+            var newGuid = GuidIdentity.Create(Guid.NewGuid());
+            var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid)};
+            var events2 = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid)};
+
+            await eventRepository.AppendAsync(events, 0);
+            await eventRepository2.AppendAsync(events2, 2);
+
+            var result = await eventRepository.LoadEvents();
+            Assert.AreEqual(4, result.Value.Count());
+        }
 
         [DataTestMethod]
         [PersistenceTypeTest]
