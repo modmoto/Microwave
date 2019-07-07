@@ -11,9 +11,9 @@ namespace Microwave.Persistence.UnitTests.Querries
     {
         [DataTestMethod]
         [PersistenceTypeTest]
-        public async Task VersionRepo_DuplicateUpdate(IPersistenceDefinition definition)
+        public async Task VersionRepo_DuplicateUpdate(IPersistenceLayerProvider layerProvider)
         {
-            var versionRepository = definition.VersionRepository;
+            var versionRepository = layerProvider.VersionRepository;
 
             var dateTimeOffset = DateTimeOffset.Now;
             await versionRepository.SaveVersion(new LastProcessedVersion("Type", dateTimeOffset));

@@ -16,9 +16,9 @@ namespace Microwave.Persistence.UnitTests.Eventstores
     {
         [DataTestMethod]
         [PersistenceTypeTest]
-        public async Task AddAndLoadEvents(IPersistenceDefinition definition)
+        public async Task AddAndLoadEvents(IPersistenceLayerProvider layerProvider)
         {
-            var eventRepository = definition.EventRepository;
+            var eventRepository = layerProvider.EventRepository;
 
             var newGuid = GuidIdentity.Create(Guid.NewGuid());
             var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid), new TestEvent3(newGuid, "TestName")};
@@ -36,9 +36,9 @@ namespace Microwave.Persistence.UnitTests.Eventstores
 
         [DataTestMethod]
         [PersistenceTypeTest]
-        public async Task AddAndLoadEvents_Twice(IPersistenceDefinition definition)
+        public async Task AddAndLoadEvents_Twice(IPersistenceLayerProvider layerProvider)
         {
-            var eventRepository = definition.EventRepository;
+            var eventRepository = layerProvider.EventRepository;
 
             var newGuid = GuidIdentity.Create(Guid.NewGuid());
             var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid), new TestEvent3(newGuid, "TestName")};
@@ -54,9 +54,9 @@ namespace Microwave.Persistence.UnitTests.Eventstores
         // this is because of mongodb, constructor has to be named the same
         [DataTestMethod]
         [PersistenceTypeTest]
-        public async Task AddAndLoadEvents_ParamCalledWrong(IPersistenceDefinition definition)
+        public async Task AddAndLoadEvents_ParamCalledWrong(IPersistenceLayerProvider layerProvider)
         {
-            var eventRepository = definition.EventRepository;
+            var eventRepository = layerProvider.EventRepository;
 
             var newGuid = GuidIdentity.Create(Guid.NewGuid());
             var events = new List<IDomainEvent> { new TestEvent_ParameterCalledWrong(newGuid)};
@@ -69,9 +69,9 @@ namespace Microwave.Persistence.UnitTests.Eventstores
 
         [DataTestMethod]
         [PersistenceTypeTest]
-        public async Task LoadDomainEvents_IdAndStuffIsSetCorreclty(IPersistenceDefinition definition)
+        public async Task LoadDomainEvents_IdAndStuffIsSetCorreclty(IPersistenceLayerProvider layerProvider)
         {
-            var eventRepository = definition.EventRepository;
+            var eventRepository = layerProvider.EventRepository;
 
             var newGuid = GuidIdentity.Create(Guid.NewGuid());
             var testEvent1 = new TestEvent1(newGuid);
@@ -92,9 +92,9 @@ namespace Microwave.Persistence.UnitTests.Eventstores
 
         [DataTestMethod]
         [PersistenceTypeTest]
-        public async Task AddAndLoadEventsConcurrent(IPersistenceDefinition definition)
+        public async Task AddAndLoadEventsConcurrent(IPersistenceLayerProvider layerProvider)
         {
-            var eventRepository = definition.EventRepository;
+            var eventRepository = layerProvider.EventRepository;
 
             var newGuid = GuidIdentity.Create(Guid.NewGuid());
             var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid)};
@@ -114,9 +114,9 @@ namespace Microwave.Persistence.UnitTests.Eventstores
 
         [DataTestMethod]
         [PersistenceTypeTest]
-        public async Task AddAndLoadEventsConcurrent_AfterNormalAdd(IPersistenceDefinition definition)
+        public async Task AddAndLoadEventsConcurrent_AfterNormalAdd(IPersistenceLayerProvider layerProvider)
         {
-            var eventRepository = definition.EventRepository;
+            var eventRepository = layerProvider.EventRepository;
 
             var newGuid = GuidIdentity.Create(Guid.NewGuid());
             var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid)};
@@ -135,9 +135,9 @@ namespace Microwave.Persistence.UnitTests.Eventstores
 
         [DataTestMethod]
         [PersistenceTypeTest]
-        public async Task AddAndLoadEventsConcurrent_AddAfterwardsAgain(IPersistenceDefinition definition)
+        public async Task AddAndLoadEventsConcurrent_AddAfterwardsAgain(IPersistenceLayerProvider layerProvider)
         {
-            var eventRepository = definition.EventRepository;
+            var eventRepository = layerProvider.EventRepository;
 
             var newGuid = GuidIdentity.Create(Guid.NewGuid());
             var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid)};
@@ -155,10 +155,10 @@ namespace Microwave.Persistence.UnitTests.Eventstores
 
         [DataTestMethod]
         [PersistenceTypeTest]
-        public async Task AddAndLoadEventsConcurrent_AddAfterwardsAgain_DifferentRepo(IPersistenceDefinition definition)
+        public async Task AddAndLoadEventsConcurrent_AddAfterwardsAgain_DifferentRepo(IPersistenceLayerProvider layerProvider)
         {
-            var eventRepository = definition.EventRepository;
-            var eventRepository2 = definition.EventRepository;
+            var eventRepository = layerProvider.EventRepository;
+            var eventRepository2 = layerProvider.EventRepository;
 
             var newGuid = GuidIdentity.Create(Guid.NewGuid());
             var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid)};
@@ -176,10 +176,10 @@ namespace Microwave.Persistence.UnitTests.Eventstores
 
         [DataTestMethod]
         [PersistenceTypeTest]
-        public async Task AddAndLoadEventsConcurrent_CacheEmpty(IPersistenceDefinition definition)
+        public async Task AddAndLoadEventsConcurrent_CacheEmpty(IPersistenceLayerProvider layerProvider)
         {
-            var eventRepository = definition.EventRepository;
-            var eventRepository2 = definition.EventRepository;
+            var eventRepository = layerProvider.EventRepository;
+            var eventRepository2 = layerProvider.EventRepository;
 
             var newGuid = GuidIdentity.Create(Guid.NewGuid());
             var newGuid2 = GuidIdentity.Create(Guid.NewGuid());
@@ -195,10 +195,10 @@ namespace Microwave.Persistence.UnitTests.Eventstores
 
         [DataTestMethod]
         [PersistenceTypeTest]
-        public async Task AddAndLoadEventsConcurrent_CacheEmpty2(IPersistenceDefinition definition)
+        public async Task AddAndLoadEventsConcurrent_CacheEmpty2(IPersistenceLayerProvider layerProvider)
         {
-            var eventRepository = definition.EventRepository;
-            var eventRepository2 = definition.EventRepository;
+            var eventRepository = layerProvider.EventRepository;
+            var eventRepository2 = layerProvider.EventRepository;
 
             var newGuid = GuidIdentity.Create(Guid.NewGuid());
             var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid)};
@@ -213,9 +213,9 @@ namespace Microwave.Persistence.UnitTests.Eventstores
 
         [DataTestMethod]
         [PersistenceTypeTest]
-        public async Task LoadEntityId_NotFoundTIsCorrect(IPersistenceDefinition definition)
+        public async Task LoadEntityId_NotFoundTIsCorrect(IPersistenceLayerProvider layerProvider)
         {
-            var eventRepository = definition.EventRepository;
+            var eventRepository = layerProvider.EventRepository;
 
             var entityId = Identity.Create(Guid.NewGuid());
             var result = await eventRepository.LoadEventsByEntity(entityId);
@@ -226,9 +226,9 @@ namespace Microwave.Persistence.UnitTests.Eventstores
 
         [DataTestMethod]
         [PersistenceTypeTest]
-        public async Task LoadEntityId_VersionTooHIgh_NotFoundIsOk(IPersistenceDefinition definition)
+        public async Task LoadEntityId_VersionTooHIgh_NotFoundIsOk(IPersistenceLayerProvider layerProvider)
         {
-            var eventRepository = definition.EventRepository;
+            var eventRepository = layerProvider.EventRepository;
 
             var entityId = Identity.Create(new Guid());
             var events = new List<IDomainEvent> { new TestEvent1(entityId), new TestEvent2(entityId)};
@@ -242,9 +242,9 @@ namespace Microwave.Persistence.UnitTests.Eventstores
 
         [DataTestMethod]
         [PersistenceTypeTest]
-        public async Task LoadType_VersionTooHIgh_NotFoundIsOk(IPersistenceDefinition definition)
+        public async Task LoadType_VersionTooHIgh_NotFoundIsOk(IPersistenceLayerProvider layerProvider)
         {
-            var eventRepository = definition.EventRepository;
+            var eventRepository = layerProvider.EventRepository;
 
             var entityId = Identity.Create(new Guid());
             var events = new List<IDomainEvent> { new TestEvent1(entityId), new TestEvent2(entityId)};
@@ -259,9 +259,9 @@ namespace Microwave.Persistence.UnitTests.Eventstores
 
         [DataTestMethod]
         [PersistenceTypeTest]
-        public async Task LoadType_EmptyListWhenNoEventsPresentButAreBeingPublished(IPersistenceDefinition definition)
+        public async Task LoadType_EmptyListWhenNoEventsPresentButAreBeingPublished(IPersistenceLayerProvider layerProvider)
         {
-            var eventRepository = definition.EventRepository;
+            var eventRepository = layerProvider.EventRepository;
 
             var result = await eventRepository.LoadEventsByTypeAsync("TypeNotInsertedButSubscribed");
 
@@ -270,9 +270,9 @@ namespace Microwave.Persistence.UnitTests.Eventstores
 
         [DataTestMethod]
         [PersistenceTypeTest]
-        public async Task AddEmptyEventList(IPersistenceDefinition definition)
+        public async Task AddEmptyEventList(IPersistenceLayerProvider layerProvider)
         {
-            var eventRepository = definition.EventRepository;
+            var eventRepository = layerProvider.EventRepository;
 
             var appendAsync = await eventRepository.AppendAsync(new List<IDomainEvent>(), 0);
             appendAsync.Check();
@@ -280,9 +280,9 @@ namespace Microwave.Persistence.UnitTests.Eventstores
 
         [DataTestMethod]
         [PersistenceTypeTest]
-        public async Task LoadEventsByTypeAsync(IPersistenceDefinition definition)
+        public async Task LoadEventsByTypeAsync(IPersistenceLayerProvider layerProvider)
         {
-            var eventRepository = definition.EventRepository;
+            var eventRepository = layerProvider.EventRepository;
 
             var newGuid = GuidIdentity.Create(Guid.NewGuid());
             var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid), new TestEvent2(newGuid)};
@@ -295,9 +295,9 @@ namespace Microwave.Persistence.UnitTests.Eventstores
 
         [DataTestMethod]
         [PersistenceTypeTest]
-        public async Task AddAndLoadEventsByTimeStamp(IPersistenceDefinition definition)
+        public async Task AddAndLoadEventsByTimeStamp(IPersistenceLayerProvider layerProvider)
         {
-            var eventRepository = definition.EventRepository;
+            var eventRepository = layerProvider.EventRepository;
 
             var newGuid = GuidIdentity.Create(Guid.NewGuid());
             var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid), new TestEvent1(newGuid), new TestEvent2(newGuid)};
@@ -312,9 +312,9 @@ namespace Microwave.Persistence.UnitTests.Eventstores
 
         [DataTestMethod]
         [PersistenceTypeTest]
-        public async Task AddEvents_FirstEventAfterCreationHasWrongRowVersionBug(IPersistenceDefinition definition)
+        public async Task AddEvents_FirstEventAfterCreationHasWrongRowVersionBug(IPersistenceLayerProvider layerProvider)
         {
-            var eventRepository = definition.EventRepository;
+            var eventRepository = layerProvider.EventRepository;
 
             var newGuid = GuidIdentity.Create(Guid.NewGuid());
             var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid), new TestEvent1(newGuid), new TestEvent2(newGuid)};
@@ -331,9 +331,9 @@ namespace Microwave.Persistence.UnitTests.Eventstores
 
         [DataTestMethod]
         [PersistenceTypeTest]
-        public async Task AddEvents_VersionTooHigh(IPersistenceDefinition definition)
+        public async Task AddEvents_VersionTooHigh(IPersistenceLayerProvider layerProvider)
         {
-            var eventRepository = definition.EventRepository;
+            var eventRepository = layerProvider.EventRepository;
 
             var newGuid = GuidIdentity.Create(Guid.NewGuid());
             var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid), new TestEvent1(newGuid), new TestEvent2(newGuid)};
@@ -345,9 +345,9 @@ namespace Microwave.Persistence.UnitTests.Eventstores
 
         [DataTestMethod]
         [PersistenceTypeTest]
-        public async Task AddEvents_VersionWayTooHigh(IPersistenceDefinition definition)
+        public async Task AddEvents_VersionWayTooHigh(IPersistenceLayerProvider layerProvider)
         {
-            var eventRepository = definition.EventRepository;
+            var eventRepository = layerProvider.EventRepository;
 
             var newGuid = GuidIdentity.Create(Guid.NewGuid());
             var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid), new TestEvent1(newGuid), new TestEvent2(newGuid)};
@@ -358,9 +358,9 @@ namespace Microwave.Persistence.UnitTests.Eventstores
 
         [DataTestMethod]
         [PersistenceTypeTest]
-        public async Task AddAndLoadEventsByTimeStamp_SavedAsType(IPersistenceDefinition definition)
+        public async Task AddAndLoadEventsByTimeStamp_SavedAsType(IPersistenceLayerProvider layerProvider)
         {
-            var eventRepository = definition.EventRepository;
+            var eventRepository = layerProvider.EventRepository;
 
             var newGuid = GuidIdentity.Create(Guid.NewGuid());
             var domainEvent = new TestEvent1(newGuid);
@@ -376,9 +376,9 @@ namespace Microwave.Persistence.UnitTests.Eventstores
 
         [DataTestMethod]
         [PersistenceTypeTest]
-        public async Task AddEvents_IdSet(IPersistenceDefinition definition)
+        public async Task AddEvents_IdSet(IPersistenceLayerProvider layerProvider)
         {
-            var eventRepository = definition.EventRepository;
+            var eventRepository = layerProvider.EventRepository;
 
             var testEvent1 = new TestEvent1(GuidIdentity.Create(Guid.NewGuid()));
             await eventRepository.AppendAsync(new[] {testEvent1}, 0);
@@ -391,9 +391,9 @@ namespace Microwave.Persistence.UnitTests.Eventstores
 
         [DataTestMethod]
         [PersistenceTypeTest]
-        public async Task AddEvents_IdOfTypeSet(IPersistenceDefinition definition)
+        public async Task AddEvents_IdOfTypeSet(IPersistenceLayerProvider layerProvider)
         {
-            var eventRepository = definition.EventRepository;
+            var eventRepository = layerProvider.EventRepository;
 
             var testEvent1 = new TestEvent1(GuidIdentity.Create(Guid.NewGuid()));
             await eventRepository.AppendAsync(new List<IDomainEvent> { testEvent1 }, 0);
@@ -406,9 +406,9 @@ namespace Microwave.Persistence.UnitTests.Eventstores
 
         [DataTestMethod]
         [PersistenceTypeTest]
-        public async Task AddEvents_RunTypeProjection(IPersistenceDefinition definition)
+        public async Task AddEvents_RunTypeProjection(IPersistenceLayerProvider layerProvider)
         {
-            var eventRepository = definition.EventRepository;
+            var eventRepository = layerProvider.EventRepository;
 
             var newGuid = GuidIdentity.Create(Guid.NewGuid());
             var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid), new TestEvent1(newGuid), new TestEvent2(newGuid)};
@@ -426,9 +426,9 @@ namespace Microwave.Persistence.UnitTests.Eventstores
 
         [DataTestMethod]
         [PersistenceTypeTest]
-        public async Task FindLastOccuredOnOfType(IPersistenceDefinition definition)
+        public async Task FindLastOccuredOnOfType(IPersistenceLayerProvider layerProvider)
         {
-            var eventRepository = definition.EventRepository;
+            var eventRepository = layerProvider.EventRepository;
 
             var newGuid = GuidIdentity.Create();
             var events = new List<IDomainEvent> { new TestEvent2(newGuid)};
@@ -448,9 +448,9 @@ namespace Microwave.Persistence.UnitTests.Eventstores
 
         [DataTestMethod]
         [PersistenceTypeTest]
-        public async Task FindLastOccuredOnOfType_NotFound(IPersistenceDefinition definition)
+        public async Task FindLastOccuredOnOfType_NotFound(IPersistenceLayerProvider layerProvider)
         {
-            var eventRepository = definition.EventRepository;
+            var eventRepository = layerProvider.EventRepository;
 
             var newGuid = GuidIdentity.Create(Guid.NewGuid());
             var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid), new TestEvent1(newGuid), new TestEvent2(newGuid), new TestEvent2(newGuid)};

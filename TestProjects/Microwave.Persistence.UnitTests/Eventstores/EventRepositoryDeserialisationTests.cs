@@ -15,9 +15,9 @@ namespace Microwave.Persistence.UnitTests.Eventstores
         // This is not supported and might never be
         [DataTestMethod]
         [PersistenceTypeTest]
-        public async Task TestDeserializationOfIdInInterface_OwnBackingField(IPersistenceDefinition definition)
+        public async Task TestDeserializationOfIdInInterface_OwnBackingField(IPersistenceLayerProvider layerProvider)
         {
-            var entityStreamRepository = definition.EventRepository;
+            var entityStreamRepository = layerProvider.EventRepository;
             var domainEvent = new TestEv_CustomBackingField(GuidIdentity.Create(Guid.NewGuid()));
 
             await entityStreamRepository.AppendAsync(new List<IDomainEvent> {domainEvent}, 0);
@@ -27,9 +27,9 @@ namespace Microwave.Persistence.UnitTests.Eventstores
 
         [DataTestMethod]
         [PersistenceTypeTest]
-        public async Task TestDeserializationOfIdInInterface_GetAutoProperty(IPersistenceDefinition definition)
+        public async Task TestDeserializationOfIdInInterface_GetAutoProperty(IPersistenceLayerProvider layerProvider)
         {
-            var entityStreamRepository = definition.EventRepository;
+            var entityStreamRepository = layerProvider.EventRepository;
 
             var domainEvent = new TestEv_AutoProperty(GuidIdentity.Create(Guid.NewGuid()));
             await entityStreamRepository.AppendAsync(new List<IDomainEvent> {domainEvent}, 0);
@@ -40,9 +40,9 @@ namespace Microwave.Persistence.UnitTests.Eventstores
 
         [DataTestMethod]
         [PersistenceTypeTest]
-        public async Task TestDeserializationOfIdInInterface(IPersistenceDefinition definition)
+        public async Task TestDeserializationOfIdInInterface(IPersistenceLayerProvider layerProvider)
         {
-            var entityStreamRepository = definition.EventRepository;
+            var entityStreamRepository = layerProvider.EventRepository;
 
             var domainEvent = new TestEv2(GuidIdentity.Create(Guid.NewGuid()));
             await entityStreamRepository.AppendAsync(new List<IDomainEvent> {domainEvent}, 0);

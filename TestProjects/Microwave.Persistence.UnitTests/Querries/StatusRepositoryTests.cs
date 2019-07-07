@@ -14,9 +14,9 @@ namespace Microwave.Persistence.UnitTests.Querries
     {
         [DataTestMethod]
         [PersistenceTypeTest]
-        public async Task StatusLoadAndSafe_HappyPath(IPersistenceDefinition definition)
+        public async Task StatusLoadAndSafe_HappyPath(IPersistenceLayerProvider layerProvider)
         {
-            var statusRepository = definition.StatusRepository;
+            var statusRepository = layerProvider.StatusRepository;
 
             List<EventsPublishedByService> services = new List<EventsPublishedByService> {
                 EventsPublishedByService.Reachable(new ServiceEndPoint(new Uri("http://service1.de"), "Name1"), new []
@@ -44,9 +44,9 @@ namespace Microwave.Persistence.UnitTests.Querries
 
         [DataTestMethod]
         [PersistenceTypeTest]
-        public async Task StatusLoadAndSafe_NoSaveBeforeGet(IPersistenceDefinition definition)
+        public async Task StatusLoadAndSafe_NoSaveBeforeGet(IPersistenceLayerProvider layerProvider)
         {
-            var statusRepository = definition.StatusRepository;
+            var statusRepository = layerProvider.StatusRepository;
 
             var location = await statusRepository.GetEventLocation();
 
@@ -55,9 +55,9 @@ namespace Microwave.Persistence.UnitTests.Querries
 
         [DataTestMethod]
         [PersistenceTypeTest]
-        public async Task StatusLoadAndSafe_OneUnresolvedEvent(IPersistenceDefinition definition)
+        public async Task StatusLoadAndSafe_OneUnresolvedEvent(IPersistenceLayerProvider layerProvider)
         {
-            var statusRepository = definition.StatusRepository;
+            var statusRepository = layerProvider.StatusRepository;
 
             List<EventsPublishedByService> services = new List<EventsPublishedByService> {
                 EventsPublishedByService.Reachable(new ServiceEndPoint(new Uri("http://service1.de"), "Name1"), new []
@@ -84,9 +84,9 @@ namespace Microwave.Persistence.UnitTests.Querries
 
         [DataTestMethod]
         [PersistenceTypeTest]
-        public async Task StatusLoadAndSafe_OneUnresolvedReadModel(IPersistenceDefinition definition)
+        public async Task StatusLoadAndSafe_OneUnresolvedReadModel(IPersistenceLayerProvider layerProvider)
         {
-            var statusRepository = definition.StatusRepository;
+            var statusRepository = layerProvider.StatusRepository;
 
             List<EventsPublishedByService> services = new List<EventsPublishedByService> {
                 EventsPublishedByService.Reachable(new ServiceEndPoint(new Uri("http://service1.de"), "Name1"), new []
@@ -116,9 +116,9 @@ namespace Microwave.Persistence.UnitTests.Querries
 
         [DataTestMethod]
         [PersistenceTypeTest]
-        public async Task SaveAndLoadServiceMap(IPersistenceDefinition definition)
+        public async Task SaveAndLoadServiceMap(IPersistenceLayerProvider layerProvider)
         {
-            var statusRepository = definition.StatusRepository;
+            var statusRepository = layerProvider.StatusRepository;
 
             var map = new ServiceMap(new List<ServiceNodeConfig>
             {

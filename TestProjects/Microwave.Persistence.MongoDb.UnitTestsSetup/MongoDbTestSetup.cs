@@ -8,7 +8,7 @@ using Microwave.Queries;
 
 namespace Microwave.Persistence.MongoDb.UnitTestsSetup
 {
-    public class MongoDbTestSetup : IPersistenceDefinition
+    public class MongoDbTestSetup : IPersistenceLayerProvider
     {
         public MongoDbTestSetup()
         {
