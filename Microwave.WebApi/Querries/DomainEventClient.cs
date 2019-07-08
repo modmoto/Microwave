@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
 using System.Net.Http;
-using Microwave.Discovery.Domain;
+using Microwave.Discovery.EventLocations;
 using Microwave.Queries;
 
 namespace Microwave.WebApi.Querries

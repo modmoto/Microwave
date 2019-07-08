@@ -4,8 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microwave.Discovery;
-using Microwave.Discovery.Domain;
-using Microwave.Discovery.Domain.Services;
+using Microwave.Discovery.ServiceMaps;
 using Microwave.Domain;
 
 namespace Microwave.UI.Areas.MicrowaveDashboard.Pages

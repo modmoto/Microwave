@@ -22,7 +22,7 @@ namespace ReadService1
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             services.AddMicrowaveUi();
-            services.AddMicrowave(_microwaveConfiguration, new MongoDbPersistenceLayer(new MicrowaveMongoDb("TestReadService1")));
+            services.AddMicrowave(_microwaveConfiguration, new MongoDbPersistenceLayer(new MicrowaveMongoDb { DatabaseName = "TestReadService1" }));
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)

@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
-using Microwave.Discovery.Domain;
+using Microwave.Discovery.EventLocations;
+using Microwave.Discovery.ServiceMaps;
 
 namespace Microwave.Discovery
 {

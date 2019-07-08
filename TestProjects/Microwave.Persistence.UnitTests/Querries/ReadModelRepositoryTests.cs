@@ -17,9 +17,9 @@ namespace Microwave.Persistence.UnitTests.Querries
         [DataTestMethod]
         [PersistenceTypeTest]
 
-        public async Task IdentifiableQuerySaveAndLoad(IPersistenceDefinition definition)
+        public async Task IdentifiableQuerySaveAndLoad(IPersistenceLayerProvider layerProvider)
         {
-            var queryRepository = definition.ReadModelRepository;
+            var queryRepository = layerProvider.ReadModelRepository;
 
             var guid = GuidIdentity.Create(Guid.NewGuid());
             var testQuerry = new TestReadModel();
@@ -35,9 +35,9 @@ namespace Microwave.Persistence.UnitTests.Querries
 
         [DataTestMethod]
         [PersistenceTypeTest]
-        public async Task IdentifiableQuerySaveAndLoadAll(IPersistenceDefinition definition)
+        public async Task IdentifiableQuerySaveAndLoadAll(IPersistenceLayerProvider layerProvider)
         {
-            var queryRepository = definition.ReadModelRepository;
+            var queryRepository = layerProvider.ReadModelRepository;
 
             var testQuerry = new TestReadModel();
             var testQuerry2 = new TestReadModel();
@@ -54,9 +54,9 @@ namespace Microwave.Persistence.UnitTests.Querries
 
         [DataTestMethod]
         [PersistenceTypeTest]
-        public async Task IdentifiableQuerySaveAndLoadAll_UnknownType(IPersistenceDefinition definition)
+        public async Task IdentifiableQuerySaveAndLoadAll_UnknownType(IPersistenceLayerProvider layerProvider)
         {
-            var queryRepository = definition.ReadModelRepository;
+            var queryRepository = layerProvider.ReadModelRepository;
 
             var testQuerry = new TestReadModel();
             var testQuerry2 = new TestReadModel();
@@ -71,9 +71,9 @@ namespace Microwave.Persistence.UnitTests.Querries
 
         [DataTestMethod]
         [PersistenceTypeTest]
-        public async Task InsertQuery(IPersistenceDefinition definition)
+        public async Task InsertQuery(IPersistenceLayerProvider layerProvider)
         {
-            var queryRepository = definition.ReadModelRepository;
+            var queryRepository = layerProvider.ReadModelRepository;
             var testQuery = new TestQuerry { UserName = "Test"};
             await queryRepository.Save(testQuery);
             var query = (await queryRepository.Load<TestQuerry>()).Value;
@@ -83,9 +83,9 @@ namespace Microwave.Persistence.UnitTests.Querries
 
         [DataTestMethod]
         [PersistenceTypeTest]
-        public async Task InsertQuery_ConcurrencyProblem(IPersistenceDefinition definition)
+        public async Task InsertQuery_ConcurrencyProblem(IPersistenceLayerProvider layerProvider)
         {
-            var queryRepository = definition.ReadModelRepository;
+            var queryRepository = layerProvider.ReadModelRepository;
             var testQuery = new TestQuerry { UserName = "Test1"};
             var testQuery2 = new TestQuerry { UserName = "Test2"};
             var save = queryRepository.Save(testQuery);
@@ -96,9 +96,9 @@ namespace Microwave.Persistence.UnitTests.Querries
 
         [DataTestMethod]
         [PersistenceTypeTest]
-        public async Task UpdateQuery(IPersistenceDefinition definition)
+        public async Task UpdateQuery(IPersistenceLayerProvider layerProvider)
         {
-            var queryRepository = definition.ReadModelRepository;
+            var queryRepository = layerProvider.ReadModelRepository;
             await queryRepository.Save(new TestQuerry { UserName = "Test"});
             await queryRepository.Save(new TestQuerry { UserName = "NewName"});
             var query = (await queryRepository.Load<TestQuerry>()).Value;
@@ -108,9 +108,9 @@ namespace Microwave.Persistence.UnitTests.Querries
 
         [DataTestMethod]
         [PersistenceTypeTest]
-        public async Task LoadTwoTypesOfReadModels_Bug(IPersistenceDefinition definition)
+        public async Task LoadTwoTypesOfReadModels_Bug(IPersistenceLayerProvider layerProvider)
         {
-            var queryRepository = definition.ReadModelRepository;
+            var queryRepository = layerProvider.ReadModelRepository;
             var guid2 = GuidIdentity.Create(Guid.NewGuid());
             var testQuery2 = new TestReadModel2();
             testQuery2.SetVars("Test2", new []{ "Jeah", "jeah2"});
@@ -124,9 +124,9 @@ namespace Microwave.Persistence.UnitTests.Querries
 
         [DataTestMethod]
         [PersistenceTypeTest]
-        public async Task ReadModelNotFoundEceptionHasCorrectT(IPersistenceDefinition definition)
+        public async Task ReadModelNotFoundEceptionHasCorrectT(IPersistenceLayerProvider layerProvider)
         {
-            var queryRepository = definition.ReadModelRepository;
+            var queryRepository = layerProvider.ReadModelRepository;
             var guid2 = GuidIdentity.Create(Guid.NewGuid());
             var result = await queryRepository.Load<TestReadModel>(guid2);
 

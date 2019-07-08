@@ -4,23 +4,16 @@ namespace Microwave.Persistence.MongoDb
 {
     public class MicrowaveMongoDb
     {
-        private readonly string _databaseName;
-        private readonly string _connectionString;
+        public string DatabaseName { get; set; } = "MicrowaveDb";
+        public string ConnectionString { get; set; } = "mongodb://localhost:27017/";
+
         public IMongoDatabase Database
         {
             get
             {
-                var client = new MongoClient(_connectionString);
-                return client.GetDatabase(_databaseName);
+                var client = new MongoClient(ConnectionString);
+                return client.GetDatabase(DatabaseName);
             }
-        }
-
-        public MicrowaveMongoDb(
-            string databaseName = "MicrowaveDb",
-            string connectionString = "mongodb://localhost:27017/")
-        {
-            _databaseName = databaseName;
-            _connectionString = connectionString;
         }
     }
 }

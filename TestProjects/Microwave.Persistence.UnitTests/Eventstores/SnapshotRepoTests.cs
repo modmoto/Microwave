@@ -15,9 +15,9 @@ namespace Microwave.Persistence.UnitTests.Eventstores
     {
         [DataTestMethod]
         [PersistenceTypeTest]
-        public async Task LoadAndSaveSnapshotWithGuidList(IPersistenceDefinition definition)
+        public async Task LoadAndSaveSnapshotWithGuidList(IPersistenceLayerProvider layerProvider)
         {
-            var repo = definition.SnapShotRepository;
+            var repo = layerProvider.SnapShotRepository;
             var userSnapshot = new UserSnapshot();
 
             var entityId = GuidIdentity.Create(Guid.NewGuid());

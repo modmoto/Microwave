@@ -5,7 +5,7 @@ using Microwave.Queries;
 
 namespace Microwave.Persistence.UnitTestSetupPorts
 {
-    public interface IPersistenceDefinition
+    public interface IPersistenceLayerProvider
     {
         IVersionRepository VersionRepository { get; }
         IStatusRepository StatusRepository { get; }

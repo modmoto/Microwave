@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 
 namespace Microwave.Queries
 {
@@ -24,10 +23,5 @@ namespace Microwave.Queries
                 methodToExecute.Invoke(this, new object[] {domainEvent, version});
             }
         }
-    }
-
-    public abstract class ReadModel : Query
-    {
-        public abstract Type GetsCreatedOn { get; }
     }
 }

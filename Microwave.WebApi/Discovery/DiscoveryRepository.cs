@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microwave.Discovery;
-using Microwave.Discovery.Domain.Events;
-using Microwave.Discovery.Domain.Services;
+using Microwave.Discovery.EventLocations;
+using Microwave.Discovery.ServiceMaps;
 using Newtonsoft.Json;
 
 namespace Microwave.WebApi.Discovery

@@ -1,4 +1,4 @@
-using Microwave.Discovery.Domain;
+using Microwave.Discovery.EventLocations;
 
 namespace Microwave.Persistence.MongoDb.Querries
 {

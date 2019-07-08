@@ -6,9 +6,8 @@ using Microsoft.AspNetCore.Hosting.Internal;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Discovery;
-using Microwave.Discovery.Domain;
-using Microwave.Discovery.Domain.Events;
-using Microwave.Discovery.Domain.Services;
+using Microwave.Discovery.EventLocations;
+using Microwave.Discovery.ServiceMaps;
 using Microwave.UI.Areas.MicrowaveDashboard.Pages;
 using Moq;
 

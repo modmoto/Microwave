@@ -8,11 +8,11 @@ using Microwave.Queries;
 
 namespace Microwave.Persistence.MongoDb.UnitTestsSetup
 {
-    public class MongoDbTestSetup : IPersistenceDefinition
+    public class MongoDbTestSetup : IPersistenceLayerProvider
     {
         public MongoDbTestSetup()
         {
-            EventMongoDb = new MicrowaveMongoDb("IntegrationTest");
+            EventMongoDb = new MicrowaveMongoDb { DatabaseName = "IntegrationTest" };
             EventMongoDb.Database.Client.DropDatabase("IntegrationTest");
         }
 

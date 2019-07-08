@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microwave.Discovery;
-using Microwave.Discovery.Domain;
+using Microwave.Discovery.EventLocations;
 using Microwave.Domain;
 
 namespace Microwave.UI.Areas.MicrowaveDashboard.Pages

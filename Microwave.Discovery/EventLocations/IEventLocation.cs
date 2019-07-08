@@ -1,9 +1,8 @@
 using System;
 using System.Collections.Generic;
-using Microwave.Discovery.Domain.Events;
-using Microwave.Discovery.Domain.Services;
+using Microwave.Discovery.ServiceMaps;
 
-namespace Microwave.Discovery.Domain
+namespace Microwave.Discovery.EventLocations
 {
     public interface IEventLocation
     {
