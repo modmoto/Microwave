@@ -21,7 +21,7 @@ namespace Microwave.Persistence.MongoDb.Querries
             _cache = cache;
             _database = mongoDb.Database;
         }
-        public async Task SaveEventLocation(EventLocation eventLocation)
+        public async Task SaveEventLocation(IEventLocation eventLocation)
         {
             var eventLocationDbo = new EventLocationDbo
             {

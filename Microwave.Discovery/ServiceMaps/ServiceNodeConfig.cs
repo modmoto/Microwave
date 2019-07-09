@@ -15,7 +15,7 @@ namespace Microwave.Discovery.ServiceMaps
         }
 
         public bool IsReachable { get; }
-        public ServiceEndPoint ServiceEndPoint { get; }
+        public ServiceEndPoint ServiceEndPoint { get; set; }
         public IEnumerable<ServiceEndPoint> Services { get; }
     }
 }

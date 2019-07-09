@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -76,12 +77,13 @@ namespace Microwave.Discovery
             await _statusRepository.SaveServiceMap(map);
         }
 
-        public async Task<ServiceNodeWithDependantServices> GetConsumingServiceNodes()
+        public async Task<ServiceNodeConfig> GetConsumingServiceNodes()
         {
             var eventLocation = await _statusRepository.GetEventLocation();
-            return new ServiceNodeWithDependantServices(
-                _configuration.ServiceName,
-                eventLocation.Services.Select(s => s.ServiceEndPoint));
+            return new ServiceNodeConfig(
+                new ServiceEndPoint(null, _configuration.ServiceName),
+                eventLocation.Services.Select(s => s.ServiceEndPoint),
+                true);
         }
     }
 }
