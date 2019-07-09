@@ -2,6 +2,7 @@
 
     <PropertyGroup>
         <TargetFramework>netcoreapp2.2</TargetFramework>
+        <DebugSymbols>None</DebugSymbols>
         <IsPackable>false</IsPackable>
     </PropertyGroup>
 
@@ -15,12 +16,5 @@
       <ProjectReference Include="..\..\Microwave.Discovery\Microwave.Discovery.csproj" />
       <ProjectReference Include="..\..\Microwave.EventStores\Microwave.EventStores.csproj" />
       <ProjectReference Include="..\..\Microwave.Queries\Microwave.Queries.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <PackageReference Include="coverlet.msbuild" Version="2.5.1">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
-        </PackageReference>
     </ItemGroup>
 </Project>

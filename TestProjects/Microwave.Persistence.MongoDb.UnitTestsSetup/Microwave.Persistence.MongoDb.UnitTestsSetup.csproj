@@ -2,6 +2,7 @@
 
     <PropertyGroup>
         <TargetFramework>netcoreapp2.2</TargetFramework>
+        <DebugSymbols>None</DebugSymbols>
         <IsPackable>false</IsPackable>
     </PropertyGroup>
 
@@ -17,12 +18,5 @@
       <ProjectReference Include="..\..\Microwave.Persistence.MongoDb\Microwave.Persistence.MongoDb.csproj" />
       <ProjectReference Include="..\Microwave.Persistence.UnitTestSetupPorts\Microwave.Persistence.UnitTestSetupPorts.csproj" />
       <ProjectReference Include="..\..\Microwave\Microwave.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <PackageReference Include="coverlet.msbuild" Version="2.5.1">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
-        </PackageReference>
     </ItemGroup>
 </Project>
