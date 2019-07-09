@@ -14,13 +14,13 @@ namespace Microwave.UI.Areas.MicrowaveDashboard.Pages
         private readonly IDiscoveryHandler _handler;
         private ServiceMap _serviceMap;
 
-        public IEnumerable<ServiceNodeConfig> ReachableServices =>
+        public IEnumerable<MicrowaveServiceNode> ReachableServices =>
             _serviceMap.AllServices.Where(s => s.IsReachable);
-        public IEnumerable<ServiceNodeConfig> UnreachableServices =>
+        public IEnumerable<MicrowaveServiceNode> UnreachableServices =>
             _serviceMap.AllServices.Where(s => !s.IsReachable);
         public bool MapIsDiscovered => _serviceMap != null;
 
-        private IEnumerable<ServiceNodeConfig> ServicesSortedByIncomingNodes
+        private IEnumerable<MicrowaveServiceNode> ServicesSortedByIncomingNodes
         {
             get
             {
@@ -28,7 +28,7 @@ namespace Microwave.UI.Areas.MicrowaveDashboard.Pages
                 foreach (var reachableService in ReachableServices)
                 {
                     var serviceBaseAddress = reachableService.ServiceEndPoint.ServiceBaseAddress;
-                    var serviceNodeConfigs = ReachableServices.SelectMany(s => s.Services);
+                    var serviceNodeConfigs = ReachableServices.SelectMany(s => s.ConnectedServices);
                     var serviceDependencies = serviceNodeConfigs.Count(s => s.ServiceBaseAddress == serviceBaseAddress);
                     serviceDependencyCounter.Add(serviceBaseAddress, serviceDependencies);
                 }
@@ -36,7 +36,7 @@ namespace Microwave.UI.Areas.MicrowaveDashboard.Pages
                 var sortedList = serviceDependencyCounter.ToList();
                 sortedList.Sort((x, y) => y.Value - x.Value);
 
-                var nodeConfigs = new List<ServiceNodeConfig>();
+                var nodeConfigs = new List<MicrowaveServiceNode>();
                 foreach (var item in sortedList)
                 {
                     nodeConfigs.Add(ReachableServices.Single(r => r.ServiceEndPoint.ServiceBaseAddress == item.Key));
@@ -77,7 +77,7 @@ namespace Microwave.UI.Areas.MicrowaveDashboard.Pages
                 var edges = new List<Edge>();
                 foreach (var serviceNodeConfig in serviceNodeConfigs)
                 {
-                    foreach (var serviceEndPoint in serviceNodeConfig.Services)
+                    foreach (var serviceEndPoint in serviceNodeConfig.ConnectedServices)
                     {
                         edges.Add(new Edge(serviceNodeConfig.ServiceEndPoint.ServiceBaseAddress, serviceEndPoint.ServiceBaseAddress));
                     }

@@ -48,7 +48,7 @@ namespace Microwave.WebApi.UnitTests
         [TestMethod]
         public async Task GetServiceDependencies()
         {
-            var serviceNodeWithDependentServicesDto = new ServiceNodeConfig(
+            var serviceNodeWithDependentServicesDto = new MicrowaveServiceNode(
                 new ServiceEndPoint(null, "ServiceName"),
                 new List<ServiceEndPoint>
                 {
@@ -71,7 +71,7 @@ namespace Microwave.WebApi.UnitTests
             var serviceAdress = new Uri("http://localhost:5000/");
 
             var serviceNode = await serviceDiscoveryRepository.GetDependantServices(serviceAdress);
-            var dependantServices = serviceNode.Services.ToList();
+            var dependantServices = serviceNode.ConnectedServices.ToList();
             Assert.AreEqual(2, dependantServices.Count);
             Assert.AreEqual("ServiceName", serviceNode.ServiceEndPoint.Name);
             Assert.AreEqual(new Uri("http://localhost:5000/"), serviceNode.ServiceEndPoint.ServiceBaseAddress);

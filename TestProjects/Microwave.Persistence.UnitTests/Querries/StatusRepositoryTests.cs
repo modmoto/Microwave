@@ -120,16 +120,16 @@ namespace Microwave.Persistence.UnitTests.Querries
         {
             var statusRepository = layerProvider.StatusRepository;
 
-            var map = new ServiceMap(new List<ServiceNodeConfig>
+            var map = new ServiceMap(new List<MicrowaveServiceNode>
             {
-                new ServiceNodeConfig(
+                new MicrowaveServiceNode(
                     new ServiceEndPoint(new Uri("http://123.de"), "Name"),
                     new List<ServiceEndPoint>
                     {
                         new ServiceEndPoint(new Uri("http://www.uri1.de"), "Name")
                     },
                     true),
-                new ServiceNodeConfig(
+                new MicrowaveServiceNode(
                     new ServiceEndPoint(new Uri("http://123.de"), "Name2"),
                     new List<ServiceEndPoint>
                     {
@@ -137,7 +137,7 @@ namespace Microwave.Persistence.UnitTests.Querries
                         new ServiceEndPoint(new Uri("http://www.uri1.de"), "Name")
                     },
                     true),
-                new ServiceNodeConfig(
+                new MicrowaveServiceNode(
                     new ServiceEndPoint(new Uri("http://123.de")),
                     new List<ServiceEndPoint>(),
                     false)
@@ -150,12 +150,12 @@ namespace Microwave.Persistence.UnitTests.Querries
             Assert.AreEqual("Name2", serviceDependenciesDtos[1].ServiceEndPoint.Name);
             Assert.IsTrue(serviceDependenciesDtos[1].IsReachable);
             Assert.IsFalse(serviceDependenciesDtos[2].IsReachable);
-            Assert.AreEqual(new Uri("http://www.uri1.de"), serviceDependenciesDtos[0].Services.First().ServiceBaseAddress);
-            Assert.AreEqual(new Uri("http://www.uri2.de"), serviceDependenciesDtos[1].Services.First().ServiceBaseAddress);
-            Assert.AreEqual(new Uri("http://www.uri1.de"), serviceDependenciesDtos[1].Services.Skip(1).First().ServiceBaseAddress);
-            Assert.AreEqual("Name", serviceDependenciesDtos[0].Services.First().Name);
-            Assert.AreEqual("Name2", serviceDependenciesDtos[1].Services.First().Name);
-            Assert.AreEqual("Name", serviceDependenciesDtos[1].Services.Skip(1).First().Name);
+            Assert.AreEqual(new Uri("http://www.uri1.de"), serviceDependenciesDtos[0].ConnectedServices.First().ServiceBaseAddress);
+            Assert.AreEqual(new Uri("http://www.uri2.de"), serviceDependenciesDtos[1].ConnectedServices.First().ServiceBaseAddress);
+            Assert.AreEqual(new Uri("http://www.uri1.de"), serviceDependenciesDtos[1].ConnectedServices.Skip(1).First().ServiceBaseAddress);
+            Assert.AreEqual("Name", serviceDependenciesDtos[0].ConnectedServices.First().Name);
+            Assert.AreEqual("Name2", serviceDependenciesDtos[1].ConnectedServices.First().Name);
+            Assert.AreEqual("Name", serviceDependenciesDtos[1].ConnectedServices.Skip(1).First().Name);
         }
     }
 }

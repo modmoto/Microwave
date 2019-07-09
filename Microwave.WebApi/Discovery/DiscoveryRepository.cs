@@ -35,20 +35,20 @@ namespace Microwave.WebApi.Discovery
             }
         }
 
-        public async Task<ServiceNodeConfig> GetDependantServices(Uri serviceAddress)
+        public async Task<MicrowaveServiceNode> GetDependantServices(Uri serviceAddress)
         {
             var client = _factory.GetClient(serviceAddress);
             try
             {
                 var response = await client.GetAsync("Dicovery/ServiceDependencies");
                 var content = await response.Content.ReadAsStringAsync();
-                var serviceDependencies = JsonConvert.DeserializeObject<ServiceNodeConfig>(content);
+                var serviceDependencies = JsonConvert.DeserializeObject<MicrowaveServiceNode>(content);
                 serviceDependencies.SetAddressForEndPoint(serviceAddress);
                 return serviceDependencies;
             }
             catch (HttpRequestException)
             {
-                return new ServiceNodeConfig(new ServiceEndPoint(serviceAddress), new List<ServiceEndPoint>(), false);
+                return new MicrowaveServiceNode(new ServiceEndPoint(serviceAddress), new List<ServiceEndPoint>(), false);
             }
         }
     }

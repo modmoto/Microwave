@@ -7,8 +7,8 @@ namespace Microwave.Discovery.EventLocations
 {
     public class EventLocation : IEventLocation
     {
-        public IEnumerable<ServiceNode> Services { get; private set; }
-            = new List<ServiceNode>();
+        public IEnumerable<MicrowaveServiceNode> Services { get; private set; }
+            = new List<MicrowaveServiceNode>();
         public IEnumerable<EventSchema> UnresolvedEventSubscriptions { get; }
         public IEnumerable<ReadModelSubscription> UnresolvedReadModeSubscriptions { get; }
 
@@ -41,7 +41,7 @@ namespace Microwave.Discovery.EventLocations
 
                 if (!relevantEvents.Any() && !relevantReadModels.Any()) continue;
 
-                SetDomainEventLocation(new ServiceNode(
+                SetDomainEventLocation(new MicrowaveServiceNode(
                     service.ServiceEndPoint,
                     relevantEvents,
                     relevantReadModels));
@@ -65,11 +65,11 @@ namespace Microwave.Discovery.EventLocations
 
         public static EventLocation Default()
         {
-            return new EventLocation(new List<ServiceNode>(), new List<EventSchema>(), new List<ReadModelSubscription>());
+            return new EventLocation(new List<MicrowaveServiceNode>(), new List<EventSchema>(), new List<ReadModelSubscription>());
         }
 
         public EventLocation(
-            IEnumerable<ServiceNode> services,
+            IEnumerable<MicrowaveServiceNode> services,
             IEnumerable<EventSchema> unresolvedEventSubscriptions,
             IEnumerable<ReadModelSubscription> unresolvedReadModeSubscriptions)
         {
@@ -78,20 +78,20 @@ namespace Microwave.Discovery.EventLocations
             UnresolvedReadModeSubscriptions = unresolvedReadModeSubscriptions;
         }
 
-        public ServiceNode GetServiceForEvent(Type eventType)
+        public MicrowaveServiceNode GetServiceForEvent(Type eventType)
         {
             return Services.FirstOrDefault(s => s.SubscribedEvents.Any(e => e.Name == eventType.Name));
         }
 
-        public ServiceNode GetServiceForReadModel(Type readModel)
+        public MicrowaveServiceNode GetServiceForReadModel(Type readModel)
         {
             return Services.FirstOrDefault(s => s.ReadModels.Any(rm => rm.ReadModelName == readModel.Name));
         }
 
-        private void SetDomainEventLocation(ServiceNode serviceNode)
+        private void SetDomainEventLocation(MicrowaveServiceNode microwaveServiceNodePublishStuff)
         {
-            var servicesWithoutAddedService = Services.Where(s => s.ServiceEndPoint.ServiceBaseAddress != serviceNode.ServiceEndPoint.ServiceBaseAddress);
-            var services = servicesWithoutAddedService.Append(serviceNode);
+            var servicesWithoutAddedService = Services.Where(s => s.ServiceEndPoint.ServiceBaseAddress != microwaveServiceNodePublishStuff.ServiceEndPoint.ServiceBaseAddress);
+            var services = servicesWithoutAddedService.Append(microwaveServiceNodePublishStuff);
             Services = services;
         }
     }
