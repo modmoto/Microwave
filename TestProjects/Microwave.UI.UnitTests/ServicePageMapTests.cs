@@ -16,9 +16,9 @@ namespace Microwave.UI.UnitTests
         public void GetNodesAndEdges()
         {
             var discoMock = new Mock<IDiscoveryHandler>();
-            var map = new ServiceMap(new List<ServiceNodeConfig>
+            var map = new ServiceMap(new List<MicrowaveServiceNode>
             {
-                new ServiceNodeConfig(
+                new MicrowaveServiceNode(
                     new ServiceEndPoint(new Uri("http://12.de"), "Name"),
                     new List<ServiceEndPoint>
                     {
@@ -26,7 +26,7 @@ namespace Microwave.UI.UnitTests
                         new ServiceEndPoint(new Uri("http://1234.de"), "Name")
                     },
                     true),
-                new ServiceNodeConfig(
+                new MicrowaveServiceNode(
                     new ServiceEndPoint(new Uri("http://123.de"), "Name2"),
                     new List<ServiceEndPoint>
                     {
@@ -34,7 +34,7 @@ namespace Microwave.UI.UnitTests
                         new ServiceEndPoint(new Uri("http://1234.de"), "Name")
                     },
                     true),
-                new ServiceNodeConfig(
+                new MicrowaveServiceNode(
                     new ServiceEndPoint(new Uri("http://1234.de"), "MostFrequentService"),
                     new List<ServiceEndPoint>(),
                     true)

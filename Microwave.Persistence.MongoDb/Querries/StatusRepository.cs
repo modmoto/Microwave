@@ -21,7 +21,7 @@ namespace Microwave.Persistence.MongoDb.Querries
             _cache = cache;
             _database = mongoDb.Database;
         }
-        public async Task SaveEventLocation(EventLocation eventLocation)
+        public async Task SaveEventLocation(IEventLocation eventLocation)
         {
             var eventLocationDbo = new EventLocationDbo
             {
@@ -59,7 +59,7 @@ namespace Microwave.Persistence.MongoDb.Querries
         {
             var mongoCollection = _database.GetCollection<ServiceMapDbo>(StatusDbName);
             var mapDbo = await mongoCollection.FindSync(e => e.Id == nameof(ServiceMap)).SingleOrDefaultAsync();
-            var services = mapDbo?.Services.Select(s => new ServiceNodeConfig(
+            var services = mapDbo?.Services.Select(s => new MicrowaveServiceNode(
                 s.ServiceEndPoint,
                 s.Services, s.IsReachable));
             return mapDbo == null ? null : new ServiceMap(services);
@@ -72,7 +72,7 @@ namespace Microwave.Persistence.MongoDb.Querries
                 Services = map.AllServices.Select(s => new ServiceNodeWithDependentServicesDbo
                 {
                     ServiceEndPoint = s.ServiceEndPoint,
-                    Services = s.Services,
+                    Services = s.ConnectedServices,
                     IsReachable = s.IsReachable
                 })
             };
@@ -88,7 +88,7 @@ namespace Microwave.Persistence.MongoDb.Querries
 
     public class EventLocationDbo : IIdentifiable
     {
-        public IEnumerable<ServiceNode> Services { get; set; }
+        public IEnumerable<MicrowaveServiceNode> Services { get; set; }
         public IEnumerable<EventSchema> UnresolvedEventSubscriptions { get; set; }
         public IEnumerable<ReadModelSubscription> UnresolvedReadModeSubscriptions { get; set; }
         public string Id => nameof(EventLocation);

@@ -2,6 +2,7 @@
 
     <PropertyGroup>
         <TargetFramework>netcoreapp2.2</TargetFramework>
+        <DebugType>None</DebugType>
         <IsPackable>false</IsPackable>
     </PropertyGroup>
 
@@ -13,10 +14,10 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\Microwave.Domain\Microwave.Domain.csproj" />
-      <ProjectReference Include="..\..\Microwave.Persistence.MongoDb\Microwave.Persistence.MongoDb.csproj" />
-      <ProjectReference Include="..\Microwave.Persistence.UnitTestSetupPorts\Microwave.Persistence.UnitTestSetupPorts.csproj" />
-      <ProjectReference Include="..\..\Microwave\Microwave.csproj" />
+        <ProjectReference Include="..\..\Microwave.Domain\Microwave.Domain.csproj" />
+        <ProjectReference Include="..\..\Microwave.Persistence.MongoDb\Microwave.Persistence.MongoDb.csproj" />
+        <ProjectReference Include="..\Microwave.Persistence.UnitTestSetupPorts\Microwave.Persistence.UnitTestSetupPorts.csproj" />
+        <ProjectReference Include="..\..\Microwave\Microwave.csproj" />
     </ItemGroup>
 
     <ItemGroup>

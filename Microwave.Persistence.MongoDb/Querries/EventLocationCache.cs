@@ -4,10 +4,10 @@ namespace Microwave.Persistence.MongoDb.Querries
 {
     public class EventLocationCache
     {
-        private EventLocation _eventLocation;
+        private IEventLocation _eventLocation;
         public bool HasValue => _eventLocation != null;
 
-        public void Update(EventLocation eventLocation)
+        public void Update(IEventLocation eventLocation)
         {
             _eventLocation = eventLocation;
         }
