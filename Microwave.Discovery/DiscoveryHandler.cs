@@ -29,16 +29,15 @@ namespace Microwave.Discovery
             _configuration = configuration;
         }
 
-        public async Task<EventLocationDto> GetConsumingServices()
+        public async Task<EventLocation> GetConsumingServices()
         {
             var eventLocation = await _statusRepository.GetEventLocation();
             if (eventLocation != null)
             {
-                return new EventLocationDto(
+                return new EventLocation(
                     eventLocation.Services,
                     eventLocation.UnresolvedEventSubscriptions,
-                    eventLocation.UnresolvedReadModeSubscriptions,
-                    "TestName");
+                    eventLocation.UnresolvedReadModeSubscriptions);
             }
 
             return null;

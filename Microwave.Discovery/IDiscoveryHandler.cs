@@ -6,7 +6,7 @@ namespace Microwave.Discovery
 {
     public interface IDiscoveryHandler
     {
-        Task<EventLocationDto> GetConsumingServices();
+        Task<EventLocation> GetConsumingServices();
         Task<ServiceMap> GetServiceMap();
         Task DiscoverConsumingServices();
         Task DiscoverServiceMap();

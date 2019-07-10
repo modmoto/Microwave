@@ -11,7 +11,7 @@ namespace Microwave.UI.Areas.MicrowaveDashboard.Pages
     {
         private readonly IDiscoveryHandler _discoveryHandler;
 
-        public EventLocationDto ConsumingServices { get; set; }
+        public EventLocation ConsumingServices { get; set; }
 
         public bool HasMissingEvents => ConsumingServices.UnresolvedEventSubscriptions.Any()
                                         || ConsumingServices.UnresolvedReadModeSubscriptions.Any();
