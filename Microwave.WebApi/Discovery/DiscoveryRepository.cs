@@ -48,7 +48,7 @@ namespace Microwave.WebApi.Discovery
             }
             catch (HttpRequestException)
             {
-                return new MicrowaveServiceNode(new ServiceEndPoint(serviceAddress), new List<ServiceEndPoint>(), false);
+                return MicrowaveServiceNode.UnreachableMicrowaveServiceNode(new ServiceEndPoint(serviceAddress), new List<ServiceEndPoint>());
             }
         }
     }

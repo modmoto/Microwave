@@ -122,25 +122,19 @@ namespace Microwave.Persistence.UnitTests.Querries
 
             var map = new ServiceMap(new List<MicrowaveServiceNode>
             {
-                new MicrowaveServiceNode(
-                    new ServiceEndPoint(new Uri("http://123.de"), "Name"),
+                MicrowaveServiceNode.ReachableMicrowaveServiceNode(new ServiceEndPoint(new Uri("http://123.de"), "Name"),
                     new List<ServiceEndPoint>
                     {
                         new ServiceEndPoint(new Uri("http://www.uri1.de"), "Name")
-                    },
-                    true),
-                new MicrowaveServiceNode(
-                    new ServiceEndPoint(new Uri("http://123.de"), "Name2"),
+                    }),
+                MicrowaveServiceNode.ReachableMicrowaveServiceNode(new ServiceEndPoint(new Uri("http://123.de"), "Name2"),
                     new List<ServiceEndPoint>
                     {
                         new ServiceEndPoint(new Uri("http://www.uri2.de"), "Name2"),
                         new ServiceEndPoint(new Uri("http://www.uri1.de"), "Name")
-                    },
-                    true),
-                new MicrowaveServiceNode(
-                    new ServiceEndPoint(new Uri("http://123.de")),
-                    new List<ServiceEndPoint>(),
-                    false)
+                    }),
+                MicrowaveServiceNode.UnreachableMicrowaveServiceNode(new ServiceEndPoint(new Uri("http://123.de")),
+                    new List<ServiceEndPoint>())
             });
             await statusRepository.SaveServiceMap(map);
             var mapLoaded = await statusRepository.GetServiceMap();

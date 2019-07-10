@@ -41,8 +41,7 @@ namespace Microwave.Discovery.EventLocations
 
                 if (!relevantEvents.Any() && !relevantReadModels.Any()) continue;
 
-                SetDomainEventLocation(new MicrowaveServiceNode(
-                    service.ServiceEndPoint,
+                SetDomainEventLocation(MicrowaveServiceNode.Create(service.ServiceEndPoint,
                     relevantEvents,
                     relevantReadModels));
 

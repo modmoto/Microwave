@@ -59,9 +59,10 @@ namespace Microwave.Persistence.MongoDb.Querries
         {
             var mongoCollection = _database.GetCollection<ServiceMapDbo>(StatusDbName);
             var mapDbo = await mongoCollection.FindSync(e => e.Id == nameof(ServiceMap)).SingleOrDefaultAsync();
-            var services = mapDbo?.Services.Select(s => new MicrowaveServiceNode(
-                s.ServiceEndPoint,
-                s.Services, s.IsReachable));
+            var services = mapDbo?.Services.Select(s =>
+                s.IsReachable
+                    ? MicrowaveServiceNode.ReachableMicrowaveServiceNode(s.ServiceEndPoint,s.Services)
+                    : MicrowaveServiceNode.UnreachableMicrowaveServiceNode(s.ServiceEndPoint, s.Services));
             return mapDbo == null ? null : new ServiceMap(services);
         }
 

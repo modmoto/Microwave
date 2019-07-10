@@ -80,10 +80,8 @@ namespace Microwave.Discovery
         public async Task<MicrowaveServiceNode> GetConsumingServiceNodes()
         {
             var eventLocation = await _statusRepository.GetEventLocation();
-            return new MicrowaveServiceNode(
-                new ServiceEndPoint(null, _configuration.ServiceName),
-                eventLocation.Services.Select(s => s.ServiceEndPoint),
-                true);
+            return MicrowaveServiceNode.ReachableMicrowaveServiceNode(new ServiceEndPoint(null, _configuration.ServiceName),
+                eventLocation.Services.Select(s => s.ServiceEndPoint));
         }
     }
 }
