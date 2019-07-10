@@ -9,7 +9,7 @@ namespace Microwave.WebApi.Querries
     public class DomainEventClient<T> : HttpClient
     {
 
-        public DomainEventClient(IEventLocation eventLocation)
+        public DomainEventClient(EventLocation eventLocation)
         {
             var type = typeof(T);
             if (typeof(IAsyncEventHandler).IsAssignableFrom(type))

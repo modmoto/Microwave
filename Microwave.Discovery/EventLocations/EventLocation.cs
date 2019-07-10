@@ -5,7 +5,7 @@ using Microwave.Discovery.ServiceMaps;
 
 namespace Microwave.Discovery.EventLocations
 {
-    public class EventLocation : IEventLocation
+    public class EventLocation
     {
         public IEnumerable<MicrowaveServiceNode> Services { get; private set; }
             = new List<MicrowaveServiceNode>();
@@ -62,7 +62,7 @@ namespace Microwave.Discovery.EventLocations
             return notFoundProperties;
         }
 
-        public static IEventLocation Default()
+        public static EventLocation Default()
         {
             return new EventLocation(new List<MicrowaveServiceNode>(), new List<EventSchema>(), new List<ReadModelSubscription>());
         }

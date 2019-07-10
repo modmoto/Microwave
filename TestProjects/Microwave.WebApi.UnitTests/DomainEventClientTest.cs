@@ -16,7 +16,7 @@ namespace Microwave.WebApi.UnitTests
         [TestMethod]
         public void ClientForQueries()
         {
-            var mock = new Mock<IEventLocation>();
+            var mock = new Mock<EventLocation>();
             mock.Setup(m => m.GetServiceForEvent(typeof(Ev1))).Returns(MicrowaveServiceNode.Create(new ServiceEndPoint(new Uri
                 ("http://luls.de/")), null, null));
             var domainEventClient = new DomainEventClient<QueryEventHandler<Q1, Ev1>>(mock.Object);
@@ -26,7 +26,7 @@ namespace Microwave.WebApi.UnitTests
         [TestMethod]
         public void ClientForAsyncHandles()
         {
-            var mock = new Mock<IEventLocation>();
+            var mock = new Mock<EventLocation>();
             mock.Setup(m => m.GetServiceForEvent(typeof(Ev2))).Returns(MicrowaveServiceNode.Create(new ServiceEndPoint(new Uri
                 ("http://troll.de/")), null, null));
 
@@ -37,7 +37,7 @@ namespace Microwave.WebApi.UnitTests
         [TestMethod]
         public void ClientForReadModels()
         {
-            var mock = new Mock<IEventLocation>();
+            var mock = new Mock<EventLocation>();
             mock.Setup(m => m.GetServiceForReadModel(typeof(IdQuery))).Returns(MicrowaveServiceNode.Create(new ServiceEndPoint(new Uri
                 ("http://troll2.de/")), null, null));
 
