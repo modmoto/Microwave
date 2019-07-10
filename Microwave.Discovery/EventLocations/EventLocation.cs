@@ -62,7 +62,7 @@ namespace Microwave.Discovery.EventLocations
             return notFoundProperties;
         }
 
-        public static EventLocation Default()
+        public static IEventLocation Default()
         {
             return new EventLocation(new List<MicrowaveServiceNode>(), new List<EventSchema>(), new List<ReadModelSubscription>());
         }
