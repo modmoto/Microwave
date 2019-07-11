@@ -32,15 +32,10 @@ namespace Microwave.Discovery
         public async Task<EventLocation> GetConsumingServices()
         {
             var eventLocation = await _statusRepository.GetEventLocation();
-            if (eventLocation != null)
-            {
-                return new EventLocation(
-                    eventLocation.Services,
-                    eventLocation.UnresolvedEventSubscriptions,
-                    eventLocation.UnresolvedReadModeSubscriptions);
-            }
-
-            return null;
+            return new EventLocation(
+                eventLocation.Services,
+                eventLocation.UnresolvedEventSubscriptions,
+                eventLocation.UnresolvedReadModeSubscriptions);
         }
 
         public async Task<ServiceMap> GetServiceMap()
