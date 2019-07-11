@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Discovery.EventLocations;
 using Microwave.Discovery.ServiceMaps;
@@ -6,7 +7,6 @@ using Microwave.Domain.EventSourcing;
 using Microwave.Domain.Identities;
 using Microwave.Queries;
 using Microwave.WebApi.Querries;
-using Moq;
 
 namespace Microwave.WebApi.UnitTests
 {
@@ -16,33 +16,47 @@ namespace Microwave.WebApi.UnitTests
         [TestMethod]
         public void ClientForQueries()
         {
-            var mock = new Mock<IEventLocation>();
-            mock.Setup(m => m.GetServiceForEvent(typeof(Ev1))).Returns(new MicrowaveServiceNode(new ServiceEndPoint(new Uri
-            ("http://luls.de/")), null, null));
-            var domainEventClient = new DomainEventClient<QueryEventHandler<Q1, Ev1>>(mock.Object);
+            var domainEventClient = new DomainEventClient<QueryEventHandler<Q1, Ev1>>(new EventLocationFake());
             Assert.AreEqual("http://luls.de/Api/DomainEventTypeStreams/Ev1", domainEventClient.BaseAddress.ToString());
         }
 
         [TestMethod]
         public void ClientForAsyncHandles()
         {
-            var mock = new Mock<IEventLocation>();
-            mock.Setup(m => m.GetServiceForEvent(typeof(Ev2))).Returns(new MicrowaveServiceNode(new ServiceEndPoint(new Uri
-                ("http://troll.de/")), null, null));
-
-            var domainEventClient = new DomainEventClient<AsyncEventHandler<Ev2>>(mock.Object);
+            var domainEventClient = new DomainEventClient<AsyncEventHandler<Ev2>>(new EventLocationFake());
             Assert.AreEqual("http://troll.de/Api/DomainEventTypeStreams/Ev2", domainEventClient.BaseAddress.ToString());
         }
 
         [TestMethod]
         public void ClientForReadModels()
         {
-            var mock = new Mock<IEventLocation>();
-            mock.Setup(m => m.GetServiceForReadModel(typeof(IdQuery))).Returns(new MicrowaveServiceNode(new ServiceEndPoint(new Uri
-                ("http://troll2.de/")), null, null));
-
-            var domainEventClient = new DomainEventClient<ReadModelHandler<IdQuery>>(mock.Object);
+            var domainEventClient = new DomainEventClient<ReadModelHandler<IdQuery>>(new EventLocationFake());
             Assert.AreEqual("http://troll2.de/Api/DomainEvents", domainEventClient.BaseAddress.ToString());
+        }
+    }
+
+    internal class EventLocationFake : EventLocation
+    {
+        public EventLocationFake() : base(new List<MicrowaveServiceNode>
+        {
+            MicrowaveServiceNode.Create(new ServiceEndPoint(new Uri("http://luls.de/")),
+                new List<EventSchema>
+            {
+                new EventSchema(nameof(Ev1))
+            }, new List<ReadModelSubscription>()),
+            MicrowaveServiceNode.Create(new ServiceEndPoint(new Uri("http://troll.de/")),
+                new List<EventSchema>
+                {
+                    new EventSchema(nameof(Ev2))
+                }, new List<ReadModelSubscription>()),
+            MicrowaveServiceNode.Create(new ServiceEndPoint(new Uri("http://troll2.de/")),
+                new List<EventSchema>(),
+                new List<ReadModelSubscription>
+            {
+                new ReadModelSubscription(nameof(IdQuery), new EventSchema(nameof(Ev2)))
+            })
+        }, new List<EventSchema>(), new List<ReadModelSubscription>())
+        {
         }
     }
 

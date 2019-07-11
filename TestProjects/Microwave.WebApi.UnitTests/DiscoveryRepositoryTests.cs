@@ -48,14 +48,12 @@ namespace Microwave.WebApi.UnitTests
         [TestMethod]
         public async Task GetServiceDependencies()
         {
-            var serviceNodeWithDependentServicesDto = new MicrowaveServiceNode(
-                new ServiceEndPoint(null, "ServiceName"),
+            var serviceNodeWithDependentServicesDto = MicrowaveServiceNode.ReachableMicrowaveServiceNode(new ServiceEndPoint(null, "ServiceName"),
                 new List<ServiceEndPoint>
                 {
                     new ServiceEndPoint(new Uri("http://remoteservice1.de"), "RemoteName1"),
                     new ServiceEndPoint(new Uri("http://remoteservice2.de"), "RemoteName2"),
-                },
-                true);
+                });
 
             var mockHttp = new MockHttpMessageHandler();
             var serializeObject = JsonConvert.SerializeObject(serviceNodeWithDependentServicesDto);

@@ -20,11 +20,10 @@ namespace Microwave.UI.UnitTests
         public async Task GetConsumingServices()
         {
             var mock = new Mock<IDiscoveryHandler>();
-            mock.Setup(m => m.GetConsumingServices()).ReturnsAsync(new EventLocationDto(
+            mock.Setup(m => m.GetConsumingServices()).ReturnsAsync(new EventLocation(
                 new List<MicrowaveServiceNode>(),
                 new List<EventSchema>(),
-                new List<ReadModelSubscription>(),
-                "name"));
+                new List<ReadModelSubscription>()));
             var indexModel = new IndexModel(mock.Object, new MicrowaveConfiguration());
 
             await indexModel.OnGetAsync();
@@ -35,11 +34,11 @@ namespace Microwave.UI.UnitTests
         [TestMethod]
         public async Task GetNodesAndEdges()
         {
-            var mock = new Mock<IDiscoveryHandler>();mock.Setup(m => m.GetConsumingServices()).ReturnsAsync(new EventLocationDto(
+            var mock = new Mock<IDiscoveryHandler>();
+            mock.Setup(m => m.GetConsumingServices()).ReturnsAsync(new EventLocation(
                 new List<MicrowaveServiceNode>(),
                 new List<EventSchema>(),
-                new List<ReadModelSubscription>(),
-                "name"));
+                new List<ReadModelSubscription>()));
 
             var indexModel = new IndexModel(mock.Object, new MicrowaveConfiguration());
 

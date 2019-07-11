@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -30,19 +29,13 @@ namespace Microwave.Discovery
             _configuration = configuration;
         }
 
-        public async Task<EventLocationDto> GetConsumingServices()
+        public async Task<EventLocation> GetConsumingServices()
         {
             var eventLocation = await _statusRepository.GetEventLocation();
-            if (eventLocation != null)
-            {
-                return new EventLocationDto(
-                    eventLocation.Services,
-                    eventLocation.UnresolvedEventSubscriptions,
-                    eventLocation.UnresolvedReadModeSubscriptions,
-                    "TestName");
-            }
-
-            return null;
+            return new EventLocation(
+                eventLocation.Services,
+                eventLocation.UnresolvedEventSubscriptions,
+                eventLocation.UnresolvedReadModeSubscriptions);
         }
 
         public async Task<ServiceMap> GetServiceMap()
@@ -80,10 +73,8 @@ namespace Microwave.Discovery
         public async Task<MicrowaveServiceNode> GetConsumingServiceNodes()
         {
             var eventLocation = await _statusRepository.GetEventLocation();
-            return new MicrowaveServiceNode(
-                new ServiceEndPoint(null, _configuration.ServiceName),
-                eventLocation.Services.Select(s => s.ServiceEndPoint),
-                true);
+            return MicrowaveServiceNode.ReachableMicrowaveServiceNode(new ServiceEndPoint(null, _configuration.ServiceName),
+                eventLocation.Services.Select(s => s.ServiceEndPoint));
         }
     }
 }

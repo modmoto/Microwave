@@ -18,26 +18,20 @@ namespace Microwave.UI.UnitTests
             var discoMock = new Mock<IDiscoveryHandler>();
             var map = new ServiceMap(new List<MicrowaveServiceNode>
             {
-                new MicrowaveServiceNode(
-                    new ServiceEndPoint(new Uri("http://12.de"), "Name"),
+                MicrowaveServiceNode.ReachableMicrowaveServiceNode(new ServiceEndPoint(new Uri("http://12.de"), "Name"),
                     new List<ServiceEndPoint>
                     {
                         new ServiceEndPoint(new Uri("http://123.de"), "Name"),
                         new ServiceEndPoint(new Uri("http://1234.de"), "Name")
-                    },
-                    true),
-                new MicrowaveServiceNode(
-                    new ServiceEndPoint(new Uri("http://123.de"), "Name2"),
+                    }),
+                MicrowaveServiceNode.ReachableMicrowaveServiceNode(new ServiceEndPoint(new Uri("http://123.de"), "Name2"),
                     new List<ServiceEndPoint>
                     {
                         new ServiceEndPoint(new Uri("http://12.de"), "Name2"),
                         new ServiceEndPoint(new Uri("http://1234.de"), "Name")
-                    },
-                    true),
-                new MicrowaveServiceNode(
-                    new ServiceEndPoint(new Uri("http://1234.de"), "MostFrequentService"),
-                    new List<ServiceEndPoint>(),
-                    true)
+                    }),
+                MicrowaveServiceNode.ReachableMicrowaveServiceNode(new ServiceEndPoint(new Uri("http://1234.de"), "MostFrequentService"),
+                    new List<ServiceEndPoint>())
             });
             discoMock.Setup(m => m.GetServiceMap()).ReturnsAsync(map);
             var serviceMapPage = new ServiceMapPage(discoMock.Object, null);

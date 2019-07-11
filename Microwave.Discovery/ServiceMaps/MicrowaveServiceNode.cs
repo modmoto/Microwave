@@ -7,7 +7,29 @@ namespace Microwave.Discovery.ServiceMaps
 {
     public class MicrowaveServiceNode
     {
-        public MicrowaveServiceNode(
+        public static MicrowaveServiceNode Create(
+            ServiceEndPoint serviceEndPoint,
+            IEnumerable<EventSchema> subscribedEvents,
+            IEnumerable<ReadModelSubscription> readModels)
+        {
+            return new MicrowaveServiceNode(serviceEndPoint, subscribedEvents, readModels);
+        }
+
+        public static MicrowaveServiceNode ReachableMicrowaveServiceNode(
+            ServiceEndPoint serviceEndPoint,
+            IEnumerable<ServiceEndPoint> connectedServices)
+        {
+            return new MicrowaveServiceNode(serviceEndPoint, connectedServices, true);
+        }
+
+        public static MicrowaveServiceNode UnreachableMicrowaveServiceNode(
+            ServiceEndPoint serviceEndPoint,
+            IEnumerable<ServiceEndPoint> connectedServices)
+        {
+            return new MicrowaveServiceNode(serviceEndPoint, connectedServices, false);
+        }
+
+        private MicrowaveServiceNode(
             ServiceEndPoint serviceEndPoint,
             IEnumerable<EventSchema> subscribedEvents,
             IEnumerable<ReadModelSubscription> readModels)
@@ -20,7 +42,8 @@ namespace Microwave.Discovery.ServiceMaps
         }
 
         [JsonConstructor]
-        public MicrowaveServiceNode(ServiceEndPoint serviceEndPoint,
+        private MicrowaveServiceNode(
+            ServiceEndPoint serviceEndPoint,
             IEnumerable<ServiceEndPoint> connectedServices,
             bool isReachable)
         {
