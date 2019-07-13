@@ -5,6 +5,7 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Discovery.EventLocations;
+using Microwave.Domain;
 using Microwave.Persistence.MongoDb.Querries;
 using Microwave.Persistence.MongoDb.UnitTestsSetup;
 using Microwave.WebApi.Discovery;

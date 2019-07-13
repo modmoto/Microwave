@@ -1,5 +1,4 @@
-﻿using Microwave.Discovery;
-using Microwave.Domain;
+﻿using Microwave.Domain;
 
 namespace Microwave
 {

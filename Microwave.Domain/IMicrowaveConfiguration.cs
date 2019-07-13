@@ -4,5 +4,6 @@ namespace Microwave.Domain
     {
         string ServiceName { get; }
         IServiceBaseAddressCollection ServiceLocations { get; }
+        IMicrowaveHttpClientCreator MicrowaveHttpClientCreator { get; }
     }
 }

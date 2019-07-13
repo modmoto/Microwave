@@ -1,6 +1,6 @@
 using System;
 using System.Net.Http;
-using Microwave.Discovery;
+using Microwave.Domain;
 
 namespace Microwave.WebApi.Discovery
 {

@@ -1,12 +1,8 @@
 using System.Net.Http;
+using Microwave.Domain;
 
-namespace Microwave.Discovery
+namespace Microwave
 {
-    public interface IMicrowaveHttpClientCreator
-    {
-        HttpClient CreateHttpClient();
-    }
-
     public class DefaultMicrowaveHttpClientCreator : IMicrowaveHttpClientCreator
     {
         public HttpClient CreateHttpClient()
