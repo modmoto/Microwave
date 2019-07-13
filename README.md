@@ -20,5 +20,5 @@ also implements readmodels if you want to implement CQRS over domain events.
 
 ![alt text](https://github.com/Lauchi/Microwave/blob/development/MicrowaveOverview.svg "Overview")
 
-Take a look at the wiki for further details!
+Take a look at the [wiki](https://github.com/Lauchi/Microwave/wiki) for further details!
 
