@@ -4,7 +4,7 @@ using Microwave.Domain;
 
 namespace Microwave
 {
-    public class ServiceBaseAddressCollection : List<Uri>,  IServiceBaseAddressCollection
+    public class ServiceBaseAddressCollection : List<Uri>
     {
     }
 }
