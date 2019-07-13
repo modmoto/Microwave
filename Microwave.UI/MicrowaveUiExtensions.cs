@@ -8,6 +8,7 @@ namespace Microwave.UI
         public static void AddMicrowaveUi(this IServiceCollection services)
         {
             services.ConfigureOptions(typeof(MicrowaveUiConfigureOptions));
+            services.AddSingleton(new MicrowaveUiConfiguration());
         }
 
         public static IApplicationBuilder UseMicrowaveUi(this IApplicationBuilder builder)

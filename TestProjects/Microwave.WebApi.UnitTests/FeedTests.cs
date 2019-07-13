@@ -27,7 +27,7 @@ namespace Microwave.WebApi.UnitTests
             mockHttp.When("http://localost:5000/api/DomainEvents/?timeStamp=0001-01-01T00:00:00.0000000+00:00")
                 .Respond("application/json", "[{ \"domainEventType\": \"UNKNOWN_TYPE\",\"version\": 12, \"created\": \"2018-01-07T19:07:21.227631+01:00\", \"domainEvent\": {\"EntityId\" : \"5a8b63c8-0f7f-4de7-a9e5-b6b377aa2180\"}}, { \"domainEventType\": \"TestEv\",\"version\": 12, \"created\": \"2018-01-07T19:07:31.227631+01:00\", \"domainEvent\": {\"EntityId\" : \"5a8b63c8-0f7f-4de7-a9e5-b6b377aa2180\" }}]");
 
-            var domainOverallEventClient = new DomainEventClient<ReadModelHandler<TestReadModel>>(mockHttp);
+            var domainOverallEventClient = new HttpClient(mockHttp);
             domainOverallEventClient.BaseAddress = new Uri("http://localost:5000/api/DomainEvents/");
 
             var factoryMock = new Mock<IDomainEventClientFactory>();
@@ -49,7 +49,7 @@ namespace Microwave.WebApi.UnitTests
             var mockHttp = new MockHttpMessageHandler();
             mockHttp.When("http://localost:5000/api/DomainEvents/?timeStamp=0001-01-01T00:00:00.0000000+00:00")
                 .Throw(new HttpRequestException());
-            var domainOverallEventClient = new DomainEventClient<ReadModelHandler<TestReadModel>>(mockHttp);
+            var domainOverallEventClient = new HttpClient(mockHttp);
             domainOverallEventClient.BaseAddress = new Uri("http://localost:5000/api/DomainEvents/");
 
             var factoryMock = new Mock<IDomainEventClientFactory>();

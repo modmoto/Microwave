@@ -3,24 +3,23 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microwave.Discovery.EventLocations;
 using Microwave.Discovery.ServiceMaps;
-using Microwave.Domain;
 
 namespace Microwave.Discovery
 {
     public class DiscoveryHandler : IDiscoveryHandler
     {
-        private readonly IServiceBaseAddressCollection _serviceBaseAddressCollection;
+        private readonly ServiceBaseAddressCollection _serviceBaseAddressCollection;
         private readonly EventsSubscribedByService _eventsSubscribedByService;
         private readonly IServiceDiscoveryRepository _discoveryRepository;
         private readonly IStatusRepository _statusRepository;
-        private readonly IMicrowaveConfiguration _configuration;
+        private readonly DiscoveryConfiguration _configuration;
 
         public DiscoveryHandler(
-            IServiceBaseAddressCollection serviceBaseAddressCollection,
+            ServiceBaseAddressCollection serviceBaseAddressCollection,
             EventsSubscribedByService eventsSubscribedByService,
             IServiceDiscoveryRepository discoveryRepository,
             IStatusRepository statusRepository,
-            IMicrowaveConfiguration configuration)
+            DiscoveryConfiguration configuration)
         {
             _serviceBaseAddressCollection = serviceBaseAddressCollection;
             _eventsSubscribedByService = eventsSubscribedByService;

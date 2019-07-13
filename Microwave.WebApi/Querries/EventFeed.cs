@@ -28,7 +28,7 @@ namespace Microwave.WebApi.Querries
             var client = await _clientFactory.GetClient<T>();
             try
             {
-                if (client.HasTheValidLocation) {
+                if (client.BaseAddress != null) {
                     var response = await client.GetAsync($"?timeStamp={isoString}");
                     if (response.StatusCode != HttpStatusCode.OK) return new List<SubscribedDomainEventWrapper>();
                     var content = await response.Content.ReadAsStringAsync();
