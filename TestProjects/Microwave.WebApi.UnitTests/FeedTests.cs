@@ -1,14 +1,9 @@
 using System;
-using System.Linq;
-using System.Net.Http;
-using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Domain.EventSourcing;
 using Microwave.Domain.Identities;
 using Microwave.Queries;
 using Microwave.WebApi.Querries;
-using Moq;
-using RichardSzalay.MockHttp;
 
 namespace Microwave.WebApi.UnitTests
 {
