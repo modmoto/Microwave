@@ -18,6 +18,7 @@ namespace WriteService2
         {
             ServiceName = "WriteService2",
             ServiceLocations = ServiceConfiguration.ServiceAdresses,
+            MicrowaveHttpClientCreator = new MyMicrowaveHttpClientCreator()
         };
 
         public void ConfigureServices(IServiceCollection services)
