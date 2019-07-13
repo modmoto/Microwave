@@ -18,7 +18,7 @@ subscribe to events, you just implement a `IHandleAsync<T>` Interface where `T` 
 microwave transfers the events to this handler as soon as they happen in your domain. With this mechanism Microwave 
 also implements readmodels if you want to implement CQRS over domain events.
 
-![alt text](https://github.com/Lauchi/Microwave/blob/development/MicrowaveOverview.svg "Overview")
+![alt text](https://github.com/Lauchi/Microwave/blob/master/MicrowaveOverview.svg "Overview")
 
 [Take a look at the wiki for further details!](https://github.com/Lauchi/Microwave/wiki)
 
