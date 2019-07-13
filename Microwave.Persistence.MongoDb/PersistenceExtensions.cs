@@ -12,12 +12,7 @@ namespace Microwave.Persistence.MongoDb
 {
     public class MongoDbPersistenceLayer : IPersistenceLayer
     {
-        private readonly MicrowaveMongoDb _microwaveMongoDb;
-
-        public MongoDbPersistenceLayer(MicrowaveMongoDb microwaveMongoDb = null)
-        {
-            _microwaveMongoDb = microwaveMongoDb ?? new MicrowaveMongoDb();
-        }
+        public MicrowaveMongoDb MicrowaveMongoDb { get; set; } = new MicrowaveMongoDb();
 
         public IServiceCollection AddPersistenceLayer(IServiceCollection services, IEnumerable<Assembly> assemblies)
         {
@@ -25,7 +20,7 @@ namespace Microwave.Persistence.MongoDb
 
             services.AddTransient<IVersionRepository, VersionRepository>();
             services.AddTransient<IReadModelRepository, ReadModelRepository>();
-            services.AddSingleton(_microwaveMongoDb);
+            services.AddSingleton(MicrowaveMongoDb);
             services.AddSingleton(new EventLocationCache());
 
             services.AddTransient<IEventRepository, EventRepository>();

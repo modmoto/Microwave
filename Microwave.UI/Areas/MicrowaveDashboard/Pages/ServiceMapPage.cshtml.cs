@@ -88,7 +88,7 @@ namespace Microwave.UI.Areas.MicrowaveDashboard.Pages
 
         public ServiceMapPage(
             IDiscoveryHandler handler,
-            MicrowaveUiConfiguration configuration) : base(configuration)
+            MicrowaveConfiguration configuration) : base(configuration)
         {
             _handler = handler;
         }
