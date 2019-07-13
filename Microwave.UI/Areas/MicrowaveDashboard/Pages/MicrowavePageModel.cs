@@ -4,9 +4,9 @@ namespace Microwave.UI.Areas.MicrowaveDashboard.Pages
 {
     public class MicrowavePageModel : PageModel
     {
-        private readonly MicrowaveUiConfiguration _configuration;
+        private readonly MicrowaveConfiguration _configuration;
 
-        public MicrowavePageModel(MicrowaveUiConfiguration configuration)
+        public MicrowavePageModel(MicrowaveConfiguration configuration)
         {
             _configuration = configuration;
         }

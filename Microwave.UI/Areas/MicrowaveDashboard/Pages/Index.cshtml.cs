@@ -17,7 +17,7 @@ namespace Microwave.UI.Areas.MicrowaveDashboard.Pages
 
         public IndexModel(
             IDiscoveryHandler discoveryHandler,
-            MicrowaveUiConfiguration configuration) : base(configuration)
+            MicrowaveConfiguration configuration) : base(configuration)
         {
             _discoveryHandler = discoveryHandler;
         }

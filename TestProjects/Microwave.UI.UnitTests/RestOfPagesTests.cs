@@ -24,7 +24,7 @@ namespace Microwave.UI.UnitTests
                 new List<MicrowaveServiceNode>(),
                 new List<EventSchema>(),
                 new List<ReadModelSubscription>()));
-            var indexModel = new IndexModel(mock.Object, new MicrowaveUiConfiguration());
+            var indexModel = new IndexModel(mock.Object, new MicrowaveConfiguration());
 
             await indexModel.OnGetAsync();
 
@@ -40,7 +40,7 @@ namespace Microwave.UI.UnitTests
                 new List<EventSchema>(),
                 new List<ReadModelSubscription>()));
 
-            var indexModel = new IndexModel(mock.Object, new MicrowaveUiConfiguration());
+            var indexModel = new IndexModel(mock.Object, new MicrowaveConfiguration());
 
             await indexModel.OnGetAsync();
 
@@ -51,7 +51,7 @@ namespace Microwave.UI.UnitTests
         public async Task Discover()
         {
             var mock = new Mock<IDiscoveryHandler>();
-            var indexModel = new IndexModel(mock.Object, new MicrowaveUiConfiguration());
+            var indexModel = new IndexModel(mock.Object, new MicrowaveConfiguration());
 
             await indexModel.OnPostAsync();
 

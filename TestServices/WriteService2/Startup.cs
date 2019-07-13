@@ -32,7 +32,8 @@ namespace WriteService2
             }).SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.AddMicrowaveUi();
 
-            services.AddMicrowave(_microwaveConfiguration, new MongoDbPersistenceLayer(new MicrowaveMongoDb { DatabaseName = "TestWriteService2ReadDb" }));
+            services.AddMicrowave(_microwaveConfiguration, new MongoDbPersistenceLayer
+                { MicrowaveMongoDb = new MicrowaveMongoDb { DatabaseName = "TestWriteService2ReadDb" }} );
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
