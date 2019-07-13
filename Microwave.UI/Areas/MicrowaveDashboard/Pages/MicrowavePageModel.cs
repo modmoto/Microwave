@@ -1,13 +1,12 @@
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microwave.Domain;
 
 namespace Microwave.UI.Areas.MicrowaveDashboard.Pages
 {
     public class MicrowavePageModel : PageModel
     {
-        private readonly IMicrowaveConfiguration _configuration;
+        private readonly MicrowaveUiConfiguration _configuration;
 
-        public MicrowavePageModel(IMicrowaveConfiguration configuration)
+        public MicrowavePageModel(MicrowaveUiConfiguration configuration)
         {
             _configuration = configuration;
         }

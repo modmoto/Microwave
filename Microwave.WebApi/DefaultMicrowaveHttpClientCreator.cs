@@ -1,11 +1,11 @@
+using System;
 using System.Net.Http;
-using Microwave.Domain;
 
-namespace Microwave
+namespace Microwave.WebApi
 {
     public class DefaultMicrowaveHttpClientCreator : IMicrowaveHttpClientCreator
     {
-        public HttpClient CreateHttpClient()
+        public HttpClient CreateHttpClient(Uri serviceAddress)
         {
             return new HttpClient();
         }

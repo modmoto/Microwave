@@ -82,7 +82,7 @@ namespace Microwave
 
         public static IServiceCollection AddMicrowave(
             this IServiceCollection services,
-            IMicrowaveConfiguration microwaveConfiguration,
+            MicrowaveConfiguration microwaveConfiguration,
             IPersistenceLayer persistenceLayer)
         {
             var assemblies = new List<Assembly>();
@@ -120,6 +120,7 @@ namespace Microwave
             services.AddSingleton(microwaveConfiguration);
             services.AddSingleton(microwaveConfiguration.ServiceLocations);
             services.AddSingleton(microwaveConfiguration.MicrowaveHttpClientCreator);
+            services.AddSingleton(new DiscoveryConfiguration { ServiceName = microwaveConfiguration.ServiceName });
 
             AddEventAndReadModelSubscriptions(services, assemblies);
             AddPublishedEventCollection(services, assemblies, microwaveConfiguration);
@@ -141,7 +142,7 @@ namespace Microwave
         }
 
         private static void AddPublishedEventCollection(IServiceCollection services,
-            IEnumerable<Assembly> domainEventAssemblies, IMicrowaveConfiguration microwaveConfiguration)
+            IEnumerable<Assembly> domainEventAssemblies, MicrowaveConfiguration microwaveConfiguration)
         {
             var publishedEventCollection = new PublishedEventsByServiceDto { ServiceName = microwaveConfiguration.ServiceName };
             foreach (var assembly in domainEventAssemblies)

@@ -13,14 +13,14 @@ namespace Microwave.Discovery
         private readonly EventsSubscribedByService _eventsSubscribedByService;
         private readonly IServiceDiscoveryRepository _discoveryRepository;
         private readonly IStatusRepository _statusRepository;
-        private readonly IMicrowaveConfiguration _configuration;
+        private readonly DiscoveryConfiguration _configuration;
 
         public DiscoveryHandler(
             IServiceBaseAddressCollection serviceBaseAddressCollection,
             EventsSubscribedByService eventsSubscribedByService,
             IServiceDiscoveryRepository discoveryRepository,
             IStatusRepository statusRepository,
-            IMicrowaveConfiguration configuration)
+            DiscoveryConfiguration configuration)
         {
             _serviceBaseAddressCollection = serviceBaseAddressCollection;
             _eventsSubscribedByService = eventsSubscribedByService;

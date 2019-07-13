@@ -1,8 +1,9 @@
 ﻿using Microwave.Domain;
+using Microwave.WebApi;
 
 namespace Microwave
 {
-    public class MicrowaveConfiguration : IMicrowaveConfiguration
+    public class MicrowaveConfiguration
     {
         public string ServiceName { get; set; }
         public IServiceBaseAddressCollection ServiceLocations { get; set; } = new ServiceBaseAddressCollection();

@@ -1,12 +1,13 @@
+using System;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using Microwave.Domain;
+using Microwave.WebApi;
 
-namespace ReadService1
+namespace WriteService1
 {
     public class MyMicrowaveHttpClientCreator : IMicrowaveHttpClientCreator
     {
-        public HttpClient CreateHttpClient()
+        public HttpClient CreateHttpClient(Uri serviceAdress)
         {
             var discoveryClient = new HttpClient();
             discoveryClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("123");

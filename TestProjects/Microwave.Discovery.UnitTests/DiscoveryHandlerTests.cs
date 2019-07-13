@@ -5,9 +5,9 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Discovery.EventLocations;
-using Microwave.Domain;
 using Microwave.Persistence.MongoDb.Querries;
 using Microwave.Persistence.MongoDb.UnitTestsSetup;
+using Microwave.WebApi;
 using Microwave.WebApi.Discovery;
 
 namespace Microwave.Discovery.UnitTests
@@ -27,7 +27,7 @@ namespace Microwave.Discovery.UnitTests
                 new EventsSubscribedByService(new List<EventSchema>(), new List<ReadModelSubscription>()),
                 new DiscoveryRepository(new DiscoveryClientFactory(new MyMicrowaveHttpClientCreator())),
                 statusRepository,
-                new MicrowaveConfiguration());
+                new DiscoveryConfiguration());
 
             var consumingServices = await discoveryHandler.GetConsumingServices();
 
@@ -44,7 +44,7 @@ namespace Microwave.Discovery.UnitTests
                 new EventsSubscribedByService(new List<EventSchema>(), new List<ReadModelSubscription>()),
                 new DiscoveryRepository(new DiscoveryClientFactory(new MyMicrowaveHttpClientCreator())),
                 statusRepository,
-                new MicrowaveConfiguration());
+                new DiscoveryConfiguration());
 
             var consumingServices = await discoveryHandler.GetConsumingServices();
 
@@ -54,7 +54,7 @@ namespace Microwave.Discovery.UnitTests
 
     public class MyMicrowaveHttpClientCreator : IMicrowaveHttpClientCreator
     {
-        public HttpClient CreateHttpClient()
+        public HttpClient CreateHttpClient(Uri serviceAdress)
         {
             var discoveryClient = new HttpClient();
             discoveryClient.BaseAddress = new Uri("http://123.de");

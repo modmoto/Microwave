@@ -1,6 +1,5 @@
 using System;
 using System.Net.Http;
-using Microwave.Domain;
 
 namespace Microwave.WebApi.Discovery
 {
@@ -13,17 +12,17 @@ namespace Microwave.WebApi.Discovery
             _clientCreator = clientCreator;
         }
 
-        public HttpClient GetClient(Uri serviceAdress)
+        public HttpClient GetClient(Uri serviceAddress)
         {
-            var discoveryClient = _clientCreator.CreateHttpClient();
-            discoveryClient.BaseAddress = serviceAdress;
+            var discoveryClient = _clientCreator.CreateHttpClient(serviceAddress);
+            discoveryClient.BaseAddress = serviceAddress;
             return discoveryClient;
         }
     }
 
     public interface IDiscoveryClientFactory
     {
-        HttpClient GetClient(Uri serviceAdress);
+        HttpClient GetClient(Uri serviceAddress);
     }
 
     public class  DiscoveryClient : HttpClient
