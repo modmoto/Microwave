@@ -19,7 +19,7 @@ namespace Microwave.WebApi.Discovery
         }
         public async Task<EventsPublishedByService> GetPublishedEventTypes(Uri serviceAdress)
         {
-            var client = _factory.GetClient(serviceAdress);
+            var client = await _factory.GetClient(serviceAdress);
             try
             {
                 var response = await client.GetAsync("Dicovery/PublishedEvents");
@@ -37,7 +37,7 @@ namespace Microwave.WebApi.Discovery
 
         public async Task<MicrowaveServiceNode> GetDependantServices(Uri serviceAddress)
         {
-            var client = _factory.GetClient(serviceAddress);
+            var client = await _factory.GetClient(serviceAddress);
             try
             {
                 var response = await client.GetAsync("Dicovery/ServiceDependencies");

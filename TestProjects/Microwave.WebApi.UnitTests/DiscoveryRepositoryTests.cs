@@ -32,7 +32,7 @@ namespace Microwave.WebApi.UnitTests
             client.BaseAddress = new Uri("http://localhost:5000/");
 
             var mock = new Mock<IDiscoveryClientFactory>();
-            mock.Setup(m => m.GetClient(It.IsAny<Uri>())).Returns(client);
+            mock.Setup(m => m.GetClient(It.IsAny<Uri>())).ReturnsAsync(client);
             var serviceDiscoveryRepository = new DiscoveryRepository(mock.Object);
             var serviceAdress = new Uri("http://localhost:5000/");
             var publishedEventTypes = serviceDiscoveryRepository.GetPublishedEventTypes(serviceAdress);
@@ -65,7 +65,7 @@ namespace Microwave.WebApi.UnitTests
             client.BaseAddress = new Uri("http://localhost:5000/");
 
             var mock = new Mock<IDiscoveryClientFactory>();
-            mock.Setup(m => m.GetClient(It.IsAny<Uri>())).Returns(client);
+            mock.Setup(m => m.GetClient(It.IsAny<Uri>())).ReturnsAsync(client);
             var serviceDiscoveryRepository = new DiscoveryRepository(mock.Object);
             var serviceAddress = new Uri("http://localhost:5000/");
 
@@ -91,7 +91,7 @@ namespace Microwave.WebApi.UnitTests
             client.BaseAddress = new Uri("http://localhost:5000/");
 
             var mock = new Mock<IDiscoveryClientFactory>();
-            mock.Setup(m => m.GetClient(It.IsAny<Uri>())).Returns(client);
+            mock.Setup(m => m.GetClient(It.IsAny<Uri>())).ReturnsAsync(client);
             var serviceDiscoveryRepository = new DiscoveryRepository(mock.Object);
             var serviceAddress = new Uri("http://localhost:5000/");
 

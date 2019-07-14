@@ -54,12 +54,12 @@ namespace Microwave.Discovery.UnitTests
 
     public class MyMicrowaveHttpClientCreator : IMicrowaveHttpClientCreator
     {
-        public HttpClient CreateHttpClient(Uri serviceAdress)
+        public Task<HttpClient> CreateHttpClient(Uri serviceAdress)
         {
             var discoveryClient = new HttpClient();
             discoveryClient.BaseAddress = new Uri("http://123.de");
             discoveryClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("123");
-            return discoveryClient;
+            return Task.FromResult(discoveryClient);
         }
     }
 }

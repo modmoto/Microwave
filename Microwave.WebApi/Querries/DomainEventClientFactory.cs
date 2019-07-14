@@ -32,7 +32,8 @@ namespace Microwave.WebApi.Querries
                 var eventType = type.GetGenericArguments().First();
                 var domainEventLocation = eventLocation.GetServiceForEvent(eventType);
                 if (domainEventLocation == null) return DefaultHttpClient();
-                var httpClient = _httpClientCreator.CreateHttpClient(domainEventLocation.ServiceEndPoint.ServiceBaseAddress);
+                var httpClient = await _httpClientCreator.CreateHttpClient(domainEventLocation.ServiceEndPoint
+                .ServiceBaseAddress);
                 httpClient.BaseAddress = new Uri(domainEventLocation.ServiceEndPoint.ServiceBaseAddress + $"Api/DomainEventTypeStreams/{eventType.Name}");
                 return httpClient;
             }
@@ -41,7 +42,8 @@ namespace Microwave.WebApi.Querries
                 var eventType = type.GetGenericArguments().Skip(1).First();
                 var consumingService = eventLocation.GetServiceForEvent(eventType);
                 if (consumingService == null) return DefaultHttpClient();
-                var httpClient = _httpClientCreator.CreateHttpClient(consumingService.ServiceEndPoint.ServiceBaseAddress);
+                var httpClient = await _httpClientCreator.CreateHttpClient(consumingService.ServiceEndPoint
+                .ServiceBaseAddress);
                 httpClient.BaseAddress = new Uri(consumingService.ServiceEndPoint.ServiceBaseAddress + $"Api/DomainEventTypeStreams/{eventType.Name}");
                 return httpClient;
             }
@@ -50,7 +52,8 @@ namespace Microwave.WebApi.Querries
                 var readModelType = type.GetGenericArguments().First();
                 var subscriberEventAndReadmodelConfig = eventLocation.GetServiceForReadModel(readModelType);
                 if (subscriberEventAndReadmodelConfig == null) return DefaultHttpClient();
-                var httpClient = _httpClientCreator.CreateHttpClient(subscriberEventAndReadmodelConfig.ServiceEndPoint.ServiceBaseAddress);
+                var httpClient = await _httpClientCreator.CreateHttpClient(subscriberEventAndReadmodelConfig
+                .ServiceEndPoint.ServiceBaseAddress);
                 httpClient.BaseAddress = new Uri(subscriberEventAndReadmodelConfig.ServiceEndPoint.ServiceBaseAddress + "Api/DomainEvents");
                 return httpClient;
             }
