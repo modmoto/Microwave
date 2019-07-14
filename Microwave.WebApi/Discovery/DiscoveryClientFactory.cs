@@ -1,5 +1,6 @@
 using System;
 using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace Microwave.WebApi.Discovery
 {
@@ -12,9 +13,9 @@ namespace Microwave.WebApi.Discovery
             _clientCreator = clientCreator;
         }
 
-        public HttpClient GetClient(Uri serviceAddress)
+        public async Task<HttpClient> GetClient(Uri serviceAddress)
         {
-            var discoveryClient = _clientCreator.CreateHttpClient(serviceAddress);
+            var discoveryClient = await _clientCreator.CreateHttpClient(serviceAddress);
             discoveryClient.BaseAddress = serviceAddress;
             return discoveryClient;
         }
@@ -22,7 +23,7 @@ namespace Microwave.WebApi.Discovery
 
     public interface IDiscoveryClientFactory
     {
-        HttpClient GetClient(Uri serviceAddress);
+        Task<HttpClient> GetClient(Uri serviceAddress);
     }
 
     public class  DiscoveryClient : HttpClient

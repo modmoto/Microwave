@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Discovery.EventLocations;
@@ -31,7 +32,7 @@ namespace Microwave.WebApi.UnitTests
             client.BaseAddress = new Uri("http://localhost:5000/");
 
             var mock = new Mock<IDiscoveryClientFactory>();
-            mock.Setup(m => m.GetClient(It.IsAny<Uri>())).Returns(client);
+            mock.Setup(m => m.GetClient(It.IsAny<Uri>())).ReturnsAsync(client);
             var serviceDiscoveryRepository = new DiscoveryRepository(mock.Object);
             var serviceAdress = new Uri("http://localhost:5000/");
             var publishedEventTypes = serviceDiscoveryRepository.GetPublishedEventTypes(serviceAdress);
@@ -64,11 +65,11 @@ namespace Microwave.WebApi.UnitTests
             client.BaseAddress = new Uri("http://localhost:5000/");
 
             var mock = new Mock<IDiscoveryClientFactory>();
-            mock.Setup(m => m.GetClient(It.IsAny<Uri>())).Returns(client);
+            mock.Setup(m => m.GetClient(It.IsAny<Uri>())).ReturnsAsync(client);
             var serviceDiscoveryRepository = new DiscoveryRepository(mock.Object);
-            var serviceAdress = new Uri("http://localhost:5000/");
+            var serviceAddress = new Uri("http://localhost:5000/");
 
-            var serviceNode = await serviceDiscoveryRepository.GetDependantServices(serviceAdress);
+            var serviceNode = await serviceDiscoveryRepository.GetDependantServices(serviceAddress);
             var dependantServices = serviceNode.ConnectedServices.ToList();
             Assert.AreEqual(2, dependantServices.Count);
             Assert.AreEqual("ServiceName", serviceNode.ServiceEndPoint.Name);
@@ -77,6 +78,26 @@ namespace Microwave.WebApi.UnitTests
             Assert.AreEqual("RemoteName2", dependantServices[1].Name);
             Assert.AreEqual(new Uri("http://remoteservice1.de"), dependantServices[0].ServiceBaseAddress);
             Assert.AreEqual(new Uri("http://remoteservice2.de"), dependantServices[1].ServiceBaseAddress);
+        }
+
+        [TestMethod]
+        public async Task GetServiceDependencies_Unauthorized()
+        {
+            var mockHttp = new MockHttpMessageHandler();
+            mockHttp.When("http://localhost:5000/Dicovery/ServiceDependencies")
+                .Respond(HttpStatusCode.Unauthorized);
+
+            var client = new DiscoveryClient(mockHttp);
+            client.BaseAddress = new Uri("http://localhost:5000/");
+
+            var mock = new Mock<IDiscoveryClientFactory>();
+            mock.Setup(m => m.GetClient(It.IsAny<Uri>())).ReturnsAsync(client);
+            var serviceDiscoveryRepository = new DiscoveryRepository(mock.Object);
+            var serviceAddress = new Uri("http://localhost:5000/");
+
+            var serviceNode = await serviceDiscoveryRepository.GetDependantServices(serviceAddress);
+
+            Assert.IsFalse(serviceNode.IsReachable);
         }
     }
 }
