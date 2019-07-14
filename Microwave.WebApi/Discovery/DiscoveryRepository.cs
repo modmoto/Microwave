@@ -41,6 +41,7 @@ namespace Microwave.WebApi.Discovery
             try
             {
                 var response = await client.GetAsync("Dicovery/ServiceDependencies");
+                if (!response.IsSuccessStatusCode) return MicrowaveServiceNode.UnreachableMicrowaveServiceNode(new ServiceEndPoint(serviceAddress), new List<ServiceEndPoint>());
                 var content = await response.Content.ReadAsStringAsync();
                 var serviceDependencies = JsonConvert.DeserializeObject<MicrowaveServiceNode>(content);
                 serviceDependencies.SetAddressForEndPoint(serviceAddress);

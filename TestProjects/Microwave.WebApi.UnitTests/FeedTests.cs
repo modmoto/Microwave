@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -49,6 +50,26 @@ namespace Microwave.WebApi.UnitTests
             var mockHttp = new MockHttpMessageHandler();
             mockHttp.When("http://localost:5000/api/DomainEvents/?timeStamp=0001-01-01T00:00:00.0000000+00:00")
                 .Throw(new HttpRequestException());
+            var domainOverallEventClient = new HttpClient(mockHttp);
+            domainOverallEventClient.BaseAddress = new Uri("http://localost:5000/api/DomainEvents/");
+
+            var factoryMock = new Mock<IDomainEventClientFactory>();
+            factoryMock.Setup(m => m.GetClient<ReadModelHandler<TestReadModel>>()).ReturnsAsync(domainOverallEventClient);
+
+            var domainEventFactory = new DomainEventFactory(_eventTypeRegistration);
+            var readModelFeed = new EventFeed<ReadModelHandler<TestReadModel>>(domainEventFactory, factoryMock.Object);
+            var domainEvents = await readModelFeed.GetEventsAsync();
+            var domainEventWrappers = domainEvents.ToList();
+
+            Assert.AreEqual(0, domainEventWrappers.Count);
+        }
+
+        [TestMethod]
+        public async Task ReadModelFeed_Unauthorized()
+        {
+            var mockHttp = new MockHttpMessageHandler();
+            mockHttp.When("http://localost:5000/api/DomainEvents/?timeStamp=0001-01-01T00:00:00.0000000+00:00")
+                .Respond(HttpStatusCode.Unauthorized);
             var domainOverallEventClient = new HttpClient(mockHttp);
             domainOverallEventClient.BaseAddress = new Uri("http://localost:5000/api/DomainEvents/");
 
