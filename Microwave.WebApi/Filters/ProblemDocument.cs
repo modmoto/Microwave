@@ -8,14 +8,16 @@ namespace Microwave.WebApi.Filters
 {
     public class ProblemDocument
     {
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty("title", NullValueHandling = NullValueHandling.Ignore)]
         public string Title { get; }
+
+        [JsonProperty("type")]
         public string Type { get; }
 
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty("status",NullValueHandling = NullValueHandling.Ignore)]
         public HttpStatusCode? Status { get; }
 
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty("detail", NullValueHandling = NullValueHandling.Ignore)]
         public string Detail { get; }
 
         [JsonProperty("problem-details", NullValueHandling = NullValueHandling.Ignore)]
