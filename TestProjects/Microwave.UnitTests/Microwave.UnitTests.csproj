@@ -14,18 +14,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Reference Include="Microsoft.Extensions.DependencyInjection, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60">
-        <HintPath>..\..\..\.nuget\packages\microsoft.extensions.dependencyinjection\2.1.1\lib\netcoreapp2.0\Microsoft.Extensions.DependencyInjection.dll</HintPath>
-      </Reference>
-      <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60">
-        <HintPath>..\..\..\.nuget\packages\microsoft.extensions.dependencyinjection.abstractions\1.0.0\lib\netstandard1.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
-      </Reference>
-      <Reference Include="MongoDB.Bson, Version=2.7.3.0, Culture=neutral, PublicKeyToken=null">
-        <HintPath>..\..\..\.nuget\packages\mongodb.bson\2.7.3\lib\netstandard1.5\MongoDB.Bson.dll</HintPath>
-      </Reference>
-    </ItemGroup>
-
-    <ItemGroup>
       <ProjectReference Include="..\..\Microwave.Discovery\Microwave.Discovery.csproj" />
       <ProjectReference Include="..\..\Microwave.Persistence.MongoDb\Microwave.Persistence.MongoDb.csproj" />
       <ProjectReference Include="..\Microwave.UnitTests.PublishedEventsDll\Microwave.UnitTests.PublishedEventsDll.csproj" />
