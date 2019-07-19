@@ -115,7 +115,7 @@ namespace Microwave.Domain.UnitTests
         public Identity EntityId => Identity;
     }
 
-    public class CanNotChangeToStringId : DomainErrorRenamed
+    public class CanNotChangeToStringId : DomainError
     {
         public CanNotChangeToStringId() : base("You can not change to a string ID")
         {

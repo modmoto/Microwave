@@ -1,6 +1,6 @@
 namespace Microwave.Domain.Validation
 {
-    public class TypelessDomainError : DomainErrorRenamed
+    public class TypelessDomainError : DomainError
     {
         public TypelessDomainError(string errorType)
         {
