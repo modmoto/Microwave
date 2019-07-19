@@ -56,6 +56,19 @@ namespace Microwave.WebApi.UnitTests
         }
 
         [TestMethod]
+        public void TestBadRequestFilter_EnumErrors()
+        {
+            var notFoundFilter = new DomainValidationFilter();
+            var exceptionContext = new FakeContext();
+            exceptionContext.Exception = new DomainValidationException(new List<DomainError> { new TypelessDomainError("ErrorType") });
+            notFoundFilter.OnException(exceptionContext);
+
+            var exceptionContextResult = exceptionContext.Result as BadRequestObjectResult;
+            Assert.IsNotNull(exceptionContextResult);
+            Assert.AreEqual(400, exceptionContextResult.StatusCode);
+        }
+
+        [TestMethod]
         public  void ProblemDocumentConst1()
         {
             var problemDocument = new ProblemDocument("Type", "Title", HttpStatusCode.Conflict, "war ein Konflikt");
