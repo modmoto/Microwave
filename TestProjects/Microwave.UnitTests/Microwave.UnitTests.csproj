@@ -2,8 +2,8 @@
 
     <PropertyGroup>
         <TargetFramework>netcoreapp2.2</TargetFramework>
+        <DebugType>None</DebugType>
         <IsPackable>false</IsPackable>
-        <RootNamespace>Microwave.DependencyInjectionExtensions.UnitTests</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
