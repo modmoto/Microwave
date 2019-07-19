@@ -4,6 +4,11 @@ namespace Microwave.Domain.Identities
 {
     public abstract class Identity : IEquatable<Identity>
     {
+
+        public Identity()
+        {
+        }
+
         public string Id { get; protected set; }
 
         public static bool operator== (Identity id1, Identity id2)

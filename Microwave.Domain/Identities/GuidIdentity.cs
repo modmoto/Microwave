@@ -4,7 +4,7 @@ namespace Microwave.Domain.Identities
 {
     public class GuidIdentity : Identity
     {
-        private GuidIdentity(string id)
+        public GuidIdentity(string id)
         {
             Id = id;
         }
