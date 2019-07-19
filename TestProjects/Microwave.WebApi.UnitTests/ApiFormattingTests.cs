@@ -1,10 +1,15 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Domain.Identities;
+using Microwave.Domain.Validation;
 using Microwave.Queries;
 using Microwave.WebApi.ApiFormatting.DateTimeOffsets;
 using Microwave.WebApi.ApiFormatting.Identities;
 using Microwave.WebApi.ApiFormatting.ReadModels;
+using Microwave.WebApi.Filters;
 using Newtonsoft.Json;
 
 namespace Microwave.WebApi.UnitTests
@@ -81,6 +86,13 @@ namespace Microwave.WebApi.UnitTests
             var jobject = jsonTextWriterMock.StringValue;
             Assert.AreEqual($"{{{Environment.NewLine}  \"IdentityField\": \"TestId\",{Environment.NewLine}  \"TestProp\": \"test\"{Environment.NewLine}}}",
             jobject);
+        }
+    }
+
+    public class TestError : DomainError
+    {
+        public TestError(string desc = null) : base(desc)
+        {
         }
     }
 

@@ -1,5 +1,4 @@
-﻿using System.Net;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microwave.Domain.Validation;
 
@@ -14,7 +13,6 @@ namespace Microwave.WebApi.Filters
             var error = new ProblemDocument(
                 "DomainValidationFailed",
                 "A Domain Validation failed, see details",
-                HttpStatusCode.BadRequest,
                 domainValidationException.DomainErrors);
             var badRequestResult = new BadRequestObjectResult(error);
             context.Result = badRequestResult;

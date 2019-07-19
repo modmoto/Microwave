@@ -2,7 +2,7 @@
 
 namespace Microwave.Domain.Validation
 {
-    public class DomainError
+    public abstract class DomainError
     {
         public DomainError(string description = null)
         {

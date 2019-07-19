@@ -46,12 +46,11 @@ namespace Microwave.WebApi.Filters
         public ProblemDocument(
             string type,
             string title,
-            HttpStatusCode status,
             IEnumerable<DomainError> domainErrors)
         {
             Type = type;
             Title = title;
-            Status = status;
+            Status = HttpStatusCode.BadRequest;
             ProblemDetails =
                 domainErrors.Select(error => new ProblemDocument(error.ErrorType, error.Description));
         }
