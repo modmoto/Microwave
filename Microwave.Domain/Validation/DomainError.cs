@@ -2,7 +2,7 @@
 {
     public abstract class DomainError
     {
-        public DomainError(string description = null)
+        protected DomainError(string description = null)
         {
             Description = description;
         }
