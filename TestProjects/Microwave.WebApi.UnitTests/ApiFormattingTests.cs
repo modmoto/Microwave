@@ -38,8 +38,10 @@ namespace Microwave.WebApi.UnitTests
         {
             var identityConverter = new DateTimeOffsetConverter();
             var expected = "2019-01-07T22:06:35.3773970-01:00";
-            var time = identityConverter.ReadJson(new Mockreader(expected), typeof(Identity), null, JsonSerializer
-                .Create());
+            var time = identityConverter.ReadJson(new Mockreader(expected),
+                typeof(Identity),
+                null,
+                JsonSerializer.Create());
             Assert.AreEqual(DateTimeOffset.Parse("2019-01-07T22:06:35.3773970-01:00"), time);
         }
 
