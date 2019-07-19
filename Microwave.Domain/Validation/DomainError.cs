@@ -13,7 +13,7 @@ namespace Microwave.Domain.Validation
         public string Description { get; }
     }
 
-    internal class TypelessDomainError : DomainError
+    public class TypelessDomainError : DomainError
     {
         public TypelessDomainError(string errorType)
         {
@@ -23,7 +23,7 @@ namespace Microwave.Domain.Validation
         public override string ErrorType { get; }
     }
 
-    internal class EnumDomainError : DomainError
+    public class EnumDomainError : DomainError
     {
         private readonly Enum _enumErrorType;
 

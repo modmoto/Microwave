@@ -1,7 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Domain.Identities;
 using Microwave.Domain.Validation;
@@ -9,7 +6,6 @@ using Microwave.Queries;
 using Microwave.WebApi.ApiFormatting.DateTimeOffsets;
 using Microwave.WebApi.ApiFormatting.Identities;
 using Microwave.WebApi.ApiFormatting.ReadModels;
-using Microwave.WebApi.Filters;
 using Newtonsoft.Json;
 
 namespace Microwave.WebApi.UnitTests
