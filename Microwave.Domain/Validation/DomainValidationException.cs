@@ -12,9 +12,9 @@ namespace Microwave.Domain.Validation
         {
         }
 
-        public IEnumerable<DomainErrorRenamed> DomainErrors { get; }
+        public IEnumerable<DomainError> DomainErrors { get; }
 
-        public DomainValidationException(IEnumerable<DomainErrorRenamed> domainErrors)
+        public DomainValidationException(IEnumerable<DomainError> domainErrors)
         {
             DomainErrors = domainErrors;
         }

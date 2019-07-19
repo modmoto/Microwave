@@ -2,11 +2,11 @@ using System;
 
 namespace Microwave.Domain.Validation
 {
-    public class EnumDomainErrorRenamed : DomainErrorRenamed
+    public class EnumDomainError : DomainError
     {
         private readonly Enum _enumErrorType;
 
-        public EnumDomainErrorRenamed(Enum enumErrorType)
+        public EnumDomainError(Enum enumErrorType)
         {
             _enumErrorType = enumErrorType;
         }
