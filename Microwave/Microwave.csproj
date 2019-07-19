@@ -5,6 +5,12 @@
     <RootNamespace>Microwave</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60">
+      <HintPath>..\..\..\.nuget\packages\microsoft.extensions.dependencyinjection.abstractions\1.0.0\lib\netstandard1.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
+    </Reference>
+
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\Microwave.EventStores\Microwave.EventStores.csproj" />
     <ProjectReference Include="..\Microwave.Queries\Microwave.Queries.csproj" />
     <ProjectReference Include="..\Microwave.WebApi\Microwave.WebApi.csproj" />
