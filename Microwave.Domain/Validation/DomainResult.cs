@@ -20,15 +20,15 @@ namespace Microwave.Domain.Validation
             }
         }
 
-        public IEnumerable<DomainError> DomainErrors { get; }
+        public IEnumerable<DomainErrorRenamed> DomainErrors { get; }
 
         private DomainResult(IEnumerable<IDomainEvent> domainEvents)
         {
             _domainEvents = domainEvents;
-            DomainErrors = new List<DomainError>();
+            DomainErrors = new List<DomainErrorRenamed>();
         }
 
-        private DomainResult(IEnumerable<DomainError> domainErrors)
+        private DomainResult(IEnumerable<DomainErrorRenamed> domainErrors)
         {
             _domainEvents = new List<IDomainEvent>();
             DomainErrors = domainErrors;
@@ -44,15 +44,15 @@ namespace Microwave.Domain.Validation
             return new DomainResult(domainEvents);
         }
 
-        public static DomainResult Error(DomainError domainDomainError)
+        public static DomainResult Error(DomainErrorRenamed domainDomainError)
         {
-            return new DomainResult(new List<DomainError> { domainDomainError });
+            return new DomainResult(new List<DomainErrorRenamed> { domainDomainError });
         }
 
         public static DomainResult Error(string domainDomainErrorKey)
         {
             var domainError = new TypelessDomainError(domainDomainErrorKey);
-            return new DomainResult(new List<DomainError> { domainError });
+            return new DomainResult(new List<DomainErrorRenamed> { domainError });
         }
 
         public static DomainResult Error(IEnumerable<string> domainDomainErrorKeys)
@@ -64,7 +64,7 @@ namespace Microwave.Domain.Validation
         public static DomainResult Error(Enum domainDomainErrorKey)
         {
             var domainError = new EnumDomainError(domainDomainErrorKey);
-            return new DomainResult(new List<DomainError> { domainError });
+            return new DomainResult(new List<DomainErrorRenamed> { domainError });
         }
 
         public static DomainResult Error(IEnumerable<Enum> domainDomainErrorKeys)
@@ -73,7 +73,7 @@ namespace Microwave.Domain.Validation
             return new DomainResult(enumDomainErrors);
         }
 
-        public static DomainResult Error(IEnumerable<DomainError> domainErrors)
+        public static DomainResult Error(IEnumerable<DomainErrorRenamed> domainErrors)
         {
             return new DomainResult(domainErrors);
         }
