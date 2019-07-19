@@ -87,9 +87,9 @@ namespace Microwave.WebApi.UnitTests
         }
     }
 
-    public class TestError : DomainError
+    public class TestErrorRenamed : DomainErrorRenamed
     {
-        public TestError(string desc = null) : base(desc)
+        public TestErrorRenamed(string desc = null) : base(desc)
         {
         }
     }

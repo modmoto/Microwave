@@ -46,7 +46,7 @@ namespace Microwave.WebApi.Filters
         public ProblemDocument(
             string type,
             string title,
-            IEnumerable<DomainError> domainErrors)
+            IEnumerable<DomainErrorRenamed> domainErrors)
         {
             Type = type;
             Title = title;

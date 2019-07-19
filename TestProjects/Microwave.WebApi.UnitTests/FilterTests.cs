@@ -47,7 +47,7 @@ namespace Microwave.WebApi.UnitTests
         {
             var notFoundFilter = new DomainValidationFilter();
             var exceptionContext = new FakeContext();
-            exceptionContext.Exception = new DomainValidationException(new List<DomainError> { new TestError("egal") });
+            exceptionContext.Exception = new DomainValidationException(new List<DomainErrorRenamed> { new TestErrorRenamed("egal") });
             notFoundFilter.OnException(exceptionContext);
 
             var exceptionContextResult = exceptionContext.Result as BadRequestObjectResult;
@@ -60,7 +60,7 @@ namespace Microwave.WebApi.UnitTests
         {
             var notFoundFilter = new DomainValidationFilter();
             var exceptionContext = new FakeContext();
-            exceptionContext.Exception = new DomainValidationException(new List<DomainError> { new TypelessDomainError("ErrorType") });
+            exceptionContext.Exception = new DomainValidationException(new List<DomainErrorRenamed> { new TypelessDomainErrorRenamed("ErrorType") });
             notFoundFilter.OnException(exceptionContext);
 
             var exceptionContextResult = exceptionContext.Result as BadRequestObjectResult;
@@ -82,9 +82,9 @@ namespace Microwave.WebApi.UnitTests
         [TestMethod]
         public  void ProblemDocumentConst2()
         {
-            var problemDocument = new ProblemDocument("Type", "Title", new List<DomainError>
+            var problemDocument = new ProblemDocument("Type", "Title", new List<DomainErrorRenamed>
             {
-                new TestError("irgend ein error")
+                new TestErrorRenamed("irgend ein error")
             });
 
             Assert.AreEqual("Title", problemDocument.Title);

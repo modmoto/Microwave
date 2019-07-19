@@ -1,8 +1,8 @@
 ﻿namespace Microwave.Domain.Validation
 {
-    public abstract class DomainError
+    public abstract class DomainErrorRenamed
     {
-        public DomainError(string description = null)
+        public DomainErrorRenamed(string description = null)
         {
             Description = description;
         }
