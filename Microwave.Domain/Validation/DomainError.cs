@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Microwave.Domain.Validation
+﻿namespace Microwave.Domain.Validation
 {
     public abstract class DomainError
     {
@@ -11,27 +9,5 @@ namespace Microwave.Domain.Validation
 
         public virtual string ErrorType => GetType().Name;
         public string Description { get; }
-    }
-
-    public class TypelessDomainError : DomainError
-    {
-        public TypelessDomainError(string errorType)
-        {
-            ErrorType = errorType;
-        }
-
-        public override string ErrorType { get; }
-    }
-
-    public class EnumDomainError : DomainError
-    {
-        private readonly Enum _enumErrorType;
-
-        public EnumDomainError(Enum enumErrorType)
-        {
-            _enumErrorType = enumErrorType;
-        }
-
-        public override string ErrorType => _enumErrorType.ToString();
     }
 }
