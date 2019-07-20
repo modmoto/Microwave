@@ -61,6 +61,11 @@ namespace Microwave.Queries
 
             _second = second;
         }
+
+        public static UpdateEveryAttribute Default()
+        {
+            return new UpdateEveryAttribute(1);
+        }
     }
 
     public class InvalidTimeNotationException : Exception

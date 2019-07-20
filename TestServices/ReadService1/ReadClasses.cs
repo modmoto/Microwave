@@ -39,15 +39,24 @@ namespace ReadService1
         public Identity EntityId { get; }
     }
 
-    public class ReadModel1 : ReadModel, IHandle<Event3>, IHandle<Event4>
+    [UpdateEvery(5)]
+    public class ReadModel1 : ReadModel, IHandle<Event2>, IHandle<Event4>
     {
-        public override Type GetsCreatedOn => typeof(Event3);
+        public override Type GetsCreatedOn => typeof(Event2);
 
-        public void Handle(Event3 domainEvent)
+        public void Handle(Event2 domainEvent)
         {
         }
 
         public void Handle(Event4 domainEvent)
+        {
+        }
+    }
+
+    [UpdateEvery(5)]
+    public class Querry1 : Query, IHandle<Event2>
+    {
+        public void Handle(Event2 domainEvent)
         {
         }
     }

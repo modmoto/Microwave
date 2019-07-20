@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using Microwave.Discovery;
 using Microwave.Queries;
@@ -29,19 +31,56 @@ namespace Microwave
         public void StartEventPolling()
         {
             #pragma warning disable 4014
-            foreach (var handler in _queryHandlers) StartThreadForHandlingUpdates(() => handler.Update());
-            foreach (var handler in _readModelHandlers) StartThreadForHandlingUpdates(() => handler.Update());
-            foreach (var handler in _asyncEventHandlers) StartThreadForHandlingUpdates(() => handler.Update());
+            foreach (var handler in _queryHandlers) StartThreadForHandlingUpdates(
+                () => handler.Update(),
+                GetTimingAttribute(handler));
+            foreach (var handler in _readModelHandlers) StartThreadForHandlingUpdates(
+                () => handler.Update(),
+                GetTimingAttribute(handler));
+            foreach (var handler in _asyncEventHandlers) StartThreadForHandlingUpdates(
+                () => handler.Update(),
+                GetTimingAttribute(handler));
             #pragma warning restore 4014
         }
 
-        private async Task StartThreadForHandlingUpdates(Func<Task> action)
+        private UpdateEveryAttribute GetTimingAttribute(IQueryEventHandler handler)
+        {
+            var type = handler.GetType();
+            var first = type.GenericTypeArguments.First();
+            return GetUpdateEveryAttribute(first);
+        }
+
+        private UpdateEveryAttribute GetTimingAttribute(IReadModelEventHandler handler)
+        {
+            var type = handler.GetType();
+            var first = type.GenericTypeArguments.First();
+            return GetUpdateEveryAttribute(first);
+        }
+
+        private UpdateEveryAttribute GetTimingAttribute(IAsyncEventHandler handler)
+        {
+            var type = handler.GetType();
+            var first = type.GenericTypeArguments.First();
+            return GetUpdateEveryAttribute(first);
+        }
+
+        private static UpdateEveryAttribute GetUpdateEveryAttribute(Type type)
+        {
+            var customAttribute = type.GetCustomAttribute(typeof(UpdateEveryAttribute));
+            var updateEveryAttribute = customAttribute as UpdateEveryAttribute;
+            return updateEveryAttribute ?? UpdateEveryAttribute.Default();
+        }
+
+        private async Task StartThreadForHandlingUpdates(Func<Task> action, UpdateEveryAttribute attribute)
         {
             try
             {
                 while (true)
                 {
-                    await Task.Delay(5000);
+                    var now = DateTime.UtcNow;
+                    var nextTrigger = attribute.Next;
+                    var timeSpan = nextTrigger - now;
+                    await Task.Delay(timeSpan);
                     await action.Invoke();
                 }
             }

@@ -14,7 +14,8 @@ namespace ReadService1
         private MicrowaveConfiguration _microwaveConfiguration = new MicrowaveConfiguration
         {
             ServiceName = "ReadService1",
-            ServiceLocations = ServiceConfiguration.ServiceAdresses
+            ServiceLocations = ServiceConfiguration.ServiceAdresses,
+            MicrowaveHttpClientCreator = new MyMicrowaveHttpClientCreator()
         };
 
         public void ConfigureServices(IServiceCollection services)
