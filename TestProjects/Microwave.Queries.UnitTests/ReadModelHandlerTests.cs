@@ -20,7 +20,7 @@ namespace Microwave.Queries.UnitTests
 
             var queryRepository = new ReadModelRepository(EventMongoDb);
 
-            var readModelHandler = new ReadModelHandler<TestReadModelQuerries>(queryRepository,
+            var readModelHandler = new ReadModelEventHandler<TestReadModelQuerries>(queryRepository,
                 new VersionRepository(EventMongoDb), new FeedMock2());
             await readModelHandler.Update();
 
@@ -38,7 +38,7 @@ namespace Microwave.Queries.UnitTests
 
             var queryRepository = new ReadModelRepository(EventMongoDb);
 
-            var readModelHandler = new ReadModelHandler<TestReadModelQuerries>(queryRepository,
+            var readModelHandler = new ReadModelEventHandler<TestReadModelQuerries>(queryRepository,
                 new VersionRepository(EventMongoDb), new FeedMock3());
 
             await readModelHandler.Update();
@@ -57,7 +57,7 @@ namespace Microwave.Queries.UnitTests
 
             var queryRepository = new ReadModelRepository(EventMongoDb);
 
-            var readModelHandler = new ReadModelHandler<TestReadModelQuerries>(queryRepository, new VersionRepository(EventMongoDb), new FeedMock4());
+            var readModelHandler = new ReadModelEventHandler<TestReadModelQuerries>(queryRepository, new VersionRepository(EventMongoDb), new FeedMock4());
 
             await readModelHandler.Update();
 
@@ -75,7 +75,7 @@ namespace Microwave.Queries.UnitTests
 
             var queryRepository = new ReadModelRepository(EventMongoDb);
 
-            var readModelHandler = new ReadModelHandler<TestReadModelQuerries_OnlyOneEventAndVersionIsCounted>(
+            var readModelHandler = new ReadModelEventHandler<TestReadModelQuerries_OnlyOneEventAndVersionIsCounted>(
                 queryRepository,
                 new VersionRepository(EventMongoDb),
                 new FeedMock5());
@@ -96,9 +96,9 @@ namespace Microwave.Queries.UnitTests
 
             var queryRepository = new ReadModelRepository(EventMongoDb);
 
-            var readModelHandler = new ReadModelHandler<TestReadModelQuerries_TwoParallelFeeds1>(queryRepository, new VersionRepository(EventMongoDb), new FeedMock6());
+            var readModelHandler = new ReadModelEventHandler<TestReadModelQuerries_TwoParallelFeeds1>(queryRepository, new VersionRepository(EventMongoDb), new FeedMock6());
 
-            var readModelHandler2 = new ReadModelHandler<TestReadModelQuerries_TwoParallelFeeds2>(queryRepository, new VersionRepository(EventMongoDb), new FeedMock7());
+            var readModelHandler2 = new ReadModelEventHandler<TestReadModelQuerries_TwoParallelFeeds2>(queryRepository, new VersionRepository(EventMongoDb), new FeedMock7());
 
             await readModelHandler.Update();
             await readModelHandler2.Update();
@@ -116,7 +116,7 @@ namespace Microwave.Queries.UnitTests
 
             var queryRepository = new ReadModelRepository(EventMongoDb);
 
-            var readModelHandler = new ReadModelHandler<TestReadModelQuerries_VerionedHandle>(
+            var readModelHandler = new ReadModelEventHandler<TestReadModelQuerries_VerionedHandle>(
                 queryRepository,
                 new VersionRepository(EventMongoDb),
                 new FeedMockVersioned());
@@ -195,7 +195,7 @@ namespace Microwave.Queries.UnitTests
         public override Type GetsCreatedOn => typeof(TestEvnt2);
     }
 
-    public class FeedMock2 : IEventFeed<ReadModelHandler<TestReadModelQuerries>>
+    public class FeedMock2 : IEventFeed<ReadModelEventHandler<TestReadModelQuerries>>
     {
         public Task<IEnumerable<SubscribedDomainEventWrapper>> GetEventsAsync(DateTimeOffset since = default(DateTimeOffset))
         {
@@ -214,7 +214,7 @@ namespace Microwave.Queries.UnitTests
         }
     }
 
-    public class FeedMock5 : IEventFeed<ReadModelHandler<TestReadModelQuerries_OnlyOneEventAndVersionIsCounted>>
+    public class FeedMock5 : IEventFeed<ReadModelEventHandler<TestReadModelQuerries_OnlyOneEventAndVersionIsCounted>>
     {
         public Task<IEnumerable<SubscribedDomainEventWrapper>> GetEventsAsync(DateTimeOffset since = default(DateTimeOffset))
         {
@@ -233,7 +233,7 @@ namespace Microwave.Queries.UnitTests
         }
     }
 
-    public class FeedMockVersioned : IEventFeed<ReadModelHandler<TestReadModelQuerries_VerionedHandle>>
+    public class FeedMockVersioned : IEventFeed<ReadModelEventHandler<TestReadModelQuerries_VerionedHandle>>
     {
         public Task<IEnumerable<SubscribedDomainEventWrapper>> GetEventsAsync(DateTimeOffset since = default(DateTimeOffset))
         {
@@ -252,7 +252,7 @@ namespace Microwave.Queries.UnitTests
         }
     }
 
-    public class FeedMock6 : IEventFeed<ReadModelHandler<TestReadModelQuerries_TwoParallelFeeds1>>
+    public class FeedMock6 : IEventFeed<ReadModelEventHandler<TestReadModelQuerries_TwoParallelFeeds1>>
     {
         public Task<IEnumerable<SubscribedDomainEventWrapper>> GetEventsAsync(DateTimeOffset since = default(DateTimeOffset))
         {
@@ -271,7 +271,7 @@ namespace Microwave.Queries.UnitTests
         public override Type GetsCreatedOn => typeof(TestEvnt1);
     }
 
-    public class FeedMock7 : IEventFeed<ReadModelHandler<TestReadModelQuerries_TwoParallelFeeds2>>
+    public class FeedMock7 : IEventFeed<ReadModelEventHandler<TestReadModelQuerries_TwoParallelFeeds2>>
     {
         public Task<IEnumerable<SubscribedDomainEventWrapper>> GetEventsAsync(DateTimeOffset since = default(DateTimeOffset))
         {
@@ -290,7 +290,7 @@ namespace Microwave.Queries.UnitTests
         public override Type GetsCreatedOn => typeof(TestEvnt2);
     }
 
-    public class FeedMock3 : IEventFeed<ReadModelHandler<TestReadModelQuerries>>
+    public class FeedMock3 : IEventFeed<ReadModelEventHandler<TestReadModelQuerries>>
     {
         public Task<IEnumerable<SubscribedDomainEventWrapper>> GetEventsAsync(DateTimeOffset since = default(DateTimeOffset))
         {
@@ -309,7 +309,7 @@ namespace Microwave.Queries.UnitTests
         }
     }
 
-    public class FeedMock4 : IEventFeed<ReadModelHandler<TestReadModelQuerries>>
+    public class FeedMock4 : IEventFeed<ReadModelEventHandler<TestReadModelQuerries>>
     {
         public Task<IEnumerable<SubscribedDomainEventWrapper>> GetEventsAsync(DateTimeOffset since = default(DateTimeOffset))
         {
@@ -328,7 +328,7 @@ namespace Microwave.Queries.UnitTests
         }
     }
 
-    public class FeedMock1 : IEventFeed<ReadModelHandler<TestReadModelQuerries>>
+    public class FeedMock1 : IEventFeed<ReadModelEventHandler<TestReadModelQuerries>>
     {
         public Task<IEnumerable<SubscribedDomainEventWrapper>> GetEventsAsync(DateTimeOffset since = default(DateTimeOffset))
         {

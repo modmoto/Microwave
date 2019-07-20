@@ -32,9 +32,9 @@ namespace Microwave.WebApi.UnitTests
             domainOverallEventClient.BaseAddress = new Uri("http://localost:5000/api/DomainEvents/");
 
             var factoryMock = new Mock<IDomainEventClientFactory>();
-            factoryMock.Setup(m => m.GetClient<ReadModelHandler<TestReadModel>>()).ReturnsAsync(domainOverallEventClient);
+            factoryMock.Setup(m => m.GetClient<ReadModelEventHandler<TestReadModel>>()).ReturnsAsync(domainOverallEventClient);
             var domainEventFactory = new DomainEventFactory(_eventTypeRegistration);
-            var readModelFeed = new EventFeed<ReadModelHandler<TestReadModel>>(
+            var readModelFeed = new EventFeed<ReadModelEventHandler<TestReadModel>>(
                 domainEventFactory,
                 factoryMock.Object);
             var domainEvents = await readModelFeed.GetEventsAsync();
@@ -54,10 +54,10 @@ namespace Microwave.WebApi.UnitTests
             domainOverallEventClient.BaseAddress = new Uri("http://localost:5000/api/DomainEvents/");
 
             var factoryMock = new Mock<IDomainEventClientFactory>();
-            factoryMock.Setup(m => m.GetClient<ReadModelHandler<TestReadModel>>()).ReturnsAsync(domainOverallEventClient);
+            factoryMock.Setup(m => m.GetClient<ReadModelEventHandler<TestReadModel>>()).ReturnsAsync(domainOverallEventClient);
 
             var domainEventFactory = new DomainEventFactory(_eventTypeRegistration);
-            var readModelFeed = new EventFeed<ReadModelHandler<TestReadModel>>(domainEventFactory, factoryMock.Object);
+            var readModelFeed = new EventFeed<ReadModelEventHandler<TestReadModel>>(domainEventFactory, factoryMock.Object);
             var domainEvents = await readModelFeed.GetEventsAsync();
             var domainEventWrappers = domainEvents.ToList();
 
@@ -74,10 +74,10 @@ namespace Microwave.WebApi.UnitTests
             domainOverallEventClient.BaseAddress = new Uri("http://localost:5000/api/DomainEvents/");
 
             var factoryMock = new Mock<IDomainEventClientFactory>();
-            factoryMock.Setup(m => m.GetClient<ReadModelHandler<TestReadModel>>()).ReturnsAsync(domainOverallEventClient);
+            factoryMock.Setup(m => m.GetClient<ReadModelEventHandler<TestReadModel>>()).ReturnsAsync(domainOverallEventClient);
 
             var domainEventFactory = new DomainEventFactory(_eventTypeRegistration);
-            var readModelFeed = new EventFeed<ReadModelHandler<TestReadModel>>(domainEventFactory, factoryMock.Object);
+            var readModelFeed = new EventFeed<ReadModelEventHandler<TestReadModel>>(domainEventFactory, factoryMock.Object);
             var domainEvents = await readModelFeed.GetEventsAsync();
             var domainEventWrappers = domainEvents.ToList();
 

@@ -343,8 +343,8 @@ namespace Microwave
             var readModels = assembly.GetTypes().Where(ImplementsIhandleInterfaceAndReadModel).ToList();
             var genericInterfaceTypeOfFeed = typeof(IEventFeed<>);
             var genericTypeOfFeed = typeof(EventFeed<>);
-            var genericTypeOfHandler = typeof(ReadModelHandler<>);
-            var interfaceReadModelHandler = typeof(IReadModelHandler);
+            var genericTypeOfHandler = typeof(ReadModelEventHandler<>);
+            var interfaceReadModelHandler = typeof(IReadModelEventHandler);
 
             foreach (var readModel in readModels)
             {

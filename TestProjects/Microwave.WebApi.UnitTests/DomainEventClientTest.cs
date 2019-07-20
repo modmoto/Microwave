@@ -42,7 +42,7 @@ namespace Microwave.WebApi.UnitTests
             var mock = new Mock<IStatusRepository>();
             mock.Setup(s => s.GetEventLocation()).ReturnsAsync(new EventLocationFake());
             var domainEventFactory = new DomainEventClientFactory(mock.Object, new DefaultMicrowaveHttpClientCreator());
-            var domainEventClient = await domainEventFactory.GetClient<ReadModelHandler<IdQuery>>();
+            var domainEventClient = await domainEventFactory.GetClient<ReadModelEventHandler<IdQuery>>();
             Assert.AreEqual("http://troll2.de/Api/DomainEvents", domainEventClient.BaseAddress.ToString());
         }
     }

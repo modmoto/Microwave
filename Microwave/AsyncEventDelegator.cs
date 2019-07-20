@@ -11,13 +11,13 @@ namespace Microwave
     {
         private readonly IEnumerable<IAsyncEventHandler> _asyncEventHandlers;
         private readonly IEnumerable<IQueryEventHandler> _queryHandlers;
-        private readonly IEnumerable<IReadModelHandler> _readModelHandlers;
+        private readonly IEnumerable<IReadModelEventHandler> _readModelHandlers;
         private readonly IDiscoveryHandler _discoveryHandler;
 
         public AsyncEventDelegator(
             IEnumerable<IAsyncEventHandler> asyncEventHandlers,
             IEnumerable<IQueryEventHandler> queryHandlers,
-            IEnumerable<IReadModelHandler> readModelHandlers,
+            IEnumerable<IReadModelEventHandler> readModelHandlers,
             IDiscoveryHandler discoveryHandler)
         {
             _asyncEventHandlers = asyncEventHandlers;
