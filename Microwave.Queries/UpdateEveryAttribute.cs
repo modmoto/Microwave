@@ -3,7 +3,7 @@ using NCrontab;
 
 namespace Microwave.Queries
 {
-    public class UpdateAfterAttribute : Attribute
+    public class UpdateEveryAttribute : Attribute
     {
         private readonly int _second;
 
@@ -49,13 +49,13 @@ namespace Microwave.Queries
                 0);
         }
 
-        public UpdateAfterAttribute(string cronNotation)
+        public UpdateEveryAttribute(string cronNotation)
         {
             var schedule = CrontabSchedule.Parse(cronNotation);
             _cronNotation = schedule;
         }
 
-        public UpdateAfterAttribute(int second)
+        public UpdateEveryAttribute(int second)
         {
             if (second < 1 || second > 60) throw new InvalidTimeNotationException();
 

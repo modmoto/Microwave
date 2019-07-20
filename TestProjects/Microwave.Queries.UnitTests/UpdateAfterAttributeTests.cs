@@ -9,7 +9,7 @@ namespace Microwave.Queries.UnitTests
         [TestMethod]
         public void Constructor()
         {
-            var attribute = new UpdateAfterAttribute("* * * * *");
+            var attribute = new UpdateEveryAttribute("* * * * *");
             var attributeNext = attribute.Next;
 
             Assert.AreEqual(attributeNext.Minute, DateTime.UtcNow.AddMinutes(1).Minute);
@@ -18,7 +18,7 @@ namespace Microwave.Queries.UnitTests
         [TestMethod]
         public void ConstructorSeconds()
         {
-            var attribute = new UpdateAfterAttribute(20);
+            var attribute = new UpdateEveryAttribute(20);
             var attributeNext = attribute.Next;
 
             Assert.IsTrue(attributeNext.Second % 20 == 0);
@@ -27,7 +27,7 @@ namespace Microwave.Queries.UnitTests
         [TestMethod]
         public void ConstructorSeconds_1()
         {
-            var attribute = new UpdateAfterAttribute(1);
+            var attribute = new UpdateEveryAttribute(1);
             var attributeNext = attribute.Next;
 
             Assert.IsTrue(attributeNext.Second % 1 == 0);
@@ -36,7 +36,7 @@ namespace Microwave.Queries.UnitTests
         [TestMethod]
         public void ConstructorSeconds_0()
         {
-            Assert.ThrowsException<InvalidTimeNotationException>(() => new UpdateAfterAttribute(0));
+            Assert.ThrowsException<InvalidTimeNotationException>(() => new UpdateEveryAttribute(0));
         }
     }
 }

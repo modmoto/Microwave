@@ -2,7 +2,6 @@
 
 namespace Microwave.Queries
 {
-    [UpdateAfter("* * * * *")]
     public class Query
     {
         public void Handle(ISubscribedDomainEvent domainEvent, long version)

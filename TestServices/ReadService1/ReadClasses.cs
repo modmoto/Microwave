@@ -5,7 +5,11 @@ using Microwave.Queries;
 
 namespace ReadService1
 {
-    public class Handler1 : IHandleAsync<Event2>, IHandleAsync<Event4>, IHandleAsync<EventNotPublished>
+    [UpdateEvery(5)]
+    public class Handler1 :
+        IHandleAsync<Event2>,
+        IHandleAsync<Event4>,
+        IHandleAsync<EventNotPublished>
     {
         public Task HandleAsync(Event2 domainEvent)
         {
