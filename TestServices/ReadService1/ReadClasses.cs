@@ -29,6 +29,16 @@ namespace ReadService1
         }
     }
 
+    public class Handler2 :
+        IHandleAsync<Event2>
+    {
+        public Task HandleAsync(Event2 domainEvent)
+        {
+            Console.WriteLine("Event2 was handled");
+            return Task.CompletedTask;
+        }
+    }
+
     public class EventNotPublished : ISubscribedDomainEvent
     {
         public EventNotPublished(Identity entityId)
