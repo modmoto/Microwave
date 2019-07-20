@@ -1,6 +1,7 @@
 using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Domain.Identities;
+using Microwave.Domain.Validation;
 using Microwave.Queries;
 using Microwave.WebApi.ApiFormatting.DateTimeOffsets;
 using Microwave.WebApi.ApiFormatting.Identities;
@@ -37,8 +38,10 @@ namespace Microwave.WebApi.UnitTests
         {
             var identityConverter = new DateTimeOffsetConverter();
             var expected = "2019-01-07T22:06:35.3773970-01:00";
-            var time = identityConverter.ReadJson(new Mockreader(expected), typeof(Identity), null, JsonSerializer
-                .Create());
+            var time = identityConverter.ReadJson(new Mockreader(expected),
+                typeof(Identity),
+                null,
+                JsonSerializer.Create());
             Assert.AreEqual(DateTimeOffset.Parse("2019-01-07T22:06:35.3773970-01:00"), time);
         }
 
@@ -81,6 +84,13 @@ namespace Microwave.WebApi.UnitTests
             var jobject = jsonTextWriterMock.StringValue;
             Assert.AreEqual($"{{{Environment.NewLine}  \"IdentityField\": \"TestId\",{Environment.NewLine}  \"TestProp\": \"test\"{Environment.NewLine}}}",
             jobject);
+        }
+    }
+
+    public class TestError : DomainError
+    {
+        public TestError(string desc = null) : base(desc)
+        {
         }
     }
 
