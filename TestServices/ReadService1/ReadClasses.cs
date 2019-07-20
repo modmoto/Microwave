@@ -46,6 +46,7 @@ namespace ReadService1
 
         public void Handle(Event2 domainEvent)
         {
+            Console.WriteLine("jeah");
         }
 
         public void Handle(Event4 domainEvent)
