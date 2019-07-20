@@ -31,9 +31,7 @@ namespace Microwave
             Task.Run(() =>
             {
                 Task.Delay(10000).Wait();
-                #pragma warning disable 4014
                 asyncEventDelegator.StartEventPolling();
-                #pragma warning restore 4014
             });
 
             Task.Run(() =>

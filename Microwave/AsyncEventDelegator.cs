@@ -26,24 +26,24 @@ namespace Microwave
             _discoveryHandler = discoveryHandler;
         }
 
-        public async Task StartEventPolling()
+        public void StartEventPolling()
         {
-
-            while (true)
-            {
-                await Task.Delay(1000);
-
-                foreach (var handler in _queryHandlers) await SecureCall(() => handler.Update());
-                foreach (var handler in _readModelHandlers) await SecureCall(() => handler.Update());
-                foreach (var handler in _asyncEventHandlers) await SecureCall(() => handler.Update());
-            }
+            #pragma warning disable 4014
+            foreach (var handler in _queryHandlers) StartThreadForHandlingUpdates(() => handler.Update());
+            foreach (var handler in _readModelHandlers) StartThreadForHandlingUpdates(() => handler.Update());
+            foreach (var handler in _asyncEventHandlers) StartThreadForHandlingUpdates(() => handler.Update());
+            #pragma warning restore 4014
         }
 
-        private async Task SecureCall(Func<Task> action)
+        private async Task StartThreadForHandlingUpdates(Func<Task> action)
         {
             try
             {
-                await action.Invoke();
+                while (true)
+                {
+                    await Task.Delay(5000);
+                    await action.Invoke();
+                }
             }
             catch (DomainEventNotAssignableToEntityException notAssignableToEntityException)
             {
