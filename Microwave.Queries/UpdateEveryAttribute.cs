@@ -64,7 +64,7 @@ namespace Microwave.Queries
 
         public static UpdateEveryAttribute Default()
         {
-            return new UpdateEveryAttribute(1);
+            return new UpdateEveryAttribute();
         }
     }
 

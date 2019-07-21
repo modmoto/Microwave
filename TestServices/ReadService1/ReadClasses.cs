@@ -12,7 +12,7 @@ namespace ReadService1
     {
         public Task HandleAsync(Event2 domainEvent)
         {
-            Console.WriteLine("Event2 was handled in Fast Handler");
+            Console.WriteLine($"{DateTime.UtcNow} Event2 was handled in Fast Handler");
             return Task.CompletedTask;
         }
 
@@ -34,7 +34,7 @@ namespace ReadService1
     {
         public Task HandleAsync(Event2 domainEvent)
         {
-            Console.WriteLine("Event2 was handled in Sloooooow Handler");
+            Console.WriteLine($"{DateTime.UtcNow} Event2 was handled in Sloooooow Handler");
             return Task.CompletedTask;
         }
     }
@@ -49,14 +49,14 @@ namespace ReadService1
         public Identity EntityId { get; }
     }
 
-    [UpdateEvery(15)]
+    [UpdateEvery(20)]
     public class ReadModel1 : ReadModel, IHandle<Event2>, IHandle<Event4>
     {
         public override Type GetsCreatedOn => typeof(Event2);
 
         public void Handle(Event2 domainEvent)
         {
-            Console.WriteLine("jeah");
+            Console.WriteLine($"{DateTime.UtcNow} jeah");
         }
 
         public void Handle(Event4 domainEvent)
