@@ -9,7 +9,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microwave.Discovery;
 using Microwave.Discovery.EventLocations;
 using Microwave.Domain.EventSourcing;
-using Microwave.Domain.Identities;
 using Microwave.EventStores;
 using Microwave.EventStores.Ports;
 using Microwave.Queries;
