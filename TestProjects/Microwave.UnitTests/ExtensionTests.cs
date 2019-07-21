@@ -28,7 +28,8 @@ namespace Microwave.UnitTests
             var storeDependencies = collection.AddMicrowave(new MongoDbPersistenceLayer());
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
-            var eventDelegateHandlers = buildServiceProvider.GetServices<IAsyncEventHandler>().ToList();
+            var eventDelegateHandlers = buildServiceProvider.GetServices<IAsyncEventHandler>().OrderBy(
+                s => s.HandlerClassType.ToString()).ToList();
             Assert.AreEqual(7, eventDelegateHandlers.Count);
 
             Assert.AreEqual(typeof(TestEventHandler), eventDelegateHandlers[4].HandlerClassType);
