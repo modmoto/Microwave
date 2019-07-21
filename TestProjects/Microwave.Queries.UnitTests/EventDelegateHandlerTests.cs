@@ -33,7 +33,7 @@ namespace Microwave.Queries.UnitTests
             versionRepo.Setup(repo => repo.SaveVersion(It.IsAny<LastProcessedVersion>())).Returns(Task.CompletedTask);
             versionRepo.Setup(repo => repo.GetVersionAsync(It.IsAny<string>())).ReturnsAsync(DateTimeOffset.MinValue);
             var handler = new Handler();
-            var eventDelegateHandler = new AsyncEventHandler<TestEv>(versionRepo.Object, mock.Object, new []{ handler });
+            var eventDelegateHandler = new AsyncEventHandler<TestEv>(versionRepo.Object, mock.Object, handler);
             await eventDelegateHandler.Update();
             Assert.AreEqual(1, handler.WasCalled);
         }

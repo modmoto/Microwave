@@ -39,7 +39,7 @@ namespace Microwave
                 GetTimingAttribute(handler));
             foreach (var handler in _asyncEventHandlers) StartThreadForHandlingUpdates(
                 () => handler.Update(),
-                GetTimingAttribute(handler));
+                GetUpdateEveryAttribute(handler.HandlerClassType));
             #pragma warning restore 4014
         }
 
@@ -56,14 +56,6 @@ namespace Microwave
             var first = type.GenericTypeArguments.First();
             return GetUpdateEveryAttribute(first);
         }
-
-        private UpdateEveryAttribute GetTimingAttribute(IAsyncEventHandler handler)
-        {
-            var type = handler.GetType();
-            var first = type.GenericTypeArguments.First();
-            return GetUpdateEveryAttribute(first);
-        }
-
         private static UpdateEveryAttribute GetUpdateEveryAttribute(Type type)
         {
             var customAttribute = type.GetCustomAttribute(typeof(UpdateEveryAttribute));

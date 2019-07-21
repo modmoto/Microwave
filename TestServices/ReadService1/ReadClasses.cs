@@ -5,7 +5,6 @@ using Microwave.Queries;
 
 namespace ReadService1
 {
-    [UpdateEvery(5)]
     public class Handler1 :
         IHandleAsync<Event2>,
         IHandleAsync<Event4>,
@@ -13,7 +12,7 @@ namespace ReadService1
     {
         public Task HandleAsync(Event2 domainEvent)
         {
-            Console.WriteLine("Event2 was handled");
+            Console.WriteLine("Event2 was handled in Fast Handler");
             return Task.CompletedTask;
         }
 
@@ -29,12 +28,13 @@ namespace ReadService1
         }
     }
 
+    [UpdateEvery(10)]
     public class Handler2 :
         IHandleAsync<Event2>
     {
         public Task HandleAsync(Event2 domainEvent)
         {
-            Console.WriteLine("Event2 was handled");
+            Console.WriteLine("Event2 was handled in Sloooooow Handler");
             return Task.CompletedTask;
         }
     }

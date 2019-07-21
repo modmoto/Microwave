@@ -23,13 +23,16 @@ namespace Microwave.Queries.UnitTests
 
             var handleAsync = new Handler1();
             var handleAsync2 = new Handler2();
-            var eventDelegateHandler = new AsyncEventHandler<TestEv2>(
+            var eventDelegateHandler1 = new AsyncEventHandler<TestEv2>(
                 new VersionRepository(EventMongoDb),
-                new EventFeedMock(dateTimeOffset, domainEventWrapper),
-                new List<IHandleAsync<TestEv2>> {handleAsync, handleAsync2});
+                new EventFeedMock(dateTimeOffset, domainEventWrapper), handleAsync);
 
-            await eventDelegateHandler.Update();
-            await eventDelegateHandler.Update();
+            var eventDelegateHandler2 = new AsyncEventHandler<TestEv2>(
+                new VersionRepository(EventMongoDb),
+                new EventFeedMock(dateTimeOffset, domainEventWrapper), handleAsync2);
+
+            await eventDelegateHandler1.Update();
+            await eventDelegateHandler2.Update();
 
             Assert.AreEqual(1, handleAsync.TimesCalled);
             Assert.AreEqual(1, handleAsync2.TimesCalled);

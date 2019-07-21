@@ -15,7 +15,7 @@ using Microwave.WebApi.Discovery;
 using Microwave.WebApi.Querries;
 using MongoDB.Bson.Serialization;
 
-namespace Microwave.DependencyInjectionExtensions.UnitTests
+namespace Microwave.UnitTests
 {
     [TestClass]
     public class ExtensionTests

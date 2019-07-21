@@ -55,7 +55,7 @@ namespace Microwave.Queries
             _cronNotation = schedule;
         }
 
-        public UpdateEveryAttribute(int second)
+        public UpdateEveryAttribute(int second = 1)
         {
             if (second < 1 || second > 60) throw new InvalidTimeNotationException();
 
