@@ -49,7 +49,7 @@ namespace ReadService1
         public Identity EntityId { get; }
     }
 
-    [UpdateEvery(5)]
+    [UpdateEvery(15)]
     public class ReadModel1 : ReadModel, IHandle<Event2>, IHandle<Event4>
     {
         public override Type GetsCreatedOn => typeof(Event2);

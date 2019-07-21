@@ -29,9 +29,11 @@ namespace Microwave.UnitTests
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
             var eventDelegateHandlers = buildServiceProvider.GetServices<IAsyncEventHandler>().ToList();
-            Assert.AreEqual(6, eventDelegateHandlers.Count);
-            Assert.IsNotNull(eventDelegateHandlers[0]);
-            Assert.IsNotNull(eventDelegateHandlers[1]);
+            Assert.AreEqual(7, eventDelegateHandlers.Count);
+
+            Assert.AreEqual(typeof(TestEventHandler), eventDelegateHandlers[4].HandlerClassType);
+            Assert.AreEqual(typeof(TestEventHandler), eventDelegateHandlers[5].HandlerClassType);
+            Assert.AreEqual(typeof(TestEventHandler2), eventDelegateHandlers[6].HandlerClassType);
 
             var handleAsync1 = buildServiceProvider.GetServices<IHandleAsync<TestDomainEvent1>>();
             var handleAsync2 = buildServiceProvider.GetServices<IHandleAsync<TestDomainEvent2>>();

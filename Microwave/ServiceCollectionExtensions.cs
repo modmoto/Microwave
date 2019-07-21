@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microwave.Discovery;
 using Microwave.Discovery.EventLocations;
 using Microwave.Domain.EventSourcing;
+using Microwave.Domain.Identities;
 using Microwave.EventStores;
 using Microwave.EventStores.Ports;
 using Microwave.Queries;
@@ -305,7 +306,8 @@ namespace Microwave
             foreach (var handleAsync in handleAsyncInterfaces)
             {
                 var types = handleAsync.GetInterfaces().Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IHandleAsync<>));
-                bool added = false;
+                services.AddTransient(handleAsync);
+
                 foreach (var iHandleEvent in types)
                 {
                     //feed
@@ -317,12 +319,15 @@ namespace Microwave
                     addTransientCall.Invoke(null, new object[] { services });
 
                     //handler
-                    if (!added)
+                    services.AddTransient(genericTypeOfHandlerInterface, s =>
                     {
-                        var callToAddTransient = addTransient.MakeGenericMethod(genericTypeOfHandlerInterface, genericHandler);
-                        callToAddTransient.Invoke(null, new object[] { services });
-                        added = true;
-                    }
+                        var versionRepo = s.GetRequiredService<IVersionRepository>();
+                        var feedInstance = s.GetRequiredService(feedInterface);
+                        var handleAsyncInstance = s.GetRequiredService(handleAsync);
+                        var constructorInfo = genericHandler.GetConstructors().Single();
+                        var createdHandlerInstance = constructorInfo.Invoke(new [] { versionRepo, feedInstance, handleAsyncInstance });
+                        return createdHandlerInstance;
+                    });
 
                     //handleAsyncs
                     var handleAsyncTypeWithEvent = handleAsyncType.MakeGenericType(domainEventType);
@@ -386,5 +391,10 @@ namespace Microwave
                 m.Name == "AddTransient" && m.GetGenericArguments().Length == 2 &&
                 m.GetParameters().Length == 1);
         }
+    }
+
+    internal class shiat : ISubscribedDomainEvent
+    {
+        public Identity EntityId { get; }
     }
 }
