@@ -67,12 +67,4 @@ namespace Microwave.Queries
             return new UpdateEveryAttribute();
         }
     }
-
-    public class InvalidTimeNotationException : Exception
-    {
-        public InvalidTimeNotationException()
-        : base($"Choose a valie between 1 and 60 seconds")
-        {
-        }
-    }
 }
