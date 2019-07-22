@@ -13,8 +13,8 @@ namespace Microwave.Persistence.MongoDb.UnitTestsSetup
     {
         public MongoDbTestSetup()
         {
-            EventMongoDb = new MicrowaveMongoDb { DatabaseName = "IntegrationTest" };
-            EventMongoDb.Database.Client.DropDatabase("IntegrationTest");
+            EventMongoDb = new MicrowaveMongoDb { DatabaseName = "MicrowaveIntegrationTest" };
+            EventMongoDb.Database.Client.DropDatabase("MicrowaveIntegrationTest");
         }
 
         public MicrowaveMongoDb EventMongoDb { get; }
