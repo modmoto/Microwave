@@ -38,6 +38,11 @@ namespace Microwave.Persistence.UnitTests.Querries
             await statusRepository.SaveEventLocation(eventLocation);
             var location = await statusRepository.GetEventLocation();
 
+            var microwaveServiceNodes = location.Services.ToList();
+            Assert.IsNotNull(microwaveServiceNodes);
+            Assert.AreEqual(1, microwaveServiceNodes.Count);
+            Assert.AreEqual(2, microwaveServiceNodes[0].SubscribedEvents.Count());
+            Assert.AreEqual(1, microwaveServiceNodes[0].ReadModels.Count());
             Assert.IsTrue(!location.UnresolvedEventSubscriptions.Any());
             Assert.IsTrue(!location.UnresolvedReadModeSubscriptions.Any());
         }
