@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using Microwave.Discovery;
 using Microwave.Queries;
@@ -11,13 +13,13 @@ namespace Microwave
     {
         private readonly IEnumerable<IAsyncEventHandler> _asyncEventHandlers;
         private readonly IEnumerable<IQueryEventHandler> _queryHandlers;
-        private readonly IEnumerable<IReadModelHandler> _readModelHandlers;
+        private readonly IEnumerable<IReadModelEventHandler> _readModelHandlers;
         private readonly IDiscoveryHandler _discoveryHandler;
 
         public AsyncEventDelegator(
             IEnumerable<IAsyncEventHandler> asyncEventHandlers,
             IEnumerable<IQueryEventHandler> queryHandlers,
-            IEnumerable<IReadModelHandler> readModelHandlers,
+            IEnumerable<IReadModelEventHandler> readModelHandlers,
             IDiscoveryHandler discoveryHandler)
         {
             _asyncEventHandlers = asyncEventHandlers;
@@ -26,24 +28,53 @@ namespace Microwave
             _discoveryHandler = discoveryHandler;
         }
 
-        public async Task StartEventPolling()
+        public void StartEventPolling()
         {
-
-            while (true)
-            {
-                await Task.Delay(1000);
-
-                foreach (var handler in _queryHandlers) await SecureCall(() => handler.Update());
-                foreach (var handler in _readModelHandlers) await SecureCall(() => handler.Update());
-                foreach (var handler in _asyncEventHandlers) await SecureCall(() => handler.Update());
-            }
+            #pragma warning disable 4014
+            foreach (var handler in _queryHandlers) StartThreadForHandlingUpdates(
+                () => handler.Update(),
+                GetTimingAttribute(handler));
+            foreach (var handler in _readModelHandlers) StartThreadForHandlingUpdates(
+                () => handler.Update(),
+                GetTimingAttribute(handler));
+            foreach (var handler in _asyncEventHandlers) StartThreadForHandlingUpdates(
+                () => handler.Update(),
+                GetUpdateEveryAttribute(handler.HandlerClassType));
+            #pragma warning restore 4014
         }
 
-        private async Task SecureCall(Func<Task> action)
+        private UpdateEveryAttribute GetTimingAttribute(IQueryEventHandler handler)
+        {
+            var type = handler.GetType();
+            var first = type.GenericTypeArguments.First();
+            return GetUpdateEveryAttribute(first);
+        }
+
+        private UpdateEveryAttribute GetTimingAttribute(IReadModelEventHandler handler)
+        {
+            var type = handler.GetType();
+            var first = type.GenericTypeArguments.First();
+            return GetUpdateEveryAttribute(first);
+        }
+        private static UpdateEveryAttribute GetUpdateEveryAttribute(Type type)
+        {
+            var customAttribute = type.GetCustomAttribute(typeof(UpdateEveryAttribute));
+            var updateEveryAttribute = customAttribute as UpdateEveryAttribute;
+            return updateEveryAttribute ?? UpdateEveryAttribute.Default();
+        }
+
+        private async Task StartThreadForHandlingUpdates(Func<Task> action, UpdateEveryAttribute attribute)
         {
             try
             {
-                await action.Invoke();
+                while (true)
+                {
+                    var now = DateTime.UtcNow;
+                    var nextTrigger = attribute.Next;
+                    var timeSpan = nextTrigger - now;
+                    await Task.Delay(timeSpan);
+                    await action.Invoke();
+                }
             }
             catch (DomainEventNotAssignableToEntityException notAssignableToEntityException)
             {

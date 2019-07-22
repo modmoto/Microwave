@@ -5,11 +5,14 @@ using Microwave.Queries;
 
 namespace ReadService1
 {
-    public class Handler1 : IHandleAsync<Event2>, IHandleAsync<Event4>, IHandleAsync<EventNotPublished>
+    public class Handler1 :
+        IHandleAsync<Event2>,
+        IHandleAsync<Event4>,
+        IHandleAsync<EventNotPublished>
     {
         public Task HandleAsync(Event2 domainEvent)
         {
-            Console.WriteLine("Event2 was handled");
+            Console.WriteLine($"{DateTime.UtcNow} Event2 was handled in Fast Handler");
             return Task.CompletedTask;
         }
 
@@ -25,6 +28,17 @@ namespace ReadService1
         }
     }
 
+    [UpdateEvery(10)]
+    public class Handler2 :
+        IHandleAsync<Event2>
+    {
+        public Task HandleAsync(Event2 domainEvent)
+        {
+            Console.WriteLine($"{DateTime.UtcNow} Event2 was handled in Sloooooow Handler");
+            return Task.CompletedTask;
+        }
+    }
+
     public class EventNotPublished : ISubscribedDomainEvent
     {
         public EventNotPublished(Identity entityId)
@@ -35,15 +49,25 @@ namespace ReadService1
         public Identity EntityId { get; }
     }
 
-    public class ReadModel1 : ReadModel, IHandle<Event3>, IHandle<Event4>
+    [UpdateEvery(20)]
+    public class ReadModel1 : ReadModel, IHandle<Event2>, IHandle<Event4>
     {
-        public override Type GetsCreatedOn => typeof(Event3);
+        public override Type GetsCreatedOn => typeof(Event2);
 
-        public void Handle(Event3 domainEvent)
+        public void Handle(Event2 domainEvent)
         {
+            Console.WriteLine($"{DateTime.UtcNow} jeah");
         }
 
         public void Handle(Event4 domainEvent)
+        {
+        }
+    }
+
+    [UpdateEvery(5)]
+    public class Querry1 : Query, IHandle<Event2>
+    {
+        public void Handle(Event2 domainEvent)
         {
         }
     }

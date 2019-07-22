@@ -30,6 +30,7 @@ namespace Microwave.Persistence.MongoDb.Querries
 
             var findOneAndReplaceOptions = new FindOneAndReplaceOptions<LastProcessedVersionDbo>();
             findOneAndReplaceOptions.IsUpsert = true;
+
             await mongoCollection.FindOneAndReplaceAsync(
                 (Expression<Func<LastProcessedVersionDbo, bool>>) (e => e.EventType == version.EventType),
                 new LastProcessedVersionDbo

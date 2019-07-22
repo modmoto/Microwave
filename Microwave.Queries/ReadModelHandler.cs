@@ -4,21 +4,21 @@ using Microwave.Domain.Results;
 
 namespace Microwave.Queries
 {
-    public interface IReadModelHandler
+    public interface IReadModelEventHandler
     {
         Task Update();
     }
 
-    public class ReadModelHandler<T> : IReadModelHandler where T : ReadModel, new()
+    public class ReadModelEventHandler<T> : IReadModelEventHandler where T : ReadModel, new()
     {
         private readonly IReadModelRepository _readModelRepository;
-        private readonly IEventFeed<ReadModelHandler<T>> _eventFeed;
+        private readonly IEventFeed<ReadModelEventHandler<T>> _eventFeed;
         private readonly IVersionRepository _versionRepository;
 
-        public ReadModelHandler(
+        public ReadModelEventHandler(
             IReadModelRepository readModelRepository,
             IVersionRepository versionRepository,
-            IEventFeed<ReadModelHandler<T>> eventFeed)
+            IEventFeed<ReadModelEventHandler<T>> eventFeed)
         {
             _readModelRepository = readModelRepository;
             _versionRepository = versionRepository;

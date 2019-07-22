@@ -21,7 +21,7 @@ namespace Microwave.Persistence.MongoDb
             services.AddTransient<IVersionRepository, VersionRepository>();
             services.AddTransient<IReadModelRepository, ReadModelRepository>();
             services.AddSingleton(MicrowaveMongoDb);
-            services.AddSingleton(new EventLocationCache());
+            services.AddSingleton<IEventLocationCache>(new EventLocationCache());
 
             services.AddTransient<IEventRepository, EventRepository>();
             services.AddSingleton<IVersionCache, VersionCache>();

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microwave.Discovery;
@@ -23,13 +24,19 @@ namespace Microwave.WebApi.Discovery
             try
             {
                 var response = await client.GetAsync("Dicovery/PublishedEvents");
+                if (!response.IsSuccessStatusCode) return EventsPublishedByService.NotReachable(new ServiceEndPoint(serviceAdress));
                 var content = await response.Content.ReadAsStringAsync();
                 var events = JsonConvert.DeserializeObject<PublishedEventsByServiceDto>(content);
 
-                return EventsPublishedByService.Reachable(new ServiceEndPoint(serviceAdress, events.ServiceName)
-                    , events.PublishedEvents);
+                return EventsPublishedByService.Reachable(
+                    new ServiceEndPoint(serviceAdress, events.ServiceName),
+                    events.PublishedEvents);
             }
             catch (HttpRequestException)
+            {
+                return EventsPublishedByService.NotReachable(new ServiceEndPoint(serviceAdress));
+            }
+            catch (IOException)
             {
                 return EventsPublishedByService.NotReachable(new ServiceEndPoint(serviceAdress));
             }

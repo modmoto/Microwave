@@ -60,7 +60,23 @@ namespace Microwave.WebApi.UnitTests
         {
             var notFoundFilter = new DomainValidationFilter();
             var exceptionContext = new FakeContext();
-            exceptionContext.Exception = new DomainValidationException(new List<DomainError> { new TypelessDomainError("ErrorType") });
+            exceptionContext.Exception = new DomainValidationException(new List<DomainError> { DomainError.Create
+            ("ErrorType") });
+            notFoundFilter.OnException(exceptionContext);
+
+            var exceptionContextResult = exceptionContext.Result as BadRequestObjectResult;
+            Assert.IsNotNull(exceptionContextResult);
+            Assert.AreEqual(400, exceptionContextResult.StatusCode);
+        }
+
+        [TestMethod]
+        public void TestBadRequestFilter_TypelessErrors()
+        {
+            var notFoundFilter = new DomainValidationFilter();
+            var exceptionContext = new FakeContext();
+            exceptionContext.Exception = new DomainValidationException(new List<DomainError> {
+                DomainError.Create(EnumErrors.Error1)
+            });
             notFoundFilter.OnException(exceptionContext);
 
             var exceptionContextResult = exceptionContext.Result as BadRequestObjectResult;
@@ -93,6 +109,11 @@ namespace Microwave.WebApi.UnitTests
             Assert.AreEqual("irgend ein error", problemDocument.ProblemDetails.First().Detail);
             Assert.AreEqual("TestError", problemDocument.ProblemDetails.First().Type);
         }
+    }
+
+    public enum EnumErrors
+    {
+        Error1
     }
 
     public class FakeContext : ExceptionContext
