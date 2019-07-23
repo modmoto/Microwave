@@ -7,6 +7,7 @@ using Microwave.EventStores.Ports;
 using Microwave.Persistence.MongoDb.Eventstores;
 using Microwave.Persistence.MongoDb.Querries;
 using Microwave.Queries;
+using Microwave.Queries.Ports;
 
 namespace Microwave.Persistence.MongoDb
 {

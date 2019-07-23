@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Microwave.Discovery;
 using Microwave.Queries;
+using Microwave.Queries.Handler;
 using Microwave.WebApi.Querries;
 
 namespace Microwave

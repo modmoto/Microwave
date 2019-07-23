@@ -12,6 +12,8 @@ using Microwave.Domain.EventSourcing;
 using Microwave.EventStores;
 using Microwave.EventStores.Ports;
 using Microwave.Queries;
+using Microwave.Queries.Handler;
+using Microwave.Queries.Ports;
 using Microwave.WebApi.ApiFormatting;
 using Microwave.WebApi.ApiFormatting.DateTimeOffsets;
 using Microwave.WebApi.ApiFormatting.Identities;

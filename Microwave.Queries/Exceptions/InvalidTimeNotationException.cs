@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace Microwave.Queries
+namespace Microwave.Queries.Exceptions
 {
     [Serializable]
     public class InvalidTimeNotationException : Exception

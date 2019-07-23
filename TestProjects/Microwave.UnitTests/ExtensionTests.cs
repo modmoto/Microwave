@@ -10,6 +10,8 @@ using Microwave.Domain.Identities;
 using Microwave.EventStores.Ports;
 using Microwave.Persistence.MongoDb;
 using Microwave.Queries;
+using Microwave.Queries.Handler;
+using Microwave.Queries.Ports;
 using Microwave.UnitTests.PublishedEventsDll;
 using Microwave.WebApi.Discovery;
 using Microwave.WebApi.Querries;

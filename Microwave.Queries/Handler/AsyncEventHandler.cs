@@ -1,8 +1,9 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Microwave.Queries.Ports;
 
-namespace Microwave.Queries
+namespace Microwave.Queries.Handler
 {
     public class AsyncEventHandler<T> : IAsyncEventHandler where T : ISubscribedDomainEvent
     {

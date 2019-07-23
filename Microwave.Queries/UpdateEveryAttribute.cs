@@ -1,5 +1,6 @@
 using System;
 using System.Runtime.CompilerServices;
+using Microwave.Queries.Exceptions;
 using NCrontab;
 
 [assembly: InternalsVisibleTo("Microwave.Queries.UnitTests")]
