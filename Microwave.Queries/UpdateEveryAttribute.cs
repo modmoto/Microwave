@@ -36,8 +36,7 @@ namespace Microwave.Queries
                 baseTime.Day,
                 baseTime.Hour,
                 baseTime.Minute,
-                nextSecondHappening,
-                0);
+                nextSecondHappening);
         }
 
         private static DateTime NextFullMinute(DateTime baseTime)
