@@ -1,13 +1,13 @@
 using System;
 using System.Threading.Tasks;
-using Microwave.Discovery.Domain.Events;
-using Microwave.Discovery.Domain.Services;
+using Microwave.Discovery.EventLocations;
+using Microwave.Discovery.ServiceMaps;
 
 namespace Microwave.Discovery
 {
     public interface IServiceDiscoveryRepository
     {
         Task<EventsPublishedByService> GetPublishedEventTypes(Uri serviceAdress);
-        Task<ServiceNodeConfig> GetDependantServices(Uri serviceAdress);
+        Task<MicrowaveServiceNode> GetDependantServices(Uri serviceAddress);
     }
 }

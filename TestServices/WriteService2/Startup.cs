@@ -1,10 +1,13 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 using Microwave;
-using Microwave.Persistence.MongoDb.Extensions;
+using Microwave.Persistence.MongoDb;
 using Microwave.UI;
+using ReadService1;
 using ServerConfig;
 
 namespace WriteService2
@@ -15,18 +18,22 @@ namespace WriteService2
         {
             ServiceName = "WriteService2",
             ServiceLocations = ServiceConfiguration.ServiceAdresses,
-            DatabaseConfiguration = new DatabaseConfiguration
-            {
-                DatabaseName = "TestWriteService2ReadDb"
-            }
+            MicrowaveHttpClientCreator = new MyMicrowaveHttpClientCreator()
         };
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddMvc(config =>
+            {
+                var policy = new AuthorizationPolicyBuilder()
+                    .AddRequirements(new ApiKeyRequirement())
+                    .Build();
+                config.Filters.Add(new AuthorizeFilter(policy));
+            }).SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.AddMicrowaveUi();
 
-            services.AddMicrowave(_microwaveConfiguration, new MongoDbPersistenceLayer());
+            services.AddMicrowave(_microwaveConfiguration, new MongoDbPersistenceLayer
+                { MicrowaveMongoDb = new MicrowaveMongoDb { DatabaseName = "TestWriteService2ReadDb" }} );
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)

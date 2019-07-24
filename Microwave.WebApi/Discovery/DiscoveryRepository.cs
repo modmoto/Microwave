@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microwave.Discovery;
-using Microwave.Discovery.Domain.Events;
-using Microwave.Discovery.Domain.Services;
+using Microwave.Discovery.EventLocations;
+using Microwave.Discovery.ServiceMaps;
 using Newtonsoft.Json;
 
 namespace Microwave.WebApi.Discovery
@@ -19,7 +19,7 @@ namespace Microwave.WebApi.Discovery
         }
         public async Task<EventsPublishedByService> GetPublishedEventTypes(Uri serviceAdress)
         {
-            var client = _factory.GetClient(serviceAdress);
+            var client = await _factory.GetClient(serviceAdress);
             try
             {
                 var response = await client.GetAsync("Dicovery/PublishedEvents");
@@ -35,50 +35,22 @@ namespace Microwave.WebApi.Discovery
             }
         }
 
-        public async Task<ServiceNodeConfig> GetDependantServices(Uri serviceAdress)
+        public async Task<MicrowaveServiceNode> GetDependantServices(Uri serviceAddress)
         {
-            var client = _factory.GetClient(serviceAdress);
+            var client = await _factory.GetClient(serviceAddress);
             try
             {
                 var response = await client.GetAsync("Dicovery/ServiceDependencies");
+                if (!response.IsSuccessStatusCode) return MicrowaveServiceNode.UnreachableMicrowaveServiceNode(new ServiceEndPoint(serviceAddress), new List<ServiceEndPoint>());
                 var content = await response.Content.ReadAsStringAsync();
-                var serviceDependencies = JsonConvert.DeserializeObject<ServiceNodeWithDependantServices>(content);
-                return new ServiceNodeConfig(
-                    new ServiceEndPoint(serviceAdress, serviceDependencies.ServiceName),
-                    serviceDependencies.Services,
-                    true);
+                var serviceDependencies = JsonConvert.DeserializeObject<MicrowaveServiceNode>(content);
+                serviceDependencies.SetAddressForEndPoint(serviceAddress);
+                return serviceDependencies;
             }
             catch (HttpRequestException)
             {
-                return new ServiceNodeConfig(new ServiceEndPoint(serviceAdress), new List<ServiceEndPoint>(), false);
+                return MicrowaveServiceNode.UnreachableMicrowaveServiceNode(new ServiceEndPoint(serviceAddress), new List<ServiceEndPoint>());
             }
-        }
-    }
-
-    public class DiscoveryClientFactory : IDiscoveryClientFactory
-    {
-        public DiscoveryClient GetClient(Uri serviceAdress)
-        {
-            var discoveryClient = new DiscoveryClient();
-            discoveryClient.BaseAddress = serviceAdress;
-            return discoveryClient;
-        }
-    }
-
-    public interface IDiscoveryClientFactory
-    {
-        DiscoveryClient GetClient(Uri serviceAdress);
-    }
-
-    public class  DiscoveryClient : HttpClient
-    {
-        // For DI
-        public DiscoveryClient()
-        {
-        }
-
-        public DiscoveryClient(HttpMessageHandler handler) : base(handler)
-        {
         }
     }
 }

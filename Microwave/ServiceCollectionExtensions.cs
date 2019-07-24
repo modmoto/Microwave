@@ -7,8 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microwave.Discovery;
-using Microwave.Discovery.Domain.Events;
-using Microwave.Domain;
+using Microwave.Discovery.EventLocations;
 using Microwave.Domain.EventSourcing;
 using Microwave.EventStores;
 using Microwave.EventStores.Ports;
@@ -82,7 +81,7 @@ namespace Microwave
 
         public static IServiceCollection AddMicrowave(
             this IServiceCollection services,
-            IMicrowaveConfiguration microwaveConfiguration,
+            MicrowaveConfiguration microwaveConfiguration,
             IPersistenceLayer persistenceLayer)
         {
             var assemblies = new List<Assembly>();
@@ -105,7 +104,7 @@ namespace Microwave
 
             services.AddTransient<IServiceDiscoveryRepository, DiscoveryRepository>();
             services.AddTransient<IDiscoveryHandler, DiscoveryHandler>();
-            services.AddSingleton(new ServiceBaseAddressCollection() as IServiceBaseAddressCollection);
+            services.AddSingleton(new ServiceBaseAddressCollection());
 
             services.AddTransient<DomainEventController>();
             services.AddTransient<DiscoveryController>();
@@ -119,7 +118,8 @@ namespace Microwave
 
             services.AddSingleton(microwaveConfiguration);
             services.AddSingleton(microwaveConfiguration.ServiceLocations);
-            services.AddSingleton(microwaveConfiguration.DatabaseConfiguration);
+            services.AddSingleton(microwaveConfiguration.MicrowaveHttpClientCreator);
+            services.AddSingleton(new DiscoveryConfiguration { ServiceName = microwaveConfiguration.ServiceName });
 
             AddEventAndReadModelSubscriptions(services, assemblies);
             AddPublishedEventCollection(services, assemblies, microwaveConfiguration);
@@ -141,7 +141,7 @@ namespace Microwave
         }
 
         private static void AddPublishedEventCollection(IServiceCollection services,
-            IEnumerable<Assembly> domainEventAssemblies, IMicrowaveConfiguration microwaveConfiguration)
+            IEnumerable<Assembly> domainEventAssemblies, MicrowaveConfiguration microwaveConfiguration)
         {
             var publishedEventCollection = new PublishedEventsByServiceDto { ServiceName = microwaveConfiguration.ServiceName };
             foreach (var assembly in domainEventAssemblies)

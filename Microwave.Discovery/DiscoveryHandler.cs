@@ -1,27 +1,25 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microwave.Discovery.Domain;
-using Microwave.Discovery.Domain.Events;
-using Microwave.Discovery.Domain.Services;
-using Microwave.Domain;
+using Microwave.Discovery.EventLocations;
+using Microwave.Discovery.ServiceMaps;
 
 namespace Microwave.Discovery
 {
     public class DiscoveryHandler : IDiscoveryHandler
     {
-        private readonly IServiceBaseAddressCollection _serviceBaseAddressCollection;
+        private readonly ServiceBaseAddressCollection _serviceBaseAddressCollection;
         private readonly EventsSubscribedByService _eventsSubscribedByService;
         private readonly IServiceDiscoveryRepository _discoveryRepository;
         private readonly IStatusRepository _statusRepository;
-        private readonly IMicrowaveConfiguration _configuration;
+        private readonly DiscoveryConfiguration _configuration;
 
         public DiscoveryHandler(
-            IServiceBaseAddressCollection serviceBaseAddressCollection,
+            ServiceBaseAddressCollection serviceBaseAddressCollection,
             EventsSubscribedByService eventsSubscribedByService,
             IServiceDiscoveryRepository discoveryRepository,
             IStatusRepository statusRepository,
-            IMicrowaveConfiguration configuration)
+            DiscoveryConfiguration configuration)
         {
             _serviceBaseAddressCollection = serviceBaseAddressCollection;
             _eventsSubscribedByService = eventsSubscribedByService;
@@ -30,19 +28,13 @@ namespace Microwave.Discovery
             _configuration = configuration;
         }
 
-        public async Task<EventLocationDto> GetConsumingServices()
+        public async Task<EventLocation> GetConsumingServices()
         {
             var eventLocation = await _statusRepository.GetEventLocation();
-            if (eventLocation != null)
-            {
-                return new EventLocationDto(
-                    eventLocation.Services,
-                    eventLocation.UnresolvedEventSubscriptions,
-                    eventLocation.UnresolvedReadModeSubscriptions,
-                    "TestName");
-            }
-
-            return null;
+            return new EventLocation(
+                eventLocation.Services,
+                eventLocation.UnresolvedEventSubscriptions,
+                eventLocation.UnresolvedReadModeSubscriptions);
         }
 
         public async Task<ServiceMap> GetServiceMap()
@@ -66,7 +58,7 @@ namespace Microwave.Discovery
 
         public async Task DiscoverServiceMap()
         {
-            var allServices = new List<ServiceNodeConfig>();
+            var allServices = new List<MicrowaveServiceNode>();
             foreach (var serviceAddress in _serviceBaseAddressCollection)
             {
                 var node = await _discoveryRepository.GetDependantServices(serviceAddress);
@@ -77,11 +69,10 @@ namespace Microwave.Discovery
             await _statusRepository.SaveServiceMap(map);
         }
 
-        public async Task<ServiceNodeWithDependantServices> GetConsumingServiceNodes()
+        public async Task<MicrowaveServiceNode> GetConsumingServiceNodes()
         {
             var eventLocation = await _statusRepository.GetEventLocation();
-            return new ServiceNodeWithDependantServices(
-                _configuration.ServiceName,
+            return MicrowaveServiceNode.ReachableMicrowaveServiceNode(new ServiceEndPoint(null, _configuration.ServiceName),
                 eventLocation.Services.Select(s => s.ServiceEndPoint));
         }
     }

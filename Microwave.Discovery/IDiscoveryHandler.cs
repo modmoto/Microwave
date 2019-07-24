@@ -1,15 +1,15 @@
 using System.Threading.Tasks;
-using Microwave.Discovery.Domain;
-using Microwave.Discovery.Domain.Services;
+using Microwave.Discovery.EventLocations;
+using Microwave.Discovery.ServiceMaps;
 
 namespace Microwave.Discovery
 {
     public interface IDiscoveryHandler
     {
-        Task<EventLocationDto> GetConsumingServices();
+        Task<EventLocation> GetConsumingServices();
         Task<ServiceMap> GetServiceMap();
         Task DiscoverConsumingServices();
         Task DiscoverServiceMap();
-        Task<ServiceNodeWithDependantServices> GetConsumingServiceNodes();
+        Task<MicrowaveServiceNode> GetConsumingServiceNodes();
     }
 }
