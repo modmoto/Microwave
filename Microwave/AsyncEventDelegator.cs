@@ -57,11 +57,12 @@ namespace Microwave
             var first = type.GenericTypeArguments.First();
             return GetUpdateEveryAttribute(first);
         }
+
         private static UpdateEveryAttribute GetUpdateEveryAttribute(Type type)
         {
             var customAttribute = type.GetCustomAttribute(typeof(UpdateEveryAttribute));
             var updateEveryAttribute = customAttribute as UpdateEveryAttribute;
-            return updateEveryAttribute ?? UpdateEveryAttribute.Default();
+            return updateEveryAttribute ?? new UpdateEveryAttribute();
         }
 
         private void StartThreadForHandlingUpdates(Func<Task> action, UpdateEveryAttribute attribute)

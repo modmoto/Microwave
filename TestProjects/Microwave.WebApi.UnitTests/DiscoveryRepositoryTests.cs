@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Discovery.EventLocations;
@@ -28,7 +29,7 @@ namespace Microwave.WebApi.UnitTests
             mockHttp.When("http://localhost:5000/Dicovery/PublishedEvents")
                 .Respond("application/json", JsonConvert.SerializeObject(publishedEvents));
 
-            var client = new DiscoveryClient(mockHttp);
+            var client = new HttpClient(mockHttp);
             client.BaseAddress = new Uri("http://localhost:5000/");
 
             var mock = new Mock<IDiscoveryClientFactory>();
@@ -61,7 +62,7 @@ namespace Microwave.WebApi.UnitTests
             mockHttp.When("http://localhost:5000/Dicovery/ServiceDependencies")
                 .Respond("application/json", serializeObject);
 
-            var client = new DiscoveryClient(mockHttp);
+            var client = new HttpClient(mockHttp);
             client.BaseAddress = new Uri("http://localhost:5000/");
 
             var mock = new Mock<IDiscoveryClientFactory>();
@@ -87,7 +88,7 @@ namespace Microwave.WebApi.UnitTests
             mockHttp.When("http://localhost:5000/Dicovery/ServiceDependencies")
                 .Respond(HttpStatusCode.Unauthorized);
 
-            var client = new DiscoveryClient(mockHttp);
+            var client = new HttpClient(mockHttp);
             client.BaseAddress = new Uri("http://localhost:5000/");
 
             var mock = new Mock<IDiscoveryClientFactory>();
@@ -98,6 +99,15 @@ namespace Microwave.WebApi.UnitTests
             var serviceNode = await serviceDiscoveryRepository.GetDependantServices(serviceAddress);
 
             Assert.IsFalse(serviceNode.IsReachable);
+        }
+
+        [TestMethod]
+        public async Task GetClientDefault()
+        {
+            var discoveryClientFactory = new DiscoveryClientFactory(new DefaultMicrowaveHttpClientCreator());
+            var client = await discoveryClientFactory.GetClient(new Uri("http://123.de"));
+
+            Assert.AreEqual(client.BaseAddress, new Uri("http://123.de"));
         }
     }
 }
