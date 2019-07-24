@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microwave.Domain.Identities;
 using Microwave.Domain.Results;
 using Microwave.EventStores;
-using Microwave.EventStores.Ports;
 
 namespace WriteService1
 {

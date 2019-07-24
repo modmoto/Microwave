@@ -2,7 +2,6 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Persistence.UnitTestSetupPorts;
-using Microwave.Queries;
 using Microwave.Queries.Ports;
 
 namespace Microwave.Persistence.UnitTests.Querries

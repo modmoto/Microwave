@@ -10,7 +10,6 @@ using Microwave.Discovery;
 using Microwave.Discovery.EventLocations;
 using Microwave.Domain.EventSourcing;
 using Microwave.EventStores;
-using Microwave.EventStores.Ports;
 using Microwave.Queries;
 using Microwave.Queries.Handler;
 using Microwave.Queries.Ports;
