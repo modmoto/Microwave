@@ -1,24 +1,18 @@
 ﻿using System;
-using System.Threading.Tasks;
+using System.Security;
 using Microsoft.Azure.Documents.Client;
-using Microwave.Domain;
 
-namespace Microwave.Eventstores.Persistence.CosmosDb
+namespace Microwave.Persistence.CosmosDb
 {
     public class CosmosDb : ICosmosDb
     {
-       
-        private readonly IMicrowaveConfiguration _configuration;
-
-        public CosmosDb(IMicrowaveConfiguration configuration)
-        {
-            _configuration = configuration;
-        }
-
         public DocumentClient GetCosmosDbClient()
         {
-            return new DocumentClient(new Uri(_configuration.DatabaseConfiguration.ConnectionString),
-                _configuration.DatabaseConfiguration.PrimaryKey);
+            return new DocumentClient(CosmosDbLocation, PrimaryKey);
         }
+
+        public SecureString PrimaryKey { get; set; }
+
+        public Uri CosmosDbLocation { get; set; }
     }
 }

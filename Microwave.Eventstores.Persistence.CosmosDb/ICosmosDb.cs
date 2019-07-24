@@ -1,7 +1,6 @@
-﻿using System.Threading.Tasks;
-using Microsoft.Azure.Documents.Client;
+﻿using Microsoft.Azure.Documents.Client;
 
-namespace Microwave.Eventstores.Persistence.CosmosDb
+namespace Microwave.Persistence.CosmosDb
 {
     public interface ICosmosDb
     {

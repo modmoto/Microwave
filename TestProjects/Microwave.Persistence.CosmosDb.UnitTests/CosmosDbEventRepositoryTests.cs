@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Security;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Domain.EventSourcing;
@@ -11,20 +12,19 @@ using Microwave.Persistence.CosmosDb;
 namespace Microwave.Persistence.CosmosDb.UnitTests
 {
     [TestClass]
-    public class CosmosDbEventRepositoryTests
+    public class CosmosDbEventRepositoryTests : IntegrationTests
     {
         [TestMethod]
+        [Ignore]
         public async Task DomainEventIsAppendedCorrectly()
         {
-            var databaseConfig = new DatabaseConfiguration();
-            databaseConfig.ConnectionString = "https://spoppinga.documents.azure.com:443/";
-            databaseConfig.PrimaryKey =
-                "mCPtXM99gxlUalpz6bkFiWib2QD2OvIB9oEYj8tlpCPz1I4jSkOzlhJGnxAAEH4uiqWiYZ7enElzAM0lopKlJA==";
-            var config = new MicrowaveConfiguration();
-            config.DatabaseConfiguration = databaseConfig;
-            
-            var cosmosDatabse = new Eventstores.Persistence.CosmosDb.CosmosDb(config);
-            var cosmosDbClient = new CosmosDbClient(cosmosDatabse, new List<Assembly> { Assembly.GetAssembly(typeof(UserCreatedEvent)) });
+            var cosmosDbClient = new CosmosDbClient(
+                Database,
+                new List<Assembly>
+                {
+                    Assembly.GetAssembly(typeof(UserCreatedEvent))
+                });
+
             await cosmosDbClient.InitializeCosmosDbAsync();
            
             var eventRepository = new CosmosDbEventRepository(cosmosDbClient);
@@ -39,33 +39,27 @@ namespace Microwave.Persistence.CosmosDb.UnitTests
         }
 
         [TestMethod]
+        [Ignore]
         public async Task DomainEventsAreGettedCorrectly()
         {
-            var databaseConfig = new DatabaseConfiguration();
-            databaseConfig.ConnectionString = "https://spoppinga.documents.azure.com:443/";
-            databaseConfig.PrimaryKey =
-                "mCPtXM99gxlUalpz6bkFiWib2QD2OvIB9oEYj8tlpCPz1I4jSkOzlhJGnxAAEH4uiqWiYZ7enElzAM0lopKlJA==";
-            var config = new MicrowaveConfiguration();
-            config.DatabaseConfiguration = databaseConfig;
+            var cosmosDbClient = new CosmosDbClient(
+                Database,
+                new List<Assembly>
+                {
+                    Assembly.GetAssembly(typeof(UserCreatedEvent))
+                });
 
-            var cosmosDatabse = new Eventstores.Persistence.CosmosDb.CosmosDb(config);
-            var cosmosDbClient = new CosmosDbClient(cosmosDatabse , new List<Assembly>{Assembly.GetAssembly(typeof(UserCreatedEvent))});
             await cosmosDbClient.InitializeCosmosDbAsync();
 
             var eventRepository = new CosmosDbEventRepository(cosmosDbClient);
             var result = await cosmosDbClient.GetDomainEventsAsync(Identity.Create(Guid.Parse("19cf121a-44cd-40bb-a3b5-ea9deb11d4f5")));
-
         }
-
-
     }
 
     public class UserCreatedEvent : IDomainEvent
     {
         public Identity EntityId { get; }
         public string Username { get; }
-
-
 
         public UserCreatedEvent(GuidIdentity entityId, string name)
         {
