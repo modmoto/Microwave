@@ -57,6 +57,7 @@ namespace Microwave
             var first = type.GenericTypeArguments.First();
             return GetUpdateEveryAttribute(first);
         }
+
         private static UpdateEveryAttribute GetUpdateEveryAttribute(Type type)
         {
             var customAttribute = type.GetCustomAttribute(typeof(UpdateEveryAttribute));
