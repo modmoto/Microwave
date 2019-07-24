@@ -6,7 +6,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Domain.EventSourcing;
 using Microwave.Domain.Identities;
 using Microwave.EventStores;
-using Microwave.Eventstores.Persistence.CosmosDb;
+using Microwave.Persistence.CosmosDb;
 
 namespace Microwave.Persistence.CosmosDb.UnitTests
 {
