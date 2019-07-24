@@ -1,6 +1,9 @@
 using System;
+using System.Runtime.CompilerServices;
+using Microwave.Queries.Exceptions;
 using NCrontab;
 
+[assembly: InternalsVisibleTo("Microwave.Queries.UnitTests")]
 namespace Microwave.Queries
 {
     public class UpdateEveryAttribute : Attribute
@@ -8,12 +11,13 @@ namespace Microwave.Queries
         private readonly int _second;
 
         private readonly CrontabSchedule _cronNotation;
+        private readonly DateTime? _nowTime;
 
         public DateTime Next
         {
             get
             {
-                var baseTime = DateTime.UtcNow;
+                var baseTime = _nowTime ?? DateTime.UtcNow;
                 if (_cronNotation != null) return _cronNotation.GetNextOccurrence(baseTime);
 
                 var secondsAfterLastHappening = baseTime.Second % _second;
@@ -33,8 +37,7 @@ namespace Microwave.Queries
                 baseTime.Day,
                 baseTime.Hour,
                 baseTime.Minute,
-                nextSecondHappening,
-                0);
+                nextSecondHappening);
         }
 
         private static DateTime NextFullMinute(DateTime baseTime)
@@ -62,17 +65,15 @@ namespace Microwave.Queries
             _second = second;
         }
 
+        internal UpdateEveryAttribute(int secondsInput, int secondsForTest)
+        {
+            _nowTime = new DateTime(1, 1, 1, 1, 0, secondsForTest);
+            _second = secondsInput;
+        }
+
         public static UpdateEveryAttribute Default()
         {
             return new UpdateEveryAttribute();
-        }
-    }
-
-    public class InvalidTimeNotationException : Exception
-    {
-        public InvalidTimeNotationException()
-        : base($"Choose a valie between 1 and 60 seconds")
-        {
         }
     }
 }

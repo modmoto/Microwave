@@ -5,7 +5,7 @@ using Microwave.Domain.EventSourcing;
 using Microwave.Domain.Identities;
 using Microwave.Domain.Results;
 
-namespace Microwave.EventStores
+namespace Microwave.EventStores.Ports
 {
     public interface IEventRepository
     {

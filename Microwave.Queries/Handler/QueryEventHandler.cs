@@ -1,8 +1,9 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using Microwave.Domain.Results;
+using Microwave.Queries.Ports;
 
-namespace Microwave.Queries
+namespace Microwave.Queries.Handler
 {
     public class QueryEventHandler<TQuerry, TEvent> : IQueryEventHandler where TQuerry : Query, new()
     {

@@ -1,8 +1,9 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Microwave.Domain.Results;
+using Microwave.Queries.Ports;
 
-namespace Microwave.Queries
+namespace Microwave.Queries.Handler
 {
     public interface IReadModelEventHandler
     {
@@ -50,8 +51,7 @@ namespace Microwave.Queries
 
                 if (latestEventVersion < result.Version) latestEventVersion = result.Version;
 
-                var readModelWrapper = ReadModelResult<T>.Ok(readModel, domainEventEntityId, latestEventVersion);
-                await _readModelRepository.Save(readModelWrapper);
+                await _readModelRepository.Save(readModel, domainEventEntityId, latestEventVersion);
                 await _versionRepository.SaveVersion(new LastProcessedVersion(redaModelVersionCounter, latestEvent.Created));
             }
         }

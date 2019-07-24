@@ -8,6 +8,7 @@ using Microwave.Discovery.ServiceMaps;
 using Microwave.Domain.EventSourcing;
 using Microwave.Domain.Identities;
 using Microwave.Queries;
+using Microwave.Queries.Handler;
 using Microwave.WebApi.Querries;
 using Moq;
 
