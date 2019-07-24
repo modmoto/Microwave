@@ -70,10 +70,5 @@ namespace Microwave.Queries
             _nowTime = new DateTime(1, 1, 1, 1, 0, secondsForTest);
             _second = secondsInput;
         }
-
-        public static UpdateEveryAttribute Default()
-        {
-            return new UpdateEveryAttribute();
-        }
     }
 }
