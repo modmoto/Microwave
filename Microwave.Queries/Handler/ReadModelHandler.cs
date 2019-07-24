@@ -51,8 +51,7 @@ namespace Microwave.Queries.Handler
 
                 if (latestEventVersion < result.Version) latestEventVersion = result.Version;
 
-                var readModelWrapper = ReadModelResult<T>.Ok(readModel, domainEventEntityId, latestEventVersion);
-                await _readModelRepository.Save(readModelWrapper);
+                await _readModelRepository.Save(readModel, domainEventEntityId, latestEventVersion);
                 await _versionRepository.SaveVersion(new LastProcessedVersion(redaModelVersionCounter, latestEvent.Created));
             }
         }

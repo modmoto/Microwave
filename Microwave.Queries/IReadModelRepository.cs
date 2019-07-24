@@ -10,7 +10,7 @@ namespace Microwave.Queries
         Task<Result<T>> Load<T>() where T : Query;
         Task<ReadModelResult<T>> Load<T>(Identity id) where T : ReadModel;
         Task<Result> Save<T>(T query) where T : Query;
-        Task<Result> Save<T>(ReadModelResult<T> readModelResult) where T : ReadModel, new();
+        Task<Result> Save<T>(T readModel, Identity identity, long version) where T : ReadModel, new();
         Task<Result<IEnumerable<T>>> LoadAll<T>() where T : ReadModel;
     }
 }

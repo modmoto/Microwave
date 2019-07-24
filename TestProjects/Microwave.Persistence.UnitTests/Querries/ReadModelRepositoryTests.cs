@@ -24,7 +24,7 @@ namespace Microwave.Persistence.UnitTests.Querries
             var guid = GuidIdentity.Create(Guid.NewGuid());
             var testQuerry = new TestReadModel();
             testQuerry.SetVars("Test", new[] {"Jeah", "jeah2"});
-            await queryRepository.Save(ReadModelResult<TestReadModel>.Ok(testQuerry, guid, 1));
+            await queryRepository.Save(testQuerry, guid, 1);
 
             var querry1 = await queryRepository.Load<TestReadModel>(guid);
 
@@ -43,8 +43,8 @@ namespace Microwave.Persistence.UnitTests.Querries
             var testQuerry2 = new TestReadModel();
             testQuerry.SetVars("Test", new[] {"Jeah", "jeah2"});
             testQuerry2.SetVars("Test", new[] {"Jeah", "jeah2"});
-            await queryRepository.Save(ReadModelResult<TestReadModel>.Ok(testQuerry, GuidIdentity.Create(), 1));
-            await queryRepository.Save(ReadModelResult<TestReadModel>.Ok(testQuerry2, GuidIdentity.Create(), 1));
+            await queryRepository.Save(testQuerry, GuidIdentity.Create(), 1);
+            await queryRepository.Save(testQuerry2, GuidIdentity.Create(), 1);
 
             var querry1 = await queryRepository.LoadAll<TestReadModel>();
 
@@ -62,8 +62,8 @@ namespace Microwave.Persistence.UnitTests.Querries
             var testQuerry2 = new TestReadModel();
             testQuerry.SetVars("Test", new[] {"Jeah", "jeah2"});
             testQuerry2.SetVars("Test", new[] {"Jeah", "jeah2"});
-            await queryRepository.Save(ReadModelResult<TestReadModel>.Ok(testQuerry, GuidIdentity.Create(), 1));
-            await queryRepository.Save(ReadModelResult<TestReadModel>.Ok(testQuerry2, GuidIdentity.Create(), 1));
+            await queryRepository.Save(testQuerry, GuidIdentity.Create(), 1);
+            await queryRepository.Save(testQuerry2, GuidIdentity.Create(), 1);
 
             var loadAll = await queryRepository.LoadAll<TestReadModel2>();
             Assert.IsTrue(loadAll.Is<NotFound>());
@@ -115,7 +115,7 @@ namespace Microwave.Persistence.UnitTests.Querries
             var testQuery2 = new TestReadModel2();
             testQuery2.SetVars("Test2", new []{ "Jeah", "jeah2"});
 
-            await queryRepository.Save(new ReadModelResult<TestReadModel2>(testQuery2, guid2, 1));
+            await queryRepository.Save(testQuery2, guid2, 1);
 
             var loadAll2 = await queryRepository.Load<TestReadModel>(guid2);
 
