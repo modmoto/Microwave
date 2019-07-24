@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Microwave.Discovery;
 using Microwave.Queries;
+using Microwave.Queries.Handler;
 
 namespace Microwave.WebApi.Querries
 {

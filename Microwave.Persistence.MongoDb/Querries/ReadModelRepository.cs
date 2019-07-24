@@ -57,19 +57,19 @@ namespace Microwave.Persistence.MongoDb.Querries
             return Result.Ok();
         }
 
-        public async Task<Result> Save<T>(ReadModelResult<T> readModelResult) where T : ReadModel, new()
+        public async Task<Result> Save<T>(T readModel, Identity identity, long version) where T : ReadModel, new()
         {
             var mongoCollection = _database.GetCollection<ReadModelDbo<T>>(GetReadModelCollectionName<T>());
 
             var findOneAndReplaceOptions = new FindOneAndReplaceOptions<ReadModelDbo<T>>();
             findOneAndReplaceOptions.IsUpsert = true;
             await mongoCollection.FindOneAndReplaceAsync(
-                (Expression<Func<ReadModelDbo<T>, bool>>) (e => e.Id == readModelResult.Id.Id),
+                (Expression<Func<ReadModelDbo<T>, bool>>) (e => e.Id == identity.Id),
                 new ReadModelDbo<T>
                 {
-                    Id = readModelResult.Id.Id,
-                    Version = readModelResult.Version,
-                    Payload = readModelResult.Value
+                    Id = identity.Id,
+                    Version = version,
+                    Payload = readModel
                 }, findOneAndReplaceOptions);
 
             return Result.Ok();

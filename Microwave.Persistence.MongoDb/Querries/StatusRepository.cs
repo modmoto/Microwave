@@ -12,11 +12,11 @@ namespace Microwave.Persistence.MongoDb.Querries
 {
     public class StatusRepository : IStatusRepository
     {
-        private readonly EventLocationCache _cache;
+        private readonly IEventLocationCache _cache;
         private readonly IMongoDatabase _database;
         private const string StatusDbName = "MicrowaveStatusCollection";
 
-        public StatusRepository(MicrowaveMongoDb mongoDb, EventLocationCache cache)
+        public StatusRepository(MicrowaveMongoDb mongoDb, IEventLocationCache cache)
         {
             _cache = cache;
             _database = mongoDb.Database;
@@ -26,7 +26,14 @@ namespace Microwave.Persistence.MongoDb.Querries
         {
             var eventLocationDbo = new EventLocationDbo
             {
-                Services = eventLocation.Services,
+                Services = eventLocation.Services.Select(s => new MicrowaveServiceNodeDto()
+                {
+                    ConnectedServices = s.ConnectedServices,
+                    IsReachable = s.IsReachable,
+                    ReadModels = s.ReadModels,
+                    SubscribedEvents = s.SubscribedEvents,
+                    ServiceEndPoint = s.ServiceEndPoint
+                }),
                 UnresolvedEventSubscriptions = eventLocation.UnresolvedEventSubscriptions,
                 UnresolvedReadModeSubscriptions = eventLocation.UnresolvedReadModeSubscriptions
             };
@@ -52,7 +59,8 @@ namespace Microwave.Persistence.MongoDb.Querries
             if (_cache.HasValue) return _cache.GetValue();
             var mongoCollection = _database.GetCollection<EventLocationDbo>(StatusDbName);
             var location = await mongoCollection.FindSync(e => e.Id == nameof(EventLocation)).SingleOrDefaultAsync();
-            return location == null ? EventLocation.Default() : new EventLocation(location.Services, location
+            return location == null ? EventLocation.Default() : new EventLocation(location.Services.Select(s =>
+                MicrowaveServiceNode.Create(s.ServiceEndPoint, s.SubscribedEvents, s.ReadModels)), location
             .UnresolvedEventSubscriptions, location.UnresolvedReadModeSubscriptions);
         }
 
@@ -90,7 +98,7 @@ namespace Microwave.Persistence.MongoDb.Querries
 
     public class EventLocationDbo : IIdentifiable
     {
-        public IEnumerable<MicrowaveServiceNode> Services { get; set; }
+        public IEnumerable<MicrowaveServiceNodeDto> Services { get; set; }
         public IEnumerable<EventSchema> UnresolvedEventSubscriptions { get; set; }
         public IEnumerable<ReadModelSubscription> UnresolvedReadModeSubscriptions { get; set; }
         public string Id => nameof(EventLocation);

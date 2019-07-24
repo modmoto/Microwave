@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace Microwave.Queries
+namespace Microwave.Queries.Handler
 {
     public interface IQueryEventHandler
     {

@@ -10,7 +10,6 @@ namespace ServerConfig
             new Uri("http://localhost:5010"),
             new Uri("http://localhost:5012"),
             new Uri("http://localhost:5014"),
-            new Uri("http://localhost:5016"), //undiscovered service
         };
     }
 }

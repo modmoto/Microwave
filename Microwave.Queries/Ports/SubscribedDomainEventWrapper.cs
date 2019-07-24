@@ -1,6 +1,6 @@
 using System;
 
-namespace Microwave.Queries
+namespace Microwave.Queries.Ports
 {
     public class SubscribedDomainEventWrapper
     {
