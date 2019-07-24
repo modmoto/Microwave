@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
@@ -13,8 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CosmosDb\Microwave.Eventstores.Persistence.CosmosDb\Microwave.Eventstores.Persistence.CosmosDb.csproj" />
-    <ProjectReference Include="..\Microwave\Microwave.csproj" />
+    <ProjectReference Include="..\..\Microwave\Microwave.csproj" />
   </ItemGroup>
 
 </Project>

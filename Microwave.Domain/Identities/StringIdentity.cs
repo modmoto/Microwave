@@ -2,7 +2,7 @@ namespace Microwave.Domain.Identities
 {
     public class StringIdentity : Identity
     {
-        private StringIdentity(string id)
+        public StringIdentity(string id)
         {
             Id = id;
         }
