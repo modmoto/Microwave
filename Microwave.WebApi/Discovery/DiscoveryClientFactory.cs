@@ -25,16 +25,4 @@ namespace Microwave.WebApi.Discovery
     {
         Task<HttpClient> GetClient(Uri serviceAddress);
     }
-
-    public class  DiscoveryClient : HttpClient
-    {
-        // For DI
-        public DiscoveryClient()
-        {
-        }
-
-        public DiscoveryClient(HttpMessageHandler handler) : base(handler)
-        {
-        }
-    }
 }
