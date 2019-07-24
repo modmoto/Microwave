@@ -18,7 +18,7 @@ subscribe to events, you just implement a `IHandleAsync<T>` Interface where `T` 
 microwave transfers the events to this handler as soon as they happen in your domain. With this mechanism Microwave 
 also offers an easy way to implement readmodels by implementing the `IHandle<T>` interface that also transfers the 
 domain events to your objects, so you only have to do the mapping and your readmodel gets updated everytime anything
- happens in your domain. A general workflow would look like this:
+ happens in your domain. The general workflow looks like this:
 
 ![alt text](https://github.com/Lauchi/Microwave/blob/master/MicrowaveOverview.svg "Overview")
 
