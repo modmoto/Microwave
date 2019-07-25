@@ -36,6 +36,23 @@ namespace Microwave.Persistence.UnitTests.Eventstores
             Assert.AreEqual(newGuid, entityGuids[0]);
             Assert.AreEqual(newGuid, entityGuids[1]);
         }
+
+        [DataTestMethod]
+        [PersistenceTypeTest]
+        public async Task LoadAndSaveSnapshotWithoutPrivateSetters_DoesNotWork(IPersistenceLayerProvider layerProvider)
+        {
+            var repo = layerProvider.SnapShotRepository;
+            var entityId = GuidIdentity.Create();
+            var newGuid = Guid.NewGuid();
+            var userSnapshot = new UserSnapshotWithoutPrivateSetters(entityId, new List<Guid> {newGuid, newGuid });
+
+
+            await repo.SaveSnapShot(new SnapShotWrapper<UserSnapshotWithoutPrivateSetters>(userSnapshot, entityId, 0));
+            var snapShotResult = await repo.LoadSnapShot<UserSnapshotWithoutPrivateSetters>(entityId);
+
+            Assert.IsNull(snapShotResult.Entity.Guids);
+            Assert.IsNull(snapShotResult.Entity.Id);
+        }
     }
 
     [SnapShotAfter(3)]
@@ -54,5 +71,23 @@ namespace Microwave.Persistence.UnitTests.Eventstores
         {
             Id = guid;
         }
+    }
+
+    [SnapShotAfter(3)]
+    public class UserSnapshotWithoutPrivateSetters : Entity
+    {
+        public UserSnapshotWithoutPrivateSetters(Identity id, IEnumerable<Guid> guids)
+        {
+            Id = id;
+            Guids = guids;
+        }
+
+        public UserSnapshotWithoutPrivateSetters()
+        {
+        }
+
+        public Identity Id { get; }
+
+        public IEnumerable<Guid> Guids { get; }
     }
 }
