@@ -13,6 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Microwave.Eventstores.Persistence.CosmosDb\Microwave.Persistence.CosmosDb.csproj" />
     <ProjectReference Include="..\..\Microwave\Microwave.csproj" />
   </ItemGroup>
 

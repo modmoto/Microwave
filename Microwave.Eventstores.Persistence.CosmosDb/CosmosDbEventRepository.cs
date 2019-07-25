@@ -1,18 +1,13 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.Azure.Documents;
-using Microsoft.Azure.Documents.Client;
-using Microsoft.Azure.Documents.Linq;
 using Microwave.Domain.EventSourcing;
 using Microwave.Domain.Identities;
 using Microwave.Domain.Results;
 using Microwave.EventStores;
-using Microwave.EventStores.Ports;
 
-namespace Microwave.Eventstores.Persistence.CosmosDb
+namespace Microwave.Persistence.CosmosDb
 {
     public class CosmosDbEventRepository : IEventRepository
     {
@@ -65,18 +60,6 @@ namespace Microwave.Eventstores.Persistence.CosmosDb
         public async Task<Result<DateTimeOffset>> GetLastEventOccuredOn(string domainEventType)
         {
             throw new NotImplementedException();
-            //FeedOptions queryOptions = new FeedOptions { MaxItemCount = -1 };
-            //var uri = UriFactory.CreateDocumentCollectionUri(DatabaseName, CollectionId);
-            //var query = _client.CreateDocumentQuery<DomainEventWrapper>(uri, queryOptions).ToList();
-            //var latestEventTime = query.Max(e => e.Created);
-
-            //return Result<DateTimeOffset>.Ok(latestEventTime);
-        }
-
-        private Uri CreateUriForCosmosDb(Identity identity)
-        {
-            //return UriFactory.CreateDocumentUri(DatabaseName, CollectionId, identity.Id);
-            return null;
         }
     }
 }

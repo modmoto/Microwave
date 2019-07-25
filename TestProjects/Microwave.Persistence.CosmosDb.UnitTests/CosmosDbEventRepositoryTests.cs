@@ -16,14 +16,12 @@ namespace Microwave.Persistence.CosmosDb.UnitTests
         [TestMethod]
         public async Task DomainEventIsAppendedCorrectly()
         {
-            var databaseConfig = new DatabaseConfiguration();
-            databaseConfig.ConnectionString = "https://spoppinga.documents.azure.com:443/";
+            var databaseConfig = new MicrowaveCosmosDb();
+            databaseConfig.DatabaseUrl = "https://spoppinga.documents.azure.com:443/";
             databaseConfig.PrimaryKey =
                 "mCPtXM99gxlUalpz6bkFiWib2QD2OvIB9oEYj8tlpCPz1I4jSkOzlhJGnxAAEH4uiqWiYZ7enElzAM0lopKlJA==";
-            var config = new MicrowaveConfiguration();
-            config.DatabaseConfiguration = databaseConfig;
             
-            var cosmosDatabse = new Eventstores.Persistence.CosmosDb.CosmosDb(config);
+            var cosmosDatabse = new CosmosDb(databaseConfig);
             var cosmosDbClient = new CosmosDbClient(cosmosDatabse, new List<Assembly> { Assembly.GetAssembly(typeof(UserCreatedEvent)) });
             await cosmosDbClient.InitializeCosmosDbAsync();
            
@@ -41,14 +39,12 @@ namespace Microwave.Persistence.CosmosDb.UnitTests
         [TestMethod]
         public async Task DomainEventsAreGettedCorrectly()
         {
-            var databaseConfig = new DatabaseConfiguration();
-            databaseConfig.ConnectionString = "https://spoppinga.documents.azure.com:443/";
+            var databaseConfig = new MicrowaveCosmosDb();
+            databaseConfig.DatabaseUrl = "https://spoppinga.documents.azure.com:443/";
             databaseConfig.PrimaryKey =
                 "mCPtXM99gxlUalpz6bkFiWib2QD2OvIB9oEYj8tlpCPz1I4jSkOzlhJGnxAAEH4uiqWiYZ7enElzAM0lopKlJA==";
-            var config = new MicrowaveConfiguration();
-            config.DatabaseConfiguration = databaseConfig;
 
-            var cosmosDatabse = new Eventstores.Persistence.CosmosDb.CosmosDb(config);
+            var cosmosDatabse = new CosmosDb(databaseConfig);
             var cosmosDbClient = new CosmosDbClient(cosmosDatabse , new List<Assembly>{Assembly.GetAssembly(typeof(UserCreatedEvent))});
             await cosmosDbClient.InitializeCosmosDbAsync();
 

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.Azure.Documents;
@@ -14,7 +13,7 @@ using Microwave.EventStores;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace Microwave.Eventstores.Persistence.CosmosDb
+namespace Microwave.Persistence.CosmosDb
 {
     public class CosmosDbClient : ICosmosDbClient
     {
@@ -68,7 +67,7 @@ namespace Microwave.Eventstores.Persistence.CosmosDb
             }
 
             var result = wrappedEvents.Select(e =>  JsonConvert.DeserializeObject(e.GetValue("DomainEvent").ToString(), _domainEventTypes.Single(x => x.Name == e.GetValue("DomainEventType").ToString()))).ToList();
-            return new List<IDomainEvent>();
+            return result.Select(e => (IDomainEvent) e);
         }
 
 

@@ -7,7 +7,7 @@ using Microwave.Domain.Identities;
 using Microwave.Domain.Results;
 using Microwave.EventStores;
 
-namespace Microwave.Eventstores.Persistence.CosmosDb
+namespace Microwave.Persistence.CosmosDb
 {
     public interface ICosmosDbClient
     {
