@@ -1,9 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.1</TargetFramework>
-    <AssemblyName>Microwave.Persistence.CosmosDb</AssemblyName>
-    <RootNamespace>Microwave.Persistence.CosmosDb</RootNamespace>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <DebugType>full</DebugType>
   </PropertyGroup>
 
   <ItemGroup>
@@ -11,8 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Microwave.Domain\Microwave.Domain.csproj" />
-    <ProjectReference Include="..\Microwave\Microwave.csproj" />
+    <ProjectReference Include="..\Microwave.EventStores\Microwave.EventStores.csproj" />
   </ItemGroup>
 
 </Project>

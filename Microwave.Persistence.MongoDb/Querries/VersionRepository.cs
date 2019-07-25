@@ -2,6 +2,7 @@ using System;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microwave.Queries;
+using Microwave.Queries.Ports;
 using MongoDB.Driver;
 
 namespace Microwave.Persistence.MongoDb.Querries
@@ -30,6 +31,7 @@ namespace Microwave.Persistence.MongoDb.Querries
 
             var findOneAndReplaceOptions = new FindOneAndReplaceOptions<LastProcessedVersionDbo>();
             findOneAndReplaceOptions.IsUpsert = true;
+
             await mongoCollection.FindOneAndReplaceAsync(
                 (Expression<Func<LastProcessedVersionDbo, bool>>) (e => e.EventType == version.EventType),
                 new LastProcessedVersionDbo

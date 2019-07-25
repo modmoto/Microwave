@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
 
-namespace Microwave.Queries
+namespace Microwave.Queries.Ports
 {
     public interface IVersionRepository
     {

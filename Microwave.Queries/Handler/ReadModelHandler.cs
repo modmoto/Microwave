@@ -1,24 +1,25 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Microwave.Domain.Results;
+using Microwave.Queries.Ports;
 
-namespace Microwave.Queries
+namespace Microwave.Queries.Handler
 {
-    public interface IReadModelHandler
+    public interface IReadModelEventHandler
     {
         Task Update();
     }
 
-    public class ReadModelHandler<T> : IReadModelHandler where T : ReadModel, new()
+    public class ReadModelEventHandler<T> : IReadModelEventHandler where T : ReadModel, new()
     {
         private readonly IReadModelRepository _readModelRepository;
-        private readonly IEventFeed<ReadModelHandler<T>> _eventFeed;
+        private readonly IEventFeed<ReadModelEventHandler<T>> _eventFeed;
         private readonly IVersionRepository _versionRepository;
 
-        public ReadModelHandler(
+        public ReadModelEventHandler(
             IReadModelRepository readModelRepository,
             IVersionRepository versionRepository,
-            IEventFeed<ReadModelHandler<T>> eventFeed)
+            IEventFeed<ReadModelEventHandler<T>> eventFeed)
         {
             _readModelRepository = readModelRepository;
             _versionRepository = versionRepository;
@@ -50,8 +51,7 @@ namespace Microwave.Queries
 
                 if (latestEventVersion < result.Version) latestEventVersion = result.Version;
 
-                var readModelWrapper = ReadModelResult<T>.Ok(readModel, domainEventEntityId, latestEventVersion);
-                await _readModelRepository.Save(readModelWrapper);
+                await _readModelRepository.Save(readModel, domainEventEntityId, latestEventVersion);
                 await _versionRepository.SaveVersion(new LastProcessedVersion(redaModelVersionCounter, latestEvent.Created));
             }
         }

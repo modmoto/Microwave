@@ -2,6 +2,7 @@ using Microwave.Discovery;
 using Microwave.EventStores;
 using Microwave.EventStores.Ports;
 using Microwave.Queries;
+using Microwave.Queries.Ports;
 
 namespace Microwave.Persistence.UnitTestSetupPorts
 {

@@ -7,6 +7,7 @@ using Microwave.EventStores.Ports;
 using Microwave.Persistence.MongoDb.Eventstores;
 using Microwave.Persistence.MongoDb.Querries;
 using Microwave.Queries;
+using Microwave.Queries.Ports;
 
 namespace Microwave.Persistence.MongoDb
 {
@@ -21,7 +22,7 @@ namespace Microwave.Persistence.MongoDb
             services.AddTransient<IVersionRepository, VersionRepository>();
             services.AddTransient<IReadModelRepository, ReadModelRepository>();
             services.AddSingleton(MicrowaveMongoDb);
-            services.AddSingleton(new EventLocationCache());
+            services.AddSingleton<IEventLocationCache>(new EventLocationCache());
 
             services.AddTransient<IEventRepository, EventRepository>();
             services.AddSingleton<IVersionCache, VersionCache>();
