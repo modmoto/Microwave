@@ -62,8 +62,8 @@ namespace Microwave
 
         private IPollingInterval GetUpdateEveryAttribute(Type type)
         {
-            return _updateEveryAttributes.FirstOrDefault(u => u.AsyncCallType == type) ?? new
-            DefaultConfig();
+            return _updateEveryAttributes.FirstOrDefault(u => u.AsyncCallType == type)
+                   ?? new PollingInterval<Type>();
         }
 
         private void StartThreadForHandlingUpdates(Func<Task> action, IPollingInterval config)
@@ -107,11 +107,5 @@ namespace Microwave
                 await Task.Delay(60000);
             }
         }
-    }
-
-    internal class DefaultConfig : IPollingInterval
-    {
-        public Type AsyncCallType { get; }
-        public DateTime Next => DateTime.UtcNow;
     }
 }
