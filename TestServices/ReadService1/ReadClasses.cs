@@ -28,7 +28,6 @@ namespace ReadService1
         }
     }
 
-    [UpdateEvery(10)]
     public class Handler2 :
         IHandleAsync<Event2>
     {
@@ -49,7 +48,6 @@ namespace ReadService1
         public Identity EntityId { get; }
     }
 
-    [UpdateEvery(25)]
     public class ReadModel1 : ReadModel, IHandle<Event2>, IHandle<Event4>
     {
         public override Type GetsCreatedOn => typeof(Event2);
@@ -64,7 +62,6 @@ namespace ReadService1
         }
     }
 
-    [UpdateEvery(5)]
     public class Querry1 : Query, IHandle<Event2>
     {
         public void Handle(Event2 domainEvent)

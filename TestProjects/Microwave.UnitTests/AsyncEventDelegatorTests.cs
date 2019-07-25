@@ -17,7 +17,10 @@ namespace Microwave.UnitTests
         {
             var mock = new Mock<IDiscoveryHandler>();
             var asyncEventDelegator = new AsyncEventDelegator(new List<IAsyncEventHandler> {new AsyncHandlerMock()}, new
-                List<IQueryEventHandler>(), new List<IReadModelEventHandler>(), mock.Object);
+                List<IQueryEventHandler>(), new List<IReadModelEventHandler>(), mock.Object, new List<IUpdateEveryConfig>
+            {
+                new UpdateEveryConfig<AsyncHandlerImplemented>(3)
+            });
 
             asyncEventDelegator.StartEventPolling();
         }
@@ -57,7 +60,6 @@ namespace Microwave.UnitTests
         public Type HandlerClassType => typeof(AsyncHandlerImplemented);
     }
 
-    [UpdateEvery(3)]
     internal class AsyncHandlerImplemented
     {
     }

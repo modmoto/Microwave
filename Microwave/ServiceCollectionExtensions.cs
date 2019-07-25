@@ -102,6 +102,7 @@ namespace Microwave
             services.AddMicrowaveMvcExtensions();
 
             services.AddSingleton<ISnapShotConfig>(new SnapShotConfig(microwaveConfiguration.SnapShotConfigurations));
+            services.AddSingleton(microwaveConfiguration.UpdateEveryConfigurations);
 
             services.AddTransient<IServiceDiscoveryRepository, DiscoveryRepository>();
             services.AddTransient<IDiscoveryHandler, DiscoveryHandler>();

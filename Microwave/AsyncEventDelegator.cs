@@ -15,17 +15,20 @@ namespace Microwave
         private readonly IEnumerable<IAsyncEventHandler> _asyncEventHandlers;
         private readonly IEnumerable<IQueryEventHandler> _queryHandlers;
         private readonly IEnumerable<IReadModelEventHandler> _readModelHandlers;
+        private readonly IEnumerable<IUpdateEveryConfig> _updateEveryAttributes;
         private readonly IDiscoveryHandler _discoveryHandler;
 
         public AsyncEventDelegator(
             IEnumerable<IAsyncEventHandler> asyncEventHandlers,
             IEnumerable<IQueryEventHandler> queryHandlers,
             IEnumerable<IReadModelEventHandler> readModelHandlers,
-            IDiscoveryHandler discoveryHandler)
+            IDiscoveryHandler discoveryHandler,
+            IEnumerable<IUpdateEveryConfig> updateEveryAttributes = null)
         {
             _asyncEventHandlers = asyncEventHandlers;
             _queryHandlers = queryHandlers;
             _readModelHandlers = readModelHandlers;
+            _updateEveryAttributes = updateEveryAttributes ?? new List<IUpdateEveryConfig>();
             _discoveryHandler = discoveryHandler;
         }
 
@@ -44,28 +47,27 @@ namespace Microwave
             #pragma warning restore 4014
         }
 
-        private UpdateEveryAttribute GetTimingAttribute(IQueryEventHandler handler)
+        private IUpdateEveryConfig GetTimingAttribute(IQueryEventHandler handler)
         {
             var type = handler.GetType();
             var first = type.GenericTypeArguments.First();
             return GetUpdateEveryAttribute(first);
         }
 
-        private UpdateEveryAttribute GetTimingAttribute(IReadModelEventHandler handler)
+        private IUpdateEveryConfig GetTimingAttribute(IReadModelEventHandler handler)
         {
             var type = handler.GetType();
             var first = type.GenericTypeArguments.First();
             return GetUpdateEveryAttribute(first);
         }
 
-        private static UpdateEveryAttribute GetUpdateEveryAttribute(Type type)
+        private IUpdateEveryConfig GetUpdateEveryAttribute(Type type)
         {
-            var customAttribute = type.GetCustomAttribute(typeof(UpdateEveryAttribute));
-            var updateEveryAttribute = customAttribute as UpdateEveryAttribute;
-            return updateEveryAttribute ?? new UpdateEveryAttribute();
+            return _updateEveryAttributes.FirstOrDefault(u => u.AsyncCallType == type) ?? new
+            DefaultConfig();
         }
 
-        private void StartThreadForHandlingUpdates(Func<Task> action, UpdateEveryAttribute attribute)
+        private void StartThreadForHandlingUpdates(Func<Task> action, IUpdateEveryConfig config)
         {
             Task.Run(async () =>
                 {
@@ -74,7 +76,7 @@ namespace Microwave
                         try
                         {
                             var now = DateTime.UtcNow;
-                            var nextTrigger = attribute.Next;
+                            var nextTrigger = config.Next;
                             var timeSpan = nextTrigger - now;
                             await Task.Delay(timeSpan);
                             await action.Invoke();
@@ -106,5 +108,11 @@ namespace Microwave
                 await Task.Delay(60000);
             }
         }
+    }
+
+    internal class DefaultConfig : IUpdateEveryConfig
+    {
+        public Type AsyncCallType { get; }
+        public DateTime Next => DateTime.UtcNow;
     }
 }
