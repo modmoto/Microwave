@@ -1,27 +1,24 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Domain.EventSourcing;
 using Microwave.Domain.Identities;
 using Microwave.EventStores;
-using Microwave.Persistence.MongoDb.Eventstores;
-using Microwave.Persistence.MongoDb.UnitTestsSetup;
-using MongoDB.Driver;
+using Microwave.Persistence.UnitTestSetupPorts;
 
-namespace Microwave.Eventstores.UnitTests
+namespace Microwave.Persistence.UnitTests.Eventstores
 {
     [TestClass]
-    public class SnapshotTests  : IntegrationTests
+    public class SnapshotTests
     {
         [TestMethod]
-        public async Task SnapshotRealized()
+        [PersistenceTypeTest]
+        public async Task SnapshotGetSavedAfterThirdEvent(IPersistenceLayerProvider layerProvider)
         {
-            var mongoCollection = EventMongoDb.Database.GetCollection<SnapShotDbo<User>>("SnapShotDbos");
-
-            var repo = new EventRepository(EventMongoDb, new VersionCache(EventMongoDb));
-            var eventStore = new EventStore(repo, new SnapShotRepository(EventMongoDb));
+            var eventStore = new EventStore(layerProvider.EventRepository, layerProvider.SnapShotRepository
+                , new SnapShotConfig(new
+            List<ISnapShotAfter> { new SnapShotAfter<User>(3)}));
 
             var entityId = GuidIdentity.Create(Guid.NewGuid());
             await eventStore.AppendAsync(new List<IDomainEvent>
@@ -32,10 +29,9 @@ namespace Microwave.Eventstores.UnitTests
 
             await eventStore.LoadAsync<User>(entityId);
 
-            var snapShotDboOld = (await mongoCollection.FindAsync(e => e.Id == entityId.ToString())).ToList()
-            .FirstOrDefault();
-
-            Assert.IsNull(snapShotDboOld);
+            var snapShotDboOld = await layerProvider.SnapShotRepository.LoadSnapShot<User>(entityId);
+            Assert.IsNull(snapShotDboOld.Entity.Id);
+            Assert.IsNull(snapShotDboOld.Entity.Name);
 
             await eventStore.AppendAsync(new List<IDomainEvent>
             {
@@ -51,11 +47,11 @@ namespace Microwave.Eventstores.UnitTests
             Assert.AreEqual("PeterNeu", user.Value.Name);
             Assert.AreEqual(entityId.Id, user.Value.Id.Id);
 
-            var snapShotDbo = (await mongoCollection.FindAsync(e => e.Id == entityId.Id)).ToList().First();
+            var snapShotDbo = await layerProvider.SnapShotRepository.LoadSnapShot<User>(entityId);
 
             Assert.AreEqual(4, snapShotDbo.Version);
-            Assert.AreEqual(entityId.Id, snapShotDbo.Id);
-            var userSnapShot = snapShotDbo.Payload;
+            Assert.AreEqual(entityId.Id, snapShotDbo.Entity.Id.Id);
+            var userSnapShot = snapShotDbo.Entity;
 
             Assert.AreEqual(14, userSnapShot.Age);
             Assert.AreEqual("PeterNeu", userSnapShot.Name);
@@ -63,10 +59,10 @@ namespace Microwave.Eventstores.UnitTests
         }
 
         [TestMethod]
-        public async Task SnapshotExactlyOnSnapShotTime_DoesNotReturnNotFoundBug()
+        [PersistenceTypeTest]
+        public async Task SnapshotExactlyOnSnapShotTime_DoesNotReturnNotFoundBug(IPersistenceLayerProvider layerProvider)
         {
-            var repo = new EventRepository(EventMongoDb, new VersionCache(EventMongoDb));
-            var eventStore = new EventStore(repo, new SnapShotRepository(EventMongoDb));
+            var eventStore = new EventStore(layerProvider.EventRepository, layerProvider.SnapShotRepository);
 
             var entityId = GuidIdentity.Create(Guid.NewGuid());
             await eventStore.AppendAsync(new List<IDomainEvent>
@@ -84,7 +80,6 @@ namespace Microwave.Eventstores.UnitTests
         }
     }
 
-    [SnapShotAfter(3)]
     public class User : Entity, IApply<Event1>, IApply<Event2>, IApply<Event3>
     {
         public string Name { get; set; }

@@ -55,7 +55,6 @@ namespace Microwave.Persistence.UnitTests.Eventstores
         }
     }
 
-    [SnapShotAfter(3)]
     public class UserSnapshot : Entity
     {
         public Identity Id { get; private set; }
@@ -73,7 +72,6 @@ namespace Microwave.Persistence.UnitTests.Eventstores
         }
     }
 
-    [SnapShotAfter(3)]
     public class UserSnapshotWithoutPrivateSetters : Entity
     {
         public UserSnapshotWithoutPrivateSetters(Identity id, IEnumerable<Guid> guids)
