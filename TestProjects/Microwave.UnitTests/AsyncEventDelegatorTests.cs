@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Discovery;
-using Microwave.Queries;
 using Microwave.Queries.Handler;
+using Microwave.Queries.Polling;
 using Moq;
 
 namespace Microwave.UnitTests
@@ -17,9 +17,9 @@ namespace Microwave.UnitTests
         {
             var mock = new Mock<IDiscoveryHandler>();
             var asyncEventDelegator = new AsyncEventDelegator(new List<IAsyncEventHandler> {new AsyncHandlerMock()}, new
-                List<IQueryEventHandler>(), new List<IReadModelEventHandler>(), mock.Object, new List<IUpdateEveryConfig>
+                List<IQueryEventHandler>(), new List<IReadModelEventHandler>(), mock.Object, new List<IPollingInterval>
             {
-                new UpdateEveryConfig<AsyncHandlerImplemented>(3)
+                new PollingInterval<AsyncHandlerImplemented>(3)
             });
 
             asyncEventDelegator.StartEventPolling();

@@ -1,6 +1,6 @@
 using Microwave.Domain.EventSourcing;
 
-namespace Microwave.EventStores
+namespace Microwave.EventStores.SnapShots
 {
     public interface ISnapShotConfig
     {

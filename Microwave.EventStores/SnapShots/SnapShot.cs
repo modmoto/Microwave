@@ -1,13 +1,14 @@
 using System;
+using Microwave.Domain.EventSourcing;
 
-namespace Microwave.Domain.EventSourcing
+namespace Microwave.EventStores.SnapShots
 {
-    public class SnapShotAfter<T> : ISnapShotAfter where T : IApply
+    public class SnapShot<T> : ISnapShot where T : IApply
     {
         public int Writes { get; }
         public Type EntityType { get; }
 
-        public SnapShotAfter(int writes)
+        public SnapShot(int writes)
         {
             Writes = writes;
             EntityType = typeof(T);
@@ -20,11 +21,5 @@ namespace Microwave.Domain.EventSourcing
             if (currentVersion == oldVersion) return false;
             return (currentVersion - oldVersion + currentVersion) % Writes == 0;
         }
-    }
-
-    public interface ISnapShotAfter
-    {
-        bool DoesNeedSnapshot(long oldVersion, long currentVersion);
-        Type EntityType { get; }
     }
 }

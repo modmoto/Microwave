@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microwave;
 using Microwave.Persistence.MongoDb;
-using Microwave.Queries;
+using Microwave.Queries.Polling;
 using Microwave.UI;
 using ServerConfig;
 
@@ -18,11 +18,11 @@ namespace ReadService1
             ServiceName = "ReadService1",
             ServiceLocations = ServiceConfiguration.ServiceAdresses,
             MicrowaveHttpClientCreator = new MyMicrowaveHttpClientCreator(),
-            UpdateEveryConfigurations = new List<IUpdateEveryConfig>
+            UpdateEveryConfigurations = new List<IPollingInterval>
             {
-                new UpdateEveryConfig<Handler2>(10),
-                new UpdateEveryConfig<ReadModel1>(25),
-                new UpdateEveryConfig<Querry1>(5)
+                new PollingInterval<Handler2>(10),
+                new PollingInterval<ReadModel1>(25),
+                new PollingInterval<Querry1>(5)
             }
         };
 

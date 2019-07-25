@@ -1,11 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 using Microwave.Discovery;
-using Microwave.Queries;
 using Microwave.Queries.Handler;
+using Microwave.Queries.Polling;
 using Microwave.WebApi.Querries;
 
 namespace Microwave
@@ -15,7 +14,7 @@ namespace Microwave
         private readonly IEnumerable<IAsyncEventHandler> _asyncEventHandlers;
         private readonly IEnumerable<IQueryEventHandler> _queryHandlers;
         private readonly IEnumerable<IReadModelEventHandler> _readModelHandlers;
-        private readonly IEnumerable<IUpdateEveryConfig> _updateEveryAttributes;
+        private readonly IEnumerable<IPollingInterval> _updateEveryAttributes;
         private readonly IDiscoveryHandler _discoveryHandler;
 
         public AsyncEventDelegator(
@@ -23,12 +22,12 @@ namespace Microwave
             IEnumerable<IQueryEventHandler> queryHandlers,
             IEnumerable<IReadModelEventHandler> readModelHandlers,
             IDiscoveryHandler discoveryHandler,
-            IEnumerable<IUpdateEveryConfig> updateEveryAttributes = null)
+            IEnumerable<IPollingInterval> updateEveryAttributes = null)
         {
             _asyncEventHandlers = asyncEventHandlers;
             _queryHandlers = queryHandlers;
             _readModelHandlers = readModelHandlers;
-            _updateEveryAttributes = updateEveryAttributes ?? new List<IUpdateEveryConfig>();
+            _updateEveryAttributes = updateEveryAttributes ?? new List<IPollingInterval>();
             _discoveryHandler = discoveryHandler;
         }
 
@@ -47,27 +46,27 @@ namespace Microwave
             #pragma warning restore 4014
         }
 
-        private IUpdateEveryConfig GetTimingAttribute(IQueryEventHandler handler)
+        private IPollingInterval GetTimingAttribute(IQueryEventHandler handler)
         {
             var type = handler.GetType();
             var first = type.GenericTypeArguments.First();
             return GetUpdateEveryAttribute(first);
         }
 
-        private IUpdateEveryConfig GetTimingAttribute(IReadModelEventHandler handler)
+        private IPollingInterval GetTimingAttribute(IReadModelEventHandler handler)
         {
             var type = handler.GetType();
             var first = type.GenericTypeArguments.First();
             return GetUpdateEveryAttribute(first);
         }
 
-        private IUpdateEveryConfig GetUpdateEveryAttribute(Type type)
+        private IPollingInterval GetUpdateEveryAttribute(Type type)
         {
             return _updateEveryAttributes.FirstOrDefault(u => u.AsyncCallType == type) ?? new
             DefaultConfig();
         }
 
-        private void StartThreadForHandlingUpdates(Func<Task> action, IUpdateEveryConfig config)
+        private void StartThreadForHandlingUpdates(Func<Task> action, IPollingInterval config)
         {
             Task.Run(async () =>
                 {
@@ -110,7 +109,7 @@ namespace Microwave
         }
     }
 
-    internal class DefaultConfig : IUpdateEveryConfig
+    internal class DefaultConfig : IPollingInterval
     {
         public Type AsyncCallType { get; }
         public DateTime Next => DateTime.UtcNow;

@@ -5,6 +5,7 @@ using Microwave.Domain.EventSourcing;
 using Microwave.Domain.Identities;
 using Microwave.Domain.Results;
 using Microwave.EventStores.Ports;
+using Microwave.EventStores.SnapShots;
 
 namespace Microwave.EventStores
 {
@@ -12,9 +13,12 @@ namespace Microwave.EventStores
     {
         private readonly IEventRepository _eventRepository;
         private readonly ISnapShotRepository _snapShotRepository;
-        private ISnapShotConfig _snapShotConfig;
+        private readonly ISnapShotConfig _snapShotConfig;
 
-        public EventStore(IEventRepository eventRepository, ISnapShotRepository snapShotRepository, ISnapShotConfig snapShotConfig = null)
+        public EventStore(
+            IEventRepository eventRepository,
+            ISnapShotRepository snapShotRepository,
+            ISnapShotConfig snapShotConfig = null)
         {
             _eventRepository = eventRepository;
             _snapShotRepository = snapShotRepository;

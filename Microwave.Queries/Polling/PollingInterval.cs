@@ -4,15 +4,9 @@ using Microwave.Queries.Exceptions;
 using NCrontab;
 
 [assembly: InternalsVisibleTo("Microwave.Queries.UnitTests")]
-namespace Microwave.Queries
+namespace Microwave.Queries.Polling
 {
-    public interface IUpdateEveryConfig
-    {
-        Type AsyncCallType { get; }
-        DateTime Next { get; }
-    }
-
-    public class UpdateEveryConfig<T> : IUpdateEveryConfig
+    public class PollingInterval<T> : IPollingInterval
     {
         public Type AsyncCallType => typeof(T);
 
@@ -60,28 +54,23 @@ namespace Microwave.Queries
                 0);
         }
 
-        public UpdateEveryConfig(string cronNotation)
+        public PollingInterval(string cronNotation)
         {
             var schedule = CrontabSchedule.Parse(cronNotation);
             _cronNotation = schedule;
         }
 
-        public UpdateEveryConfig(int second = 1)
+        public PollingInterval(int second = 1)
         {
             if (second < 1 || second > 60) throw new InvalidTimeNotationException();
 
             _second = second;
         }
 
-        internal UpdateEveryConfig(int secondsInput, int secondsForTest)
+        internal PollingInterval(int secondsInput, int secondsForTest)
         {
             _nowTime = new DateTime(1, 1, 1, 1, 0, secondsForTest);
             _second = secondsInput;
-        }
-
-        public static IUpdateEveryConfig Default()
-        {
-            return new UpdateEveryConfig<T>();
         }
     }
 }

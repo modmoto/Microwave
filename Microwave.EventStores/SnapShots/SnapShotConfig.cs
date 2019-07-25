@@ -2,15 +2,15 @@ using System.Collections.Generic;
 using System.Linq;
 using Microwave.Domain.EventSourcing;
 
-namespace Microwave.EventStores
+namespace Microwave.EventStores.SnapShots
 {
     public class SnapShotConfig : ISnapShotConfig
     {
-        private readonly IEnumerable<ISnapShotAfter> _snapShotAfters;
+        private readonly IEnumerable<ISnapShot> _snapShotAfters;
 
-        public SnapShotConfig(IEnumerable<ISnapShotAfter> snapShotAfters = null)
+        public SnapShotConfig(IEnumerable<ISnapShot> snapShotAfters = null)
         {
-            _snapShotAfters = snapShotAfters ?? new List<ISnapShotAfter>();
+            _snapShotAfters = snapShotAfters ?? new List<ISnapShot>();
         }
         public bool NeedSnapshot<T>(long snapShotVersion, long version) where T : IApply
         {

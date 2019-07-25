@@ -5,6 +5,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Domain.EventSourcing;
 using Microwave.Domain.Identities;
 using Microwave.EventStores;
+using Microwave.EventStores.SnapShots;
 using Microwave.Persistence.UnitTestSetupPorts;
 
 namespace Microwave.Persistence.UnitTests.Eventstores
@@ -18,7 +19,7 @@ namespace Microwave.Persistence.UnitTests.Eventstores
         {
             var eventStore = new EventStore(layerProvider.EventRepository, layerProvider.SnapShotRepository
                 , new SnapShotConfig(new
-            List<ISnapShotAfter> { new SnapShotAfter<User>(3)}));
+            List<ISnapShot> { new SnapShot<User>(3)}));
 
             var entityId = GuidIdentity.Create(Guid.NewGuid());
             await eventStore.AppendAsync(new List<IDomainEvent>
