@@ -228,16 +228,17 @@ namespace Microwave.UnitTests
         public void AddMicrowaveDependencies_ServiceNameIsCorrect()
         {
             var collection = (IServiceCollection) new ServiceCollection();
-            var storeDependencies = collection.AddMicrowave(new MicrowaveConfiguration
-            {
-                ServiceName = "TestService"
-            }, new MongoDbPersistenceLayer
+            var storeDependencies = collection.AddMicrowave(new MongoDbPersistenceLayer
             {
                 MicrowaveMongoDb = new MicrowaveMongoDb
                 {
-                    ConnectionString = "mongodb+srv://mongoDbTestUser:meinTestPw@cluster0-xhbcb.azure.mongodb.net/test?retryWrites=true&w=majority",
+                    ConnectionString =
+                        "mongodb+srv://mongoDbTestUser:meinTestPw@cluster0-xhbcb.azure.mongodb.net/test?retryWrites=true&w=majority",
                     DatabaseName = "MicrowaveIntegrationTest"
                 }
+            }, config =>
+            {
+                config.AddServiceName("TestService");
             });
 
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
@@ -251,21 +252,18 @@ namespace Microwave.UnitTests
         public async Task AddMicrowaveDependencies_RunStarts_DiscoveryFails()
         {
             var collection = (IServiceCollection) new ServiceCollection();
-            var storeDependencies = collection.AddMicrowave(new MicrowaveConfiguration
-            {
-                ServiceLocations = new ServiceBaseAddressCollection
-                {
-                    new Uri("http://localhost:1234")
-                }
-            }, new MongoDbPersistenceLayer
+            var storeDependencies = collection.AddMicrowave(
+                new MongoDbPersistenceLayer
             {
                 MicrowaveMongoDb = new MicrowaveMongoDb
                 {
                     ConnectionString = "mongodb+srv://mongoDbTestUser:meinTestPw@cluster0-xhbcb.azure.mongodb.net/test?retryWrites=true&w=majority",
                     DatabaseName = "MicrowaveIntegrationTest"
                 }
+            }, config =>
+            {
+                config.ServiceLocations.Add(new Uri("http://localhost:1234"));
             });
-
 
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 

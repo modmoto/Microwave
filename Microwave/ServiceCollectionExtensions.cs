@@ -75,15 +75,18 @@ namespace Microwave
             this IServiceCollection services,
             IPersistenceLayer persistenceLayer)
         {
-            services.AddMicrowave(new MicrowaveConfiguration(), persistenceLayer);
+            services.AddMicrowave(persistenceLayer, config => { });
             return services;
         }
 
         public static IServiceCollection AddMicrowave(
             this IServiceCollection services,
-            MicrowaveConfiguration microwaveConfiguration,
-            IPersistenceLayer persistenceLayer)
+            IPersistenceLayer persistenceLayer,
+            Action<MicrowaveConfiguration> addConfiguration)
         {
+            var microwaveConfiguration = new MicrowaveConfiguration();
+            addConfiguration.Invoke(microwaveConfiguration);
+
             var assemblies = new List<Assembly>();
             var referencedPaths = Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory, "*.dll", SearchOption.AllDirectories).ToList();
             referencedPaths.ForEach(path =>
@@ -103,7 +106,7 @@ namespace Microwave
             services.AddMicrowaveMvcExtensions();
 
             services.AddSingleton<ISnapShotConfig>(new SnapShotConfig(microwaveConfiguration.SnapShotConfigurations));
-            services.AddSingleton(microwaveConfiguration.UpdateEveryConfigurations);
+            services.AddSingleton(microwaveConfiguration.PollingIntervals);
 
             services.AddTransient<IServiceDiscoveryRepository, DiscoveryRepository>();
             services.AddTransient<IDiscoveryHandler, DiscoveryHandler>();
