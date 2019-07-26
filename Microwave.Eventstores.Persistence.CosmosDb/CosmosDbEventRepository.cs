@@ -6,6 +6,7 @@ using Microwave.Domain.EventSourcing;
 using Microwave.Domain.Identities;
 using Microwave.Domain.Results;
 using Microwave.EventStores;
+using Microwave.EventStores.Ports;
 
 namespace Microwave.Persistence.CosmosDb
 {
@@ -32,7 +33,12 @@ namespace Microwave.Persistence.CosmosDb
             foreach (var domainEvent in domainEvents)
             {
                
-                await _cosmosDbClient.CreateDomainEventAsync(domainEvent);
+                await _cosmosDbClient.CreateItemAsync(new DomainEventWrapper
+                {
+                    DomainEvent = domainEvent,
+                    Created = DateTimeOffset.Now,
+                    Version = currentEntityVersion
+                });
             }
 
             return Result.Ok();
@@ -41,9 +47,9 @@ namespace Microwave.Persistence.CosmosDb
         public async Task<Result<IEnumerable<DomainEventWrapper>>> LoadEvents(DateTimeOffset tickSince = default(DateTimeOffset))
         {
             var result = await _cosmosDbClient.GetDomainEventsAsync(tickSince);
-            if (result.Value.Any())
+            if (result.Any())
             {
-                return Result<IEnumerable<DomainEventWrapper>>.Ok(result.Value);
+                return Result<IEnumerable<DomainEventWrapper>>.Ok(result);
             }
             else
             {
@@ -54,7 +60,7 @@ namespace Microwave.Persistence.CosmosDb
         public async Task<Result<IEnumerable<DomainEventWrapper>>> LoadEventsByTypeAsync(string eventType, DateTimeOffset tickSince = default(DateTimeOffset))
         {
             var result = _cosmosDbClient.LoadEventsByTypeAsync(eventType, tickSince);
-            return Result<IEnumerable<DomainEventWrapper>>.Ok(result.Result.Value);
+            return Result<IEnumerable<DomainEventWrapper>>.Ok(result.Result);
         }
 
         public async Task<Result<DateTimeOffset>> GetLastEventOccuredOn(string domainEventType)

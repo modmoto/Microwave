@@ -10,6 +10,7 @@ using Microwave.Domain.EventSourcing;
 using Microwave.Domain.Identities;
 using Microwave.Domain.Results;
 using Microwave.EventStores;
+using Microwave.EventStores.Ports;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -17,13 +18,14 @@ namespace Microwave.Persistence.CosmosDb
 {
     public class CosmosDbClient : ICosmosDbClient
     {
+        private readonly ICosmosDb _cosmosDb;
         private readonly DocumentClient _client;
         private IEnumerable<Type> _domainEventTypes;
-        private const string DatabaseId = "Eventstore";
-        private const string CollectionId = "DomainEvents";
+       
 
         public CosmosDbClient(ICosmosDb cosmosDb, IEnumerable<Assembly> assemblies)
         {
+            _cosmosDb = cosmosDb;
             _client = cosmosDb.GetCosmosDbClient();
             var type = typeof(IDomainEvent);
             _domainEventTypes = assemblies
@@ -32,30 +34,10 @@ namespace Microwave.Persistence.CosmosDb
 
         }
 
-        public async Task InitializeCosmosDbAsync()
-        {
-            var database = await  _client.CreateDatabaseIfNotExistsAsync(new Database { Id = DatabaseId });
-            var collection = await _client.CreateDocumentCollectionIfNotExistsAsync(UriFactory.CreateDatabaseUri(DatabaseId),
-                new DocumentCollection { Id = CollectionId });
-            if (database == null || collection == null)
-            {
-                throw new ArgumentException("Could not create Database or Collection with given CosmosDb Configuration Parameters!");
-            }
-        }
-
-
-        public async Task CreateDomainEventAsync(IDomainEvent domainEvent)
-        {
-            var uri = UriFactory.CreateDocumentCollectionUri(DatabaseId, CollectionId);
-            await _client.CreateDocumentAsync(uri, domainEvent);
-           
-        }
-
-
-        public async Task<IEnumerable<IDomainEvent>> GetDomainEventsAsync(Identity identity)
+        public async Task<IEnumerable<DomainEventWrapper>> GetDomainEventsAsync(Identity identity)
         {   
             var query = _client.CreateDocumentQuery<DomainEventWrapper>(
-                    UriFactory.CreateDocumentCollectionUri(DatabaseId, CollectionId),
+                    UriFactory.CreateDocumentCollectionUri(_cosmosDb.DatabaseId, _cosmosDb.EventsCollectionId),
                     new FeedOptions { MaxItemCount = -1 })
                 .Where(e => e.DomainEvent.EntityId  == identity)
                 .AsDocumentQuery();
@@ -66,32 +48,127 @@ namespace Microwave.Persistence.CosmosDb
                 wrappedEvents.AddRange(await query.ExecuteNextAsync<JObject>());
             }
 
-            var result = wrappedEvents.Select(e =>  JsonConvert.DeserializeObject(e.GetValue("DomainEvent").ToString(), _domainEventTypes.Single(x => x.Name == e.GetValue("DomainEventType").ToString()))).ToList();
-            return result.Select(e => (IDomainEvent) e);
+            var result = new List<DomainEventWrapper>();
+            foreach (var wrappedEvent in wrappedEvents)
+            {
+                result.Add(new DomainEventWrapper
+                {
+                    Created = (DateTimeOffset)wrappedEvent.GetValue("Created"),
+                    DomainEvent = (IDomainEvent)JsonConvert.DeserializeObject(wrappedEvent.GetValue("DomainEvent").ToString(), _domainEventTypes.Single(x => x.Name == wrappedEvent.GetValue("DomainEventType").ToString())),
+                    Version = (long)wrappedEvent.GetValue("Version")
+                });
+            }
+
+            return result;
+        }
+
+        public async Task<SnapShotResult<T>> LoadSnapshotAsync<T>(Identity entityId)
+        {
+            var query = _client.CreateDocumentQuery<SnapShotWrapper<T>>(
+                    UriFactory.CreateDocumentCollectionUri(_cosmosDb.DatabaseId, _cosmosDb.SnapshotsCollectionId),
+                    new FeedOptions { MaxItemCount = -1 })
+                .Where(e => e.Id == entityId)
+                .AsDocumentQuery();
+
+            var wrappedEvents = new List<JObject>();
+            while (query.HasMoreResults)
+            {
+                wrappedEvents.AddRange(await query.ExecuteNextAsync<JObject>());
+            }
+            var allSnapshots = new List<SnapShotWrapper<T>>();
+            foreach (var wrappedEvent in wrappedEvents)
+            {
+                var entity =  JsonConvert.DeserializeObject<T>(wrappedEvent.GetValue("Entity").ToString());
+                var version = (long) wrappedEvent.GetValue("Version");
+                Guid.TryParse(wrappedEvent.GetValue("id").ToString(), out var guid);
+                Identity identity = null;
+                if (guid != Guid.Empty)
+                {
+                    identity = Identity.Create(guid);
+                }
+                else
+                {
+                    identity = Identity.Create(wrappedEvent.GetValue("id").ToString());
+                }
+                allSnapshots.Add(new SnapShotWrapper<T>(entity, identity, version));
+            }
+            var result = allSnapshots.Single(x => x.Version == allSnapshots.Max(s => s.Version));
+            return new SnapShotResult<T>(result.Entity, result.Version);
+        }
+
+        public async Task SaveSnapshotAsync<T>(SnapShotWrapper<T> snapShot)
+        {
+            await _client.CreateDocumentAsync(UriFactory.CreateDocumentCollectionUri(_cosmosDb.DatabaseId, _cosmosDb.SnapshotsCollectionId), snapShot);
         }
 
 
-        public async Task<Result<IEnumerable<DomainEventWrapper>>> GetDomainEventsAsync(DateTimeOffset tickSince)
+        public async Task<IEnumerable<DomainEventWrapper>> GetDomainEventsAsync(DateTimeOffset tickSince)
         {
-            FeedOptions queryOptions = new FeedOptions { MaxItemCount = -1 };
-            var uri = UriFactory.CreateDocumentCollectionUri(DatabaseId, CollectionId);
-            var query = _client.CreateDocumentQuery<DomainEventWrapper>(uri, queryOptions)
-                .Where(e => e.Created > tickSince);
-            return Result<IEnumerable<DomainEventWrapper>>.Ok(query.ToList());
+            var query = _client.CreateDocumentQuery<DomainEventWrapper>(
+                    UriFactory.CreateDocumentCollectionUri(_cosmosDb.DatabaseId, _cosmosDb.EventsCollectionId),
+                    new FeedOptions { MaxItemCount = -1 })
+                .Where(e => e.Created >= tickSince)
+                .AsDocumentQuery();
+
+            var wrappedEvents = new List<JObject>();
+            while (query.HasMoreResults)
+            {
+                wrappedEvents.AddRange(await query.ExecuteNextAsync<JObject>());
+            }
+            var result = new List<DomainEventWrapper>();
+            foreach (var wrappedEvent in wrappedEvents)
+            {
+                result.Add(new DomainEventWrapper
+                {
+                    Created = (DateTimeOffset) wrappedEvent.GetValue("Created"),
+                    DomainEvent = (IDomainEvent)JsonConvert.DeserializeObject(wrappedEvent.GetValue("DomainEvent").ToString(), _domainEventTypes.Single(x => x.Name == wrappedEvent.GetValue("DomainEventType").ToString())),
+                    Version = (long) wrappedEvent.GetValue("Version")
+                });
+            }
+
+            return result;
         }
 
-        public async Task<Document> CreateItemAsync(DomainEventWrapper domainEvent)
+        public async Task<Result> CreateItemAsync(DomainEventWrapper domainEvent)
         {
-            return await _client.CreateDocumentAsync(UriFactory.CreateDocumentCollectionUri(DatabaseId, CollectionId), domainEvent);
+            try
+            {
+                await _client.CreateDocumentAsync(UriFactory.CreateDocumentCollectionUri(_cosmosDb.DatabaseId, _cosmosDb.EventsCollectionId), domainEvent);
+            }
+            catch (DocumentClientException e)
+            {
+                var actualVersion = (await GetDomainEventsAsync(domainEvent.DomainEvent.EntityId)).Max(x => x.Version);
+                return Result.ConcurrencyResult(domainEvent.Version, actualVersion);
+            }
+            return Result.Ok();
         }
 
-        public async Task<Result<IEnumerable<DomainEventWrapper>>> LoadEventsByTypeAsync(string eventType, DateTimeOffset tickSince)
+        public async Task<IEnumerable<DomainEventWrapper>> LoadEventsByTypeAsync(string eventType, DateTimeOffset tickSince)
         {
-            FeedOptions queryOptions = new FeedOptions { MaxItemCount = -1 };
-            var uri = UriFactory.CreateDocumentCollectionUri(DatabaseId, CollectionId);
-            var query = _client.CreateDocumentQuery<DomainEventWrapper>(uri, queryOptions)
-                .Where(e => e.DomainEventType == eventType);
-            return Result<IEnumerable<DomainEventWrapper>>.Ok(query.ToList());
+            var query = _client.CreateDocumentQuery<DomainEventWrapper>(
+                    UriFactory.CreateDocumentCollectionUri(_cosmosDb.DatabaseId, _cosmosDb.EventsCollectionId),
+                    new FeedOptions { MaxItemCount = -1 })
+                .Where(e => e.Created >= tickSince && e.DomainEventType == eventType)
+                .AsDocumentQuery();
+
+            var wrappedEvents = new List<JObject>();
+            while (query.HasMoreResults)
+            {
+                wrappedEvents.AddRange(await query.ExecuteNextAsync<JObject>());
+            }
+
+            var result = new List<DomainEventWrapper>();
+            foreach (var wrappedEvent in wrappedEvents)
+            {
+                result.Add(new DomainEventWrapper
+                {
+                    Created = (DateTimeOffset)wrappedEvent.GetValue("Created"),
+                    DomainEvent = (IDomainEvent)JsonConvert.DeserializeObject(wrappedEvent.GetValue("DomainEvent").ToString(), _domainEventTypes.Single(x => x.Name == wrappedEvent.GetValue("DomainEventType").ToString())),
+                    Version = (long)wrappedEvent.GetValue("Version")
+                });
+            }
+
+            return result;
         }
     }
 

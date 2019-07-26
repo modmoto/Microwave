@@ -2,6 +2,7 @@
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using Microwave.EventStores;
+using Microwave.EventStores.Ports;
 
 namespace Microwave.Persistence.CosmosDb
 {
@@ -12,6 +13,9 @@ namespace Microwave.Persistence.CosmosDb
         public IServiceCollection AddPersistenceLayer(IServiceCollection services, IEnumerable<Assembly> assemblies)
         {
             services.AddTransient<ICosmosDb, CosmosDb>();
+            var cosmosDb = new CosmosDb();
+            cosmosDb.InitializeCosmosDb().Wait();
+
             //services.AddTransient<IStatusRepository, CosmosDbStatusRepository>();
 
             //services.AddTransient<IVersionRepository, CosmosDbVersionRepository>();

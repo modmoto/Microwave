@@ -11,6 +11,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Microwave.EventStores\Microwave.EventStores.csproj" />
+    <ProjectReference Include="..\Microwave\Microwave.csproj" />
   </ItemGroup>
 
 </Project>
