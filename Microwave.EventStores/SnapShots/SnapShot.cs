@@ -1,14 +1,17 @@
 using System;
+using Microwave.Domain.EventSourcing;
 
-namespace Microwave.Domain.EventSourcing
+namespace Microwave.EventStores.SnapShots
 {
-    public class SnapShotAfterAttribute : Attribute
+    public class SnapShot<T> : ISnapShot where T : IApply
     {
         public int Writes { get; }
+        public Type EntityType { get; }
 
-        public SnapShotAfterAttribute(int writes)
+        public SnapShot(int writes)
         {
             Writes = writes;
+            EntityType = typeof(T);
         }
 
         public bool DoesNeedSnapshot(long oldVersion, long currentVersion)

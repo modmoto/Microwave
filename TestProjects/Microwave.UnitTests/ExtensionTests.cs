@@ -8,7 +8,6 @@ using Microwave.Discovery.EventLocations;
 using Microwave.Domain.EventSourcing;
 using Microwave.Domain.Identities;
 using Microwave.EventStores;
-using Microwave.EventStores.Ports;
 using Microwave.Persistence.MongoDb;
 using Microwave.Queries;
 using Microwave.Queries.Handler;
@@ -232,7 +231,14 @@ namespace Microwave.UnitTests
             var storeDependencies = collection.AddMicrowave(new MicrowaveConfiguration
             {
                 ServiceName = "TestService"
-            }, new MongoDbPersistenceLayer());
+            }, new MongoDbPersistenceLayer
+            {
+                MicrowaveMongoDb = new MicrowaveMongoDb
+                {
+                    ConnectionString = "mongodb+srv://mongoDbTestUser:meinTestPw@cluster0-xhbcb.azure.mongodb.net/test?retryWrites=true&w=majority",
+                    DatabaseName = "MicrowaveIntegrationTest"
+                }
+            });
 
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
@@ -247,11 +253,19 @@ namespace Microwave.UnitTests
             var collection = (IServiceCollection) new ServiceCollection();
             var storeDependencies = collection.AddMicrowave(new MicrowaveConfiguration
             {
-                ServiceLocations = new ServiceBaseAddressCollection()
+                ServiceLocations = new ServiceBaseAddressCollection
                 {
                     new Uri("http://localhost:1234")
                 }
-            }, new MongoDbPersistenceLayer());
+            }, new MongoDbPersistenceLayer
+            {
+                MicrowaveMongoDb = new MicrowaveMongoDb
+                {
+                    ConnectionString = "mongodb+srv://mongoDbTestUser:meinTestPw@cluster0-xhbcb.azure.mongodb.net/test?retryWrites=true&w=majority",
+                    DatabaseName = "MicrowaveIntegrationTest"
+                }
+            });
+
 
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 

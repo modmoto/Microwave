@@ -9,8 +9,12 @@ namespace Microwave.Persistence.MongoDb.UnitTestsSetup
         [TestInitialize]
         public void SetupMongoDb()
         {
-            EventMongoDb = new MicrowaveMongoDb { DatabaseName = "IntegrationTest" };
-            EventMongoDb.Database.Client.DropDatabase("IntegrationTest");
+            EventMongoDb = new MicrowaveMongoDb
+            {
+                ConnectionString = "mongodb+srv://mongoDbTestUser:meinTestPw@cluster0-xhbcb.azure.mongodb.net/test?retryWrites=true&w=majority",
+                DatabaseName = "MicrowaveIntegrationTest"
+            };
+            EventMongoDb.Database.Client.DropDatabase("MicrowaveIntegrationTest");
         }
     }
 }

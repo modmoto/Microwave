@@ -4,10 +4,12 @@ using Microwave.Queries.Exceptions;
 using NCrontab;
 
 [assembly: InternalsVisibleTo("Microwave.Queries.UnitTests")]
-namespace Microwave.Queries
+namespace Microwave.Queries.Polling
 {
-    public class UpdateEveryAttribute : Attribute
+    public class PollingInterval<T> : IPollingInterval
     {
+        public Type AsyncCallType => typeof(T);
+
         private readonly int _second;
 
         private readonly CrontabSchedule _cronNotation;
@@ -52,20 +54,20 @@ namespace Microwave.Queries
                 0);
         }
 
-        public UpdateEveryAttribute(string cronNotation)
+        public PollingInterval(string cronNotation)
         {
             var schedule = CrontabSchedule.Parse(cronNotation);
             _cronNotation = schedule;
         }
 
-        public UpdateEveryAttribute(int second = 1)
+        public PollingInterval(int second = 1)
         {
             if (second < 1 || second > 60) throw new InvalidTimeNotationException();
 
             _second = second;
         }
 
-        internal UpdateEveryAttribute(int secondsInput, int secondsForTest)
+        internal PollingInterval(int secondsInput, int secondsForTest)
         {
             _nowTime = new DateTime(1, 1, 1, 1, 0, secondsForTest);
             _second = secondsInput;

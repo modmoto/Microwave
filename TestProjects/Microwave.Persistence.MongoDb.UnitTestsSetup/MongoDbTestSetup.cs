@@ -1,6 +1,5 @@
 using Microwave.Discovery;
 using Microwave.Discovery.EventLocations;
-using Microwave.EventStores;
 using Microwave.EventStores.Ports;
 using Microwave.Persistence.MongoDb.Eventstores;
 using Microwave.Persistence.MongoDb.Querries;
@@ -14,7 +13,9 @@ namespace Microwave.Persistence.MongoDb.UnitTestsSetup
     {
         public MongoDbTestSetup()
         {
-            EventMongoDb = new MicrowaveMongoDb { DatabaseName = "MicrowaveIntegrationTest" };
+            EventMongoDb = new MicrowaveMongoDb {
+                ConnectionString = "mongodb+srv://mongoDbTestUser:meinTestPw@cluster0-xhbcb.azure.mongodb.net/test?retryWrites=true&w=majority",
+                DatabaseName = "MicrowaveIntegrationTest" };
             EventMongoDb.Database.Client.DropDatabase("MicrowaveIntegrationTest");
         }
 

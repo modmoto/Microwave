@@ -1,10 +1,10 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microwave.Domain.EventSourcing;
+using Microwave.EventStores.SnapShots;
 
 namespace Microwave.Eventstores.UnitTests
 {
     [TestClass]
-    public class SnapshotAttributeTests
+    public class SnapshotAfterTests
     {
         [TestMethod]
         [DataRow(0, 3, true)]
@@ -16,7 +16,7 @@ namespace Microwave.Eventstores.UnitTests
         [DataRow(6, 6, false)]
         public void SnapshotConstructor(long last, long current, bool expected)
         {
-            var snapShotAfter = new SnapShotAfterAttribute(3);
+            var snapShotAfter = new SnapShot<TestEntity>(3);
             var doesNeedSnapshot = snapShotAfter.DoesNeedSnapshot(last, current);
             Assert.AreEqual(expected, doesNeedSnapshot);
         }

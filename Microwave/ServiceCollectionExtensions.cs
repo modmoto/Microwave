@@ -10,7 +10,7 @@ using Microwave.Discovery;
 using Microwave.Discovery.EventLocations;
 using Microwave.Domain.EventSourcing;
 using Microwave.EventStores;
-using Microwave.EventStores.Ports;
+using Microwave.EventStores.SnapShots;
 using Microwave.Queries;
 using Microwave.Queries.Handler;
 using Microwave.Queries.Ports;
@@ -101,6 +101,9 @@ namespace Microwave
             persistenceLayer.AddPersistenceLayer(services, assemblies);
 
             services.AddMicrowaveMvcExtensions();
+
+            services.AddSingleton<ISnapShotConfig>(new SnapShotConfig(microwaveConfiguration.SnapShotConfigurations));
+            services.AddSingleton(microwaveConfiguration.UpdateEveryConfigurations);
 
             services.AddTransient<IServiceDiscoveryRepository, DiscoveryRepository>();
             services.AddTransient<IDiscoveryHandler, DiscoveryHandler>();
