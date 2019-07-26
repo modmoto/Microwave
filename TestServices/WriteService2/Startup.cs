@@ -25,13 +25,16 @@ namespace WriteService2
             }).SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.AddMicrowaveUi();
 
-            services.AddMicrowave(new MongoDbPersistenceLayer
-                { MicrowaveMongoDb = new MicrowaveMongoDb { DatabaseName = "TestWriteService2ReadDb" }}, 
-                config =>
+            services.AddMicrowave(config =>
             {
                 config.AddServiceName("WriteService2");
                 config.ServiceLocations.AddRange(ServiceConfiguration.ServiceAdresses);
                 config.AddHttpClientCreator(new MyMicrowaveHttpClientCreator());
+            });
+
+            services.AddMicrowavePersistenceLayerMongoDb(p =>
+            {
+                p.WithDatabaseName("TestWriteService2ReadDb");
             });
         }
 

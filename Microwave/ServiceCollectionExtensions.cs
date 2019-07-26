@@ -72,36 +72,20 @@ namespace Microwave
         }
 
         public static IServiceCollection AddMicrowave(
-            this IServiceCollection services,
-            IPersistenceLayer persistenceLayer)
+            this IServiceCollection services)
         {
-            services.AddMicrowave(persistenceLayer, config => { });
+            services.AddMicrowave(config => { });
             return services;
         }
 
         public static IServiceCollection AddMicrowave(
             this IServiceCollection services,
-            IPersistenceLayer persistenceLayer,
             Action<MicrowaveConfiguration> addConfiguration)
         {
             var microwaveConfiguration = new MicrowaveConfiguration();
             addConfiguration.Invoke(microwaveConfiguration);
 
-            var assemblies = new List<Assembly>();
-            var referencedPaths = Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory, "*.dll", SearchOption.AllDirectories).ToList();
-            referencedPaths.ForEach(path =>
-            {
-                try
-                {
-                    var assemblyName = AssemblyName.GetAssemblyName(path);
-                    assemblies.Add(AppDomain.CurrentDomain.Load(assemblyName));
-                }
-                catch (FileNotFoundException)
-                {
-                }
-            });
-
-            persistenceLayer.AddPersistenceLayer(services, assemblies);
+            var assemblies = GetAllAssemblies();
 
             services.AddMicrowaveMvcExtensions();
 
@@ -144,6 +128,25 @@ namespace Microwave
             services.AddSingleton(eventRegistration);
 
             return services;
+        }
+
+        public static List<Assembly> GetAllAssemblies()
+        {
+            var assemblies = new List<Assembly>();
+            var referencedPaths = Directory
+                .GetFiles(AppDomain.CurrentDomain.BaseDirectory, "*.dll", SearchOption.AllDirectories).ToList();
+            referencedPaths.ForEach(path =>
+            {
+                try
+                {
+                    var assemblyName = AssemblyName.GetAssemblyName(path);
+                    assemblies.Add(AppDomain.CurrentDomain.Load(assemblyName));
+                }
+                catch (FileNotFoundException)
+                {
+                }
+            });
+            return assemblies;
         }
 
         private static void AddPublishedEventCollection(IServiceCollection services,

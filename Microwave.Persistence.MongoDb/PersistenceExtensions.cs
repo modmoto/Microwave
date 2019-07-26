@@ -1,5 +1,4 @@
-using System.Collections.Generic;
-using System.Reflection;
+using System;
 using Microsoft.Extensions.DependencyInjection;
 using Microwave.Discovery;
 using Microwave.EventStores.Ports;
@@ -10,24 +9,28 @@ using Microwave.Queries.Ports;
 
 namespace Microwave.Persistence.MongoDb
 {
-    public class MongoDbPersistenceLayer : IPersistenceLayer
+    public static class MongoDbPersistenceExtensions
     {
-        public MicrowaveMongoDb MicrowaveMongoDb { get; set; } = new MicrowaveMongoDb();
-
-        public IServiceCollection AddPersistenceLayer(IServiceCollection services, IEnumerable<Assembly> assemblies)
+        public static IServiceCollection AddMicrowavePersistenceLayerMongoDb(
+            this IServiceCollection services,
+            Action<MicrowaveMongoDb> mongoDb = null)
         {
+            var action = mongoDb ?? (c => { });
+            var microwaveMongoDb = new MicrowaveMongoDb();
+            action.Invoke(microwaveMongoDb);
+
             services.AddTransient<IStatusRepository, StatusRepository>();
 
             services.AddTransient<IVersionRepository, VersionRepository>();
             services.AddTransient<IReadModelRepository, ReadModelRepository>();
-            services.AddSingleton(MicrowaveMongoDb);
+            services.AddSingleton(microwaveMongoDb);
             services.AddSingleton<IEventLocationCache>(new EventLocationCache());
 
             services.AddTransient<IEventRepository, EventRepository>();
             services.AddSingleton<IVersionCache, VersionCache>();
             services.AddTransient<ISnapShotRepository, SnapShotRepository>();
 
-            foreach (var assembly in assemblies)
+            foreach (var assembly in ServiceCollectionExtensions.GetAllAssemblies())
             {
                 BsonMapRegistrationHelpers.AddBsonMapsForMicrowave(assembly);
             }
@@ -35,5 +38,4 @@ namespace Microwave.Persistence.MongoDb
             return services;
         }
     }
-
 }

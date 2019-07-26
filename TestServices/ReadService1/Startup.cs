@@ -19,9 +19,7 @@ namespace ReadService1
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             services.AddMicrowaveUi();
-            services.AddMicrowave(new MongoDbPersistenceLayer
-                { MicrowaveMongoDb = new MicrowaveMongoDb { DatabaseName = "TestReadService1" }},
-                config =>
+            services.AddMicrowave(config =>
                 {
                     config.PollingIntervals.Add(new PollingInterval<Handler2>(10));
                     config.PollingIntervals.Add(new PollingInterval<ReadModel1>(25));
@@ -33,6 +31,11 @@ namespace ReadService1
 
                     config.AddServiceName("ReadService1");
                 });
+
+            services.AddMicrowavePersistenceLayerMongoDb(p =>
+            {
+                p.WithDatabaseName("TestReadService1");
+            });
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
