@@ -13,27 +13,29 @@ namespace ReadService1
 {
     public class Startup
     {
-        private MicrowaveConfiguration _microwaveConfiguration = new MicrowaveConfiguration
-        {
-            ServiceName = "ReadService1",
-            ServiceLocations = ServiceConfiguration.ServiceAdresses,
-            MicrowaveHttpClientCreator = new MyMicrowaveHttpClientCreator(),
-            UpdateEveryConfigurations = new List<IPollingInterval>
-            {
-                new PollingInterval<Handler2>(10),
-                new PollingInterval<ReadModel1>(25),
-                new PollingInterval<Querry1>(5)
-            }
-        };
-
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             services.AddMicrowaveUi();
-            services.AddMicrowave(_microwaveConfiguration, new MongoDbPersistenceLayer
-                { MicrowaveMongoDb = new MicrowaveMongoDb { DatabaseName = "TestReadService1" }});
+            services.AddMicrowave(config =>
+                {
+                    config.PollingIntervals.Add(new PollingInterval<Handler2>(10));
+                    config.PollingIntervals.Add(new PollingInterval<ReadModel1>(25));
+                    config.PollingIntervals.Add(new PollingInterval<Querry1>(5));
+
+                    config.AddHttpClientCreator(new MyMicrowaveHttpClientCreator());
+
+                    config.ServiceLocations.AddRange(ServiceConfiguration.ServiceAdresses);
+
+                    config.AddServiceName("ReadService1");
+                });
+
+            services.AddMicrowavePersistenceLayerMongoDb(p =>
+            {
+                p.WithDatabaseName("TestReadService1");
+            });
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)

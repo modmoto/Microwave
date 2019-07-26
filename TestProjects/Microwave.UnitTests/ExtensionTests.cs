@@ -27,7 +27,7 @@ namespace Microwave.UnitTests
         {
             var collection = (IServiceCollection) new ServiceCollection();
 
-            var storeDependencies = collection.AddMicrowave(new MongoDbPersistenceLayer());
+            var storeDependencies = collection.AddMicrowave().AddMicrowavePersistenceLayerMongoDb();
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
             var eventDelegateHandlers = buildServiceProvider.GetServices<IAsyncEventHandler>().OrderBy(
@@ -108,7 +108,7 @@ namespace Microwave.UnitTests
         {
             var collection = (IServiceCollection) new ServiceCollection();
 
-            var storeDependencies = collection.AddMicrowave(new MongoDbPersistenceLayer());
+            var storeDependencies = collection.AddMicrowave().AddMicrowavePersistenceLayerMongoDb();
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
             var eventRegister = buildServiceProvider.GetServices<EventRegistration>().Single();
@@ -125,8 +125,8 @@ namespace Microwave.UnitTests
             var collection = (IServiceCollection) new ServiceCollection();
 
             var storeDependencies = collection
-                .AddMicrowave(new MongoDbPersistenceLayer())
-                .AddMicrowave(new MongoDbPersistenceLayer());
+                .AddMicrowave().AddMicrowavePersistenceLayerMongoDb()
+                .AddMicrowave().AddMicrowavePersistenceLayerMongoDb();
 
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
@@ -143,7 +143,7 @@ namespace Microwave.UnitTests
         {
             var collection = (IServiceCollection) new ServiceCollection();
 
-            var storeDependencies = collection.AddMicrowave(new MongoDbPersistenceLayer());
+            var storeDependencies = collection.AddMicrowave().AddMicrowavePersistenceLayerMongoDb();
 
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
@@ -159,7 +159,7 @@ namespace Microwave.UnitTests
         {
             var collection = (IServiceCollection) new ServiceCollection();
 
-            var storeDependencies = collection.AddMicrowave(new MongoDbPersistenceLayer());
+            var storeDependencies = collection.AddMicrowave().AddMicrowavePersistenceLayerMongoDb();
 
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
@@ -180,7 +180,7 @@ namespace Microwave.UnitTests
         public void AddMicrowaveDependencies_SubscribedEventsCorrect()
         {
             var collection = (IServiceCollection) new ServiceCollection();
-            var storeDependencies = collection.AddMicrowave(new MongoDbPersistenceLayer());
+            var storeDependencies = collection.AddMicrowave().AddMicrowavePersistenceLayerMongoDb();
 
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
@@ -201,7 +201,7 @@ namespace Microwave.UnitTests
         public void AddMicrowaveDependencies_ReadModelsCorrect()
         {
             var collection = (IServiceCollection) new ServiceCollection();
-            var storeDependencies = collection.AddMicrowave(new MongoDbPersistenceLayer());
+            var storeDependencies = collection.AddMicrowave();
 
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
@@ -216,7 +216,7 @@ namespace Microwave.UnitTests
         public void AddMicrowaveDependencies_DepedencyControllerIsResolved()
         {
             var collection = (IServiceCollection) new ServiceCollection();
-            var storeDependencies = collection.AddMicrowave(new MongoDbPersistenceLayer());
+            var storeDependencies = collection.AddMicrowave().AddMicrowavePersistenceLayerMongoDb();
 
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
@@ -228,16 +228,15 @@ namespace Microwave.UnitTests
         public void AddMicrowaveDependencies_ServiceNameIsCorrect()
         {
             var collection = (IServiceCollection) new ServiceCollection();
-            var storeDependencies = collection.AddMicrowave(new MicrowaveConfiguration
+            var storeDependencies = collection.AddMicrowave(config =>
             {
-                ServiceName = "TestService"
-            }, new MongoDbPersistenceLayer
+                config.AddServiceName("TestService");
+            });
+
+            collection.AddMicrowavePersistenceLayerMongoDb(p =>
             {
-                MicrowaveMongoDb = new MicrowaveMongoDb
-                {
-                    ConnectionString = "mongodb+srv://mongoDbTestUser:meinTestPw@cluster0-xhbcb.azure.mongodb.net/test?retryWrites=true&w=majority",
-                    DatabaseName = "MicrowaveIntegrationTest"
-                }
+                p.WithConnectionString("mongodb+srv://mongoDbTestUser:meinTestPw@cluster0-xhbcb.azure.mongodb.net/test?retryWrites=true&w=majority");
+                p.WithDatabaseName("MicrowaveIntegrationTest");
             });
 
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
@@ -251,21 +250,16 @@ namespace Microwave.UnitTests
         public async Task AddMicrowaveDependencies_RunStarts_DiscoveryFails()
         {
             var collection = (IServiceCollection) new ServiceCollection();
-            var storeDependencies = collection.AddMicrowave(new MicrowaveConfiguration
+            var storeDependencies = collection.AddMicrowave(config =>
             {
-                ServiceLocations = new ServiceBaseAddressCollection
-                {
-                    new Uri("http://localhost:1234")
-                }
-            }, new MongoDbPersistenceLayer
-            {
-                MicrowaveMongoDb = new MicrowaveMongoDb
-                {
-                    ConnectionString = "mongodb+srv://mongoDbTestUser:meinTestPw@cluster0-xhbcb.azure.mongodb.net/test?retryWrites=true&w=majority",
-                    DatabaseName = "MicrowaveIntegrationTest"
-                }
+                config.ServiceLocations.Add(new Uri("http://localhost:1234"));
             });
 
+            collection.AddMicrowavePersistenceLayerMongoDb(p =>
+            {
+                p.WithConnectionString("mongodb+srv://mongoDbTestUser:meinTestPw@cluster0-xhbcb.azure.mongodb.net/test?retryWrites=true&w=majority");
+                p.WithDatabaseName("MicrowaveIntegrationTest");
+            });
 
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 

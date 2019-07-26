@@ -5,21 +5,21 @@ namespace Microwave.EventStores.SnapShots
 {
     public class SnapShot<T> : ISnapShot where T : IApply
     {
-        public int Writes { get; }
+        public int AmountDomainEvents { get; }
         public Type EntityType { get; }
 
-        public SnapShot(int writes)
+        public SnapShot(int amountDomainEvents)
         {
-            Writes = writes;
+            AmountDomainEvents = amountDomainEvents;
             EntityType = typeof(T);
         }
 
         public bool DoesNeedSnapshot(long oldVersion, long currentVersion)
         {
-            if (currentVersion % Writes == 0 && currentVersion != oldVersion) return true;
-            if (currentVersion - oldVersion >= Writes) return true;
+            if (currentVersion % AmountDomainEvents == 0 && currentVersion != oldVersion) return true;
+            if (currentVersion - oldVersion >= AmountDomainEvents) return true;
             if (currentVersion == oldVersion) return false;
-            return (currentVersion - oldVersion + currentVersion) % Writes == 0;
+            return (currentVersion - oldVersion + currentVersion) % AmountDomainEvents == 0;
         }
     }
 }

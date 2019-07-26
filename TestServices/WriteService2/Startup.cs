@@ -14,13 +14,6 @@ namespace WriteService2
 {
     public class Startup
     {
-        private MicrowaveConfiguration _microwaveConfiguration = new MicrowaveConfiguration
-        {
-            ServiceName = "WriteService2",
-            ServiceLocations = ServiceConfiguration.ServiceAdresses,
-            MicrowaveHttpClientCreator = new MyMicrowaveHttpClientCreator()
-        };
-
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc(config =>
@@ -32,8 +25,17 @@ namespace WriteService2
             }).SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.AddMicrowaveUi();
 
-            services.AddMicrowave(_microwaveConfiguration, new MongoDbPersistenceLayer
-                { MicrowaveMongoDb = new MicrowaveMongoDb { DatabaseName = "TestWriteService2ReadDb" }} );
+            services.AddMicrowave(config =>
+            {
+                config.AddServiceName("WriteService2");
+                config.ServiceLocations.AddRange(ServiceConfiguration.ServiceAdresses);
+                config.AddHttpClientCreator(new MyMicrowaveHttpClientCreator());
+            });
+
+            services.AddMicrowavePersistenceLayerMongoDb(p =>
+            {
+                p.WithDatabaseName("TestWriteService2ReadDb");
+            });
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)

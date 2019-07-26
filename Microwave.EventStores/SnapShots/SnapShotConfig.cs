@@ -12,10 +12,10 @@ namespace Microwave.EventStores.SnapShots
         {
             _snapShotAfters = snapShotAfters ?? new List<ISnapShot>();
         }
-        public bool NeedSnapshot<T>(long snapShotVersion, long version) where T : IApply
+        public bool NeedSnapshot<T>(long oldVersion, long newVersion) where T : IApply
         {
             var firstFoundSnapshot = _snapShotAfters.FirstOrDefault(s => s.EntityType == typeof(T));
-            return firstFoundSnapshot?.DoesNeedSnapshot(snapShotVersion, version) ?? false;
+            return firstFoundSnapshot?.DoesNeedSnapshot(oldVersion, newVersion) ?? false;
         }
     }
 }

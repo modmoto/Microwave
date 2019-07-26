@@ -1,11 +1,17 @@
-﻿using MongoDB.Driver;
+﻿using System.Runtime.CompilerServices;
+using MongoDB.Driver;
 
+[assembly: InternalsVisibleTo("Microwave.Persistence.MongoDb.UnitTestsSetup")]
 namespace Microwave.Persistence.MongoDb
 {
     public class MicrowaveMongoDb
     {
-        public string DatabaseName { get; set; } = "MicrowaveDb";
-        public string ConnectionString { get; set; } = "mongodb://localhost:27017/";
+        internal MicrowaveMongoDb()
+        {
+        }
+
+        internal string DatabaseName = "MicrowaveDb";
+        internal string ConnectionString = "mongodb://localhost:27017/";
 
         public IMongoDatabase Database
         {
@@ -14,6 +20,16 @@ namespace Microwave.Persistence.MongoDb
                 var client = new MongoClient(ConnectionString);
                 return client.GetDatabase(DatabaseName);
             }
+        }
+
+        public void WithDatabaseName(string databaseName)
+        {
+            DatabaseName = databaseName;
+        }
+
+        public void WithConnectionString(string connectionString)
+        {
+            ConnectionString = connectionString;
         }
     }
 }
