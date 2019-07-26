@@ -23,7 +23,7 @@ using Microwave.WebApi.Querries;
 
 namespace Microwave
 {
-    public static class ServiceCollectionExtensions
+    public static class MicrowaveExtensions
     {
         public static IApplicationBuilder RunMicrowaveQueries(this IApplicationBuilder builder)
         {

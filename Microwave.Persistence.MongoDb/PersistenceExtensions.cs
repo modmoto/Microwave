@@ -30,7 +30,7 @@ namespace Microwave.Persistence.MongoDb
             services.AddSingleton<IVersionCache, VersionCache>();
             services.AddTransient<ISnapShotRepository, SnapShotRepository>();
 
-            foreach (var assembly in ServiceCollectionExtensions.GetAllAssemblies())
+            foreach (var assembly in MicrowaveExtensions.GetAllAssemblies())
             {
                 BsonMapRegistrationHelpers.AddBsonMapsForMicrowave(assembly);
             }
