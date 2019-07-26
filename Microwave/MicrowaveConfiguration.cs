@@ -22,7 +22,7 @@ namespace Microwave
             MicrowaveHttpClientCreator = clientCreator;
         }
 
-        public IList<ISnapShot> SnapShotConfigurations { get; } = new List<ISnapShot>();
+        public IList<ISnapShot> SnapShots { get; } = new List<ISnapShot>();
         public IList<IPollingInterval> PollingIntervals { get; } = new List<IPollingInterval>();
 
         public void AddServiceName(string serviceName)

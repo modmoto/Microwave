@@ -31,7 +31,7 @@ namespace WriteService1
                 config.AddServiceName("WriteService1");
                 config.ServiceLocations.AddRange(ServiceConfiguration.ServiceAdresses);
                 config.AddHttpClientCreator(new MyMicrowaveHttpClientCreator());
-                config.SnapShotConfigurations.Add(new SnapShot<EntityTest>(3));
+                config.SnapShots.Add(new SnapShot<EntityTest>(3));
             });
 
             services.AddMicrowavePersistenceLayerMongoDb(p =>
