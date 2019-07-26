@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 using Microwave;
+using Microwave.EventStores.SnapShots;
 using Microwave.Persistence.MongoDb;
 using Microwave.UI;
 using ReadService1;
@@ -30,6 +31,7 @@ namespace WriteService1
                 config.AddServiceName("WriteService1");
                 config.ServiceLocations.AddRange(ServiceConfiguration.ServiceAdresses);
                 config.AddHttpClientCreator(new MyMicrowaveHttpClientCreator());
+                config.SnapShotConfigurations.Add(new SnapShot<EntityTest>(3));
             });
 
             services.AddMicrowavePersistenceLayerMongoDb(p =>
