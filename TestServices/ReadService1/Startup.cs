@@ -25,7 +25,7 @@ namespace ReadService1
                     config.PollingIntervals.Add(new PollingInterval<ReadModel1>(25));
                     config.PollingIntervals.Add(new PollingInterval<Querry1>(5));
 
-                    config.AddHttpClientCreator(new MyMicrowaveHttpClientCreator());
+                    config.WithHttpClientFactory(new MyMicrowaveHttpClientFactory());
 
                     config.ServiceLocations.AddRange(ServiceConfiguration.ServiceAdresses);
 

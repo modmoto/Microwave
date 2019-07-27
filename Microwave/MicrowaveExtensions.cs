@@ -108,7 +108,7 @@ namespace Microwave
 
             services.AddSingleton(microwaveConfiguration);
             services.AddSingleton(microwaveConfiguration.ServiceLocations);
-            services.AddSingleton(microwaveConfiguration.MicrowaveHttpClientCreator);
+            services.AddSingleton(microwaveConfiguration.MicrowaveHttpClientFactory);
             services.AddSingleton(new DiscoveryConfiguration { ServiceName = microwaveConfiguration.ServiceName });
 
             AddEventAndReadModelSubscriptions(services, assemblies);

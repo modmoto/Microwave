@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace Microwave.WebApi
 {
-    public class DefaultMicrowaveHttpClientCreator : IMicrowaveHttpClientCreator
+    public class DefaultMicrowaveHttpClientFactory : IMicrowaveHttpClientFactory
     {
         public Task<HttpClient> CreateHttpClient(Uri serviceAddress)
         {

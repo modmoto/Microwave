@@ -29,7 +29,7 @@ namespace WriteService2
             {
                 config.WithServiceName("WriteService2");
                 config.ServiceLocations.AddRange(ServiceConfiguration.ServiceAdresses);
-                config.AddHttpClientCreator(new MyMicrowaveHttpClientCreator());
+                config.WithHttpClientFactory(new MyMicrowaveHttpClientFactory());
             });
 
             services.AddMicrowavePersistenceLayerMongoDb(p =>
