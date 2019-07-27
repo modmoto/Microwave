@@ -27,7 +27,7 @@ namespace WriteService2
 
             services.AddMicrowave(config =>
             {
-                config.AddServiceName("WriteService2");
+                config.WithServiceName("WriteService2");
                 config.ServiceLocations.AddRange(ServiceConfiguration.ServiceAdresses);
                 config.AddHttpClientCreator(new MyMicrowaveHttpClientCreator());
             });

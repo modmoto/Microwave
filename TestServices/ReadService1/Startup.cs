@@ -29,7 +29,7 @@ namespace ReadService1
 
                     config.ServiceLocations.AddRange(ServiceConfiguration.ServiceAdresses);
 
-                    config.AddServiceName("ReadService1");
+                    config.WithServiceName("ReadService1");
                 });
 
             services.AddMicrowavePersistenceLayerMongoDb(p =>
