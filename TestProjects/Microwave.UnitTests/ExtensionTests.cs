@@ -230,7 +230,7 @@ namespace Microwave.UnitTests
             var collection = (IServiceCollection) new ServiceCollection();
             var storeDependencies = collection.AddMicrowave(config =>
             {
-                config.AddServiceName("TestService");
+                config.WithServiceName("TestService");
             });
 
             collection.AddMicrowavePersistenceLayerMongoDb(p =>

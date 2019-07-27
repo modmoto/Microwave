@@ -104,7 +104,7 @@ namespace Microwave.WebApi.UnitTests
         [TestMethod]
         public async Task GetClientDefault()
         {
-            var discoveryClientFactory = new DiscoveryClientFactory(new DefaultMicrowaveHttpClientCreator());
+            var discoveryClientFactory = new DiscoveryClientFactory(new DefaultMicrowaveHttpClientFactory());
             var client = await discoveryClientFactory.GetClient(new Uri("http://123.de"));
 
             Assert.AreEqual(client.BaseAddress, new Uri("http://123.de"));

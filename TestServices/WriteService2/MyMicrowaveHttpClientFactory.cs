@@ -4,9 +4,9 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Microwave.WebApi;
 
-namespace ReadService1
+namespace WriteService2
 {
-    public class MyMicrowaveHttpClientCreator : IMicrowaveHttpClientCreator
+    public class MyMicrowaveHttpClientFactory : IMicrowaveHttpClientFactory
     {
         public Task<HttpClient> CreateHttpClient(Uri serviceAdress)
         {

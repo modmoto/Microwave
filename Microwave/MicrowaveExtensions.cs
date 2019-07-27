@@ -89,7 +89,7 @@ namespace Microwave
 
             services.AddMicrowaveMvcExtensions();
 
-            services.AddSingleton<ISnapShotConfig>(new SnapShotConfig(microwaveConfiguration.SnapShotConfigurations));
+            services.AddSingleton<ISnapShotConfig>(new SnapShotConfig(microwaveConfiguration.SnapShots));
             services.AddSingleton(microwaveConfiguration.PollingIntervals);
 
             services.AddTransient<IServiceDiscoveryRepository, DiscoveryRepository>();
@@ -108,7 +108,7 @@ namespace Microwave
 
             services.AddSingleton(microwaveConfiguration);
             services.AddSingleton(microwaveConfiguration.ServiceLocations);
-            services.AddSingleton(microwaveConfiguration.MicrowaveHttpClientCreator);
+            services.AddSingleton(microwaveConfiguration.MicrowaveHttpClientFactory);
             services.AddSingleton(new DiscoveryConfiguration { ServiceName = microwaveConfiguration.ServiceName });
 
             AddEventAndReadModelSubscriptions(services, assemblies);

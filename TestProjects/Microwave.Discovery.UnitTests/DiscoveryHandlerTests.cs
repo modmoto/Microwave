@@ -25,7 +25,7 @@ namespace Microwave.Discovery.UnitTests
         var discoveryHandler = new DiscoveryHandler(
                 new ServiceBaseAddressCollection(),
                 new EventsSubscribedByService(new List<EventSchema>(), new List<ReadModelSubscription>()),
-                new DiscoveryRepository(new DiscoveryClientFactory(new MyMicrowaveHttpClientCreator())),
+                new DiscoveryRepository(new DiscoveryClientFactory(new MyMicrowaveHttpClientFactory())),
                 statusRepository,
                 new DiscoveryConfiguration());
 
@@ -42,7 +42,7 @@ namespace Microwave.Discovery.UnitTests
             var discoveryHandler = new DiscoveryHandler(
                 new ServiceBaseAddressCollection(),
                 new EventsSubscribedByService(new List<EventSchema>(), new List<ReadModelSubscription>()),
-                new DiscoveryRepository(new DiscoveryClientFactory(new MyMicrowaveHttpClientCreator())),
+                new DiscoveryRepository(new DiscoveryClientFactory(new MyMicrowaveHttpClientFactory())),
                 statusRepository,
                 new DiscoveryConfiguration());
 
@@ -52,7 +52,7 @@ namespace Microwave.Discovery.UnitTests
         }
     }
 
-    public class MyMicrowaveHttpClientCreator : IMicrowaveHttpClientCreator
+    public class MyMicrowaveHttpClientFactory : IMicrowaveHttpClientFactory
     {
         public Task<HttpClient> CreateHttpClient(Uri serviceAdress)
         {

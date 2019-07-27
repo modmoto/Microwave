@@ -15,17 +15,17 @@ namespace Microwave
 
         public string ServiceName { get; private set; }
         public ServiceBaseAddressCollection ServiceLocations { get; } = new ServiceBaseAddressCollection();
-        public IMicrowaveHttpClientCreator MicrowaveHttpClientCreator { get; private set; } = new DefaultMicrowaveHttpClientCreator();
+        public IMicrowaveHttpClientFactory MicrowaveHttpClientFactory { get; private set; } = new DefaultMicrowaveHttpClientFactory();
 
-        public void AddHttpClientCreator(IMicrowaveHttpClientCreator clientCreator)
+        public void WithHttpClientFactory(IMicrowaveHttpClientFactory clientFactory)
         {
-            MicrowaveHttpClientCreator = clientCreator;
+            MicrowaveHttpClientFactory = clientFactory;
         }
 
-        public IList<ISnapShot> SnapShotConfigurations { get; } = new List<ISnapShot>();
+        public IList<ISnapShot> SnapShots { get; } = new List<ISnapShot>();
         public IList<IPollingInterval> PollingIntervals { get; } = new List<IPollingInterval>();
 
-        public void AddServiceName(string serviceName)
+        public void WithServiceName(string serviceName)
         {
             ServiceName = serviceName;
         }

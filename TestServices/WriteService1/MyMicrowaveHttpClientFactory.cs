@@ -6,7 +6,7 @@ using Microwave.WebApi;
 
 namespace WriteService1
 {
-    public class MyMicrowaveHttpClientCreator : IMicrowaveHttpClientCreator
+    public class MyMicrowaveHttpClientFactory : IMicrowaveHttpClientFactory
     {
         public Task<HttpClient> CreateHttpClient(Uri serviceAdress)
         {

@@ -6,16 +6,16 @@ namespace Microwave.WebApi.Discovery
 {
     public class DiscoveryClientFactory : IDiscoveryClientFactory
     {
-        private readonly IMicrowaveHttpClientCreator _clientCreator;
+        private readonly IMicrowaveHttpClientFactory _clientFactory;
 
-        public DiscoveryClientFactory(IMicrowaveHttpClientCreator clientCreator)
+        public DiscoveryClientFactory(IMicrowaveHttpClientFactory clientFactory)
         {
-            _clientCreator = clientCreator;
+            _clientFactory = clientFactory;
         }
 
         public async Task<HttpClient> GetClient(Uri serviceAddress)
         {
-            var discoveryClient = await _clientCreator.CreateHttpClient(serviceAddress);
+            var discoveryClient = await _clientFactory.CreateHttpClient(serviceAddress);
             discoveryClient.BaseAddress = serviceAddress;
             return discoveryClient;
         }
