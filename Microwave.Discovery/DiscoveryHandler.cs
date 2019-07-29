@@ -32,6 +32,7 @@ namespace Microwave.Discovery
         {
             var eventLocation = await _statusRepository.GetEventLocation();
             return new EventLocation(
+                eventLocation.AllPublishedEvents,
                 eventLocation.Services,
                 eventLocation.UnresolvedEventSubscriptions,
                 eventLocation.UnresolvedReadModeSubscriptions);

@@ -26,7 +26,9 @@ namespace Microwave.Persistence.MongoDb.Querries
         {
             var eventLocationDbo = new EventLocationDbo
             {
-                Services = eventLocation.Services.Select(s => new MicrowaveServiceNodeDto()
+                AllPublishedEvents = eventLocation.AllPublishedEvents.Select(s =>
+                    new EventsPublishedByServicDbo(s.ServiceEndPoint, s.PublishedEventTypes, s.IsReachable)),
+                Services = eventLocation.Services.Select(s => new MicrowaveServiceNodeDto
                 {
                     ConnectedServices = s.ConnectedServices,
                     IsReachable = s.IsReachable,
@@ -59,9 +61,16 @@ namespace Microwave.Persistence.MongoDb.Querries
             if (_cache.HasValue) return _cache.GetValue();
             var mongoCollection = _database.GetCollection<EventLocationDbo>(StatusDbName);
             var location = await mongoCollection.FindSync(e => e.Id == nameof(EventLocation)).SingleOrDefaultAsync();
-            return location == null ? EventLocation.Default() : new EventLocation(location.Services.Select(s =>
-                MicrowaveServiceNode.Create(s.ServiceEndPoint, s.SubscribedEvents, s.ReadModels)), location
-            .UnresolvedEventSubscriptions, location.UnresolvedReadModeSubscriptions);
+            return location == null
+                ? EventLocation.Default()
+                : new EventLocation(
+                    location.AllPublishedEvents.Select(s => s.IsReachable
+                        ? EventsPublishedByService.Reachable(s.ServiceEndPoint, s.PublishedEventTypes)
+                        : EventsPublishedByService.NotReachable(s.ServiceEndPoint)),
+                    location.Services.Select(s =>
+                        MicrowaveServiceNode.Create(s.ServiceEndPoint, s.SubscribedEvents, s.ReadModels)),
+                    location.UnresolvedEventSubscriptions,
+                    location.UnresolvedReadModeSubscriptions);
         }
 
         public async Task<ServiceMap> GetServiceMap()
@@ -102,6 +111,24 @@ namespace Microwave.Persistence.MongoDb.Querries
         public IEnumerable<EventSchema> UnresolvedEventSubscriptions { get; set; }
         public IEnumerable<ReadModelSubscription> UnresolvedReadModeSubscriptions { get; set; }
         public string Id => nameof(EventLocation);
+        public IEnumerable<EventsPublishedByServicDbo> AllPublishedEvents { get; set; }
+    }
+
+    public class EventsPublishedByServicDbo
+    {
+        public EventsPublishedByServicDbo(
+            ServiceEndPoint serviceEndPoint,
+            IEnumerable<EventSchema> publishedEventTypes,
+            bool isReachable)
+        {
+            ServiceEndPoint = serviceEndPoint;
+            PublishedEventTypes = publishedEventTypes;
+            IsReachable = isReachable;
+        }
+
+        public ServiceEndPoint ServiceEndPoint { get; }
+        public IEnumerable<EventSchema> PublishedEventTypes { get; }
+        public bool IsReachable { get; }
     }
 
     public class ServiceMapDbo : IIdentifiable

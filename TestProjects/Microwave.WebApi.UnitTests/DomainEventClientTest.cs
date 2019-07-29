@@ -50,7 +50,9 @@ namespace Microwave.WebApi.UnitTests
 
     internal class EventLocationFake : EventLocation
     {
-        public EventLocationFake() : base(new List<MicrowaveServiceNode>
+        public EventLocationFake() : base(
+            new List<EventsPublishedByService>(),
+            new List<MicrowaveServiceNode>
         {
             MicrowaveServiceNode.Create(new ServiceEndPoint(new Uri("http://luls.de/")),
                 new List<EventSchema>

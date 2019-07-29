@@ -7,19 +7,23 @@ namespace Microwave.Discovery.EventLocations
 {
     public class EventLocation
     {
-        public IEnumerable<MicrowaveServiceNode> Services { get; private set; }
-            = new List<MicrowaveServiceNode>();
+        public IEnumerable<EventsPublishedByService> AllPublishedEvents { get; }
+        public IEnumerable<MicrowaveServiceNode> Services { get; private set; } = new List<MicrowaveServiceNode>();
         public IEnumerable<EventSchema> UnresolvedEventSubscriptions { get; }
         public IEnumerable<ReadModelSubscription> UnresolvedReadModeSubscriptions { get; }
 
-        public EventLocation(IEnumerable<EventsPublishedByService> allServices, EventsSubscribedByService eventsSubscribedByService)
+        public EventLocation(
+            IEnumerable<EventsPublishedByService> allPublishedEvents,
+            EventsSubscribedByService eventsSubscribedByService)
         {
+            var eventsPublishedByServices = allPublishedEvents.ToList();
+            AllPublishedEvents = eventsPublishedByServices;
             var readModels = eventsSubscribedByService.ReadModelSubcriptions.ToList();
             var handleAsyncEvents = eventsSubscribedByService.Events.ToList();
             UnresolvedEventSubscriptions = handleAsyncEvents;
             UnresolvedReadModeSubscriptions = readModels;
 
-            foreach (var service in allServices)
+            foreach (var service in eventsPublishedByServices)
             {
                 var relevantEventsOfService = handleAsyncEvents.Where(ev => service.PublishedEventTypes.Contains(ev)).ToList();
                 var relevantEvents = relevantEventsOfService.Select(relevantEvent =>
@@ -64,14 +68,20 @@ namespace Microwave.Discovery.EventLocations
 
         public static EventLocation Default()
         {
-            return new EventLocation(new List<MicrowaveServiceNode>(), new List<EventSchema>(), new List<ReadModelSubscription>());
+            return new EventLocation(
+                new List<EventsPublishedByService>(),
+                new List<MicrowaveServiceNode>(),
+                new List<EventSchema>(),
+                new List<ReadModelSubscription>());
         }
 
         public EventLocation(
+            IEnumerable<EventsPublishedByService> allPublishedEvents,
             IEnumerable<MicrowaveServiceNode> services,
             IEnumerable<EventSchema> unresolvedEventSubscriptions,
             IEnumerable<ReadModelSubscription> unresolvedReadModeSubscriptions)
         {
+            AllPublishedEvents = allPublishedEvents;
             Services = services;
             UnresolvedEventSubscriptions = unresolvedEventSubscriptions;
             UnresolvedReadModeSubscriptions = unresolvedReadModeSubscriptions;
