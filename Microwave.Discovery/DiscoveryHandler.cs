@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microwave.Discovery.EventLocations;
 using Microwave.Discovery.ServiceMaps;
-using Microwave.WebApi.Discovery;
 
 namespace Microwave.Discovery
 {
@@ -80,12 +79,9 @@ namespace Microwave.Discovery
                 eventLocation.Services.Select(s => s.ServiceEndPoint));
         }
 
-        public Task<PublishedEventsByServiceDto> GetPublishedEvents()
+        public Task<EventsPublishedByService> GetPublishedEvents()
         {
-            var dto = new PublishedEventsByServiceDto();
-            dto.PublishedEvents.AddRange(_eventsPublishedByService.PublishedEventTypes);
-            dto.ServiceName = _eventsPublishedByService.ServiceEndPoint.Name;
-            return Task.FromResult(dto);
+            return Task.FromResult(_eventsPublishedByService);
         }
     }
 }

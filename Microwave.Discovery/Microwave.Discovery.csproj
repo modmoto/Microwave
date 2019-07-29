@@ -6,17 +6,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Microwave.Domain\Microwave.Domain.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
       <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Reference Include="Microwave.WebApi, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-        <HintPath>..\TestProjects\Microwave.UnitTests\bin\Debug\netcoreapp2.2\Microwave.WebApi.dll</HintPath>
-      </Reference>
     </ItemGroup>
 
 </Project>

@@ -18,7 +18,10 @@ namespace Microwave.WebApi.Discovery
         public async Task<ActionResult> GetPublishedEvents()
         {
             var publishedEvents = await _discoveryHandler.GetPublishedEvents();
-            return Ok(publishedEvents);
+            var dto = new PublishedEventsByServiceDto();
+            dto.PublishedEvents.AddRange(publishedEvents.PublishedEventTypes);
+            dto.ServiceName = publishedEvents.ServiceEndPoint.Name;
+            return Ok(dto);
         }
 
         [HttpGet("ConsumingServices")]

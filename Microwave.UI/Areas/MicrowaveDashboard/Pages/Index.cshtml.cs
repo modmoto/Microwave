@@ -28,7 +28,10 @@ namespace Microwave.UI.Areas.MicrowaveDashboard.Pages
             var consumingServices = await _discoveryHandler.GetConsumingServices();
             var publishedEvents = await _discoveryHandler.GetPublishedEvents();
             ConsumingServices = consumingServices;
-            PublishedEvents = publishedEvents;
+            var dto = new PublishedEventsByServiceDto();
+            dto.PublishedEvents.AddRange(publishedEvents.PublishedEventTypes);
+            dto.ServiceName = publishedEvents.ServiceEndPoint.Name;
+            PublishedEvents = dto;
         }
 
         public async Task<IActionResult> OnPostAsync()
