@@ -5,6 +5,7 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Discovery.EventLocations;
+using Microwave.Discovery.ServiceMaps;
 using Microwave.Persistence.MongoDb.Querries;
 using Microwave.Persistence.MongoDb.UnitTestsSetup;
 using Microwave.WebApi;
@@ -25,6 +26,7 @@ namespace Microwave.Discovery.UnitTests
         var discoveryHandler = new DiscoveryHandler(
                 new ServiceBaseAddressCollection(),
                 new EventsSubscribedByService(new List<EventSchema>(), new List<ReadModelSubscription>()),
+                null,
                 new DiscoveryRepository(new DiscoveryClientFactory(new MyMicrowaveHttpClientFactory())),
                 statusRepository,
                 new DiscoveryConfiguration());
@@ -42,6 +44,7 @@ namespace Microwave.Discovery.UnitTests
             var discoveryHandler = new DiscoveryHandler(
                 new ServiceBaseAddressCollection(),
                 new EventsSubscribedByService(new List<EventSchema>(), new List<ReadModelSubscription>()),
+                null,
                 new DiscoveryRepository(new DiscoveryClientFactory(new MyMicrowaveHttpClientFactory())),
                 statusRepository,
                 new DiscoveryConfiguration());
@@ -49,6 +52,24 @@ namespace Microwave.Discovery.UnitTests
             var consumingServices = await discoveryHandler.GetConsumingServices();
 
             Assert.IsNotNull(consumingServices);
+        }
+
+        [TestMethod]
+        public async Task GetPublishedEvents()
+        {
+            var discoveryHandler = new DiscoveryHandler(
+                null,
+                null,
+                EventsPublishedByService.Reachable(
+                    new ServiceEndPoint(new Uri("http://123.de")),
+                    new List<EventSchema>()),
+                null,
+                null,
+                null);
+
+            var events = await discoveryHandler.GetPublishedEvents();
+
+            Assert.IsNotNull(events);
         }
     }
 
