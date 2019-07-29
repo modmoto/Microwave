@@ -2,7 +2,7 @@ using System;
 
 namespace Microwave.Queries.Ports
 {
-    public class SubscribedDomainEventWrapper
+    internal class SubscribedDomainEventWrapper
     {
         public string DomainEventType => DomainEvent.GetType().Name;
         public DateTimeOffset Created { get; set; }

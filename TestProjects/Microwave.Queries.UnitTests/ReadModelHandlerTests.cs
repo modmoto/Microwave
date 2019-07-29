@@ -134,7 +134,7 @@ namespace Microwave.Queries.UnitTests
         public static GuidIdentity EntityGuid { get; set; }
         public static GuidIdentity EntityGuid2 { get; set; }
 
-        public static Task<IEnumerable<SubscribedDomainEventWrapper>> MakeEvents()
+        internal static Task<IEnumerable<SubscribedDomainEventWrapper>> MakeEvents()
         {
             var wrapper1 = new SubscribedDomainEventWrapper
             {
@@ -197,7 +197,7 @@ namespace Microwave.Queries.UnitTests
         public override Type GetsCreatedOn => typeof(TestEvnt2);
     }
 
-    public class FeedMock2 : IEventFeed<ReadModelEventHandler<TestReadModelQuerries>>
+    internal class FeedMock2 : IEventFeed<ReadModelEventHandler<TestReadModelQuerries>>
     {
         public Task<IEnumerable<SubscribedDomainEventWrapper>> GetEventsAsync(DateTimeOffset since = default(DateTimeOffset))
         {
@@ -216,7 +216,7 @@ namespace Microwave.Queries.UnitTests
         }
     }
 
-    public class FeedMock5 : IEventFeed<ReadModelEventHandler<TestReadModelQuerries_OnlyOneEventAndVersionIsCounted>>
+    internal class FeedMock5 : IEventFeed<ReadModelEventHandler<TestReadModelQuerries_OnlyOneEventAndVersionIsCounted>>
     {
         public Task<IEnumerable<SubscribedDomainEventWrapper>> GetEventsAsync(DateTimeOffset since = default(DateTimeOffset))
         {
@@ -235,7 +235,7 @@ namespace Microwave.Queries.UnitTests
         }
     }
 
-    public class FeedMockVersioned : IEventFeed<ReadModelEventHandler<TestReadModelQuerries_VerionedHandle>>
+    internal class FeedMockVersioned : IEventFeed<ReadModelEventHandler<TestReadModelQuerries_VerionedHandle>>
     {
         public Task<IEnumerable<SubscribedDomainEventWrapper>> GetEventsAsync(DateTimeOffset since = default(DateTimeOffset))
         {
@@ -254,7 +254,7 @@ namespace Microwave.Queries.UnitTests
         }
     }
 
-    public class FeedMock6 : IEventFeed<ReadModelEventHandler<TestReadModelQuerries_TwoParallelFeeds1>>
+    internal class FeedMock6 : IEventFeed<ReadModelEventHandler<TestReadModelQuerries_TwoParallelFeeds1>>
     {
         public Task<IEnumerable<SubscribedDomainEventWrapper>> GetEventsAsync(DateTimeOffset since = default(DateTimeOffset))
         {
@@ -262,7 +262,7 @@ namespace Microwave.Queries.UnitTests
         }
     }
 
-    public class TestReadModelQuerries_TwoParallelFeeds1 : ReadModel, IHandle<TestEvnt1>
+    internal class TestReadModelQuerries_TwoParallelFeeds1 : ReadModel, IHandle<TestEvnt1>
     {
         public void Handle(TestEvnt1 domainEvent)
         {
@@ -273,7 +273,7 @@ namespace Microwave.Queries.UnitTests
         public override Type GetsCreatedOn => typeof(TestEvnt1);
     }
 
-    public class FeedMock7 : IEventFeed<ReadModelEventHandler<TestReadModelQuerries_TwoParallelFeeds2>>
+    internal class FeedMock7 : IEventFeed<ReadModelEventHandler<TestReadModelQuerries_TwoParallelFeeds2>>
     {
         public Task<IEnumerable<SubscribedDomainEventWrapper>> GetEventsAsync(DateTimeOffset since = default(DateTimeOffset))
         {
@@ -292,7 +292,7 @@ namespace Microwave.Queries.UnitTests
         public override Type GetsCreatedOn => typeof(TestEvnt2);
     }
 
-    public class FeedMock3 : IEventFeed<ReadModelEventHandler<TestReadModelQuerries>>
+    internal class FeedMock3 : IEventFeed<ReadModelEventHandler<TestReadModelQuerries>>
     {
         public Task<IEnumerable<SubscribedDomainEventWrapper>> GetEventsAsync(DateTimeOffset since = default(DateTimeOffset))
         {
@@ -311,7 +311,7 @@ namespace Microwave.Queries.UnitTests
         }
     }
 
-    public class FeedMock4 : IEventFeed<ReadModelEventHandler<TestReadModelQuerries>>
+    internal class FeedMock4 : IEventFeed<ReadModelEventHandler<TestReadModelQuerries>>
     {
         public Task<IEnumerable<SubscribedDomainEventWrapper>> GetEventsAsync(DateTimeOffset since = default(DateTimeOffset))
         {
@@ -330,7 +330,7 @@ namespace Microwave.Queries.UnitTests
         }
     }
 
-    public class FeedMock1 : IEventFeed<ReadModelEventHandler<TestReadModelQuerries>>
+    internal class FeedMock1 : IEventFeed<ReadModelEventHandler<TestReadModelQuerries>>
     {
         public Task<IEnumerable<SubscribedDomainEventWrapper>> GetEventsAsync(DateTimeOffset since = default(DateTimeOffset))
         {

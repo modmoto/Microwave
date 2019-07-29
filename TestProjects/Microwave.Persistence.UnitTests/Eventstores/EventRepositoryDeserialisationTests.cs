@@ -15,7 +15,7 @@ namespace Microwave.Persistence.UnitTests.Eventstores
         // This is not supported and might never be
         [DataTestMethod]
         [PersistenceTypeTest]
-        public async Task TestDeserializationOfIdInInterface_OwnBackingField(IPersistenceLayerProvider layerProvider)
+        public async Task TestDeserializationOfIdInInterface_OwnBackingField(PersistenceLayerProvider layerProvider)
         {
             var entityStreamRepository = layerProvider.EventRepository;
             var domainEvent = new TestEv_CustomBackingField(GuidIdentity.Create(Guid.NewGuid()));
@@ -27,7 +27,7 @@ namespace Microwave.Persistence.UnitTests.Eventstores
 
         [DataTestMethod]
         [PersistenceTypeTest]
-        public async Task TestDeserializationOfIdInInterface_GetAutoProperty(IPersistenceLayerProvider layerProvider)
+        public async Task TestDeserializationOfIdInInterface_GetAutoProperty(PersistenceLayerProvider layerProvider)
         {
             var entityStreamRepository = layerProvider.EventRepository;
 
@@ -40,7 +40,7 @@ namespace Microwave.Persistence.UnitTests.Eventstores
 
         [DataTestMethod]
         [PersistenceTypeTest]
-        public async Task TestDeserializationOfIdInInterface(IPersistenceLayerProvider layerProvider)
+        public async Task TestDeserializationOfIdInInterface(PersistenceLayerProvider layerProvider)
         {
             var entityStreamRepository = layerProvider.EventRepository;
 

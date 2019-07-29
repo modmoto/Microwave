@@ -41,7 +41,7 @@ namespace Microwave.Queries.UnitTests
         }
     }
 
-    public class EventFeedMock : IEventFeed<AsyncEventHandler<TestEv2>>
+    internal class EventFeedMock : IEventFeed<AsyncEventHandler<TestEv2>>
     {
         private readonly DateTimeOffset _dateTimeOffset;
         private readonly SubscribedDomainEventWrapper _domainEventWrapper;
@@ -53,8 +53,9 @@ namespace Microwave.Queries.UnitTests
         }
 
         #pragma warning disable 1998
-        public async Task<IEnumerable<SubscribedDomainEventWrapper>> GetEventsAsync(DateTimeOffset since = default(DateTimeOffset))
+        public async Task<IEnumerable<SubscribedDomainEventWrapper>> GetEventsAsync(DateTimeOffset since = default
         #pragma warning restore 1998
+            (DateTimeOffset))
         {
             if (since < _dateTimeOffset)
                 return new List<SubscribedDomainEventWrapper> {_domainEventWrapper};

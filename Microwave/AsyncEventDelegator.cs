@@ -9,7 +9,7 @@ using Microwave.WebApi.Queries;
 
 namespace Microwave
 {
-    public class AsyncEventDelegator
+    internal class AsyncEventDelegator
     {
         private readonly IEnumerable<IAsyncEventHandler> _asyncEventHandlers;
         private readonly IEnumerable<IQueryEventHandler> _queryHandlers;

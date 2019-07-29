@@ -11,7 +11,7 @@ namespace Microwave.Persistence.UnitTests.Querries
     {
         [DataTestMethod]
         [PersistenceTypeTest]
-        public async Task VersionRepo_DuplicateUpdate(IPersistenceLayerProvider layerProvider)
+        public async Task VersionRepo_DuplicateUpdate(PersistenceLayerProvider layerProvider)
         {
             var versionRepository = layerProvider.VersionRepository;
 

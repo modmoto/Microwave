@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using Microwave.Discovery;
 using Microwave.Discovery.EventLocations;
 using Microwave.EventStores.Ports;
@@ -7,9 +8,10 @@ using Microwave.Persistence.UnitTestSetupPorts;
 using Microwave.Queries;
 using Microwave.Queries.Ports;
 
+[assembly: InternalsVisibleTo("Microwave.Persistence.UnitTests")]
 namespace Microwave.Persistence.MongoDb.UnitTestsSetup
 {
-    public class MongoDbTestSetup : IPersistenceLayerProvider
+    internal class MongoDbTestSetup : PersistenceLayerProvider
     {
         public MongoDbTestSetup()
         {
@@ -20,11 +22,12 @@ namespace Microwave.Persistence.MongoDb.UnitTestsSetup
         }
 
         public MicrowaveMongoDb EventMongoDb { get; }
-        public IVersionRepository VersionRepository => new VersionRepository(EventMongoDb);
-        public IStatusRepository StatusRepository => new StatusRepository(EventMongoDb, new CacheThatNeverHasAnything());
-        public IReadModelRepository ReadModelRepository => new ReadModelRepository(EventMongoDb);
-        public ISnapShotRepository SnapShotRepository => new SnapShotRepository(EventMongoDb);
-        public IEventRepository EventRepository => new EventRepository(EventMongoDb, new VersionCache(EventMongoDb));
+        internal override IVersionRepository VersionRepository => new VersionRepository(EventMongoDb);
+        internal override IStatusRepository StatusRepository => new StatusRepository(EventMongoDb, new CacheThatNeverHasAnything());
+        internal override IReadModelRepository ReadModelRepository => new ReadModelRepository(EventMongoDb);
+        internal override ISnapShotRepository SnapShotRepository => new SnapShotRepository(EventMongoDb);
+        internal override IEventRepository EventRepository => new EventRepository(EventMongoDb, new VersionCache
+        (EventMongoDb));
     }
 
     public class CacheThatNeverHasAnything : IEventLocationCache
