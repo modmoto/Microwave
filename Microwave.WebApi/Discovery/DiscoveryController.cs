@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microwave.Discovery;
 
@@ -15,9 +16,10 @@ namespace Microwave.WebApi.Discovery
         }
 
         [HttpGet("PublishedEvents")]
-        public ActionResult GetPublishedEvents()
+        public async Task<ActionResult> GetPublishedEvents()
         {
-            return Ok(_discoveryHandler.GetPublishedEvents());
+            var publishedEvents = await _discoveryHandler.GetPublishedEvents();
+            return Ok(publishedEvents);
         }
 
         [HttpGet("ConsumingServices")]

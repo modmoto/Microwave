@@ -1,7 +1,10 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using Microwave.Discovery;
 using Microwave.Discovery.EventLocations;
+using Microwave.WebApi.Discovery;
 
 namespace Microwave.UI.Areas.MicrowaveDashboard.Pages
 {
@@ -9,7 +12,7 @@ namespace Microwave.UI.Areas.MicrowaveDashboard.Pages
     {
         private readonly IDiscoveryHandler _discoveryHandler;
         public EventLocation ConsumingServices { get; set; }
-        public EventsPublishedByService PublishedEvents { get; set; }
+        public PublishedEventsByServiceDto PublishedEvents { get; set; }
 
         public bool HasMissingEvents => ConsumingServices.UnresolvedEventSubscriptions.Any()
                                         || ConsumingServices.UnresolvedReadModeSubscriptions.Any();
@@ -29,10 +32,10 @@ namespace Microwave.UI.Areas.MicrowaveDashboard.Pages
             PublishedEvents = publishedEvents;
         }
 
-        public async Task OnPostAsync()
+        public async Task<IActionResult> OnPostAsync()
         {
             await _discoveryHandler.DiscoverConsumingServices();
-            Redirect("/MicrowaveDashboard");
+            return Redirect("/MicrowaveDashboard");
         }
     }
 }

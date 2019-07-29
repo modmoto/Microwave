@@ -61,7 +61,7 @@ namespace Microwave.Discovery.UnitTests
                 null,
                 null,
                 EventsPublishedByService.Reachable(
-                    new ServiceEndPoint(new Uri("http://123.de")),
+                    new ServiceEndPoint(null),
                     new List<EventSchema>()),
                 null,
                 null,

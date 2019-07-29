@@ -1,6 +1,8 @@
+using System;
 using System.Threading.Tasks;
 using Microwave.Discovery.EventLocations;
 using Microwave.Discovery.ServiceMaps;
+using Microwave.WebApi.Discovery;
 
 namespace Microwave.Discovery
 {
@@ -11,6 +13,6 @@ namespace Microwave.Discovery
         Task DiscoverConsumingServices();
         Task DiscoverServiceMap();
         Task<MicrowaveServiceNode> GetConsumingServiceNodes();
-        Task<EventsPublishedByService> GetPublishedEvents();
+        Task<PublishedEventsByServiceDto> GetPublishedEvents();
     }
 }

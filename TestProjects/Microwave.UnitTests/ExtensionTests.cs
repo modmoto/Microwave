@@ -163,8 +163,8 @@ namespace Microwave.UnitTests
 
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
-            var publishingEventRegistration = buildServiceProvider.GetServices<PublishedEventsByServiceDto>().Single()
-            .PublishedEvents.OrderByDescending(e => e.Name).ToList();
+            var publishingEventRegistration = buildServiceProvider.GetServices<EventsPublishedByService>().Single()
+            .PublishedEventTypes.OrderByDescending(e => e.Name).ToList();
             Assert.AreEqual(nameof(TestEntityThatShouldNotGoIntoReadModelRegistrationEvent), publishingEventRegistration[0].Name);
             Assert.AreEqual(nameof(TestDomainEvent_PublishedEvent2), publishingEventRegistration[1].Name);
             Assert.AreEqual(nameof(TestDomainEvent_PublishedEvent1), publishingEventRegistration[2].Name);
@@ -241,9 +241,9 @@ namespace Microwave.UnitTests
 
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
-            var services = buildServiceProvider.GetServices<PublishedEventsByServiceDto>().Single();
+            var services = buildServiceProvider.GetServices<EventsPublishedByService>().Single();
             
-            Assert.AreEqual("TestService", services.ServiceName);
+            Assert.AreEqual("TestService", services.ServiceEndPoint.Name);
         }
 
         [TestMethod]
