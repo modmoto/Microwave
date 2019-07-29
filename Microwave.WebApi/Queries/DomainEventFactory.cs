@@ -6,14 +6,14 @@ using Microwave.WebApi.ApiFormatting.Identities;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace Microwave.WebApi.Querries
+namespace Microwave.WebApi.Queries
 {
-    public interface IDomainEventFactory
+    internal interface IDomainEventFactory
     {
         IEnumerable<SubscribedDomainEventWrapper> Deserialize(string serializeObject);
     }
 
-    public class DomainEventFactory : IDomainEventFactory
+    internal class DomainEventFactory : IDomainEventFactory
     {
         private readonly Dictionary<string, Type> _eventTypeRegistration;
 

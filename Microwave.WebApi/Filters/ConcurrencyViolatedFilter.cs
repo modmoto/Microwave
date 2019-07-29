@@ -5,7 +5,7 @@ using Microwave.Domain.Exceptions;
 
 namespace Microwave.WebApi.Filters
 {
-    public class ConcurrencyViolatedFilter : IExceptionFilter
+    internal class ConcurrencyViolatedFilter : IExceptionFilter
     {
         public void OnException(ExceptionContext context)
         {

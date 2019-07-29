@@ -1,18 +1,22 @@
 using System;
 using System.Linq;
 using System.Net.Http;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Microwave.Discovery;
 using Microwave.Queries.Handler;
 
-namespace Microwave.WebApi.Querries
+[assembly: InternalsVisibleTo("Microwave")]
+[assembly: InternalsVisibleTo("Microwave.UnitTests")]
+[assembly: InternalsVisibleTo("Microwave.Queries.UnitTests")]
+namespace Microwave.WebApi.Queries
 {
-    public interface IDomainEventClientFactory
+    internal interface IDomainEventClientFactory
     {
         Task<HttpClient> GetClient<T>();
     }
 
-    public class DomainEventClientFactory : IDomainEventClientFactory
+    internal class DomainEventClientFactory : IDomainEventClientFactory
     {
         private readonly IStatusRepository _statusRepository;
         private readonly IMicrowaveHttpClientFactory _httpClientFactory;

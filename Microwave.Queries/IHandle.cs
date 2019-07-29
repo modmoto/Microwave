@@ -4,9 +4,4 @@
     {
         void Handle(T domainEvent);
     }
-
-    public interface IHandleVersioned<in T> : ISubscribedDomainEvent
-    {
-        void Handle(T domainEvent, long version);
-    }
 }

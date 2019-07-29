@@ -5,7 +5,7 @@ using Microwave.Domain.Exceptions;
 
 namespace Microwave.WebApi.Filters
 {
-    public class NotFoundFilter : IExceptionFilter
+    internal class NotFoundFilter : IExceptionFilter
     {
      
         public void OnException(ExceptionContext context)

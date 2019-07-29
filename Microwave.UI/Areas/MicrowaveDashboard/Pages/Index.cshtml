@@ -36,10 +36,10 @@
     </div>
     <div class="ml-3 mb-4">
             <h5 class="card-title">Events Published By Service:</h5>
-            @if (Model.PublishedEvents.PublishedEvents.Any())
+            @if (Model.PublishedEvents.PublishedEventTypes.Any())
             {
                 <ul class="list-group list-group-flush">
-                    @foreach (var subscribedEvent in Model.PublishedEvents.PublishedEvents)
+                    @foreach (var subscribedEvent in Model.PublishedEvents.PublishedEventTypes)
                     {
                         <div class="btn-group dropright">
                             <button type="button"

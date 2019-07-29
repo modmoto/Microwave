@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
@@ -20,8 +21,9 @@ using Microwave.WebApi.ApiFormatting.DateTimeOffsets;
 using Microwave.WebApi.ApiFormatting.Identities;
 using Microwave.WebApi.Discovery;
 using Microwave.WebApi.Filters;
-using Microwave.WebApi.Querries;
+using Microwave.WebApi.Queries;
 
+[assembly: InternalsVisibleTo("Microwave.UnitTests")]
 namespace Microwave
 {
     public static class MicrowaveExtensions
@@ -233,8 +235,10 @@ namespace Microwave
             return subscriptions;
         }
 
-        public static IServiceCollection AddDomainEventRegistration(this IServiceCollection services,
-            Assembly assembly, EventRegistration eventRegistration)
+        internal static IServiceCollection AddDomainEventRegistration(
+            this IServiceCollection services,
+            Assembly assembly,
+            EventRegistration eventRegistration)
         {
             var remoteEvents =
                 assembly.GetTypes().Where(t => t.GetInterfaces().Contains(typeof(ISubscribedDomainEvent)));

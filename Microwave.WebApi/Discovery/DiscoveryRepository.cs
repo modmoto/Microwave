@@ -2,15 +2,19 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Microwave.Discovery;
 using Microwave.Discovery.EventLocations;
 using Microwave.Discovery.ServiceMaps;
 using Newtonsoft.Json;
 
+
+[assembly: InternalsVisibleTo("Microwave")]
+[assembly: InternalsVisibleTo("Microwave.Discovery.UnitTests")]
 namespace Microwave.WebApi.Discovery
 {
-    public class DiscoveryRepository : IServiceDiscoveryRepository
+    internal class DiscoveryRepository : IServiceDiscoveryRepository
     {
         private readonly IDiscoveryClientFactory _factory;
 

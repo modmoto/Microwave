@@ -14,7 +14,7 @@ using Microwave.Queries.Handler;
 using Microwave.Queries.Ports;
 using Microwave.UnitTests.PublishedEventsDll;
 using Microwave.WebApi.Discovery;
-using Microwave.WebApi.Querries;
+using Microwave.WebApi.Queries;
 using MongoDB.Bson.Serialization;
 
 namespace Microwave.UnitTests
