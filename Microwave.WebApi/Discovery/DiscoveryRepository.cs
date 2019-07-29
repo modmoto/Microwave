@@ -18,7 +18,6 @@ namespace Microwave.WebApi.Discovery
         {
             _factory = factory;
         }
-        
         public async Task<EventsPublishedByService> GetPublishedEventTypes(Uri serviceAdress)
         {
             var client = await _factory.GetClient(serviceAdress);

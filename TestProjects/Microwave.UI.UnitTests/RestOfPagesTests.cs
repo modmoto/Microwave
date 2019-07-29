@@ -21,7 +21,6 @@ namespace Microwave.UI.UnitTests
         {
             var mock = new Mock<IDiscoveryHandler>();
             mock.Setup(m => m.GetConsumingServices()).ReturnsAsync(new EventLocation(
-                new List<EventsPublishedByService>(),
                 new List<MicrowaveServiceNode>(),
                 new List<EventSchema>(),
                 new List<ReadModelSubscription>()));
@@ -37,7 +36,6 @@ namespace Microwave.UI.UnitTests
         {
             var mock = new Mock<IDiscoveryHandler>();
             mock.Setup(m => m.GetConsumingServices()).ReturnsAsync(new EventLocation(
-                new List<EventsPublishedByService>(),
                 new List<MicrowaveServiceNode>(),
                 new List<EventSchema>(),
                 new List<ReadModelSubscription>()));

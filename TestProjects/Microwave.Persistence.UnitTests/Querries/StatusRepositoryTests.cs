@@ -19,17 +19,12 @@ namespace Microwave.Persistence.UnitTests.Querries
             var statusRepository = layerProvider.StatusRepository;
 
             List<EventsPublishedByService> services = new List<EventsPublishedByService> {
-                EventsPublishedByService.Reachable(new ServiceEndPoint(
-                    new Uri("http://service1.de"), "Name1"),
-                    new List<EventSchema>
-                    {
-                        new EventSchema("Event1"),
-                        new EventSchema("Event2"),
-                        new EventSchema("Event3")
-                    }),
-                EventsPublishedByService.Reachable(
-                    new ServiceEndPoint(new Uri("http://service2.de"), "Name2"),
-                    new List<EventSchema>())
+                EventsPublishedByService.Reachable(new ServiceEndPoint(new Uri("http://service1.de"), "Name1"), new []
+                {
+                    new EventSchema("Event1"),
+                    new EventSchema("Event2"),
+                    new EventSchema("Event3")
+                })
             };
             var subscribedEventCollection = new EventsSubscribedByService(
                 new []
@@ -50,8 +45,6 @@ namespace Microwave.Persistence.UnitTests.Querries
             Assert.AreEqual(1, microwaveServiceNodes[0].ReadModels.Count());
             Assert.IsTrue(!location.UnresolvedEventSubscriptions.Any());
             Assert.IsTrue(!location.UnresolvedReadModeSubscriptions.Any());
-            Assert.AreEqual(2, location.AllPublishedEvents.Count());
-            Assert.AreEqual("Name2", location.AllPublishedEvents.Last().ServiceEndPoint.Name);
         }
 
         [DataTestMethod]
