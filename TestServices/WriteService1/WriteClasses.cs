@@ -36,4 +36,16 @@ namespace WriteService1
         public Identity EntityId { get; }
         public string Name { get; }
     }
+
+    public class EventMitSuperLangemNamen : IDomainEvent
+    {
+        public EventMitSuperLangemNamen(Identity entityId, string name)
+        {
+            EntityId = entityId;
+            Name = name;
+        }
+
+        public Identity EntityId { get; }
+        public string Name { get; }
+    }
 }

@@ -3,14 +3,15 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microwave.Discovery;
 using Microwave.Discovery.EventLocations;
+using Microwave.WebApi.Discovery;
 
 namespace Microwave.UI.Areas.MicrowaveDashboard.Pages
 {
     public class IndexModel : MicrowavePageModel
     {
         private readonly IDiscoveryHandler _discoveryHandler;
-
         public EventLocation ConsumingServices { get; set; }
+        public PublishedEventsByServiceDto PublishedEvents { get; set; }
 
         public bool HasMissingEvents => ConsumingServices.UnresolvedEventSubscriptions.Any()
                                         || ConsumingServices.UnresolvedReadModeSubscriptions.Any();
@@ -25,7 +26,12 @@ namespace Microwave.UI.Areas.MicrowaveDashboard.Pages
         public async Task OnGetAsync()
         {
             var consumingServices = await _discoveryHandler.GetConsumingServices();
+            var publishedEvents = await _discoveryHandler.GetPublishedEvents();
             ConsumingServices = consumingServices;
+            var dto = new PublishedEventsByServiceDto();
+            dto.PublishedEvents.AddRange(publishedEvents.PublishedEventTypes);
+            dto.ServiceName = publishedEvents.ServiceEndPoint.Name;
+            PublishedEvents = dto;
         }
 
         public async Task<IActionResult> OnPostAsync()

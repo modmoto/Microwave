@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microwave.Discovery;
 using Microwave.Discovery.EventLocations;
+using Microwave.Discovery.ServiceMaps;
 using Microwave.Domain.EventSourcing;
 using Microwave.EventStores;
 using Microwave.EventStores.SnapShots;
@@ -152,13 +153,17 @@ namespace Microwave
         private static void AddPublishedEventCollection(IServiceCollection services,
             IEnumerable<Assembly> domainEventAssemblies, MicrowaveConfiguration microwaveConfiguration)
         {
-            var publishedEventCollection = new PublishedEventsByServiceDto { ServiceName = microwaveConfiguration.ServiceName };
+            var publishedEvents = new List<EventSchema>();
             foreach (var assembly in domainEventAssemblies)
             {
                 var eventsForPublish = GetEventsForPublish(assembly);
-                var notAddedYet = eventsForPublish.Where(e => publishedEventCollection.PublishedEvents.All(w => w.Name != e.Name));
-                publishedEventCollection.PublishedEvents.AddRange(notAddedYet);
+                var notAddedYet = eventsForPublish.Where(e => publishedEvents.All(w => w.Name != e.Name));
+                publishedEvents.AddRange(notAddedYet);
             }
+
+            var publishedEventCollection = EventsPublishedByService.Reachable(
+                new ServiceEndPoint(null, microwaveConfiguration.ServiceName),
+                publishedEvents);
 
             services.AddSingleton(publishedEventCollection);
         }

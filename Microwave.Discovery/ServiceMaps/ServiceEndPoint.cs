@@ -6,7 +6,7 @@ namespace Microwave.Discovery.ServiceMaps
     {
         public ServiceEndPoint(Uri serviceBaseAddress, string name = null)
         {
-            Name = name ?? serviceBaseAddress.ToString();
+            Name = name ?? serviceBaseAddress?.ToString();
             ServiceBaseAddress = serviceBaseAddress;
         }
 
