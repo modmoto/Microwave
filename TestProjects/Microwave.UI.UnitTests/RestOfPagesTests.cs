@@ -24,6 +24,9 @@ namespace Microwave.UI.UnitTests
                 new List<MicrowaveServiceNode>(),
                 new List<EventSchema>(),
                 new List<ReadModelSubscription>()));
+
+            mock.Setup(m => m.GetPublishedEvents()).ReturnsAsync(EventsPublishedByService.Reachable(new
+            ServiceEndPoint(null), new List<EventSchema>()));
             var indexModel = new IndexModel(mock.Object, new MicrowaveConfiguration());
 
             await indexModel.OnGetAsync();
@@ -39,6 +42,9 @@ namespace Microwave.UI.UnitTests
                 new List<MicrowaveServiceNode>(),
                 new List<EventSchema>(),
                 new List<ReadModelSubscription>()));
+
+            mock.Setup(m => m.GetPublishedEvents()).ReturnsAsync(EventsPublishedByService.Reachable(new
+                ServiceEndPoint(null), new List<EventSchema>()));
 
             var indexModel = new IndexModel(mock.Object, new MicrowaveConfiguration());
 
