@@ -141,4 +141,41 @@
             }
         </div>
     </div>
+    <ul class="list-group list-group-flush">
+        @foreach (var subscribedEvent in Model.PublishedEvents.PublishedEventTypes)
+        {
+            <div class="btn-group dropright">
+                <button type="button"
+                        class="btn btn-white text-left pl-4 dropdown-toggle"
+                        data-toggle="dropdown"
+                        aria-haspopup="true"
+                        aria-expanded="false">
+                    @Html.DisplayFor(modelItem => subscribedEvent.Name)
+                </button>
+                <div class="dropdown-menu">
+                    @foreach (var property in subscribedEvent.Properties)
+                    {
+                        <a class="dropdown-item" href="#">
+                            <div class="d-flex flex-row">
+                                <div class="pr-3">
+                                    @Html.DisplayFor(modelItem => property.Name)
+                                </div>
+                                <div class="text-secondary">
+                                    @Html.DisplayFor(modelItem => property.Type)
+                                </div>
+                                @if (!property.IsPresentInRemote)
+                                {
+                                    <em class="fas fa-exclamation-triangle pt-1 pl-3"
+                                        data-toggle="tooltip"
+                                        data-placement="right"
+                                        title="Property is missing in remote event">
+                                    </em>
+                                }
+                            </div>
+                        </a>
+                    }
+                </div>
+            </div>
+        }
+    </ul>
 </div>
