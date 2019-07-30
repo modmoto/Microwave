@@ -30,7 +30,7 @@ namespace Microwave.Persistence.MongoDb.UnitTestsSetup
         (EventMongoDb));
     }
 
-    public class CacheThatNeverHasAnything : IEventLocationCache
+    internal class CacheThatNeverHasAnything : IEventLocationCache
     {
         public bool HasValue => false;
         public void Update(EventLocation eventLocation)

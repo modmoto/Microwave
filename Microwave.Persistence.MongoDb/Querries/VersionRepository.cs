@@ -6,7 +6,7 @@ using MongoDB.Driver;
 
 namespace Microwave.Persistence.MongoDb.Querries
 {
-    public class VersionRepository : IVersionRepository
+    internal class VersionRepository : IVersionRepository
     {
         private readonly IMongoDatabase _dataBase;
         private readonly string _lastProcessedVersions = "LastProcessedVersions";

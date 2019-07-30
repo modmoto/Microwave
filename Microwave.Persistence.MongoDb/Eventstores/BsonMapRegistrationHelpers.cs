@@ -9,7 +9,7 @@ using MongoDB.Bson.Serialization;
 
 namespace Microwave.Persistence.MongoDb.Eventstores
 {
-    public static class BsonMapRegistrationHelpers
+    internal static class BsonMapRegistrationHelpers
     {
         public static void AddBsonMapsForMicrowave(Assembly assembly)
         {

@@ -1,7 +1,7 @@
 using Microwave.Domain.Identities;
 using Microwave.Domain.Results;
 
-namespace Microwave.EventStores.Ports
+namespace Microwave.EventStores
 {
     public class EventStoreResult<T> : Result<T>
     {

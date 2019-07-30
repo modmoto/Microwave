@@ -5,7 +5,7 @@ using Microwave.Discovery;
 namespace Microwave.WebApi.Discovery
 {
     [Route("Dicovery")]
-    public class DiscoveryController : Controller
+    internal class DiscoveryController : Controller
     {
         private readonly IDiscoveryHandler _discoveryHandler;
 

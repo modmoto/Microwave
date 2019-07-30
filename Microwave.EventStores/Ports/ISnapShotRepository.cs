@@ -3,13 +3,13 @@ using Microwave.Domain.Identities;
 
 namespace Microwave.EventStores.Ports
 {
-    public interface ISnapShotRepository
+    internal interface ISnapShotRepository
     {
         Task<SnapShotResult<T>> LoadSnapShot<T>(Identity entityId) where T : new();
         Task SaveSnapShot<T>(SnapShotWrapper<T> snapShot);
     }
 
-    public class SnapShotWrapper<T>
+    internal class SnapShotWrapper<T>
     {
         public SnapShotWrapper(T entity, Identity id, long version)
         {
@@ -23,8 +23,13 @@ namespace Microwave.EventStores.Ports
         public Identity Id { get; }
     }
 
-    public class SnapShotResult<T>
+    internal class SnapShotResult<T> where T : new()
     {
+        public static SnapShotResult<T> Default()
+        {
+            return new SnapShotResult<T>(new T(), 0);
+        }
+
         public SnapShotResult(T entity, long version)
         {
             Version = version;

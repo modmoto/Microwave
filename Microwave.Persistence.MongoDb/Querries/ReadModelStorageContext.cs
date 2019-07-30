@@ -3,7 +3,7 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace Microwave.Persistence.MongoDb.Querries
 {
-    public class ReadModelDbo<T>
+    internal class ReadModelDbo<T>
     {
         [BsonId]
         public string Id { get; set; }
@@ -11,14 +11,14 @@ namespace Microwave.Persistence.MongoDb.Querries
         public long Version { get; set; }
     }
 
-    public class QueryDbo<T>
+    internal class QueryDbo<T>
     {
         [BsonId]
         public string Type { get; set; }
         public T Payload { get; set; }
     }
 
-    public class LastProcessedVersionDbo
+    internal class LastProcessedVersionDbo
     {
         [BsonId]
         public string EventType { get; set; }

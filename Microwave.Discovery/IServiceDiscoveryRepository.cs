@@ -5,7 +5,7 @@ using Microwave.Discovery.ServiceMaps;
 
 namespace Microwave.Discovery
 {
-    public interface IServiceDiscoveryRepository
+    internal interface IServiceDiscoveryRepository
     {
         Task<EventsPublishedByService> GetPublishedEventTypes(Uri serviceAdress);
         Task<MicrowaveServiceNode> GetDependantServices(Uri serviceAddress);

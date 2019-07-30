@@ -10,7 +10,7 @@ using MongoDB.Driver;
 
 namespace Microwave.Persistence.MongoDb.Querries
 {
-    public class ReadModelRepository : IReadModelRepository
+    internal class ReadModelRepository : IReadModelRepository
     {
         private readonly IMongoDatabase _database;
         private string GetReadModelCollectionName<T>() => $"ReadModelDbos_{typeof(T).Name}";
