@@ -250,7 +250,7 @@ namespace Microwave
                 {
                     if (eventRegistration[eventName] != domainEventType)
                     {
-                        throw new DuplicateDomainEventException(domainEventType);
+                        throw new DuplicateDomainEventException(eventName);
                     }
                 }
                 else

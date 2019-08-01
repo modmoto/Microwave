@@ -11,7 +11,7 @@ namespace Microwave
         {
         }
 
-        public DuplicateDomainEventException(Type domainEventName) : base($"Not able to add ${domainEventName} as a duplicate Event to a service, rename them or consider splitting the service")
+        public DuplicateDomainEventException(string domainEventName) : base($"Not able to add ${domainEventName} as a duplicate Event to a service, rename them or consider splitting the service")
         {
         }
     }

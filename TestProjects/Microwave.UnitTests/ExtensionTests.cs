@@ -26,7 +26,7 @@ namespace Microwave.UnitTests
 
         public void DuplicateDomainEventExceptionCreator()
         {
-            var duplicateDomainEventException = new DuplicateDomainEventException(typeof(TestDomainEvent1));
+            var duplicateDomainEventException = new DuplicateDomainEventException(nameof(TestDomainEvent1));
             Assert.IsTrue(duplicateDomainEventException.Message.Contains(nameof(TestDomainEvent1)));
         }
 
