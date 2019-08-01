@@ -14,7 +14,7 @@ using Microwave.Domain.Identities;
 namespace Microwave.EventStores
 {
     [Serializable]
-    internal class DifferentIdsException : Exception
+    public class DifferentIdsException : Exception
     {
         protected DifferentIdsException(SerializationInfo serializationInfo, StreamingContext streamingContext)
             : base(serializationInfo, streamingContext)

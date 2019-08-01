@@ -8,7 +8,7 @@ namespace Microwave.WebApi.Queries
 {
     [Serializable]
 
-    internal class DomainEventNotAssignableToEntityException : Exception
+    public class DomainEventNotAssignableToEntityException : Exception
     {
         protected DomainEventNotAssignableToEntityException(SerializationInfo serializationInfo, StreamingContext streamingContext)
                     : base(serializationInfo, streamingContext)
