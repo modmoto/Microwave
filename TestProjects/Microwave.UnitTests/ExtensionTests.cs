@@ -23,6 +23,14 @@ namespace Microwave.UnitTests
     public class ExtensionTests
     {
         [TestMethod]
+
+        public void DuplicateDomainEventExceptionCreator()
+        {
+            var duplicateDomainEventException = new DuplicateDomainEventException(typeof(TestDomainEvent1));
+            Assert.IsTrue(duplicateDomainEventException.Message.Contains(nameof(TestDomainEvent1)));
+        }
+
+        [TestMethod]
         public void AddDiContainerTest()
         {
             var collection = (IServiceCollection) new ServiceCollection();
