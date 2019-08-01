@@ -11,7 +11,7 @@ namespace Microwave.UI.Areas.MicrowaveDashboard.Pages
     {
         private readonly IDiscoveryHandler _discoveryHandler;
         public EventLocation ConsumingServices { get; set; }
-        public PublishedEventsByServiceDto PublishedEvents { get; set; }
+        public EventsPublishedByService PublishedEvents { get; set; }
 
         public bool HasMissingEvents => ConsumingServices.UnresolvedEventSubscriptions.Any()
                                         || ConsumingServices.UnresolvedReadModeSubscriptions.Any();
@@ -28,10 +28,7 @@ namespace Microwave.UI.Areas.MicrowaveDashboard.Pages
             var consumingServices = await _discoveryHandler.GetConsumingServices();
             var publishedEvents = await _discoveryHandler.GetPublishedEvents();
             ConsumingServices = consumingServices;
-            var dto = new PublishedEventsByServiceDto();
-            dto.PublishedEvents.AddRange(publishedEvents.PublishedEventTypes);
-            dto.ServiceName = publishedEvents.ServiceEndPoint.Name;
-            PublishedEvents = dto;
+            PublishedEvents = publishedEvents;
         }
 
         public async Task<IActionResult> OnPostAsync()

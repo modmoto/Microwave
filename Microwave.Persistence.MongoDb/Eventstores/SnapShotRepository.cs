@@ -8,7 +8,7 @@ using MongoDB.Driver;
 
 namespace Microwave.Persistence.MongoDb.Eventstores
 {
-    public class SnapShotRepository : ISnapShotRepository
+    internal class SnapShotRepository : ISnapShotRepository
     {
         private readonly IMongoDatabase _context;
         private readonly string _snapShotCollectionName = "SnapShotDbos";
@@ -24,7 +24,7 @@ namespace Microwave.Persistence.MongoDb.Eventstores
             var asyncCursor = await mongoCollection.FindAsync(r => r.Id == entityId.Id);
             var snapShot = asyncCursor.ToList().FirstOrDefault();
 
-            if (snapShot == null) return new DefaultSnapshot<T>();
+            if (snapShot == null) return SnapShotResult<T>.Default();
             return new SnapShotResult<T>(snapShot.Payload, snapShot.Version);
         }
 
@@ -42,13 +42,6 @@ namespace Microwave.Persistence.MongoDb.Eventstores
                     Version = snapShot.Version,
                     Payload = snapShot.Entity
                 }, findOneAndReplaceOptions);
-        }
-    }
-
-    public class DefaultSnapshot<T> : SnapShotResult<T> where T : new()
-    {
-        public DefaultSnapshot() : base(new T(), 0)
-        {
         }
     }
 }

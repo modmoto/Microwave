@@ -9,7 +9,7 @@ using Microwave.EventStores.SnapShots;
 
 namespace Microwave.EventStores
 {
-    public class EventStore : IEventStore
+    internal class EventStore : IEventStore
     {
         private readonly IEventRepository _eventRepository;
         private readonly ISnapShotRepository _snapShotRepository;

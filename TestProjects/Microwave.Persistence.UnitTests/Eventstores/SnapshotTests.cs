@@ -15,7 +15,7 @@ namespace Microwave.Persistence.UnitTests.Eventstores
     {
         [TestMethod]
         [PersistenceTypeTest]
-        public async Task SnapshotGetSavedAfterThirdEvent(IPersistenceLayerProvider layerProvider)
+        public async Task SnapshotGetSavedAfterThirdEvent(PersistenceLayerProvider layerProvider)
         {
             var eventStore = new EventStore(layerProvider.EventRepository, layerProvider.SnapShotRepository
                 , new SnapShotConfig(new
@@ -61,7 +61,7 @@ namespace Microwave.Persistence.UnitTests.Eventstores
 
         [TestMethod]
         [PersistenceTypeTest]
-        public async Task SnapshotExactlyOnSnapShotTime_DoesNotReturnNotFoundBug(IPersistenceLayerProvider layerProvider)
+        public async Task SnapshotExactlyOnSnapShotTime_DoesNotReturnNotFoundBug(PersistenceLayerProvider layerProvider)
         {
             var eventStore = new EventStore(layerProvider.EventRepository, layerProvider.SnapShotRepository);
 

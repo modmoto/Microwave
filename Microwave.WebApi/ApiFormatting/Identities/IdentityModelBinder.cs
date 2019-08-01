@@ -7,7 +7,7 @@ using Microwave.Domain.Identities;
 namespace Microwave.WebApi.ApiFormatting.Identities
 {
 
-    public class IdentityModelBinderProvider : IModelBinderProvider
+    internal class IdentityModelBinderProvider : IModelBinderProvider
     {
         public IModelBinder GetBinder(ModelBinderProviderContext context)
         {
@@ -18,7 +18,7 @@ namespace Microwave.WebApi.ApiFormatting.Identities
         }
     }
 
-    public class IdentityModelBinder : IModelBinder
+    internal class IdentityModelBinder : IModelBinder
     {
         public Task BindModelAsync(ModelBindingContext bindingContext)
         {

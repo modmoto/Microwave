@@ -1,16 +1,19 @@
+using System.Runtime.CompilerServices;
 using Microwave.Discovery;
 using Microwave.EventStores.Ports;
 using Microwave.Queries;
 using Microwave.Queries.Ports;
 
+[assembly: InternalsVisibleTo("Microwave.Persistence.MongoDb.UnitTestsSetup")]
+[assembly: InternalsVisibleTo("Microwave.Persistence.UnitTests")]
 namespace Microwave.Persistence.UnitTestSetupPorts
 {
-    public interface IPersistenceLayerProvider
+    public abstract class PersistenceLayerProvider
     {
-        IVersionRepository VersionRepository { get; }
-        IStatusRepository StatusRepository { get; }
-        IReadModelRepository ReadModelRepository { get; }
-        ISnapShotRepository SnapShotRepository { get; }
-        IEventRepository EventRepository { get; }
+        internal abstract IVersionRepository VersionRepository { get; }
+        internal abstract IStatusRepository StatusRepository { get; }
+        internal abstract IReadModelRepository ReadModelRepository { get; }
+        internal abstract ISnapShotRepository SnapShotRepository { get; }
+        internal abstract IEventRepository EventRepository { get; }
     }
 }

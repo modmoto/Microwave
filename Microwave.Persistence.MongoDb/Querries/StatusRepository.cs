@@ -10,7 +10,7 @@ using MongoDB.Driver;
 
 namespace Microwave.Persistence.MongoDb.Querries
 {
-    public class StatusRepository : IStatusRepository
+    internal class StatusRepository : IStatusRepository
     {
         private readonly IEventLocationCache _cache;
         private readonly IMongoDatabase _database;
@@ -96,7 +96,7 @@ namespace Microwave.Persistence.MongoDb.Querries
         string Id { get; }
     }
 
-    public class EventLocationDbo : IIdentifiable
+    internal class EventLocationDbo : IIdentifiable
     {
         public IEnumerable<MicrowaveServiceNodeDto> Services { get; set; }
         public IEnumerable<EventSchema> UnresolvedEventSubscriptions { get; set; }
@@ -104,13 +104,13 @@ namespace Microwave.Persistence.MongoDb.Querries
         public string Id => nameof(EventLocation);
     }
 
-    public class ServiceMapDbo : IIdentifiable
+    internal class ServiceMapDbo : IIdentifiable
     {
         public IEnumerable<ServiceNodeWithDependentServicesDbo> Services { get; set; }
         public string Id => nameof(ServiceMap);
     }
 
-    public class ServiceNodeWithDependentServicesDbo
+    internal class ServiceNodeWithDependentServicesDbo
     {
         public ServiceEndPoint ServiceEndPoint { get; set; }
         public IEnumerable<ServiceEndPoint> Services { get; set; }

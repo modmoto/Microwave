@@ -22,7 +22,7 @@ namespace Microwave.Eventstores.UnitTests
         {
             var snapShotRepo = new Mock<ISnapShotRepository>();
             snapShotRepo.Setup(re => re.LoadSnapShot<TestEntity>(It.IsAny<Identity>()))
-                .ReturnsAsync(new DefaultSnapshot<TestEntity>());
+                .ReturnsAsync(SnapShotResult<TestEntity>.Default());
 
             var entityStremRepo = new Mock<IEventRepository>();
             var entityId = GuidIdentity.Create(Guid.NewGuid());
@@ -44,7 +44,7 @@ namespace Microwave.Eventstores.UnitTests
         {
             var snapShotRepo = new Mock<ISnapShotRepository>();
             snapShotRepo.Setup(re => re.LoadSnapShot<TestEntity_NoIApply>(It.IsAny<Identity>()))
-                .ReturnsAsync(new DefaultSnapshot<TestEntity_NoIApply>());
+                .ReturnsAsync(SnapShotResult<TestEntity_NoIApply>.Default());
 
             var entityStremRepo = new Mock<IEventRepository>();
             var entityId = GuidIdentity.Create(Guid.NewGuid());
@@ -67,7 +67,7 @@ namespace Microwave.Eventstores.UnitTests
             var entityStremRepo = new Mock<IEventRepository>();
             var snapShotRepo = new Mock<ISnapShotRepository>();
             snapShotRepo.Setup(re => re.LoadSnapShot<TestEntity_NoIApply>(It.IsAny<Identity>()))
-                .ReturnsAsync(new DefaultSnapshot<TestEntity_NoIApply>());
+                .ReturnsAsync(SnapShotResult<TestEntity_NoIApply>.Default());
             var entityId = GuidIdentity.Create(Guid.NewGuid());
             var testEventEventStore = new TestEventEventStore(entityId);
             var domainEventWrapper = new DomainEventWrapper
@@ -87,7 +87,7 @@ namespace Microwave.Eventstores.UnitTests
         {
             var snapShotRepo = new Mock<ISnapShotRepository>();
             snapShotRepo.Setup(re => re.LoadSnapShot<TestEntity>(It.IsAny<Identity>()))
-                .ReturnsAsync(new DefaultSnapshot<TestEntity>());
+                .ReturnsAsync(SnapShotResult<TestEntity>.Default());
             var entityId = GuidIdentity.Create(Guid.NewGuid());
             var eventStore = new EventStore(new EventRepository(EventMongoDb, new VersionCache(EventMongoDb)), snapShotRepo.Object);
 
@@ -107,7 +107,7 @@ namespace Microwave.Eventstores.UnitTests
         {
             var snapShotRepo = new Mock<ISnapShotRepository>();
             snapShotRepo.Setup(re => re.LoadSnapShot<TestEntity>(It.IsAny<Identity>()))
-                .ReturnsAsync(new DefaultSnapshot<TestEntity>());
+                .ReturnsAsync(SnapShotResult<TestEntity>.Default());
             var entityId = GuidIdentity.Create(Guid.NewGuid());
             var eventStore = new EventStore(new EventRepository(EventMongoDb, new VersionCache(EventMongoDb)), snapShotRepo.Object);
 
@@ -123,7 +123,7 @@ namespace Microwave.Eventstores.UnitTests
         {
             var snapShotRepo = new Mock<ISnapShotRepository>();
             snapShotRepo.Setup(re => re.LoadSnapShot<TestEntity>(It.IsAny<Identity>()))
-                .ReturnsAsync(new DefaultSnapshot<TestEntity>());
+                .ReturnsAsync(SnapShotResult<TestEntity>.Default());
             var entityId = GuidIdentity.Create(Guid.NewGuid());
             var entityId2 = GuidIdentity.Create(Guid.NewGuid());
             var eventStore = new EventStore(new EventRepository(EventMongoDb, new VersionCache(EventMongoDb)), snapShotRepo.Object);
@@ -139,7 +139,7 @@ namespace Microwave.Eventstores.UnitTests
         {
             var snapShotRepo = new Mock<ISnapShotRepository>();
             snapShotRepo.Setup(re => re.LoadSnapShot<TestEntity>(It.IsAny<Identity>()))
-                .ReturnsAsync(new DefaultSnapshot<TestEntity>());
+                .ReturnsAsync(SnapShotResult<TestEntity>.Default());
             var entityId = GuidIdentity.Create(Guid.NewGuid());
             var eventStore = new EventStore(new EventRepository(EventMongoDb, new VersionCache(EventMongoDb)), snapShotRepo.Object);
 
@@ -155,7 +155,7 @@ namespace Microwave.Eventstores.UnitTests
         {
             var snapShotRepo = new Mock<ISnapShotRepository>();
             snapShotRepo.Setup(re => re.LoadSnapShot<TestEntity>(It.IsAny<Identity>()))
-                .ReturnsAsync(new DefaultSnapshot<TestEntity>());
+                .ReturnsAsync(SnapShotResult<TestEntity>.Default());
             var entityId = GuidIdentity.Create(Guid.NewGuid());
             var eventStore = new EventStore(new EventRepository(EventMongoDb, new VersionCache(EventMongoDb)), snapShotRepo.Object);
 

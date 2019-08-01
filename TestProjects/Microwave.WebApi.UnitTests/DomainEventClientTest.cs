@@ -9,7 +9,7 @@ using Microwave.Domain.EventSourcing;
 using Microwave.Domain.Identities;
 using Microwave.Queries;
 using Microwave.Queries.Handler;
-using Microwave.WebApi.Querries;
+using Microwave.WebApi.Queries;
 using Moq;
 
 namespace Microwave.WebApi.UnitTests

@@ -4,10 +4,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microwave.Domain.Identities;
 using Microwave.EventStores.Ports;
 
-namespace Microwave.WebApi.Querries
+namespace Microwave.WebApi.Queries
 {
     [Route("Api")]
-    public class DomainEventController : Controller
+    internal class DomainEventController : Controller
     {
         private readonly IEventRepository _eventRepository;
 

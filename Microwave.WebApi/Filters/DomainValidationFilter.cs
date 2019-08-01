@@ -4,7 +4,7 @@ using Microwave.Domain.Validation;
 
 namespace Microwave.WebApi.Filters
 {
-    public class DomainValidationFilter : IExceptionFilter
+    internal class DomainValidationFilter : IExceptionFilter
     {
         public void OnException(ExceptionContext context)
         {

@@ -4,7 +4,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Domain.EventSourcing;
 using Microwave.Domain.Identities;
 using Microwave.EventStores;
-using Microwave.WebApi.Querries;
+using Microwave.WebApi.Queries;
 using Newtonsoft.Json;
 
 namespace Microwave.Queries.UnitTests

@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 
 namespace Microwave.WebApi.Filters
 {
-    public class ProblemDocument
+    internal class ProblemDocument
     {
         [JsonProperty("title", NullValueHandling = NullValueHandling.Ignore)]
         public string Title { get; }

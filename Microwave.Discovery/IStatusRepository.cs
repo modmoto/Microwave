@@ -4,7 +4,7 @@ using Microwave.Discovery.ServiceMaps;
 
 namespace Microwave.Discovery
 {
-    public interface IStatusRepository
+    internal interface IStatusRepository
     {
         Task SaveEventLocation(EventLocation eventLocation);
         Task<EventLocation> GetEventLocation();

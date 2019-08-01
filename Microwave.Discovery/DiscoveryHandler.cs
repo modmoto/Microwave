@@ -6,7 +6,7 @@ using Microwave.Discovery.ServiceMaps;
 
 namespace Microwave.Discovery
 {
-    public class DiscoveryHandler : IDiscoveryHandler
+    internal class DiscoveryHandler : IDiscoveryHandler
     {
         private readonly ServiceBaseAddressCollection _serviceBaseAddressCollection;
         private readonly EventsSubscribedByService _eventsSubscribedByService;

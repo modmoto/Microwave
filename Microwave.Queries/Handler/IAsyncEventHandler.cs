@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace Microwave.Queries.Handler
 {
-    public interface IAsyncEventHandler
+    internal interface IAsyncEventHandler
     {
         Task Update();
         Type HandlerClassType { get; }

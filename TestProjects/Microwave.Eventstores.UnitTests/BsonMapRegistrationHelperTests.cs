@@ -24,7 +24,7 @@ namespace Microwave.Eventstores.UnitTests
             var eventRepository = new EventRepository(EventMongoDb, new VersionCache(EventMongoDb));
             var snapShotRepo = new Mock<ISnapShotRepository>();
             snapShotRepo.Setup(re => re.LoadSnapShot<TestEntity>(It.IsAny<Identity>()))
-                .ReturnsAsync(new DefaultSnapshot<TestEntity>());
+                .ReturnsAsync(SnapShotResult<TestEntity>.Default());
 
             var eventStore = new EventStore(eventRepository, snapShotRepo.Object);
 
@@ -48,7 +48,7 @@ namespace Microwave.Eventstores.UnitTests
             var eventRepository = new EventRepository(EventMongoDb, new VersionCache(EventMongoDb));
             var snapShotRepo = new Mock<ISnapShotRepository>();
             snapShotRepo.Setup(re => re.LoadSnapShot<TestEntity>(It.IsAny<Identity>()))
-                .ReturnsAsync(new DefaultSnapshot<TestEntity>());
+                .ReturnsAsync(SnapShotResult<TestEntity>.Default());
 
             var eventStore = new EventStore(eventRepository, snapShotRepo.Object);
 
@@ -73,7 +73,7 @@ namespace Microwave.Eventstores.UnitTests
             var eventRepository = new EventRepository(EventMongoDb, new VersionCache(EventMongoDb));
             var snapShotRepo = new Mock<ISnapShotRepository>();
             snapShotRepo.Setup(re => re.LoadSnapShot<TestEntity>(It.IsAny<Identity>()))
-                .ReturnsAsync(new DefaultSnapshot<TestEntity>());
+                .ReturnsAsync(SnapShotResult<TestEntity>.Default());
 
             var eventStore = new EventStore(eventRepository, snapShotRepo.Object);
 
@@ -95,7 +95,7 @@ namespace Microwave.Eventstores.UnitTests
             var eventRepository = new EventRepository(EventMongoDb, new VersionCache(EventMongoDb));
             var snapShotRepo = new Mock<ISnapShotRepository>();
             snapShotRepo.Setup(re => re.LoadSnapShot<TestEntity>(It.IsAny<Identity>()))
-                .ReturnsAsync(new DefaultSnapshot<TestEntity>());
+                .ReturnsAsync(SnapShotResult<TestEntity>.Default());
 
             var eventStore = new EventStore(eventRepository, snapShotRepo.Object);
 
@@ -120,7 +120,7 @@ namespace Microwave.Eventstores.UnitTests
             var eventRepository = new EventRepository(EventMongoDb, new VersionCache(EventMongoDb));
             var snapShotRepo = new Mock<ISnapShotRepository>();
             snapShotRepo.Setup(re => re.LoadSnapShot<TestEntity>(It.IsAny<Identity>()))
-                .ReturnsAsync(new DefaultSnapshot<TestEntity>());
+                .ReturnsAsync(SnapShotResult<TestEntity>.Default());
 
             var eventStore = new EventStore(eventRepository, snapShotRepo.Object);
 

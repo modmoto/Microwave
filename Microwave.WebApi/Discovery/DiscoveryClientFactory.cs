@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace Microwave.WebApi.Discovery
 {
-    public class DiscoveryClientFactory : IDiscoveryClientFactory
+    internal class DiscoveryClientFactory : IDiscoveryClientFactory
     {
         private readonly IMicrowaveHttpClientFactory _clientFactory;
 

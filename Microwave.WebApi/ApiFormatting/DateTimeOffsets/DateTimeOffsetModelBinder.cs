@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 namespace Microwave.WebApi.ApiFormatting.DateTimeOffsets
 {
 
-    public class DateTimeOffsetBinderProvider : IModelBinderProvider
+    internal class DateTimeOffsetBinderProvider : IModelBinderProvider
     {
         public IModelBinder GetBinder(ModelBinderProviderContext context)
         {
@@ -17,7 +17,7 @@ namespace Microwave.WebApi.ApiFormatting.DateTimeOffsets
         }
     }
 
-    public class DateTimeOffsetBinder : IModelBinder
+    internal class DateTimeOffsetBinder : IModelBinder
     {
         public Task BindModelAsync(ModelBindingContext bindingContext)
         {

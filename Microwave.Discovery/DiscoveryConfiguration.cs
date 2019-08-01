@@ -1,6 +1,6 @@
 namespace Microwave.Discovery
 {
-    public class DiscoveryConfiguration
+    internal class DiscoveryConfiguration
     {
         public string ServiceName { get; set; } = "Undefined";
     }

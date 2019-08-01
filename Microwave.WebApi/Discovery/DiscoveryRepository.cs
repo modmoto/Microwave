@@ -2,15 +2,19 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Microwave.Discovery;
 using Microwave.Discovery.EventLocations;
 using Microwave.Discovery.ServiceMaps;
 using Newtonsoft.Json;
 
+
+[assembly: InternalsVisibleTo("Microwave")]
+[assembly: InternalsVisibleTo("Microwave.Discovery.UnitTests")]
 namespace Microwave.WebApi.Discovery
 {
-    public class DiscoveryRepository : IServiceDiscoveryRepository
+    internal class DiscoveryRepository : IServiceDiscoveryRepository
     {
         private readonly IDiscoveryClientFactory _factory;
 
@@ -51,9 +55,11 @@ namespace Microwave.WebApi.Discovery
                 var response = await client.GetAsync("Dicovery/ServiceDependencies");
                 if (!response.IsSuccessStatusCode) return MicrowaveServiceNode.UnreachableMicrowaveServiceNode(new ServiceEndPoint(serviceAddress), new List<ServiceEndPoint>());
                 var content = await response.Content.ReadAsStringAsync();
-                var serviceDependencies = JsonConvert.DeserializeObject<MicrowaveServiceNode>(content);
-                serviceDependencies.SetAddressForEndPoint(serviceAddress);
-                return serviceDependencies;
+                var remoteNode = JsonConvert.DeserializeObject<MicrowaveServiceNodeDto>(content);
+                var newNode = MicrowaveServiceNode.ReachableMicrowaveServiceNode(
+                    new ServiceEndPoint(serviceAddress, remoteNode.ServiceEndPoint.Name),
+                    remoteNode.ConnectedServices);
+                return newNode;
             }
             catch (HttpRequestException)
             {

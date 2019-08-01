@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 namespace Microwave
 {
     [Serializable]
-    public class DuplicateDomainEventException : Exception
+    internal class DuplicateDomainEventException : Exception
     {
         protected DuplicateDomainEventException(SerializationInfo serializationInfo, StreamingContext streamingContext)
             : base(serializationInfo, streamingContext)

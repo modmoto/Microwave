@@ -2,7 +2,7 @@
 
 namespace Microwave.Queries.Handler
 {
-    public interface IQueryEventHandler
+    internal interface IQueryEventHandler
     {
         Task Update();
     }
