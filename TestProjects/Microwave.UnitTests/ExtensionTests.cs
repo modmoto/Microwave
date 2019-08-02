@@ -81,11 +81,12 @@ namespace Microwave.UnitTests
             var queryEventHandlers = buildServiceProvider.GetServices<IQueryEventHandler>().ToList();
             var qHandler1 = queryEventHandlers.OrderByDescending(e => e
             .GetType().GetGenericArguments().First().Name).ToList();
-            Assert.AreEqual(4, qHandler1.Count);
-            Assert.IsTrue(qHandler1[0] is QueryEventHandler<TestQuery2, TestDomainEvent1>);
-            Assert.IsTrue(qHandler1[1] is QueryEventHandler<TestQuery1, TestDomainEvent1>);
-            Assert.IsTrue(qHandler1[2] is QueryEventHandler<TestQuery1, TestDomainEvent2>);
-            Assert.IsTrue(qHandler1[3] is QueryEventHandler<TestQuerry_NotImplementingIApply, TestDomainEvent_OnlySubscribedEvent>);
+            Assert.AreEqual(5, qHandler1.Count);
+            Assert.IsTrue(qHandler1[0] is QueryEventHandler<TestQueryOnlyOneSubscribedEvent, TestDomainEvent_OnlySubscribedEventForList>);
+            Assert.IsTrue(qHandler1[1] is QueryEventHandler<TestQuery2, TestDomainEvent1>);
+            Assert.IsTrue(qHandler1[2] is QueryEventHandler<TestQuery1, TestDomainEvent1>);
+            Assert.IsTrue(qHandler1[3] is QueryEventHandler<TestQuery1, TestDomainEvent2>);
+            Assert.IsTrue(qHandler1[4] is QueryEventHandler<TestQuerry_NotImplementingIApply, TestDomainEvent_OnlySubscribedEvent>);
 
             var identHandler = buildServiceProvider.GetServices<IReadModelEventHandler>().OrderBy(r => r.GetType()
                 .GetGenericArguments().First().Name).ToList();
@@ -194,12 +195,15 @@ namespace Microwave.UnitTests
 
             var publishingEventRegistration = buildServiceProvider.GetServices<EventsSubscribedByService>().Single();
             var ihandleAsyncEvents = publishingEventRegistration.Events.OrderBy(r => r.Name).ToList();
-            Assert.AreEqual(nameof(TestDomainEvent_OnlySubscribedEvent_HandleAsync), ihandleAsyncEvents[0].Name);
-            Assert.AreEqual(nameof(TestDomainEvent_PublishedEvent1), ihandleAsyncEvents[1].Name);
-            Assert.AreEqual(nameof(TestDomainEvent_PublishedEvent2), ihandleAsyncEvents[2].Name);
-            Assert.AreEqual(nameof(TestDomainEvent1), ihandleAsyncEvents[3].Name);
-            Assert.AreEqual(nameof(TestDomainEvent2), ihandleAsyncEvents[4].Name);
-            Assert.AreEqual(5, ihandleAsyncEvents.Count);
+            Assert.AreEqual(nameof(Ev), ihandleAsyncEvents[0].Name);
+            Assert.AreEqual(nameof(TestDomainEvent_OnlySubscribedEvent), ihandleAsyncEvents[1].Name);
+            Assert.AreEqual(nameof(TestDomainEvent_OnlySubscribedEvent_HandleAsync), ihandleAsyncEvents[2].Name);
+            Assert.AreEqual(nameof(TestDomainEvent_OnlySubscribedEventForList), ihandleAsyncEvents[3].Name);
+            Assert.AreEqual(nameof(TestDomainEvent_PublishedEvent1), ihandleAsyncEvents[4].Name);
+            Assert.AreEqual(nameof(TestDomainEvent_PublishedEvent2), ihandleAsyncEvents[5].Name);
+
+
+            Assert.AreEqual(9, ihandleAsyncEvents.Count);
 
             var discoveryController = buildServiceProvider.GetServices<DiscoveryController>().Single();
             Assert.IsNotNull(discoveryController);
@@ -341,6 +345,13 @@ namespace Microwave.UnitTests
         }
     }
 
+    public class TestQueryOnlyOneSubscribedEvent : Query, IHandle<TestDomainEvent_OnlySubscribedEventForList>
+    {
+        public void Handle(TestDomainEvent_OnlySubscribedEventForList domainEvent)
+        {
+        }
+    }
+
     public class TestQuery2 : Query, IHandle<TestDomainEvent1>
     {
         public void Handle(TestDomainEvent1 domainEvent)
@@ -405,6 +416,16 @@ namespace Microwave.UnitTests
     public class Ev : IDomainEvent, ISubscribedDomainEvent
     {
         public Ev(Identity entityId)
+        {
+            EntityId = entityId;
+        }
+
+        public Identity EntityId { get; }
+    }
+
+    public class TestDomainEvent_OnlySubscribedEventForList : ISubscribedDomainEvent
+    {
+        public TestDomainEvent_OnlySubscribedEventForList(Identity entityId)
         {
             EntityId = entityId;
         }

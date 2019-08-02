@@ -57,9 +57,13 @@ namespace Microwave
             var modelAndDomainEventAssemblies = readModelAndDomainEventAssemblies.ToList();
             foreach (var assembly in modelAndDomainEventAssemblies)
             {
-                var eventsForPublish = GetEventsForSubscribe(assembly);
+                var eventsForPublish = GetEventsForIHandleAsyncs(assembly);
+                var eventsForPublish2 = GetEventsForQuerys(assembly);
                 var notAddedYet = eventsForPublish.Where(e => !iHandleAsyncEvents.Contains(e));
                 iHandleAsyncEvents.AddRange(notAddedYet);
+
+                var notAddedYet2 = eventsForPublish2.Where(e => !iHandleAsyncEvents.Contains(e));
+                iHandleAsyncEvents.AddRange(notAddedYet2);
             }
 
             var readModelSubscriptions = new List<ReadModelSubscription>();
@@ -181,7 +185,7 @@ namespace Microwave
             });
         }
 
-        private static IEnumerable<EventSchema> GetEventsForSubscribe(Assembly assembly)
+        private static IEnumerable<EventSchema> GetEventsForIHandleAsyncs(Assembly assembly)
         {
             var types = assembly.GetTypes();
             var handleAsyncs = types.Where(ev => ev.GetInterfaces().Any(x =>
@@ -196,6 +200,32 @@ namespace Microwave
                     i.IsGenericType &&
                     i.GetGenericArguments().Length == 1
                     && i.GetGenericTypeDefinition() == typeof(IHandleAsync<>));
+                domainEvents.AddRange(domainEventTypes);
+            }
+
+            return domainEvents.Select(e =>
+            {
+                var propertyInfos = e.GetGenericArguments().First().GetProperties().ToList();
+                var propertyTypes = propertyInfos.Select(p => new PropertyType(p.Name, p.PropertyType.Name));
+                return new EventSchema(e.GetGenericArguments().First().Name, propertyTypes);
+            });
+        }
+
+        private static IEnumerable<EventSchema> GetEventsForQuerys(Assembly assembly)
+        {
+            var types = assembly.GetTypes();
+            var handleAsyncs = types.Where(ev => typeof(Query).IsAssignableFrom(ev) && ev.GetInterfaces().Any(x =>
+                x.IsGenericType &&
+                x.GetGenericTypeDefinition() == typeof(IHandle<>)));
+            var domainEvents = new List<Type>();
+
+            foreach (var handler in handleAsyncs)
+            {
+                var interfaces = handler.GetInterfaces();
+                var domainEventTypes = interfaces.Where(i =>
+                    i.IsGenericType &&
+                    i.GetGenericArguments().Length == 1
+                    && i.GetGenericTypeDefinition() == typeof(IHandle<>));
                 domainEvents.AddRange(domainEventTypes);
             }
 
