@@ -12,12 +12,12 @@ using Microwave.Queries.Handler;
 [assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]
 namespace Microwave.WebApi.Queries
 {
-    internal interface IDomainEventClientFactory
+    public interface IDomainEventClientFactory
     {
         Task<HttpClient> GetClient<T>();
     }
 
-    internal class DomainEventClientFactory : IDomainEventClientFactory
+    public class DomainEventClientFactory : IDomainEventClientFactory
     {
         private readonly IStatusRepository _statusRepository;
         private readonly IMicrowaveHttpClientFactory _httpClientFactory;

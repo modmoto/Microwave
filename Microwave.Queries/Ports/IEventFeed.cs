@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 [assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]
 namespace Microwave.Queries.Ports
 {
-    internal interface IEventFeed<T>
+    public interface IEventFeed<T>
     {
         Task<IEnumerable<SubscribedDomainEventWrapper>> GetEventsAsync(DateTimeOffset since = default(DateTimeOffset));
     }

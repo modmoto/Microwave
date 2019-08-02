@@ -5,12 +5,12 @@ using Microwave.Queries.Ports;
 
 namespace Microwave.Queries.Handler
 {
-    internal interface IReadModelEventHandler
+    public interface IReadModelEventHandler
     {
         Task Update();
     }
 
-    internal class ReadModelEventHandler<T> : IReadModelEventHandler where T : ReadModel, new()
+    public class ReadModelEventHandler<T> : IReadModelEventHandler where T : ReadModel, new()
     {
         private readonly IReadModelRepository _readModelRepository;
         private readonly IEventFeed<ReadModelEventHandler<T>> _eventFeed;

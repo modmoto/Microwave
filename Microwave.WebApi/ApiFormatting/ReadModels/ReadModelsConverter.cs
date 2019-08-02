@@ -7,7 +7,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Microwave.WebApi.ApiFormatting.ReadModels
 {
-    internal class ReadModelsConverter : JsonConverter
+    public class ReadModelsConverter : JsonConverter
     {
         public override bool CanConvert(Type objectType)
         {

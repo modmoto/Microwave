@@ -60,7 +60,7 @@ namespace Microwave.UnitTests
         public Type HandlerClassType => typeof(AsyncHandlerImplemented);
     }
 
-    internal class AsyncHandlerImplemented
+    public class AsyncHandlerImplemented
     {
     }
 }

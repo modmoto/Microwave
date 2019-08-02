@@ -5,7 +5,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Microwave.WebApi.ApiFormatting.Identities
 {
-    internal class IdentityConverter : JsonConverter
+    public class IdentityConverter : JsonConverter
     {
         public override bool CanConvert(Type objectType)
         {

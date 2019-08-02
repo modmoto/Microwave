@@ -9,12 +9,12 @@ namespace Microwave.Persistence.MongoDb
 {
     public class MicrowaveMongoDb
     {
-        internal MicrowaveMongoDb()
+        public MicrowaveMongoDb()
         {
         }
 
-        internal string DatabaseName = "MicrowaveDb";
-        internal string ConnectionString = "mongodb://localhost:27017/";
+        public string DatabaseName = "MicrowaveDb";
+        public string ConnectionString = "mongodb://localhost:27017/";
 
         public IMongoDatabase Database
         {

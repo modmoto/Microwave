@@ -4,7 +4,7 @@ using Microwave.Discovery.ServiceMaps;
 
 namespace Microwave.Persistence.MongoDb.Querries
 {
-    internal class MicrowaveServiceNodeDto
+    public class MicrowaveServiceNodeDto
     {
         public bool IsReachable { get; set; }
         public ServiceEndPoint ServiceEndPoint { get; set; }

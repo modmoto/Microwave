@@ -10,7 +10,7 @@ using Newtonsoft.Json;
 
 namespace Microwave.WebApi.ApiFormatting
 {
-    internal class NewtonsoftOutputFormatter : TextOutputFormatter
+    public class NewtonsoftOutputFormatter : TextOutputFormatter
     {
         public NewtonsoftOutputFormatter()
         {

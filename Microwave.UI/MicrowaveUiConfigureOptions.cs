@@ -9,7 +9,7 @@ using Microsoft.Extensions.Options;
 [assembly: InternalsVisibleTo("Microwave.UI.UnitTests")]
 namespace Microwave.UI
 {
-    internal class MicrowaveUiConfigureOptions : IPostConfigureOptions<StaticFileOptions>
+    public class MicrowaveUiConfigureOptions : IPostConfigureOptions<StaticFileOptions>
     {
         private readonly IHostingEnvironment _environment;
 

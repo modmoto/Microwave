@@ -48,7 +48,7 @@ namespace Microwave.WebApi.UnitTests
         }
     }
 
-    internal class EventLocationFake : EventLocation
+    public class EventLocationFake : EventLocation
     {
         public EventLocationFake() : base(new List<MicrowaveServiceNode>
         {

@@ -9,7 +9,7 @@
 
     public class Ok<T> : Result<T>
     {
-        internal Ok(T value) : base(new Ok())
+        public Ok(T value) : base(new Ok())
         {
             Value = value;
         }

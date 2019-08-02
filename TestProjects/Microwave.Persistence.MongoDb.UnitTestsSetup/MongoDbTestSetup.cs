@@ -11,7 +11,7 @@ using Microwave.Queries.Ports;
 [assembly: InternalsVisibleTo("Microwave.Persistence.UnitTests")]
 namespace Microwave.Persistence.MongoDb.UnitTestsSetup
 {
-    internal class MongoDbTestSetup : PersistenceLayerProvider
+    public class MongoDbTestSetup : PersistenceLayerProvider
     {
         public MongoDbTestSetup()
         {
@@ -22,15 +22,15 @@ namespace Microwave.Persistence.MongoDb.UnitTestsSetup
         }
 
         public MicrowaveMongoDb EventMongoDb { get; }
-        internal override IVersionRepository VersionRepository => new VersionRepository(EventMongoDb);
-        internal override IStatusRepository StatusRepository => new StatusRepository(EventMongoDb, new CacheThatNeverHasAnything());
-        internal override IReadModelRepository ReadModelRepository => new ReadModelRepository(EventMongoDb);
-        internal override ISnapShotRepository SnapShotRepository => new SnapShotRepository(EventMongoDb);
-        internal override IEventRepository EventRepository => new EventRepository(EventMongoDb, new VersionCache
+        public override IVersionRepository VersionRepository => new VersionRepository(EventMongoDb);
+        public override IStatusRepository StatusRepository => new StatusRepository(EventMongoDb, new CacheThatNeverHasAnything());
+        public override IReadModelRepository ReadModelRepository => new ReadModelRepository(EventMongoDb);
+        public override ISnapShotRepository SnapShotRepository => new SnapShotRepository(EventMongoDb);
+        public override IEventRepository EventRepository => new EventRepository(EventMongoDb, new VersionCache
         (EventMongoDb));
     }
 
-    internal class CacheThatNeverHasAnything : IEventLocationCache
+    public class CacheThatNeverHasAnything : IEventLocationCache
     {
         public bool HasValue => false;
         public void Update(EventLocation eventLocation)

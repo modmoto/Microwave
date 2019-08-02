@@ -7,7 +7,7 @@ using System.Runtime.Serialization;
 namespace Microwave.WebApi.Queries
 {
     [Serializable]
-    internal class EventRegistration : Dictionary<string, Type>
+    public class EventRegistration : Dictionary<string, Type>
     {
         public EventRegistration()
         {

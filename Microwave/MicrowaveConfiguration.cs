@@ -9,7 +9,7 @@ namespace Microwave
 {
     public class MicrowaveConfiguration
     {
-        internal MicrowaveConfiguration()
+        public MicrowaveConfiguration()
         {
         }
 

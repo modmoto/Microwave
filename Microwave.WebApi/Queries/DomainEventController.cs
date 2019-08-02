@@ -7,7 +7,7 @@ using Microwave.EventStores.Ports;
 namespace Microwave.WebApi.Queries
 {
     [Route("Api")]
-    internal class DomainEventController : Controller
+    public class DomainEventController : Controller
     {
         private readonly IEventRepository _eventRepository;
 

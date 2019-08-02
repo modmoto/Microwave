@@ -14,7 +14,7 @@ using Newtonsoft.Json;
 [assembly: InternalsVisibleTo("Microwave.Discovery.UnitTests")]
 namespace Microwave.WebApi.Discovery
 {
-    internal class DiscoveryRepository : IServiceDiscoveryRepository
+    public class DiscoveryRepository : IServiceDiscoveryRepository
     {
         private readonly IDiscoveryClientFactory _factory;
 

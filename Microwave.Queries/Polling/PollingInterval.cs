@@ -67,7 +67,7 @@ namespace Microwave.Queries.Polling
             _second = second;
         }
 
-        internal PollingInterval(int secondsInput, int secondsForTest)
+        public PollingInterval(int secondsInput, int secondsForTest)
         {
             _nowTime = new DateTime(1, 1, 1, 1, 0, secondsForTest);
             _second = secondsInput;

@@ -235,7 +235,7 @@ namespace Microwave
             return subscriptions;
         }
 
-        internal static IServiceCollection AddDomainEventRegistration(
+        public static IServiceCollection AddDomainEventRegistration(
             this IServiceCollection services,
             Assembly assembly,
             EventRegistration eventRegistration)

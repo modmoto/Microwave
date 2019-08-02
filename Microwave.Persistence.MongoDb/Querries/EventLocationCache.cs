@@ -2,7 +2,7 @@ using Microwave.Discovery.EventLocations;
 
 namespace Microwave.Persistence.MongoDb.Querries
 {
-    internal class EventLocationCache : IEventLocationCache
+    public class EventLocationCache : IEventLocationCache
     {
         private EventLocation _eventLocation;
         public bool HasValue => _eventLocation != null;

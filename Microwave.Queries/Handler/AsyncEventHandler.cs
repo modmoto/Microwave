@@ -10,7 +10,7 @@ using Microwave.Queries.Ports;
 [assembly: InternalsVisibleTo("Microwave.WebApi")]
 namespace Microwave.Queries.Handler
 {
-    internal class AsyncEventHandler<T> : IAsyncEventHandler where T : ISubscribedDomainEvent
+    public class AsyncEventHandler<T> : IAsyncEventHandler where T : ISubscribedDomainEvent
     {
         private readonly IEventFeed<AsyncEventHandler<T>>  _eventFeed;
         private readonly IHandleAsync<T> _handler;

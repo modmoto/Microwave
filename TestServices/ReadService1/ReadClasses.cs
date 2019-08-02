@@ -66,8 +66,10 @@ namespace ReadService1
     {
         public void Handle(Event2 domainEvent)
         {
-            Console.WriteLine($"{DateTime.UtcNow.Second} Calling Querry 5 secs");
+            Counter += 1;
         }
+
+        public int Counter { get; set; }
     }
 
     public class ReadModelNotPublished : ReadModel, IHandle<EventNotPublished>
