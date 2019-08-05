@@ -33,7 +33,10 @@ namespace Microwave.WebApi.ApiFormatting.Identities
             }
 
             var bindingContextModel = Identity.Create(values.SingleOrDefault());
-            bindingContext.Result = ModelBindingResult.Success(bindingContextModel);
+            bindingContext.Result =
+                bindingContext.ModelType == bindingContextModel.GetType()
+                    ? ModelBindingResult.Success(bindingContextModel)
+                    : ModelBindingResult.Failed();
 
             return Task.CompletedTask;
         }
