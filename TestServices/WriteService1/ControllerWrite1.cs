@@ -31,5 +31,11 @@ namespace WriteService1
             }
             return Ok();
         }
+
+        [HttpPost("{guidId}")]
+        public async Task<ActionResult> WriteEvent(GuidIdentity guidId)
+        {
+            return Ok();
+        }
     }
 }
