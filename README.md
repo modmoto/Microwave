@@ -3,7 +3,7 @@ Microwave is a Framework to create event driven microservices. It helps you impl
 you implement your domain and not have you worried about distributing your domain events or storing them. The 
 generated service network is able to transfer the domain events by itself and is not dependant on a central unit.
 
-[![Build status](https://dev.azure.com/simonheiss87/Microwave/_apis/build/status/Microwave-DEV)](https://dev.azure.com/simonheiss87/Microwave/_build/latest?definitionId=5)
+[![Build Status](https://dev.azure.com/simonheiss87/Microwave/_apis/build/status/Microwave-REL?branchName=master)](https://dev.azure.com/simonheiss87/Microwave/_build/latest?definitionId=7&branchName=master)
 [![sonarCubeCoverage](https://sonarcloud.io/api/project_badges/measure?project=Lauchi_Microwave&metric=coverage)](https://sonarcloud.io/dashboard?id=Lauchi_Microwave)
 [![nuget](https://img.shields.io/nuget/v/Microwave.svg)](https://www.nuget.org/packages/Microwave/)
 
