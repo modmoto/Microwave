@@ -28,7 +28,7 @@ namespace Microwave.Queries.Handler
 
         public async Task Update()
         {
-            var redaModelVersionCounter = $"ReadModelVersion-{typeof(T)}";
+            var redaModelVersionCounter = $"ReadModelVersion-{typeof(T).Name}";
             var lastVersion = await _versionRepository.GetVersionAsync(redaModelVersionCounter);
             var latestEvents = await _eventFeed.GetEventsAsync(lastVersion);
             var domainEvents = latestEvents.ToList();
