@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 
 namespace Microwave.WebApi.ApiFormatting.DateTimeOffsets
 {
-    internal class DateTimeOffsetConverter : JsonConverter
+    public class DateTimeOffsetConverter : JsonConverter
     {
         public override bool CanConvert(Type objectType)
         {

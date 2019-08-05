@@ -41,7 +41,7 @@ namespace Microwave.Queries.UnitTests
         }
     }
 
-    internal class EventFeedMock : IEventFeed<AsyncEventHandler<TestEv2>>
+    public class EventFeedMock : IEventFeed<AsyncEventHandler<TestEv2>>
     {
         private readonly DateTimeOffset _dateTimeOffset;
         private readonly SubscribedDomainEventWrapper _domainEventWrapper;

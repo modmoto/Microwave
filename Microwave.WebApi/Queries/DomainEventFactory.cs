@@ -8,12 +8,12 @@ using Newtonsoft.Json.Linq;
 
 namespace Microwave.WebApi.Queries
 {
-    internal interface IDomainEventFactory
+    public interface IDomainEventFactory
     {
         IEnumerable<SubscribedDomainEventWrapper> Deserialize(string serializeObject);
     }
 
-    internal class DomainEventFactory : IDomainEventFactory
+    public class DomainEventFactory : IDomainEventFactory
     {
         private readonly Dictionary<string, Type> _eventTypeRegistration;
 

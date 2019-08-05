@@ -8,7 +8,7 @@ using MongoDB.Driver;
 
 namespace Microwave.Persistence.MongoDb.Eventstores
 {
-    internal class SnapShotRepository : ISnapShotRepository
+    public class SnapShotRepository : ISnapShotRepository
     {
         private readonly IMongoDatabase _context;
         private readonly string _snapShotCollectionName = "SnapShotDbos";

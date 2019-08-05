@@ -11,7 +11,7 @@ using MongoDB.Driver;
 
 namespace Microwave.Persistence.MongoDb.Eventstores
 {
-    internal class EventRepository : IEventRepository
+    public class EventRepository : IEventRepository
     {
         private readonly IMongoDatabase _database;
         private readonly string _eventCollectionName = "DomainEventDbos";

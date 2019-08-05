@@ -7,7 +7,7 @@ using Microwave.Queries.Ports;
 
 namespace Microwave.WebApi.Queries
 {
-    internal class EventFeed<T> : IEventFeed<T>
+    public class EventFeed<T> : IEventFeed<T>
     {
         private readonly IDomainEventFactory _eventFactory;
         private readonly IDomainEventClientFactory _clientFactory;

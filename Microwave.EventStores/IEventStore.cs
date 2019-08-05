@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Microwave.Domain.EventSourcing;
 using Microwave.Domain.Identities;
 using Microwave.Domain.Results;
-using Microwave.EventStores.Ports;
 
 namespace Microwave.EventStores
 {

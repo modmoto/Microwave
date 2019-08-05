@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 namespace Microwave.Queries.Exceptions
 {
     [Serializable]
-    internal class InvalidTimeNotationException : Exception
+    public class InvalidTimeNotationException : Exception
     {
         protected InvalidTimeNotationException(SerializationInfo serializationInfo, StreamingContext streamingContext)
             : base(serializationInfo, streamingContext)

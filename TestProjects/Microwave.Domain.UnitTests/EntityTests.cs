@@ -78,7 +78,7 @@ namespace Microwave.Domain.UnitTests
         public Identity Id { get; set; }
     }
 
-    internal class TestUserWithNoApplyMethod : Entity
+    public class TestUserWithNoApplyMethod : Entity
     {
         public void Apply()
         {
@@ -107,7 +107,7 @@ namespace Microwave.Domain.UnitTests
         public Identity EntityId { get; }
     }
 
-    internal class TestUser : Entity
+    public class TestUser : Entity
     {
         public void Apply(TestUserCreatedEvent domainEvent)
         {
@@ -117,7 +117,7 @@ namespace Microwave.Domain.UnitTests
         public Identity Id { get; set; }
     }
 
-    internal class TestUserNormal : Entity, IApply<TestUserCreatedEvent>
+    public class TestUserNormal : Entity, IApply<TestUserCreatedEvent>
     {
         public void Apply(TestUserCreatedEvent domainEvent)
         {

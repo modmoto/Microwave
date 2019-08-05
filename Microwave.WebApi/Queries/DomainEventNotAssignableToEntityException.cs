@@ -1,14 +1,12 @@
 using System;
-using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using Microwave.Queries;
 
-[assembly: InternalsVisibleTo("Microwave")]
 namespace Microwave.WebApi.Queries
 {
     [Serializable]
 
-    internal class DomainEventNotAssignableToEntityException : Exception
+    public class DomainEventNotAssignableToEntityException : Exception
     {
         protected DomainEventNotAssignableToEntityException(SerializationInfo serializationInfo, StreamingContext streamingContext)
                     : base(serializationInfo, streamingContext)

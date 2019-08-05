@@ -6,7 +6,7 @@ using MongoDB.Driver;
 
 namespace Microwave.Persistence.MongoDb.Eventstores
 {
-    internal class VersionCache : IVersionCache
+    public class VersionCache : IVersionCache
     {
         private readonly ConcurrentDictionary<Identity, long> _cache = new ConcurrentDictionary<Identity, long>();
         private readonly IMongoDatabase _database;

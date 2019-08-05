@@ -31,7 +31,7 @@ namespace Microwave.Queries.UnitTests
         }
     }
 
-    internal class ReadModelTestForQuery : ReadModel, IHandle<TestEv>, IHandleVersioned<TestEv2>
+    public class ReadModelTestForQuery : ReadModel, IHandle<TestEv>, IHandleVersioned<TestEv2>
     {
         public override Type GetsCreatedOn { get; }
         public void Handle(TestEv domainEvent)

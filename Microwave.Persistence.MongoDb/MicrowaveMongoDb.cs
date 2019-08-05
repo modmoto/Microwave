@@ -1,20 +1,15 @@
-﻿using System.Runtime.CompilerServices;
-using MongoDB.Driver;
+﻿using MongoDB.Driver;
 
-[assembly: InternalsVisibleTo("Microwave.Persistence.MongoDb.UnitTestsSetup")]
-[assembly: InternalsVisibleTo("Microwave.Queries.UnitTests")]
-[assembly: InternalsVisibleTo("Microwave.Eventstores.UnitTests")]
-[assembly: InternalsVisibleTo("Microwave.Discovery.UnitTests")]
 namespace Microwave.Persistence.MongoDb
 {
     public class MicrowaveMongoDb
     {
-        internal MicrowaveMongoDb()
+        public MicrowaveMongoDb()
         {
         }
 
-        internal string DatabaseName = "MicrowaveDb";
-        internal string ConnectionString = "mongodb://localhost:27017/";
+        public string DatabaseName = "MicrowaveDb";
+        public string ConnectionString = "mongodb://localhost:27017/";
 
         public IMongoDatabase Database
         {

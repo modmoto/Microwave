@@ -3,14 +3,14 @@ using Microwave.Domain.EventSourcing;
 
 namespace Microwave.Persistence.MongoDb.Eventstores
 {
-    internal class SnapShotDbo<T>
+    public class SnapShotDbo<T>
     {
         public string Id { get; set; }
         public T Payload { get; set; }
         public long Version { get; set; }
     }
 
-    internal class DomainEventDbo
+    public class DomainEventDbo
     {
         public DomainEventKey Key { get; set; }
 
@@ -27,7 +27,7 @@ namespace Microwave.Persistence.MongoDb.Eventstores
         public string EventType { get; set; }
     }
 
-    internal class DomainEventKey
+    public class DomainEventKey
     {
         public string EntityId { get; set; }
         public long Version { get; set; }
