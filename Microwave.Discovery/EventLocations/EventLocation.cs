@@ -1,12 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using Microwave.Discovery.ServiceMaps;
 
-[assembly: InternalsVisibleTo("Microwave.Persistence.MongoDb")]
-[assembly: InternalsVisibleTo("Microwave.WebApi")]
-[assembly: InternalsVisibleTo("Microwave.UI")]
 namespace Microwave.Discovery.EventLocations
 {
     public class EventLocation

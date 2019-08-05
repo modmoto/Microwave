@@ -1,9 +1,7 @@
 using System;
-using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using Microwave.Queries;
 
-[assembly: InternalsVisibleTo("Microwave")]
 namespace Microwave.WebApi.Queries
 {
     [Serializable]

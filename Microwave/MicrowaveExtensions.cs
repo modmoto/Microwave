@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,7 +22,6 @@ using Microwave.WebApi.Discovery;
 using Microwave.WebApi.Filters;
 using Microwave.WebApi.Queries;
 
-[assembly: InternalsVisibleTo("Microwave.UnitTests")]
 namespace Microwave
 {
     public static class MicrowaveExtensions

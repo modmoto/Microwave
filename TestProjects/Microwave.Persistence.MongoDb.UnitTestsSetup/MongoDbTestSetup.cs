@@ -1,4 +1,3 @@
-using System.Runtime.CompilerServices;
 using Microwave.Discovery;
 using Microwave.Discovery.EventLocations;
 using Microwave.EventStores.Ports;
@@ -8,7 +7,6 @@ using Microwave.Persistence.UnitTestSetupPorts;
 using Microwave.Queries;
 using Microwave.Queries.Ports;
 
-[assembly: InternalsVisibleTo("Microwave.Persistence.UnitTests")]
 namespace Microwave.Persistence.MongoDb.UnitTestsSetup
 {
     public class MongoDbTestSetup : PersistenceLayerProvider

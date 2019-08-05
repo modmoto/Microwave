@@ -1,10 +1,5 @@
-﻿using System.Runtime.CompilerServices;
-using MongoDB.Driver;
+﻿using MongoDB.Driver;
 
-[assembly: InternalsVisibleTo("Microwave.Persistence.MongoDb.UnitTestsSetup")]
-[assembly: InternalsVisibleTo("Microwave.Queries.UnitTests")]
-[assembly: InternalsVisibleTo("Microwave.Eventstores.UnitTests")]
-[assembly: InternalsVisibleTo("Microwave.Discovery.UnitTests")]
 namespace Microwave.Persistence.MongoDb
 {
     public class MicrowaveMongoDb

@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microwave.Discovery;
 using Microwave.Discovery.EventLocations;
-using Microwave.WebApi.Discovery;
 
 namespace Microwave.UI.Areas.MicrowaveDashboard.Pages
 {
