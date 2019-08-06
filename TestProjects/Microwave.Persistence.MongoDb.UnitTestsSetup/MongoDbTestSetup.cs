@@ -9,22 +9,24 @@ using Microwave.Queries.Ports;
 
 namespace Microwave.Persistence.MongoDb.UnitTestsSetup
 {
-    public class MongoDbTestSetup : IPersistenceLayerProvider
+    public class MongoDbTestSetup : PersistenceLayerProvider
     {
         public MongoDbTestSetup()
         {
-            EventMongoDb = new MicrowaveMongoDb {
-                ConnectionString = "mongodb+srv://mongoDbTestUser:meinTestPw@cluster0-xhbcb.azure.mongodb.net/test?retryWrites=true&w=majority",
-                DatabaseName = "MicrowaveIntegrationTest" };
+            EventMongoDb = new MicrowaveMongoDb()
+                .WithConnectionString(
+                    "mongodb+srv://mongoDbTestUser:meinTestPw@cluster0-xhbcb.azure.mongodb.net/test?retryWrites=true&w=majority")
+                .WithDatabaseName("MicrowaveIntegrationTest");
             EventMongoDb.Database.Client.DropDatabase("MicrowaveIntegrationTest");
         }
 
         public MicrowaveMongoDb EventMongoDb { get; }
-        public IVersionRepository VersionRepository => new VersionRepository(EventMongoDb);
-        public IStatusRepository StatusRepository => new StatusRepository(EventMongoDb, new CacheThatNeverHasAnything());
-        public IReadModelRepository ReadModelRepository => new ReadModelRepository(EventMongoDb);
-        public ISnapShotRepository SnapShotRepository => new SnapShotRepository(EventMongoDb);
-        public IEventRepository EventRepository => new EventRepository(EventMongoDb, new VersionCache(EventMongoDb));
+        public override IVersionRepository VersionRepository => new VersionRepository(EventMongoDb);
+        public override IStatusRepository StatusRepository => new StatusRepository(EventMongoDb, new CacheThatNeverHasAnything());
+        public override IReadModelRepository ReadModelRepository => new ReadModelRepository(EventMongoDb);
+        public override ISnapShotRepository SnapShotRepository => new SnapShotRepository(EventMongoDb);
+        public override IEventRepository EventRepository => new EventRepository(EventMongoDb, new VersionCache
+        (EventMongoDb));
     }
 
     public class CacheThatNeverHasAnything : IEventLocationCache

@@ -6,7 +6,7 @@ using Microwave.WebApi.ApiFormatting.Identities;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace Microwave.WebApi.Querries
+namespace Microwave.WebApi.Queries
 {
     public interface IDomainEventFactory
     {

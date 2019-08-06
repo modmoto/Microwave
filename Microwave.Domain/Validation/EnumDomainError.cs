@@ -6,7 +6,7 @@ namespace Microwave.Domain.Validation
     {
         private readonly Enum _enumErrorType;
 
-        internal EnumDomainError(Enum enumErrorType)
+        public EnumDomainError(Enum enumErrorType)
         {
             _enumErrorType = enumErrorType;
         }

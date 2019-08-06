@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microwave.Discovery;
 using Microwave.Queries.Handler;
 
-namespace Microwave.WebApi.Querries
+namespace Microwave.WebApi.Queries
 {
     public interface IDomainEventClientFactory
     {
@@ -37,13 +37,14 @@ namespace Microwave.WebApi.Querries
                 httpClient.BaseAddress = new Uri(domainEventLocation.ServiceEndPoint.ServiceBaseAddress + $"Api/DomainEventTypeStreams/{eventType.Name}");
                 return httpClient;
             }
-            else if (typeof(IQueryEventHandler).IsAssignableFrom(type))
+
+            if (typeof(IQueryEventHandler).IsAssignableFrom(type))
             {
                 var eventType = type.GetGenericArguments().Skip(1).First();
                 var consumingService = eventLocation.GetServiceForEvent(eventType);
                 if (consumingService == null) return DefaultHttpClient();
                 var httpClient = await _httpClientFactory.CreateHttpClient(consumingService.ServiceEndPoint
-                .ServiceBaseAddress);
+                    .ServiceBaseAddress);
                 httpClient.BaseAddress = new Uri(consumingService.ServiceEndPoint.ServiceBaseAddress + $"Api/DomainEventTypeStreams/{eventType.Name}");
                 return httpClient;
             }
@@ -53,7 +54,7 @@ namespace Microwave.WebApi.Querries
                 var subscriberEventAndReadmodelConfig = eventLocation.GetServiceForReadModel(readModelType);
                 if (subscriberEventAndReadmodelConfig == null) return DefaultHttpClient();
                 var httpClient = await _httpClientFactory.CreateHttpClient(subscriberEventAndReadmodelConfig
-                .ServiceEndPoint.ServiceBaseAddress);
+                    .ServiceEndPoint.ServiceBaseAddress);
                 httpClient.BaseAddress = new Uri(subscriberEventAndReadmodelConfig.ServiceEndPoint.ServiceBaseAddress + "Api/DomainEvents");
                 return httpClient;
             }

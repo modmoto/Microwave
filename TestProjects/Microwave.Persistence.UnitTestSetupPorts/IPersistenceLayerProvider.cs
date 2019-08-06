@@ -5,12 +5,12 @@ using Microwave.Queries.Ports;
 
 namespace Microwave.Persistence.UnitTestSetupPorts
 {
-    public interface IPersistenceLayerProvider
+    public abstract class PersistenceLayerProvider
     {
-        IVersionRepository VersionRepository { get; }
-        IStatusRepository StatusRepository { get; }
-        IReadModelRepository ReadModelRepository { get; }
-        ISnapShotRepository SnapShotRepository { get; }
-        IEventRepository EventRepository { get; }
+        public abstract IVersionRepository VersionRepository { get; }
+        public abstract IStatusRepository StatusRepository { get; }
+        public abstract IReadModelRepository ReadModelRepository { get; }
+        public abstract ISnapShotRepository SnapShotRepository { get; }
+        public abstract IEventRepository EventRepository { get; }
     }
 }

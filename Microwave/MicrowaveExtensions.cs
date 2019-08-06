@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microwave.Discovery;
 using Microwave.Discovery.EventLocations;
+using Microwave.Discovery.ServiceMaps;
 using Microwave.Domain.EventSourcing;
 using Microwave.EventStores;
 using Microwave.EventStores.SnapShots;
@@ -19,7 +20,7 @@ using Microwave.WebApi.ApiFormatting.DateTimeOffsets;
 using Microwave.WebApi.ApiFormatting.Identities;
 using Microwave.WebApi.Discovery;
 using Microwave.WebApi.Filters;
-using Microwave.WebApi.Querries;
+using Microwave.WebApi.Queries;
 
 namespace Microwave
 {
@@ -54,9 +55,13 @@ namespace Microwave
             var modelAndDomainEventAssemblies = readModelAndDomainEventAssemblies.ToList();
             foreach (var assembly in modelAndDomainEventAssemblies)
             {
-                var eventsForPublish = GetEventsForSubscribe(assembly);
+                var eventsForPublish = GetEventsForIHandleAsyncs(assembly);
+                var eventsForPublish2 = GetEventsForQuerys(assembly);
                 var notAddedYet = eventsForPublish.Where(e => !iHandleAsyncEvents.Contains(e));
                 iHandleAsyncEvents.AddRange(notAddedYet);
+
+                var notAddedYet2 = eventsForPublish2.Where(e => !iHandleAsyncEvents.Contains(e));
+                iHandleAsyncEvents.AddRange(notAddedYet2);
             }
 
             var readModelSubscriptions = new List<ReadModelSubscription>();
@@ -152,13 +157,17 @@ namespace Microwave
         private static void AddPublishedEventCollection(IServiceCollection services,
             IEnumerable<Assembly> domainEventAssemblies, MicrowaveConfiguration microwaveConfiguration)
         {
-            var publishedEventCollection = new PublishedEventsByServiceDto { ServiceName = microwaveConfiguration.ServiceName };
+            var publishedEvents = new List<EventSchema>();
             foreach (var assembly in domainEventAssemblies)
             {
                 var eventsForPublish = GetEventsForPublish(assembly);
-                var notAddedYet = eventsForPublish.Where(e => publishedEventCollection.PublishedEvents.All(w => w.Name != e.Name));
-                publishedEventCollection.PublishedEvents.AddRange(notAddedYet);
+                var notAddedYet = eventsForPublish.Where(e => publishedEvents.All(w => w.Name != e.Name));
+                publishedEvents.AddRange(notAddedYet);
             }
+
+            var publishedEventCollection = EventsPublishedByService.Reachable(
+                new ServiceEndPoint(null, microwaveConfiguration.ServiceName),
+                publishedEvents);
 
             services.AddSingleton(publishedEventCollection);
         }
@@ -174,7 +183,7 @@ namespace Microwave
             });
         }
 
-        private static IEnumerable<EventSchema> GetEventsForSubscribe(Assembly assembly)
+        private static IEnumerable<EventSchema> GetEventsForIHandleAsyncs(Assembly assembly)
         {
             var types = assembly.GetTypes();
             var handleAsyncs = types.Where(ev => ev.GetInterfaces().Any(x =>
@@ -189,6 +198,32 @@ namespace Microwave
                     i.IsGenericType &&
                     i.GetGenericArguments().Length == 1
                     && i.GetGenericTypeDefinition() == typeof(IHandleAsync<>));
+                domainEvents.AddRange(domainEventTypes);
+            }
+
+            return domainEvents.Select(e =>
+            {
+                var propertyInfos = e.GetGenericArguments().First().GetProperties().ToList();
+                var propertyTypes = propertyInfos.Select(p => new PropertyType(p.Name, p.PropertyType.Name));
+                return new EventSchema(e.GetGenericArguments().First().Name, propertyTypes);
+            });
+        }
+
+        private static IEnumerable<EventSchema> GetEventsForQuerys(Assembly assembly)
+        {
+            var types = assembly.GetTypes();
+            var handleAsyncs = types.Where(ev => typeof(Query).IsAssignableFrom(ev) && ev.GetInterfaces().Any(x =>
+                x.IsGenericType &&
+                x.GetGenericTypeDefinition() == typeof(IHandle<>)));
+            var domainEvents = new List<Type>();
+
+            foreach (var handler in handleAsyncs)
+            {
+                var interfaces = handler.GetInterfaces();
+                var domainEventTypes = interfaces.Where(i =>
+                    i.IsGenericType &&
+                    i.GetGenericArguments().Length == 1
+                    && i.GetGenericTypeDefinition() == typeof(IHandle<>));
                 domainEvents.AddRange(domainEventTypes);
             }
 
@@ -228,8 +263,10 @@ namespace Microwave
             return subscriptions;
         }
 
-        public static IServiceCollection AddDomainEventRegistration(this IServiceCollection services,
-            Assembly assembly, EventRegistration eventRegistration)
+        public static IServiceCollection AddDomainEventRegistration(
+            this IServiceCollection services,
+            Assembly assembly,
+            EventRegistration eventRegistration)
         {
             var remoteEvents =
                 assembly.GetTypes().Where(t => t.GetInterfaces().Contains(typeof(ISubscribedDomainEvent)));
@@ -241,7 +278,7 @@ namespace Microwave
                 {
                     if (eventRegistration[eventName] != domainEventType)
                     {
-                        throw new DuplicateDomainEventException(eventName);
+                        throw new DuplicateDomainEventException(domainEventType);
                     }
                 }
                 else

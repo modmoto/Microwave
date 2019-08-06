@@ -91,7 +91,7 @@ namespace Microwave.Persistence.MongoDb.Querries
         }
     }
 
-    internal interface IIdentifiable
+    public interface IIdentifiable
     {
         string Id { get; }
     }

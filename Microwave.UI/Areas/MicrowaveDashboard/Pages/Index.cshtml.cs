@@ -9,8 +9,8 @@ namespace Microwave.UI.Areas.MicrowaveDashboard.Pages
     public class IndexModel : MicrowavePageModel
     {
         private readonly IDiscoveryHandler _discoveryHandler;
-
         public EventLocation ConsumingServices { get; set; }
+        public EventsPublishedByService PublishedEvents { get; set; }
 
         public bool HasMissingEvents => ConsumingServices.UnresolvedEventSubscriptions.Any()
                                         || ConsumingServices.UnresolvedReadModeSubscriptions.Any();
@@ -25,7 +25,9 @@ namespace Microwave.UI.Areas.MicrowaveDashboard.Pages
         public async Task OnGetAsync()
         {
             var consumingServices = await _discoveryHandler.GetConsumingServices();
+            var publishedEvents = await _discoveryHandler.GetPublishedEvents();
             ConsumingServices = consumingServices;
+            PublishedEvents = publishedEvents;
         }
 
         public async Task<IActionResult> OnPostAsync()

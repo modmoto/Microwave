@@ -2,7 +2,7 @@ using System;
 using System.Runtime.Serialization;
 using Microwave.Queries;
 
-namespace Microwave.WebApi.Querries
+namespace Microwave.WebApi.Queries
 {
     [Serializable]
 

@@ -16,7 +16,7 @@ namespace Microwave.Persistence.UnitTests.Eventstores
     {
         [DataTestMethod]
         [PersistenceTypeTest]
-        public async Task AddAndLoadEvents(IPersistenceLayerProvider layerProvider)
+        public async Task AddAndLoadEvents(PersistenceLayerProvider layerProvider)
         {
             var eventRepository = layerProvider.EventRepository;
 
@@ -36,7 +36,7 @@ namespace Microwave.Persistence.UnitTests.Eventstores
 
         [DataTestMethod]
         [PersistenceTypeTest]
-        public async Task AddAndLoadEvents_Twice(IPersistenceLayerProvider layerProvider)
+        public async Task AddAndLoadEvents_Twice(PersistenceLayerProvider layerProvider)
         {
             var eventRepository = layerProvider.EventRepository;
 
@@ -54,7 +54,7 @@ namespace Microwave.Persistence.UnitTests.Eventstores
         // this is because of mongodb, constructor has to be named the same
         [DataTestMethod]
         [PersistenceTypeTest]
-        public async Task AddAndLoadEvents_ParamCalledWrong(IPersistenceLayerProvider layerProvider)
+        public async Task AddAndLoadEvents_ParamCalledWrong(PersistenceLayerProvider layerProvider)
         {
             var eventRepository = layerProvider.EventRepository;
 
@@ -69,7 +69,7 @@ namespace Microwave.Persistence.UnitTests.Eventstores
 
         [DataTestMethod]
         [PersistenceTypeTest]
-        public async Task LoadDomainEvents_IdAndStuffIsSetCorreclty(IPersistenceLayerProvider layerProvider)
+        public async Task LoadDomainEvents_IdAndStuffIsSetCorreclty(PersistenceLayerProvider layerProvider)
         {
             var eventRepository = layerProvider.EventRepository;
 
@@ -92,7 +92,7 @@ namespace Microwave.Persistence.UnitTests.Eventstores
 
         [DataTestMethod]
         [PersistenceTypeTest]
-        public async Task AddAndLoadEventsConcurrent(IPersistenceLayerProvider layerProvider)
+        public async Task AddAndLoadEventsConcurrent(PersistenceLayerProvider layerProvider)
         {
             var eventRepository = layerProvider.EventRepository;
 
@@ -114,7 +114,7 @@ namespace Microwave.Persistence.UnitTests.Eventstores
 
         [DataTestMethod]
         [PersistenceTypeTest]
-        public async Task AddAndLoadEventsConcurrent_AfterNormalAdd(IPersistenceLayerProvider layerProvider)
+        public async Task AddAndLoadEventsConcurrent_AfterNormalAdd(PersistenceLayerProvider layerProvider)
         {
             var eventRepository = layerProvider.EventRepository;
 
@@ -135,7 +135,7 @@ namespace Microwave.Persistence.UnitTests.Eventstores
 
         [DataTestMethod]
         [PersistenceTypeTest]
-        public async Task AddAndLoadEventsConcurrent_AddAfterwardsAgain(IPersistenceLayerProvider layerProvider)
+        public async Task AddAndLoadEventsConcurrent_AddAfterwardsAgain(PersistenceLayerProvider layerProvider)
         {
             var eventRepository = layerProvider.EventRepository;
 
@@ -155,7 +155,7 @@ namespace Microwave.Persistence.UnitTests.Eventstores
 
         [DataTestMethod]
         [PersistenceTypeTest]
-        public async Task AddAndLoadEventsConcurrent_AddAfterwardsAgain_DifferentRepo(IPersistenceLayerProvider layerProvider)
+        public async Task AddAndLoadEventsConcurrent_AddAfterwardsAgain_DifferentRepo(PersistenceLayerProvider layerProvider)
         {
             var eventRepository = layerProvider.EventRepository;
             var eventRepository2 = layerProvider.EventRepository;
@@ -176,7 +176,7 @@ namespace Microwave.Persistence.UnitTests.Eventstores
 
         [DataTestMethod]
         [PersistenceTypeTest]
-        public async Task AddAndLoadEventsConcurrent_CacheEmpty(IPersistenceLayerProvider layerProvider)
+        public async Task AddAndLoadEventsConcurrent_CacheEmpty(PersistenceLayerProvider layerProvider)
         {
             var eventRepository = layerProvider.EventRepository;
             var eventRepository2 = layerProvider.EventRepository;
@@ -195,7 +195,7 @@ namespace Microwave.Persistence.UnitTests.Eventstores
 
         [DataTestMethod]
         [PersistenceTypeTest]
-        public async Task AddAndLoadEventsConcurrent_CacheEmpty2(IPersistenceLayerProvider layerProvider)
+        public async Task AddAndLoadEventsConcurrent_CacheEmpty2(PersistenceLayerProvider layerProvider)
         {
             var eventRepository = layerProvider.EventRepository;
             var eventRepository2 = layerProvider.EventRepository;
@@ -213,7 +213,7 @@ namespace Microwave.Persistence.UnitTests.Eventstores
 
         [DataTestMethod]
         [PersistenceTypeTest]
-        public async Task LoadEntityId_NotFoundTIsCorrect(IPersistenceLayerProvider layerProvider)
+        public async Task LoadEntityId_NotFoundTIsCorrect(PersistenceLayerProvider layerProvider)
         {
             var eventRepository = layerProvider.EventRepository;
 
@@ -226,7 +226,7 @@ namespace Microwave.Persistence.UnitTests.Eventstores
 
         [DataTestMethod]
         [PersistenceTypeTest]
-        public async Task LoadEntityId_VersionTooHIgh_NotFoundIsOk(IPersistenceLayerProvider layerProvider)
+        public async Task LoadEntityId_VersionTooHIgh_NotFoundIsOk(PersistenceLayerProvider layerProvider)
         {
             var eventRepository = layerProvider.EventRepository;
 
@@ -242,7 +242,7 @@ namespace Microwave.Persistence.UnitTests.Eventstores
 
         [DataTestMethod]
         [PersistenceTypeTest]
-        public async Task LoadType_VersionTooHIgh_NotFoundIsOk(IPersistenceLayerProvider layerProvider)
+        public async Task LoadType_VersionTooHIgh_NotFoundIsOk(PersistenceLayerProvider layerProvider)
         {
             var eventRepository = layerProvider.EventRepository;
 
@@ -259,7 +259,7 @@ namespace Microwave.Persistence.UnitTests.Eventstores
 
         [DataTestMethod]
         [PersistenceTypeTest]
-        public async Task LoadType_EmptyListWhenNoEventsPresentButAreBeingPublished(IPersistenceLayerProvider layerProvider)
+        public async Task LoadType_EmptyListWhenNoEventsPresentButAreBeingPublished(PersistenceLayerProvider layerProvider)
         {
             var eventRepository = layerProvider.EventRepository;
 
@@ -270,7 +270,7 @@ namespace Microwave.Persistence.UnitTests.Eventstores
 
         [DataTestMethod]
         [PersistenceTypeTest]
-        public async Task AddEmptyEventList(IPersistenceLayerProvider layerProvider)
+        public async Task AddEmptyEventList(PersistenceLayerProvider layerProvider)
         {
             var eventRepository = layerProvider.EventRepository;
 
@@ -280,7 +280,7 @@ namespace Microwave.Persistence.UnitTests.Eventstores
 
         [DataTestMethod]
         [PersistenceTypeTest]
-        public async Task LoadEventsByTypeAsync(IPersistenceLayerProvider layerProvider)
+        public async Task LoadEventsByTypeAsync(PersistenceLayerProvider layerProvider)
         {
             var eventRepository = layerProvider.EventRepository;
 
@@ -295,7 +295,7 @@ namespace Microwave.Persistence.UnitTests.Eventstores
 
         [DataTestMethod]
         [PersistenceTypeTest]
-        public async Task AddAndLoadEventsByTimeStamp(IPersistenceLayerProvider layerProvider)
+        public async Task AddAndLoadEventsByTimeStamp(PersistenceLayerProvider layerProvider)
         {
             var eventRepository = layerProvider.EventRepository;
 
@@ -312,7 +312,7 @@ namespace Microwave.Persistence.UnitTests.Eventstores
 
         [DataTestMethod]
         [PersistenceTypeTest]
-        public async Task AddEvents_FirstEventAfterCreationHasWrongRowVersionBug(IPersistenceLayerProvider layerProvider)
+        public async Task AddEvents_FirstEventAfterCreationHasWrongRowVersionBug(PersistenceLayerProvider layerProvider)
         {
             var eventRepository = layerProvider.EventRepository;
 
@@ -331,7 +331,7 @@ namespace Microwave.Persistence.UnitTests.Eventstores
 
         [DataTestMethod]
         [PersistenceTypeTest]
-        public async Task AddEvents_VersionTooHigh(IPersistenceLayerProvider layerProvider)
+        public async Task AddEvents_VersionTooHigh(PersistenceLayerProvider layerProvider)
         {
             var eventRepository = layerProvider.EventRepository;
 
@@ -345,7 +345,7 @@ namespace Microwave.Persistence.UnitTests.Eventstores
 
         [DataTestMethod]
         [PersistenceTypeTest]
-        public async Task AddEvents_VersionWayTooHigh(IPersistenceLayerProvider layerProvider)
+        public async Task AddEvents_VersionWayTooHigh(PersistenceLayerProvider layerProvider)
         {
             var eventRepository = layerProvider.EventRepository;
 
@@ -358,7 +358,7 @@ namespace Microwave.Persistence.UnitTests.Eventstores
 
         [DataTestMethod]
         [PersistenceTypeTest]
-        public async Task AddAndLoadEventsByTimeStamp_SavedAsType(IPersistenceLayerProvider layerProvider)
+        public async Task AddAndLoadEventsByTimeStamp_SavedAsType(PersistenceLayerProvider layerProvider)
         {
             var eventRepository = layerProvider.EventRepository;
 
@@ -376,7 +376,7 @@ namespace Microwave.Persistence.UnitTests.Eventstores
 
         [DataTestMethod]
         [PersistenceTypeTest]
-        public async Task AddEvents_IdSet(IPersistenceLayerProvider layerProvider)
+        public async Task AddEvents_IdSet(PersistenceLayerProvider layerProvider)
         {
             var eventRepository = layerProvider.EventRepository;
 
@@ -391,7 +391,7 @@ namespace Microwave.Persistence.UnitTests.Eventstores
 
         [DataTestMethod]
         [PersistenceTypeTest]
-        public async Task AddEvents_IdOfTypeSet(IPersistenceLayerProvider layerProvider)
+        public async Task AddEvents_IdOfTypeSet(PersistenceLayerProvider layerProvider)
         {
             var eventRepository = layerProvider.EventRepository;
 
@@ -406,7 +406,7 @@ namespace Microwave.Persistence.UnitTests.Eventstores
 
         [DataTestMethod]
         [PersistenceTypeTest]
-        public async Task AddEvents_RunTypeProjection(IPersistenceLayerProvider layerProvider)
+        public async Task AddEvents_RunTypeProjection(PersistenceLayerProvider layerProvider)
         {
             var eventRepository = layerProvider.EventRepository;
 
@@ -426,7 +426,7 @@ namespace Microwave.Persistence.UnitTests.Eventstores
 
         [DataTestMethod]
         [PersistenceTypeTest]
-        public async Task FindLastOccuredOnOfType(IPersistenceLayerProvider layerProvider)
+        public async Task FindLastOccuredOnOfType(PersistenceLayerProvider layerProvider)
         {
             var eventRepository = layerProvider.EventRepository;
 
@@ -448,7 +448,7 @@ namespace Microwave.Persistence.UnitTests.Eventstores
 
         [DataTestMethod]
         [PersistenceTypeTest]
-        public async Task FindLastOccuredOnOfType_NotFound(IPersistenceLayerProvider layerProvider)
+        public async Task FindLastOccuredOnOfType_NotFound(PersistenceLayerProvider layerProvider)
         {
             var eventRepository = layerProvider.EventRepository;
 

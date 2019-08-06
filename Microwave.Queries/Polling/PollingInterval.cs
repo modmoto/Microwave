@@ -1,9 +1,7 @@
 using System;
-using System.Runtime.CompilerServices;
 using Microwave.Queries.Exceptions;
 using NCrontab;
 
-[assembly: InternalsVisibleTo("Microwave.Queries.UnitTests")]
 namespace Microwave.Queries.Polling
 {
     public class PollingInterval<T> : IPollingInterval
@@ -67,7 +65,7 @@ namespace Microwave.Queries.Polling
             _second = second;
         }
 
-        internal PollingInterval(int secondsInput, int secondsForTest)
+        public PollingInterval(int secondsInput, int secondsForTest)
         {
             _nowTime = new DateTime(1, 1, 1, 1, 0, secondsForTest);
             _second = secondsInput;

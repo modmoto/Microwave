@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microwave.Discovery;
 using Microwave.Queries.Handler;
 using Microwave.Queries.Polling;
-using Microwave.WebApi.Querries;
+using Microwave.WebApi.Queries;
 
 namespace Microwave
 {

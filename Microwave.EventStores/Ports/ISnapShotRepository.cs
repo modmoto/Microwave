@@ -23,8 +23,13 @@ namespace Microwave.EventStores.Ports
         public Identity Id { get; }
     }
 
-    public class SnapShotResult<T>
+    public class SnapShotResult<T> where T : new()
     {
+        public static SnapShotResult<T> Default()
+        {
+            return new SnapShotResult<T>(new T(), 0);
+        }
+
         public SnapShotResult(T entity, long version)
         {
             Version = version;

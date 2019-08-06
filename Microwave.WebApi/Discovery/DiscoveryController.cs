@@ -7,19 +7,21 @@ namespace Microwave.WebApi.Discovery
     [Route("Dicovery")]
     public class DiscoveryController : Controller
     {
-        private readonly PublishedEventsByServiceDto _publishedEvents;
         private readonly IDiscoveryHandler _discoveryHandler;
 
-        public DiscoveryController(PublishedEventsByServiceDto publishedEvents, IDiscoveryHandler discoveryHandler)
+        public DiscoveryController(IDiscoveryHandler discoveryHandler)
         {
-            _publishedEvents = publishedEvents;
             _discoveryHandler = discoveryHandler;
         }
 
         [HttpGet("PublishedEvents")]
-        public ActionResult GetPublishedEvents()
+        public async Task<ActionResult> GetPublishedEvents()
         {
-            return Ok(_publishedEvents);
+            var publishedEvents = await _discoveryHandler.GetPublishedEvents();
+            var dto = new PublishedEventsByServiceDto();
+            dto.PublishedEvents.AddRange(publishedEvents.PublishedEventTypes);
+            dto.ServiceName = publishedEvents.ServiceEndPoint.Name;
+            return Ok(dto);
         }
 
         [HttpGet("ConsumingServices")]

@@ -11,7 +11,7 @@
         {
             <div class="dropdown p-3 col-4">
                 <button class="btn btn-danger dropdown-toggle" type="button" id="dropdownMenuButton"
-                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     Some dependencies could not be discovered!
                 </button>
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
@@ -34,6 +34,48 @@
         </form>
 
     </div>
+    <div class="ml-3 mb-4">
+            <h5 class="card-title">Events Published By Service:</h5>
+            @if (Model.PublishedEvents.PublishedEventTypes.Any())
+            {
+                <ul class="list-group list-group-flush">
+                    @foreach (var subscribedEvent in Model.PublishedEvents.PublishedEventTypes)
+                    {
+                        <div class="btn-group dropright">
+                            <button type="button"
+                                    class="btn btn-secondary m-1 text-left pl-4 dropdown-toggle"
+                                    data-toggle="dropdown"
+                                    aria-haspopup="true"
+                                    aria-expanded="false">
+                                @Html.DisplayFor(modelItem => subscribedEvent.Name)
+                            </button>
+                            <div class="dropdown-menu">
+                                @foreach (var property in subscribedEvent.Properties)
+                                {
+                                    <a class="dropdown-item" href="#">
+                                        <div class="d-flex flex-row">
+                                            <div class="pr-3">
+                                                @Html.DisplayFor(modelItem => property.Name)
+                                            </div>
+                                            <div class="text-secondary">
+                                                @Html.DisplayFor(modelItem => property.Type)
+                                            </div>
+                                        </div>
+                                    </a>
+                                }
+                            </div>
+                        </div>
+                    }
+                </ul>
+            }
+            else
+            {
+                <h5 class="card-title">None</h5>
+            }
+
+        </div>
+
+    <h5 class="card-title">Service depends on:</h5>
     <div class="container">
         <div class="card-deck">
             @foreach (var item in Model.ConsumingServices.Services)
@@ -141,4 +183,5 @@
             }
         </div>
     </div>
+
 </div>

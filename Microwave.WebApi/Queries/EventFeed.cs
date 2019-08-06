@@ -5,7 +5,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Microwave.Queries.Ports;
 
-namespace Microwave.WebApi.Querries
+namespace Microwave.WebApi.Queries
 {
     public class EventFeed<T> : IEventFeed<T>
     {

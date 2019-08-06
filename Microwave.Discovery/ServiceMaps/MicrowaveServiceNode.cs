@@ -1,7 +1,5 @@
-using System;
 using System.Collections.Generic;
 using Microwave.Discovery.EventLocations;
-using Newtonsoft.Json;
 
 namespace Microwave.Discovery.ServiceMaps
 {
@@ -41,7 +39,6 @@ namespace Microwave.Discovery.ServiceMaps
             ReadModels = readModels;
         }
 
-        [JsonConstructor]
         private MicrowaveServiceNode(
             ServiceEndPoint serviceEndPoint,
             IEnumerable<ServiceEndPoint> connectedServices,
@@ -55,14 +52,9 @@ namespace Microwave.Discovery.ServiceMaps
         }
 
         public bool IsReachable { get; }
-        public ServiceEndPoint ServiceEndPoint { get; private set; }
+        public ServiceEndPoint ServiceEndPoint { get; }
         public IEnumerable<ServiceEndPoint> ConnectedServices { get; }
         public IEnumerable<EventSchema> SubscribedEvents { get; }
         public IEnumerable<ReadModelSubscription> ReadModels { get; }
-
-        public void SetAddressForEndPoint(Uri serviceAddress)
-        {
-            ServiceEndPoint = new ServiceEndPoint(serviceAddress, ServiceEndPoint.Name);
-        }
     }
 }
