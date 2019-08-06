@@ -37,5 +37,11 @@ namespace WriteService1
         {
             return Ok();
         }
+
+        [HttpPost("{guidId}/tests")]
+        public async Task<ActionResult> WriteEventSecond(GuidIdentity guidId)
+        {
+            return Ok();
+        }
     }
 }

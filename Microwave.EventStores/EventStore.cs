@@ -41,6 +41,7 @@ namespace Microwave.EventStores
 
         public async Task<EventStoreResult<T>> LoadAsync<T>(Identity entityId) where T : IApply, new()
         {
+            if (entityId == null) return EventStoreResult<T>.NotFound(entityId);
             var snapShot = await _snapShotRepository.LoadSnapShot<T>(entityId);
             var entity = snapShot.Entity;
             var result = await _eventRepository.LoadEventsByEntity(entityId, snapShot.Version);
