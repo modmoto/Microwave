@@ -32,6 +32,7 @@ namespace Microwave.Persistence.MongoDb.Querries
 
         public async Task<ReadModelResult<T>> Load<T>(Identity id) where T : ReadModel
         {
+            if (id == null) return ReadModelResult<T>.NotFound(null);
             var mongoCollection = _database.GetCollection<ReadModelDbo<T>>(GetReadModelCollectionName<T>());
             var asyncCursor = await mongoCollection.FindAsync(dbo => dbo.Id == id.Id);
             var identifiableQueryDbo = asyncCursor.FirstOrDefault();

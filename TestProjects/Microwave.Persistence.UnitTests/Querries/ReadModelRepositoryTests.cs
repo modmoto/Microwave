@@ -35,6 +35,18 @@ namespace Microwave.Persistence.UnitTests.Querries
 
         [DataTestMethod]
         [PersistenceTypeTest]
+
+        public async Task LoadWithNullId(PersistenceLayerProvider layerProvider)
+        {
+            var queryRepository = layerProvider.ReadModelRepository;
+            var querry1 = await queryRepository.Load<TestReadModel>(null);
+
+            Assert.IsTrue(querry1.Is<NotFound>());
+            Assert.ThrowsException<NotFoundException>(() => querry1.Value);
+        }
+
+        [DataTestMethod]
+        [PersistenceTypeTest]
         public async Task IdentifiableQuerySaveAndLoadAll(PersistenceLayerProvider layerProvider)
         {
             var queryRepository = layerProvider.ReadModelRepository;

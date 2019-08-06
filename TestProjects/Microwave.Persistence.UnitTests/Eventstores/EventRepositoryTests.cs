@@ -36,6 +36,17 @@ namespace Microwave.Persistence.UnitTests.Eventstores
 
         [DataTestMethod]
         [PersistenceTypeTest]
+        public async Task LoadWithNulls(PersistenceLayerProvider layerProvider)
+        {
+            var eventRepository = layerProvider.EventRepository;
+
+            var loadEventsByEntity = await eventRepository.LoadEventsByEntity(null);
+            Assert.IsTrue(loadEventsByEntity.Is<NotFound>());
+            Assert.ThrowsException<NotFoundException>(() => loadEventsByEntity.Value);
+        }
+
+        [DataTestMethod]
+        [PersistenceTypeTest]
         public async Task AddAndLoadEvents_Twice(PersistenceLayerProvider layerProvider)
         {
             var eventRepository = layerProvider.EventRepository;

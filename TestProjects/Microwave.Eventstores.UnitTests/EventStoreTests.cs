@@ -18,6 +18,17 @@ namespace Microwave.Eventstores.UnitTests
     public class EventStoreTests : IntegrationTests
     {
         [TestMethod]
+        public async Task LoadWithNull()
+        {
+            var eventStore = new EventStore(null, null);
+            var loadAsync = await eventStore.LoadAsync<TestEntity>(null);
+
+            Assert.IsTrue(loadAsync.Is<NotFound>());
+            var exception = Assert.ThrowsException<NotFoundException>(() => loadAsync.Value);
+            Assert.IsTrue(exception.Message.Contains("null"));
+        }
+
+        [TestMethod]
         public async Task ApplyMethod_HappyPath()
         {
             var snapShotRepo = new Mock<ISnapShotRepository>();

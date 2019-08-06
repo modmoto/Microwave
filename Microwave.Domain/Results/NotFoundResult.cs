@@ -24,7 +24,7 @@ namespace Microwave.Domain.Results
 
         public override void Check()
         {
-            throw new NotFoundException(Type, NotFoundId.Id);
+            throw new NotFoundException(Type, NotFoundId?.Id ?? "null");
         }
     }
 }
