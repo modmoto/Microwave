@@ -22,5 +22,14 @@ namespace Microwave.Persistence.UnitTests.Querries
             var count = await versionRepository.GetVersionAsync("Type");
             Assert.AreEqual(dateTimeOffset, count);
         }
+
+        [DataTestMethod]
+        [PersistenceTypeTest]
+        public async Task LoadWithNull(PersistenceLayerProvider layerProvider)
+        {
+            var versionRepository = layerProvider.VersionRepository;
+            var count = await versionRepository.GetVersionAsync(null);
+            Assert.AreEqual(DateTimeOffset.MinValue, count);
+        }
     }
 }

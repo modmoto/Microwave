@@ -4,7 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Domain.EventSourcing;
+using Microwave.Domain.Exceptions;
 using Microwave.Domain.Identities;
+using Microwave.Domain.Results;
 using Microwave.EventStores.Ports;
 using Microwave.Persistence.UnitTestSetupPorts;
 
@@ -30,8 +32,8 @@ namespace Microwave.Persistence.UnitTests.Eventstores
             await repo.SaveSnapShot(new SnapShotWrapper<UserSnapshot>(userSnapshot, entityId, 0));
             var snapShotResult = await repo.LoadSnapShot<UserSnapshot>(entityId);
 
-            var entityGuids = snapShotResult.Entity.Guids.ToList();
-            Assert.AreEqual(entityId.Id, snapShotResult.Entity.Id.Id);
+            var entityGuids = snapShotResult.Value.Guids.ToList();
+            Assert.AreEqual(entityId.Id, snapShotResult.Value.Id.Id);
             Assert.AreEqual(2, entityGuids.Count);
             Assert.AreEqual(newGuid, entityGuids[0]);
             Assert.AreEqual(newGuid, entityGuids[1]);
@@ -50,8 +52,19 @@ namespace Microwave.Persistence.UnitTests.Eventstores
             await repo.SaveSnapShot(new SnapShotWrapper<UserSnapshotWithoutPrivateSetters>(userSnapshot, entityId, 0));
             var snapShotResult = await repo.LoadSnapShot<UserSnapshotWithoutPrivateSetters>(entityId);
 
-            Assert.IsNull(snapShotResult.Entity.Guids);
-            Assert.IsNull(snapShotResult.Entity.Id);
+            Assert.IsNull(snapShotResult.Value.Guids);
+            Assert.IsNull(snapShotResult.Value.Id);
+        }
+
+        [DataTestMethod]
+        [PersistenceTypeTest]
+        public async Task LoadWithNull(PersistenceLayerProvider layerProvider)
+        {
+            var repo = layerProvider.SnapShotRepository;
+            var snapShotResult = await repo.LoadSnapShot<UserSnapshotWithoutPrivateSetters>(null);
+
+            Assert.IsTrue(snapShotResult.Is<NotFound>());
+            Assert.ThrowsException<NotFoundException>(() => snapShotResult.Value);
         }
     }
 

@@ -25,6 +25,7 @@ namespace Microwave.Persistence.MongoDb.Eventstores
 
         public async Task<Result<IEnumerable<DomainEventWrapper>>> LoadEventsByEntity(Identity entityId, long from = 0)
         {
+            if (entityId == null) return Result<IEnumerable<DomainEventWrapper>>.NotFound(null);
             var mongoCollection = _database.GetCollection<DomainEventDbo>(_eventCollectionName);
             var domainEventDbos = (await mongoCollection.FindAsync(ev => ev.Key.EntityId == entityId.Id && ev.Key.Version > from)).ToList();
             if (!domainEventDbos.Any())

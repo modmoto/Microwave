@@ -31,8 +31,8 @@ namespace Microwave.Persistence.UnitTests.Eventstores
             await eventStore.LoadAsync<User>(entityId);
 
             var snapShotDboOld = await layerProvider.SnapShotRepository.LoadSnapShot<User>(entityId);
-            Assert.IsNull(snapShotDboOld.Entity.Id);
-            Assert.IsNull(snapShotDboOld.Entity.Name);
+            Assert.IsNull(snapShotDboOld.Value.Id);
+            Assert.IsNull(snapShotDboOld.Value.Name);
 
             await eventStore.AppendAsync(new List<IDomainEvent>
             {
@@ -51,8 +51,8 @@ namespace Microwave.Persistence.UnitTests.Eventstores
             var snapShotDbo = await layerProvider.SnapShotRepository.LoadSnapShot<User>(entityId);
 
             Assert.AreEqual(4, snapShotDbo.Version);
-            Assert.AreEqual(entityId.Id, snapShotDbo.Entity.Id.Id);
-            var userSnapShot = snapShotDbo.Entity;
+            Assert.AreEqual(entityId.Id, snapShotDbo.Value.Id.Id);
+            var userSnapShot = snapShotDbo.Value;
 
             Assert.AreEqual(14, userSnapShot.Age);
             Assert.AreEqual("PeterNeu", userSnapShot.Name);

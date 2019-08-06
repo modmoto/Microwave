@@ -20,6 +20,7 @@ namespace Microwave.Persistence.MongoDb.Eventstores
 
         public async Task<SnapShotResult<T>> LoadSnapShot<T>(Identity entityId) where T : new()
         {
+            if (entityId == null) return SnapShotResult<T>.NotFound(null);
             var mongoCollection = _context.GetCollection<SnapShotDbo<T>>(_snapShotCollectionName);
             var asyncCursor = await mongoCollection.FindAsync(r => r.Id == entityId.Id);
             var snapShot = asyncCursor.ToList().FirstOrDefault();
