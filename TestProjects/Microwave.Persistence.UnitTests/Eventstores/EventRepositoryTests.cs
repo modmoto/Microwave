@@ -62,22 +62,6 @@ namespace Microwave.Persistence.UnitTests.Eventstores
             Assert.AreEqual(6, loadEventsByEntity.Value.Count());
         }
 
-        // this is because of mongodb, constructor has to be named the same
-        [DataTestMethod]
-        [PersistenceTypeTest]
-        public async Task AddAndLoadEvents_ParamCalledWrong(PersistenceLayerProvider layerProvider)
-        {
-            var eventRepository = layerProvider.EventRepository;
-
-            var newGuid = GuidIdentity.Create(Guid.NewGuid());
-            var events = new List<IDomainEvent> { new TestEvent_ParameterCalledWrong(newGuid)};
-            await eventRepository.AppendAsync(events, 0);
-
-            var loadEventsByEntity = await eventRepository.LoadEventsByEntity(newGuid);
-            Assert.AreEqual(1, loadEventsByEntity.Value.Count());
-            Assert.AreEqual(null, loadEventsByEntity.Value.ToList()[0].DomainEvent.EntityId);
-        }
-
         [DataTestMethod]
         [PersistenceTypeTest]
         public async Task LoadDomainEvents_IdAndStuffIsSetCorreclty(PersistenceLayerProvider layerProvider)
@@ -187,43 +171,6 @@ namespace Microwave.Persistence.UnitTests.Eventstores
 
         [DataTestMethod]
         [PersistenceTypeTest]
-        public async Task AddAndLoadEventsConcurrent_CacheEmpty(PersistenceLayerProvider layerProvider)
-        {
-            var eventRepository = layerProvider.EventRepository;
-            var eventRepository2 = layerProvider.EventRepository;
-
-            var newGuid = GuidIdentity.Create(Guid.NewGuid());
-            var newGuid2 = GuidIdentity.Create(Guid.NewGuid());
-            var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid)};
-            var events2 = new List<IDomainEvent> { new TestEvent1(newGuid2), new TestEvent2(newGuid2)};
-
-            await eventRepository.AppendAsync(events, 0);
-            await eventRepository2.AppendAsync(events2, 0);
-
-            var result = await eventRepository.LoadEvents();
-            Assert.AreEqual(4, result.Value.Count());
-        }
-
-        [DataTestMethod]
-        [PersistenceTypeTest]
-        public async Task AddAndLoadEventsConcurrent_CacheEmpty2(PersistenceLayerProvider layerProvider)
-        {
-            var eventRepository = layerProvider.EventRepository;
-            var eventRepository2 = layerProvider.EventRepository;
-
-            var newGuid = GuidIdentity.Create(Guid.NewGuid());
-            var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid)};
-            var events2 = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid)};
-
-            await eventRepository.AppendAsync(events, 0);
-            await eventRepository2.AppendAsync(events2, 2);
-
-            var result = await eventRepository.LoadEvents();
-            Assert.AreEqual(4, result.Value.Count());
-        }
-
-        [DataTestMethod]
-        [PersistenceTypeTest]
         public async Task LoadEntityId_NotFoundTIsCorrect(PersistenceLayerProvider layerProvider)
         {
             var eventRepository = layerProvider.EventRepository;
@@ -233,22 +180,6 @@ namespace Microwave.Persistence.UnitTests.Eventstores
 
             var notFoundException = Assert.ThrowsException<NotFoundException>(() => result.Value);
             Assert.AreEqual($"Could not find DomainEvents with ID {entityId.Id}", notFoundException.Message);
-        }
-
-        [DataTestMethod]
-        [PersistenceTypeTest]
-        public async Task LoadEntityId_VersionTooHIgh_NotFoundIsOk(PersistenceLayerProvider layerProvider)
-        {
-            var eventRepository = layerProvider.EventRepository;
-
-            var entityId = Identity.Create(new Guid());
-            var events = new List<IDomainEvent> { new TestEvent1(entityId), new TestEvent2(entityId)};
-            await eventRepository.AppendAsync(events, 0);
-
-            var result = await eventRepository.LoadEventsByEntity(entityId, 3);
-
-            Assert.IsTrue(result.Is<Ok>());
-            Assert.AreEqual(0, result.Value.Count());
         }
 
         [DataTestMethod]
@@ -435,44 +366,6 @@ namespace Microwave.Persistence.UnitTests.Eventstores
             Assert.AreEqual(typeof(TestEvent1), result.Value.ToList()[0].DomainEvent.GetType());
         }
 
-        [DataTestMethod]
-        [PersistenceTypeTest]
-        public async Task FindLastOccuredOnOfType(PersistenceLayerProvider layerProvider)
-        {
-            var eventRepository = layerProvider.EventRepository;
-
-            var newGuid = GuidIdentity.Create();
-            var events = new List<IDomainEvent> { new TestEvent2(newGuid)};
-
-            await eventRepository.AppendAsync(events, 0);
-            var result = await eventRepository.GetLastEventOccuredOn(nameof(TestEvent2));
-
-            await Task.Delay(1000);
-            await eventRepository.AppendAsync(events, 1);
-
-            var resultAddedAfter = await eventRepository.GetLastEventOccuredOn(nameof(TestEvent2));
-
-            Assert.AreNotEqual(resultAddedAfter.Value.Ticks, result.Value.Ticks);
-            Assert.AreEqual(DateTimeOffset.Now.Day, result.Value.Day);
-            Assert.AreEqual(DateTimeOffset.Now.Hour, result.Value.Hour);
-        }
-
-        [DataTestMethod]
-        [PersistenceTypeTest]
-        public async Task FindLastOccuredOnOfType_NotFound(PersistenceLayerProvider layerProvider)
-        {
-            var eventRepository = layerProvider.EventRepository;
-
-            var newGuid = GuidIdentity.Create(Guid.NewGuid());
-            var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid), new TestEvent1(newGuid), new TestEvent2(newGuid), new TestEvent2(newGuid)};
-
-            await eventRepository.AppendAsync(events, 0);
-
-            var result = await eventRepository.GetLastEventOccuredOn(nameof(TestEvent3));
-
-            Assert.IsTrue(result.Is<NotFound>());
-        }
-
         private static void CheckAllResults(Result[] whenAll)
         {
             foreach (var result in whenAll)
@@ -487,16 +380,6 @@ namespace Microwave.Persistence.UnitTests.Eventstores
         public TestEvent1(Identity entityId)
         {
             EntityId = entityId;
-        }
-
-        public Identity EntityId { get; }
-    }
-
-    public class TestEvent_ParameterCalledWrong : IDomainEvent
-    {
-        public TestEvent_ParameterCalledWrong(Identity notCalledEntityId)
-        {
-            EntityId = notCalledEntityId;
         }
 
         public Identity EntityId { get; }

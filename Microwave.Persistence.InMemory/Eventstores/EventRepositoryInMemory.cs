@@ -43,8 +43,8 @@ namespace Microwave.Persistence.InMemory.Eventstores
         {
             var maxVersion = _domainEvents.
                                  Where(e => e.DomainEvent.EntityId == domainEvents.First().EntityId)
-                                 .OrderBy(e => e.Version).FirstOrDefault()?.Version ?? 0;
-            if (maxVersion > currentEntityVersion) return Task.FromResult(
+                                 .OrderBy(e => e.Version).LastOrDefault()?.Version ?? 0;
+            if (maxVersion != currentEntityVersion) return Task.FromResult(
                 Result.ConcurrencyResult(currentEntityVersion, maxVersion));
             var newVersion = currentEntityVersion;
             var domainEventWrappers = domainEvents.Select(e => new DomainEventWrapper
@@ -52,7 +52,7 @@ namespace Microwave.Persistence.InMemory.Eventstores
                 Created = DateTimeOffset.Now,
                 DomainEvent = e,
                 Version = ++newVersion
-            });
+            }).ToList();
             _domainEvents.AddRange(domainEventWrappers);
             return Task.FromResult(Result.Ok());
         }
@@ -70,11 +70,6 @@ namespace Microwave.Persistence.InMemory.Eventstores
                 .OrderBy(e => e.Created)
                 .Where(e => e.DomainEventType == eventType && e.Created > tickSince);
             return Task.FromResult(Result<IEnumerable<DomainEventWrapper>>.Ok(domainEventWrappers));
-        }
-
-        public Task<Result<DateTimeOffset>> GetLastEventOccuredOn(string domainEventType)
-        {
-            return null;
         }
     }
 }

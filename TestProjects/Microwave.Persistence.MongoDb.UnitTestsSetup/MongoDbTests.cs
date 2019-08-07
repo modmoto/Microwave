@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Domain.EventSourcing;
 using Microwave.Domain.Identities;
+using Microwave.Domain.Results;
 using Microwave.EventStores;
 using Microwave.EventStores.Ports;
 using Microwave.Persistence.MongoDb.Eventstores;
@@ -66,6 +67,81 @@ namespace Microwave.Persistence.MongoDb.UnitTestsSetup
             Assert.AreEqual(newGuid.ToString(), result.Value.Single().DomainEvent.EntityId.Id);
             Assert.AreEqual("Simon", ((TestEventAllOk) result.Value.Single().DomainEvent).Name);
         }
+
+        // this is because of mongodb, constructor has to be named the same
+        [DataTestMethod]
+        public async Task AddAndLoadEvents_ParamCalledWrong()
+        {
+            var eventRepository = new EventRepositoryMongoDb(EventMongoDb, new VersionCache(EventMongoDb));
+
+            var newGuid = GuidIdentity.Create(Guid.NewGuid());
+            var events = new List<IDomainEvent> { new TestEvent_ParameterCalledWrong(newGuid)};
+            await eventRepository.AppendAsync(events, 0);
+
+            var loadEventsByEntity = await eventRepository.LoadEventsByEntity(newGuid);
+            Assert.AreEqual(1, loadEventsByEntity.Value.Count());
+            Assert.AreEqual(null, loadEventsByEntity.Value.ToList()[0].DomainEvent.EntityId);
+        }
+
+        [DataTestMethod]
+        public async Task AddAndLoadEventsConcurrent_CacheEmpty2()
+        {
+            var eventRepository = new EventRepositoryMongoDb(EventMongoDb, new VersionCache(EventMongoDb));
+            var eventRepository2 = new EventRepositoryMongoDb(EventMongoDb, new VersionCache(EventMongoDb));
+
+            var newGuid = GuidIdentity.Create(Guid.NewGuid());
+            var events = new List<IDomainEvent> { new TestEventAllOk(newGuid, "name"), new TestEventAllOk(newGuid, "name")};
+            var events2 = new List<IDomainEvent> { new TestEventAllOk(newGuid, "name"), new TestEventAllOk(newGuid, "name")};
+
+            await eventRepository.AppendAsync(events, 0);
+            await eventRepository2.AppendAsync(events2, 2);
+
+            var result = await eventRepository.LoadEvents();
+            Assert.AreEqual(4, result.Value.Count());
+        }
+
+        [DataTestMethod]
+        public async Task AddAndLoadEventsConcurrent_CacheEmpty()
+        {
+            var eventRepository = new EventRepositoryMongoDb(EventMongoDb, new VersionCache(EventMongoDb));;
+            var eventRepository2 = new EventRepositoryMongoDb(EventMongoDb, new VersionCache(EventMongoDb));
+
+            var newGuid = GuidIdentity.Create(Guid.NewGuid());
+            var newGuid2 = GuidIdentity.Create(Guid.NewGuid());
+            var events = new List<IDomainEvent> { new TestEventAllOk(newGuid, "name"), new TestEventAllOk(newGuid, "name")};
+            var events2 = new List<IDomainEvent> { new TestEventAllOk(newGuid2, "name"), new TestEventAllOk(newGuid2, "name")};
+
+            await eventRepository.AppendAsync(events, 0);
+            await eventRepository2.AppendAsync(events2, 0);
+
+            var result = await eventRepository.LoadEvents();
+            Assert.AreEqual(4, result.Value.Count());
+        }
+
+        [DataTestMethod]
+        public async Task LoadEntityId_VersionTooHIgh_NotFoundIsOk()
+        {
+            var eventRepository = new EventRepositoryMongoDb(EventMongoDb, new VersionCache(EventMongoDb));
+
+            var newGuid = GuidIdentity.Create(Guid.NewGuid());
+            var events = new List<IDomainEvent> { new TestEventAllOk(newGuid, "name"), new TestEventAllOk(newGuid, "name"),};
+            await eventRepository.AppendAsync(events, 0);
+
+            var result = await eventRepository.LoadEventsByEntity(newGuid, 3);
+
+            Assert.IsTrue(result.Is<Ok>());
+            Assert.AreEqual(0, result.Value.Count());
+        }
+    }
+
+    public class TestEvent_ParameterCalledWrong : IDomainEvent
+    {
+        public TestEvent_ParameterCalledWrong(Identity notCalledEntityId)
+        {
+            EntityId = notCalledEntityId;
+        }
+
+        public Identity EntityId { get; }
     }
 
     public class TestEntity
