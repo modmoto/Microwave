@@ -21,12 +21,13 @@ namespace Microwave.Persistence.InMemory.Eventstores
             throw new NotImplementedException();
         }
 
-        public Task<Result<IEnumerable<DomainEventWrapper>>> LoadEvents(DateTimeOffset tickSince = default)
+        public Task<Result<IEnumerable<DomainEventWrapper>>> LoadEvents(DateTimeOffset tickSince = default(DateTimeOffset))
         {
             throw new NotImplementedException();
         }
 
-        public Task<Result<IEnumerable<DomainEventWrapper>>> LoadEventsByTypeAsync(string eventType, DateTimeOffset tickSince = default)
+        public Task<Result<IEnumerable<DomainEventWrapper>>> LoadEventsByTypeAsync(string eventType, DateTimeOffset
+        tickSince = default(DateTimeOffset))
         {
             throw new NotImplementedException();
         }
