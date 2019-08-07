@@ -11,13 +11,13 @@ using MongoDB.Driver;
 
 namespace Microwave.Persistence.MongoDb.Eventstores
 {
-    public class EventRepository : IEventRepository
+    public class EventRepositoryMongoDb : IEventRepository
     {
         private readonly IMongoDatabase _database;
         private readonly string _eventCollectionName = "DomainEventDbos";
         private readonly IVersionCache _versions;
 
-        public EventRepository(MicrowaveMongoDb mongoDb, IVersionCache versions)
+        public EventRepositoryMongoDb(MicrowaveMongoDb mongoDb, IVersionCache versions)
         {
             _versions = versions;
             _database = mongoDb.Database;

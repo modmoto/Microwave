@@ -21,7 +21,7 @@ namespace Microwave.Eventstores.UnitTests
         {
             BsonMapRegistrationHelpers.AddBsonMapFor<TestEvent_BsonBug>();
 
-            var eventRepository = new EventRepository(EventMongoDb, new VersionCache(EventMongoDb));
+            var eventRepository = new EventRepositoryMongoDb(EventMongoDb, new VersionCache(EventMongoDb));
             var snapShotRepo = new Mock<ISnapShotRepository>();
             snapShotRepo.Setup(re => re.LoadSnapShot<TestEntity>(It.IsAny<Identity>()))
                 .ReturnsAsync(SnapShotResult<TestEntity>.Default());
@@ -45,7 +45,7 @@ namespace Microwave.Eventstores.UnitTests
         {
             BsonMapRegistrationHelpers.AddBsonMapFor<TestEvent_BsonBug_AutoProperty>();
 
-            var eventRepository = new EventRepository(EventMongoDb, new VersionCache(EventMongoDb));
+            var eventRepository = new EventRepositoryMongoDb(EventMongoDb, new VersionCache(EventMongoDb));
             var snapShotRepo = new Mock<ISnapShotRepository>();
             snapShotRepo.Setup(re => re.LoadSnapShot<TestEntity>(It.IsAny<Identity>()))
                 .ReturnsAsync(SnapShotResult<TestEntity>.Default());
@@ -70,7 +70,7 @@ namespace Microwave.Eventstores.UnitTests
         {
             BsonMapRegistrationHelpers.AddBsonMapFor<TestEvent_UnconventionalOderring>();
 
-            var eventRepository = new EventRepository(EventMongoDb, new VersionCache(EventMongoDb));
+            var eventRepository = new EventRepositoryMongoDb(EventMongoDb, new VersionCache(EventMongoDb));
             var snapShotRepo = new Mock<ISnapShotRepository>();
             snapShotRepo.Setup(re => re.LoadSnapShot<TestEntity>(It.IsAny<Identity>()))
                 .ReturnsAsync(SnapShotResult<TestEntity>.Default());
@@ -92,7 +92,7 @@ namespace Microwave.Eventstores.UnitTests
         {
             BsonMapRegistrationHelpers.AddBsonMapFor<TestEvent_TwoIdentitiesInConstructor>();
 
-            var eventRepository = new EventRepository(EventMongoDb, new VersionCache(EventMongoDb));
+            var eventRepository = new EventRepositoryMongoDb(EventMongoDb, new VersionCache(EventMongoDb));
             var snapShotRepo = new Mock<ISnapShotRepository>();
             snapShotRepo.Setup(re => re.LoadSnapShot<TestEntity>(It.IsAny<Identity>()))
                 .ReturnsAsync(SnapShotResult<TestEntity>.Default());
@@ -117,7 +117,7 @@ namespace Microwave.Eventstores.UnitTests
         {
             BsonMapRegistrationHelpers.AddBsonMapFor<TestEvent_BsonBug_AutoProperty_NotWithEntityIdName>();
 
-            var eventRepository = new EventRepository(EventMongoDb, new VersionCache(EventMongoDb));
+            var eventRepository = new EventRepositoryMongoDb(EventMongoDb, new VersionCache(EventMongoDb));
             var snapShotRepo = new Mock<ISnapShotRepository>();
             snapShotRepo.Setup(re => re.LoadSnapShot<TestEntity>(It.IsAny<Identity>()))
                 .ReturnsAsync(SnapShotResult<TestEntity>.Default());

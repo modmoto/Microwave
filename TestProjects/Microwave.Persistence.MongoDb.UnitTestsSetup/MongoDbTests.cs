@@ -19,7 +19,7 @@ namespace Microwave.Persistence.MongoDb.UnitTestsSetup
         [TestMethod]
         public async Task AddAndLoadEvents_AutoProperty()
         {
-            var eventRepository = new EventRepository(EventMongoDb, new VersionCache(EventMongoDb));
+            var eventRepository = new EventRepositoryMongoDb(EventMongoDb, new VersionCache(EventMongoDb));
             var stringIdentity = StringIdentity.Create("TestId");
 
             BsonClassMap.RegisterClassMap<DomainEventWithAutoProperty>(cm =>
@@ -47,7 +47,7 @@ namespace Microwave.Persistence.MongoDb.UnitTestsSetup
         {
             BsonMapRegistrationHelpers.AddBsonMapsForMicrowave(typeof(TestEventAllOk).Assembly);
 
-            var eventRepository = new EventRepository(EventMongoDb, new VersionCache(EventMongoDb));
+            var eventRepository = new EventRepositoryMongoDb(EventMongoDb, new VersionCache(EventMongoDb));
             var snapShotRepo = new Mock<ISnapShotRepository>();
             snapShotRepo.Setup(re => re.LoadSnapShot<TestEntity>(It.IsAny<Identity>()))
                 .ReturnsAsync(SnapShotResult<TestEntity>.Default());

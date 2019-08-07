@@ -19,16 +19,16 @@ namespace Microwave.Persistence.MongoDb
             var microwaveMongoDb = new MicrowaveMongoDb();
             action.Invoke(microwaveMongoDb);
 
-            services.AddTransient<IStatusRepository, StatusRepository>();
+            services.AddTransient<IStatusRepository, StatusRepositoryMongoDb>();
 
-            services.AddTransient<IVersionRepository, VersionRepository>();
-            services.AddTransient<IReadModelRepository, ReadModelRepository>();
+            services.AddTransient<IVersionRepository, VersionRepositoryMongoDb>();
+            services.AddTransient<IReadModelRepository, ReadModelRepositoryMongoDb>();
             services.AddSingleton(microwaveMongoDb);
             services.AddSingleton<IEventLocationCache>(new EventLocationCache());
 
-            services.AddTransient<IEventRepository, EventRepository>();
+            services.AddTransient<IEventRepository, EventRepositoryMongoDb>();
             services.AddSingleton<IVersionCache, VersionCache>();
-            services.AddTransient<ISnapShotRepository, SnapShotRepository>();
+            services.AddTransient<ISnapShotRepository, SnapShotRepositoryMongoDb>();
 
             foreach (var assembly in MicrowaveExtensions.GetAllAssemblies())
             {

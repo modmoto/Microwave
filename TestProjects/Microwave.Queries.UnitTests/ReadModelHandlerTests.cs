@@ -20,10 +20,10 @@ namespace Microwave.Queries.UnitTests
         {
             EntityGuid = GuidIdentity.Create(Guid.NewGuid());
 
-            var queryRepository = new ReadModelRepository(EventMongoDb);
+            var queryRepository = new ReadModelRepositoryMongoDb(EventMongoDb);
 
             var readModelHandler = new ReadModelEventHandler<TestReadModelQuerries>(queryRepository,
-                new VersionRepository(EventMongoDb), new FeedMock2());
+                new VersionRepositoryMongoDb(EventMongoDb), new FeedMock2());
             await readModelHandler.Update();
 
             var result = await queryRepository.Load<TestReadModelQuerries>(EntityGuid);
@@ -38,10 +38,10 @@ namespace Microwave.Queries.UnitTests
             EntityGuid = GuidIdentity.Create(Guid.NewGuid());
             EntityGuid2 = GuidIdentity.Create(Guid.NewGuid());
 
-            var queryRepository = new ReadModelRepository(EventMongoDb);
+            var queryRepository = new ReadModelRepositoryMongoDb(EventMongoDb);
 
             var readModelHandler = new ReadModelEventHandler<TestReadModelQuerries>(queryRepository,
-                new VersionRepository(EventMongoDb), new FeedMock3());
+                new VersionRepositoryMongoDb(EventMongoDb), new FeedMock3());
 
             await readModelHandler.Update();
 
@@ -57,9 +57,9 @@ namespace Microwave.Queries.UnitTests
             EntityGuid = GuidIdentity.Create(Guid.NewGuid());
             EntityGuid2 = GuidIdentity.Create(Guid.NewGuid());
 
-            var queryRepository = new ReadModelRepository(EventMongoDb);
+            var queryRepository = new ReadModelRepositoryMongoDb(EventMongoDb);
 
-            var readModelHandler = new ReadModelEventHandler<TestReadModelQuerries>(queryRepository, new VersionRepository(EventMongoDb), new FeedMock4());
+            var readModelHandler = new ReadModelEventHandler<TestReadModelQuerries>(queryRepository, new VersionRepositoryMongoDb(EventMongoDb), new FeedMock4());
 
             await readModelHandler.Update();
 
@@ -75,11 +75,11 @@ namespace Microwave.Queries.UnitTests
         {
             EntityGuid = GuidIdentity.Create(Guid.NewGuid());
 
-            var queryRepository = new ReadModelRepository(EventMongoDb);
+            var queryRepository = new ReadModelRepositoryMongoDb(EventMongoDb);
 
             var readModelHandler = new ReadModelEventHandler<TestReadModelQuerries_OnlyOneEventAndVersionIsCounted>(
                 queryRepository,
-                new VersionRepository(EventMongoDb),
+                new VersionRepositoryMongoDb(EventMongoDb),
                 new FeedMock5());
 
             await readModelHandler.Update();
@@ -96,11 +96,11 @@ namespace Microwave.Queries.UnitTests
             EntityGuid = GuidIdentity.Create(Guid.NewGuid());
             EntityGuid2 = GuidIdentity.Create(Guid.NewGuid());
 
-            var queryRepository = new ReadModelRepository(EventMongoDb);
+            var queryRepository = new ReadModelRepositoryMongoDb(EventMongoDb);
 
-            var readModelHandler = new ReadModelEventHandler<TestReadModelQuerries_TwoParallelFeeds1>(queryRepository, new VersionRepository(EventMongoDb), new FeedMock6());
+            var readModelHandler = new ReadModelEventHandler<TestReadModelQuerries_TwoParallelFeeds1>(queryRepository, new VersionRepositoryMongoDb(EventMongoDb), new FeedMock6());
 
-            var readModelHandler2 = new ReadModelEventHandler<TestReadModelQuerries_TwoParallelFeeds2>(queryRepository, new VersionRepository(EventMongoDb), new FeedMock7());
+            var readModelHandler2 = new ReadModelEventHandler<TestReadModelQuerries_TwoParallelFeeds2>(queryRepository, new VersionRepositoryMongoDb(EventMongoDb), new FeedMock7());
 
             await readModelHandler.Update();
             await readModelHandler2.Update();
@@ -116,11 +116,11 @@ namespace Microwave.Queries.UnitTests
         {
             EntityGuid = GuidIdentity.Create(Guid.NewGuid());
 
-            var queryRepository = new ReadModelRepository(EventMongoDb);
+            var queryRepository = new ReadModelRepositoryMongoDb(EventMongoDb);
 
             var readModelHandler = new ReadModelEventHandler<TestReadModelQuerries_VerionedHandle>(
                 queryRepository,
-                new VersionRepository(EventMongoDb),
+                new VersionRepositoryMongoDb(EventMongoDb),
                 new FeedMockVersioned());
 
             await readModelHandler.Update();

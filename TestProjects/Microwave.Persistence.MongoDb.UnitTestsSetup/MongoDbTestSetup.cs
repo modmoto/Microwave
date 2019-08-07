@@ -21,11 +21,11 @@ namespace Microwave.Persistence.MongoDb.UnitTestsSetup
         }
 
         public MicrowaveMongoDb EventMongoDb { get; }
-        public override IVersionRepository VersionRepository => new VersionRepository(EventMongoDb);
-        public override IStatusRepository StatusRepository => new StatusRepository(EventMongoDb, new CacheThatNeverHasAnything());
-        public override IReadModelRepository ReadModelRepository => new ReadModelRepository(EventMongoDb);
-        public override ISnapShotRepository SnapShotRepository => new SnapShotRepository(EventMongoDb);
-        public override IEventRepository EventRepository => new EventRepository(EventMongoDb, new VersionCache
+        public override IVersionRepository VersionRepository => new VersionRepositoryMongoDb(EventMongoDb);
+        public override IStatusRepository StatusRepository => new StatusRepositoryMongoDb(EventMongoDb, new CacheThatNeverHasAnything());
+        public override IReadModelRepository ReadModelRepository => new ReadModelRepositoryMongoDb(EventMongoDb);
+        public override ISnapShotRepository SnapShotRepository => new SnapShotRepositoryMongoDb(EventMongoDb);
+        public override IEventRepository EventRepository => new EventRepositoryMongoDb(EventMongoDb, new VersionCache
         (EventMongoDb));
     }
 
