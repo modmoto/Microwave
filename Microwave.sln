@@ -53,7 +53,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WriteService2", "TestServic
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microwave.Discovery.UnitTests", "TestProjects\Microwave.Discovery.UnitTests\Microwave.Discovery.UnitTests.csproj", "{A12C678F-D971-4FAC-8E82-9F307770CD92}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microwave.Persistence.InMemory", "Microwave.Persistence.InMemory\Microwave.Persistence.InMemory.csproj", "{DC77A39F-92B3-411F-9A63-3DA65C52EE04}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microwave.Persistence.InMemory", "Microwave.Persistence.InMemory\Microwave.Persistence.InMemory.csproj", "{DC77A39F-92B3-411F-9A63-3DA65C52EE04}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microwave.Persistence.InMemory.UnitTestsSetup", "TestProjects\Microwave.Persistence.InMemory.UnitTestsSetup\Microwave.Persistence.InMemory.UnitTestsSetup.csproj", "{E27B6652-B3A5-450D-9366-229C442DA8B4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -157,6 +159,10 @@ Global
 		{DC77A39F-92B3-411F-9A63-3DA65C52EE04}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DC77A39F-92B3-411F-9A63-3DA65C52EE04}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DC77A39F-92B3-411F-9A63-3DA65C52EE04}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E27B6652-B3A5-450D-9366-229C442DA8B4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E27B6652-B3A5-450D-9366-229C442DA8B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E27B6652-B3A5-450D-9366-229C442DA8B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E27B6652-B3A5-450D-9366-229C442DA8B4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -177,6 +183,7 @@ Global
 		{B8B78E4F-59D5-45AB-962E-2898A4368841} = {4DA39CBA-8A2D-4C97-9B79-B118325D7D04}
 		{73988DBC-1385-4332-9733-DE74F6656D53} = {4DA39CBA-8A2D-4C97-9B79-B118325D7D04}
 		{A12C678F-D971-4FAC-8E82-9F307770CD92} = {2DFC8EF1-71B5-4F61-9E1D-B06DAA1BC199}
+		{E27B6652-B3A5-450D-9366-229C442DA8B4} = {2DFC8EF1-71B5-4F61-9E1D-B06DAA1BC199}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {10681780-EDC2-4AAC-8551-A22B38DC45CE}
