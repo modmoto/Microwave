@@ -13,13 +13,11 @@ namespace Microwave.Persistence.InMemory
         public static IServiceCollection AddMicrowavePersistenceLayerInMemory(
             this IServiceCollection services)
         {
-            services.AddTransient<IStatusRepository, StatusRepositoryInMemory>();
-
-            services.AddTransient<IVersionRepository, VersionRepositoryInMemory>();
-            services.AddTransient<IReadModelRepository, ReadModelRepositoryInMemory>();
-
-            services.AddTransient<IEventRepository, EventRepositoryInMemory>();
-            services.AddTransient<ISnapShotRepository, SnapShotRepositoryInMemory>();
+            services.AddSingleton<IStatusRepository, StatusRepositoryInMemory>();
+            services.AddSingleton<IVersionRepository, VersionRepositoryInMemory>();
+            services.AddSingleton<IReadModelRepository, ReadModelRepositoryInMemory>();
+            services.AddSingleton<IEventRepository, EventRepositoryInMemory>();
+            services.AddSingleton<ISnapShotRepository, SnapShotRepositoryInMemory>();
 
             return services;
         }
