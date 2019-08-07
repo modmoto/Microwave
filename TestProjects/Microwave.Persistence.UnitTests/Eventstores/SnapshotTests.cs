@@ -17,7 +17,8 @@ namespace Microwave.Persistence.UnitTests.Eventstores
         [PersistenceTypeTest]
         public async Task SnapshotGetSavedAfterThirdEvent(PersistenceLayerProvider layerProvider)
         {
-            var eventStore = new EventStore(layerProvider.EventRepository, layerProvider.SnapShotRepository
+            var snapShotRepository = layerProvider.SnapShotRepository;
+            var eventStore = new EventStore(layerProvider.EventRepository, snapShotRepository
                 , new SnapShotConfig(new
             List<ISnapShot> { new SnapShot<User>(3)}));
 
@@ -30,7 +31,7 @@ namespace Microwave.Persistence.UnitTests.Eventstores
 
             await eventStore.LoadAsync<User>(entityId);
 
-            var snapShotDboOld = await layerProvider.SnapShotRepository.LoadSnapShot<User>(entityId);
+            var snapShotDboOld = await snapShotRepository.LoadSnapShot<User>(entityId);
             Assert.IsNull(snapShotDboOld.Value.Id);
             Assert.IsNull(snapShotDboOld.Value.Name);
 
@@ -48,7 +49,7 @@ namespace Microwave.Persistence.UnitTests.Eventstores
             Assert.AreEqual("PeterNeu", user.Value.Name);
             Assert.AreEqual(entityId.Id, user.Value.Id.Id);
 
-            var snapShotDbo = await layerProvider.SnapShotRepository.LoadSnapShot<User>(entityId);
+            var snapShotDbo = await snapShotRepository.LoadSnapShot<User>(entityId);
 
             Assert.AreEqual(4, snapShotDbo.Version);
             Assert.AreEqual(entityId.Id, snapShotDbo.Value.Id.Id);

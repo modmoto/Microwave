@@ -41,23 +41,6 @@ namespace Microwave.Persistence.UnitTests.Eventstores
 
         [DataTestMethod]
         [PersistenceTypeTest]
-        public async Task LoadAndSaveSnapshotWithoutPrivateSetters_DoesNotWork(PersistenceLayerProvider layerProvider)
-        {
-            var repo = layerProvider.SnapShotRepository;
-            var entityId = GuidIdentity.Create();
-            var newGuid = Guid.NewGuid();
-            var userSnapshot = new UserSnapshotWithoutPrivateSetters(entityId, new List<Guid> {newGuid, newGuid });
-
-
-            await repo.SaveSnapShot(new SnapShotWrapper<UserSnapshotWithoutPrivateSetters>(userSnapshot, entityId, 0));
-            var snapShotResult = await repo.LoadSnapShot<UserSnapshotWithoutPrivateSetters>(entityId);
-
-            Assert.IsNull(snapShotResult.Value.Guids);
-            Assert.IsNull(snapShotResult.Value.Id);
-        }
-
-        [DataTestMethod]
-        [PersistenceTypeTest]
         public async Task LoadWithNull(PersistenceLayerProvider layerProvider)
         {
             var repo = layerProvider.SnapShotRepository;

@@ -46,7 +46,7 @@ namespace Microwave.Persistence.MongoDb.UnitTestsSetup
         [TestMethod]
         public async Task AddEvents_ForeachMethod()
         {
-            BsonMapRegistrationHelpers.AddBsonMapsForMicrowave(typeof(TestEventAllOk).Assembly);
+            BsonMapRegistrationHelpers.AddBsonMapFor<TestEventAllOk>();
 
             var eventRepository = new EventRepositoryMongoDb(EventMongoDb, new VersionCache(EventMongoDb));
             var snapShotRepo = new Mock<ISnapShotRepository>();
@@ -69,7 +69,7 @@ namespace Microwave.Persistence.MongoDb.UnitTestsSetup
         }
 
         // this is because of mongodb, constructor has to be named the same
-        [DataTestMethod]
+        [TestMethod]
         public async Task AddAndLoadEvents_ParamCalledWrong()
         {
             var eventRepository = new EventRepositoryMongoDb(EventMongoDb, new VersionCache(EventMongoDb));
@@ -83,15 +83,15 @@ namespace Microwave.Persistence.MongoDb.UnitTestsSetup
             Assert.AreEqual(null, loadEventsByEntity.Value.ToList()[0].DomainEvent.EntityId);
         }
 
-        [DataTestMethod]
+        [TestMethod]
         public async Task AddAndLoadEventsConcurrent_CacheEmpty2()
         {
             var eventRepository = new EventRepositoryMongoDb(EventMongoDb, new VersionCache(EventMongoDb));
             var eventRepository2 = new EventRepositoryMongoDb(EventMongoDb, new VersionCache(EventMongoDb));
 
             var newGuid = GuidIdentity.Create(Guid.NewGuid());
-            var events = new List<IDomainEvent> { new TestEventAllOk(newGuid, "name"), new TestEventAllOk(newGuid, "name")};
-            var events2 = new List<IDomainEvent> { new TestEventAllOk(newGuid, "name"), new TestEventAllOk(newGuid, "name")};
+            var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid)};
+            var events2 = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid)};
 
             await eventRepository.AppendAsync(events, 0);
             await eventRepository2.AppendAsync(events2, 2);
@@ -100,7 +100,7 @@ namespace Microwave.Persistence.MongoDb.UnitTestsSetup
             Assert.AreEqual(4, result.Value.Count());
         }
 
-        [DataTestMethod]
+        [TestMethod]
         public async Task AddAndLoadEventsConcurrent_CacheEmpty()
         {
             var eventRepository = new EventRepositoryMongoDb(EventMongoDb, new VersionCache(EventMongoDb));;
@@ -108,8 +108,8 @@ namespace Microwave.Persistence.MongoDb.UnitTestsSetup
 
             var newGuid = GuidIdentity.Create(Guid.NewGuid());
             var newGuid2 = GuidIdentity.Create(Guid.NewGuid());
-            var events = new List<IDomainEvent> { new TestEventAllOk(newGuid, "name"), new TestEventAllOk(newGuid, "name")};
-            var events2 = new List<IDomainEvent> { new TestEventAllOk(newGuid2, "name"), new TestEventAllOk(newGuid2, "name")};
+            var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid)};
+            var events2 = new List<IDomainEvent> { new TestEvent1(newGuid2), new TestEvent2(newGuid2)};
 
             await eventRepository.AppendAsync(events, 0);
             await eventRepository2.AppendAsync(events2, 0);
@@ -118,13 +118,13 @@ namespace Microwave.Persistence.MongoDb.UnitTestsSetup
             Assert.AreEqual(4, result.Value.Count());
         }
 
-        [DataTestMethod]
+        [TestMethod]
         public async Task LoadEntityId_VersionTooHIgh_NotFoundIsOk()
         {
             var eventRepository = new EventRepositoryMongoDb(EventMongoDb, new VersionCache(EventMongoDb));
 
             var newGuid = GuidIdentity.Create(Guid.NewGuid());
-            var events = new List<IDomainEvent> { new TestEventAllOk(newGuid, "name"), new TestEventAllOk(newGuid, "name"),};
+            var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid)};
             await eventRepository.AppendAsync(events, 0);
 
             var result = await eventRepository.LoadEventsByEntity(newGuid, 3);
@@ -133,6 +133,27 @@ namespace Microwave.Persistence.MongoDb.UnitTestsSetup
             Assert.AreEqual(0, result.Value.Count());
         }
     }
+
+    public class TestEvent1 : IDomainEvent
+    {
+        public TestEvent1(Identity entityId)
+        {
+            EntityId = entityId;
+        }
+
+        public Identity EntityId { get; }
+    }
+
+    public class TestEvent2 : IDomainEvent
+    {
+        public TestEvent2(Identity entityId)
+        {
+            EntityId = entityId;
+        }
+
+        public Identity EntityId { get; }
+    }
+
 
     public class TestEvent_ParameterCalledWrong : IDomainEvent
     {
