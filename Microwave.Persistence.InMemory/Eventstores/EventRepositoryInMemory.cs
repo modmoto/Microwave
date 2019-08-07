@@ -23,12 +23,17 @@ namespace Microwave.Persistence.InMemory.Eventstores
 
         public Task<Result> AppendAsync(IEnumerable<IDomainEvent> domainEvents, long currentEntityVersion)
         {
-
+            var maxVersion = _domainEvents.
+                                 Where(e => e.DomainEvent.EntityId == domainEvents.First().EntityId)
+                                 .OrderBy(e => e.Version).FirstOrDefault()?.Version ?? 0;
+            if (maxVersion > currentEntityVersion) return Task.FromResult(
+                Result.ConcurrencyResult(currentEntityVersion, maxVersion));
+            var newVersion = currentEntityVersion;
             var domainEventWrappers = domainEvents.Select(e => new DomainEventWrapper
             {
                 Created = DateTimeOffset.Now,
                 DomainEvent = e,
-                Version = ++currentEntityVersion
+                Version = ++newVersion
             });
             _domainEvents.AddRange(domainEventWrappers);
             return Task.FromResult(Result.Ok());
