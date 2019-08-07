@@ -16,9 +16,27 @@ namespace Microwave.Persistence.InMemory.Eventstores
 
         public Task<Result<IEnumerable<DomainEventWrapper>>> LoadEventsByEntity(Identity entityId, long from = 0)
         {
-            var domainEventWrappersById = _domainEvents.Where(e => e.DomainEvent.EntityId == entityId);
-            var domainEventWrappers = domainEventWrappersById.Where(e => e.Version > from).OrderBy(e => e.Version);
-            return Task.FromResult(Result<IEnumerable<DomainEventWrapper>>.Ok(domainEventWrappers));
+            if (entityId == null) return Task.FromResult(Result<IEnumerable<DomainEventWrapper>>.NotFound(null));
+            var mongoCollection = _domainEvents;
+            var domainEventDbos = mongoCollection.Where(e => e.DomainEvent.EntityId == entityId && e.Version > from).ToList();
+            if (!domainEventDbos.Any())
+            {
+                var eventDbos = mongoCollection.FirstOrDefault(e => e.DomainEvent.EntityId == entityId);
+                if (eventDbos == null) return Task.FromResult(Result<IEnumerable<DomainEventWrapper>>.NotFound(entityId));
+                return Task.FromResult(Result<IEnumerable<DomainEventWrapper>>.Ok(new List<DomainEventWrapper>()));
+            }
+
+            var domainEvents = domainEventDbos.Select(dbo =>
+            {
+                return new DomainEventWrapper
+                {
+                    Created = dbo.Created,
+                    Version = dbo.Version,
+                    DomainEvent = dbo.DomainEvent
+                };
+            });
+
+            return Task.FromResult(Result<IEnumerable<DomainEventWrapper>>.Ok(domainEvents));
         }
 
         public Task<Result> AppendAsync(IEnumerable<IDomainEvent> domainEvents, long currentEntityVersion)
