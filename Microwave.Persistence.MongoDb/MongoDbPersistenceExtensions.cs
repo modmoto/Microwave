@@ -1,4 +1,8 @@
 using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using Microwave.Discovery;
 using Microwave.EventStores.Ports;
@@ -30,12 +34,31 @@ namespace Microwave.Persistence.MongoDb
             services.AddSingleton<IVersionCache, VersionCache>();
             services.AddTransient<ISnapShotRepository, SnapShotRepositoryMongoDb>();
 
-            foreach (var assembly in MicrowaveExtensions.GetAllAssemblies())
+            foreach (var assembly in GetAllAssemblies())
             {
                 BsonMapRegistrationHelpers.AddBsonMapsForMicrowave(assembly);
             }
 
             return services;
+        }
+
+        private static List<Assembly> GetAllAssemblies()
+        {
+            var assemblies = new List<Assembly>();
+            var referencedPaths = Directory
+                .GetFiles(AppDomain.CurrentDomain.BaseDirectory, "*.dll", SearchOption.AllDirectories).ToList();
+            referencedPaths.ForEach(path =>
+            {
+                try
+                {
+                    var assemblyName = AssemblyName.GetAssemblyName(path);
+                    assemblies.Add(AppDomain.CurrentDomain.Load(assemblyName));
+                }
+                catch (FileNotFoundException)
+                {
+                }
+            });
+            return assemblies;
         }
     }
 }
