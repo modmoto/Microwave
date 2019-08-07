@@ -6,7 +6,7 @@ using Microwave.Persistence.UnitTestSetupPorts;
 using Microwave.Queries;
 using Microwave.Queries.Ports;
 
-namespace Microwave.Persistence.MongoDb.UnitTestsSetup
+namespace Microwave.Persistence.InMemory.UnitTestsSetup
 {
     public class InMemroyTestSetup : PersistenceLayerProvider
     {
