@@ -33,13 +33,13 @@ namespace WriteService1
         }
 
         [HttpPost("{guidId}")]
-        public Task<ActionResult> WriteEvent(GuidIdentity guidId)
+        public ActionResult WriteEvent(GuidIdentity guidId)
         {
             return Ok();
         }
 
         [HttpPost("{guidId}/tests")]
-        public Task<ActionResult> WriteEventSecond(GuidIdentity guidId)
+        public ActionResult WriteEventSecond(GuidIdentity guidId)
         {
             return Ok();
         }
