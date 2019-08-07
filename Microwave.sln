@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27703.2026
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28803.352
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microwave.Domain", "Microwave.Domain\Microwave.Domain.csproj", "{9A1885D9-77BB-45D4-99E5-A9FC15F9B6A5}"
 EndProject
@@ -19,39 +19,41 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microwave", "Microwave\Micr
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microwave.UnitTests", "TestProjects\Microwave.UnitTests\Microwave.UnitTests.csproj", "{6DE4BD27-1E59-43F3-AF52-5925CEA1E9CA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microwave.Domain.UnitTests", "TestProjects\Microwave.Domain.UnitTests\Microwave.Domain.UnitTests.csproj", "{306D2634-E1A9-4C72-AEA5-AEB9FA26110F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microwave.Domain.UnitTests", "TestProjects\Microwave.Domain.UnitTests\Microwave.Domain.UnitTests.csproj", "{306D2634-E1A9-4C72-AEA5-AEB9FA26110F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microwave.WebApi.UnitTests", "TestProjects\Microwave.WebApi.UnitTests\Microwave.WebApi.UnitTests.csproj", "{3622487E-A894-49FD-A8EF-5D11DAA01B62}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microwave.WebApi.UnitTests", "TestProjects\Microwave.WebApi.UnitTests\Microwave.WebApi.UnitTests.csproj", "{3622487E-A894-49FD-A8EF-5D11DAA01B62}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microwave.UnitTests.PublishedEventsDll", "TestProjects\Microwave.UnitTests.PublishedEventsDll\Microwave.UnitTests.PublishedEventsDll.csproj", "{5A17AEC8-F492-48F4-8C6F-4063489DA58F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microwave.UnitTests.PublishedEventsDll", "TestProjects\Microwave.UnitTests.PublishedEventsDll\Microwave.UnitTests.PublishedEventsDll.csproj", "{5A17AEC8-F492-48F4-8C6F-4063489DA58F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microwave.Persistence.MongoDb", "Microwave.Persistence.MongoDb\Microwave.Persistence.MongoDb.csproj", "{6394F395-66C1-483D-B4BC-8B19007F7785}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microwave.Persistence.MongoDb", "Microwave.Persistence.MongoDb\Microwave.Persistence.MongoDb.csproj", "{6394F395-66C1-483D-B4BC-8B19007F7785}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microwave.Persistence.UnitTests", "TestProjects\Microwave.Persistence.UnitTests\Microwave.Persistence.UnitTests.csproj", "{52EC4F8C-6145-4E15-8FE3-388431BEF5FA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microwave.Persistence.UnitTests", "TestProjects\Microwave.Persistence.UnitTests\Microwave.Persistence.UnitTests.csproj", "{52EC4F8C-6145-4E15-8FE3-388431BEF5FA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microwave.Discovery", "Microwave.Discovery\Microwave.Discovery.csproj", "{80A57BBD-8D51-4638-9D74-E63785754CC7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microwave.Discovery", "Microwave.Discovery\Microwave.Discovery.csproj", "{80A57BBD-8D51-4638-9D74-E63785754CC7}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestServices", "TestServices", "{4DA39CBA-8A2D-4C97-9B79-B118325D7D04}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microwave.UI.UnitTests", "TestProjects\Microwave.UI.UnitTests\Microwave.UI.UnitTests.csproj", "{10F2D68D-5EE4-4DC4-81AB-DAA30A6BF951}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microwave.UI.UnitTests", "TestProjects\Microwave.UI.UnitTests\Microwave.UI.UnitTests.csproj", "{10F2D68D-5EE4-4DC4-81AB-DAA30A6BF951}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microwave.UI", "Microwave.UI\Microwave.UI.csproj", "{446A53A9-B95A-4B3E-B067-6FBC126173E4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microwave.UI", "Microwave.UI\Microwave.UI.csproj", "{446A53A9-B95A-4B3E-B067-6FBC126173E4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microwave.Persistence.MongoDb.UnitTestsSetup", "TestProjects\Microwave.Persistence.MongoDb.UnitTestsSetup\Microwave.Persistence.MongoDb.UnitTestsSetup.csproj", "{A7A69C69-F8D1-4866-A812-96FE7548F5D8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microwave.Persistence.MongoDb.UnitTestsSetup", "TestProjects\Microwave.Persistence.MongoDb.UnitTestsSetup\Microwave.Persistence.MongoDb.UnitTestsSetup.csproj", "{A7A69C69-F8D1-4866-A812-96FE7548F5D8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microwave.Persistence.UnitTestSetupPorts", "TestProjects\Microwave.Persistence.UnitTestSetupPorts\Microwave.Persistence.UnitTestSetupPorts.csproj", "{39C94AEB-1532-4826-BD46-5ADBFDC6BA6B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microwave.Persistence.UnitTestSetupPorts", "TestProjects\Microwave.Persistence.UnitTestSetupPorts\Microwave.Persistence.UnitTestSetupPorts.csproj", "{39C94AEB-1532-4826-BD46-5ADBFDC6BA6B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestProjects", "TestProjects", "{2DFC8EF1-71B5-4F61-9E1D-B06DAA1BC199}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReadService1", "TestServices\ReadService1\ReadService1.csproj", "{15919721-12DD-4082-AE95-B3B26981433D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReadService1", "TestServices\ReadService1\ReadService1.csproj", "{15919721-12DD-4082-AE95-B3B26981433D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServerConfig", "TestServices\ServerConfig\ServerConfig.csproj", "{F759B847-0E47-4C6E-A26F-9FF4BAE397BA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServerConfig", "TestServices\ServerConfig\ServerConfig.csproj", "{F759B847-0E47-4C6E-A26F-9FF4BAE397BA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WriteService1", "TestServices\WriteService1\WriteService1.csproj", "{B8B78E4F-59D5-45AB-962E-2898A4368841}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WriteService1", "TestServices\WriteService1\WriteService1.csproj", "{B8B78E4F-59D5-45AB-962E-2898A4368841}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WriteService2", "TestServices\WriteService2\WriteService2.csproj", "{73988DBC-1385-4332-9733-DE74F6656D53}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WriteService2", "TestServices\WriteService2\WriteService2.csproj", "{73988DBC-1385-4332-9733-DE74F6656D53}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microwave.Discovery.UnitTests", "TestProjects\Microwave.Discovery.UnitTests\Microwave.Discovery.UnitTests.csproj", "{A12C678F-D971-4FAC-8E82-9F307770CD92}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microwave.Discovery.UnitTests", "TestProjects\Microwave.Discovery.UnitTests\Microwave.Discovery.UnitTests.csproj", "{A12C678F-D971-4FAC-8E82-9F307770CD92}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microwave.Persistence.InMemory", "Microwave.Persistence.InMemory\Microwave.Persistence.InMemory.csproj", "{DC77A39F-92B3-411F-9A63-3DA65C52EE04}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -151,28 +153,32 @@ Global
 		{A12C678F-D971-4FAC-8E82-9F307770CD92}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A12C678F-D971-4FAC-8E82-9F307770CD92}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A12C678F-D971-4FAC-8E82-9F307770CD92}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DC77A39F-92B3-411F-9A63-3DA65C52EE04}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DC77A39F-92B3-411F-9A63-3DA65C52EE04}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DC77A39F-92B3-411F-9A63-3DA65C52EE04}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DC77A39F-92B3-411F-9A63-3DA65C52EE04}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {10681780-EDC2-4AAC-8551-A22B38DC45CE}
-	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{C73734E8-928B-4C41-9054-F294D02219F1} = {2DFC8EF1-71B5-4F61-9E1D-B06DAA1BC199}
+		{B3AA5BEA-6586-4A39-9541-1812F456FB0B} = {2DFC8EF1-71B5-4F61-9E1D-B06DAA1BC199}
+		{6DE4BD27-1E59-43F3-AF52-5925CEA1E9CA} = {2DFC8EF1-71B5-4F61-9E1D-B06DAA1BC199}
+		{306D2634-E1A9-4C72-AEA5-AEB9FA26110F} = {2DFC8EF1-71B5-4F61-9E1D-B06DAA1BC199}
 		{3622487E-A894-49FD-A8EF-5D11DAA01B62} = {2DFC8EF1-71B5-4F61-9E1D-B06DAA1BC199}
 		{5A17AEC8-F492-48F4-8C6F-4063489DA58F} = {2DFC8EF1-71B5-4F61-9E1D-B06DAA1BC199}
-		{6DE4BD27-1E59-43F3-AF52-5925CEA1E9CA} = {2DFC8EF1-71B5-4F61-9E1D-B06DAA1BC199}
-		{C73734E8-928B-4C41-9054-F294D02219F1} = {2DFC8EF1-71B5-4F61-9E1D-B06DAA1BC199}
-		{306D2634-E1A9-4C72-AEA5-AEB9FA26110F} = {2DFC8EF1-71B5-4F61-9E1D-B06DAA1BC199}
-		{A7A69C69-F8D1-4866-A812-96FE7548F5D8} = {2DFC8EF1-71B5-4F61-9E1D-B06DAA1BC199}
 		{52EC4F8C-6145-4E15-8FE3-388431BEF5FA} = {2DFC8EF1-71B5-4F61-9E1D-B06DAA1BC199}
-		{39C94AEB-1532-4826-BD46-5ADBFDC6BA6B} = {2DFC8EF1-71B5-4F61-9E1D-B06DAA1BC199}
-		{B3AA5BEA-6586-4A39-9541-1812F456FB0B} = {2DFC8EF1-71B5-4F61-9E1D-B06DAA1BC199}
 		{10F2D68D-5EE4-4DC4-81AB-DAA30A6BF951} = {2DFC8EF1-71B5-4F61-9E1D-B06DAA1BC199}
+		{A7A69C69-F8D1-4866-A812-96FE7548F5D8} = {2DFC8EF1-71B5-4F61-9E1D-B06DAA1BC199}
+		{39C94AEB-1532-4826-BD46-5ADBFDC6BA6B} = {2DFC8EF1-71B5-4F61-9E1D-B06DAA1BC199}
 		{15919721-12DD-4082-AE95-B3B26981433D} = {4DA39CBA-8A2D-4C97-9B79-B118325D7D04}
 		{F759B847-0E47-4C6E-A26F-9FF4BAE397BA} = {4DA39CBA-8A2D-4C97-9B79-B118325D7D04}
 		{B8B78E4F-59D5-45AB-962E-2898A4368841} = {4DA39CBA-8A2D-4C97-9B79-B118325D7D04}
 		{73988DBC-1385-4332-9733-DE74F6656D53} = {4DA39CBA-8A2D-4C97-9B79-B118325D7D04}
 		{A12C678F-D971-4FAC-8E82-9F307770CD92} = {2DFC8EF1-71B5-4F61-9E1D-B06DAA1BC199}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {10681780-EDC2-4AAC-8551-A22B38DC45CE}
 	EndGlobalSection
 EndGlobal
