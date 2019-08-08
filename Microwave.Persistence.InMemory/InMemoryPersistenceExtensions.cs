@@ -26,7 +26,10 @@ namespace Microwave.Persistence.InMemory
 
             foreach (var domainEvents in groupedEvents)
             {
-                eventRepositoryInMemory.AppendAsync(domainEvents, 0).Wait();
+                var appendAsync = eventRepositoryInMemory.AppendAsync(domainEvents, 0);
+                appendAsync.Wait();
+                var res = appendAsync.Result;
+                res.Check();
             }
 
             services.AddSingleton<IStatusRepository, StatusRepositoryInMemory>();
