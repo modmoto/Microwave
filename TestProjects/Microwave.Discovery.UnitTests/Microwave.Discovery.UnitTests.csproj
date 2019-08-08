@@ -15,7 +15,7 @@
     <ItemGroup>
       <ProjectReference Include="..\..\Microwave.Discovery\Microwave.Discovery.csproj" />
       <ProjectReference Include="..\..\Microwave\Microwave.csproj" />
-      <ProjectReference Include="..\Microwave.Persistence.MongoDb.UnitTestsSetup\Microwave.Persistence.MongoDb.UnitTestsSetup.csproj" />
+      <ProjectReference Include="..\Microwave.Persistence.UnitTestsSetup\Microwave.Persistence.UnitTestsSetup.csproj" />
     </ItemGroup>
 
     <ItemGroup>

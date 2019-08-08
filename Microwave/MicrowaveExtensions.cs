@@ -135,7 +135,7 @@ namespace Microwave
             return services;
         }
 
-        public static List<Assembly> GetAllAssemblies()
+        private static List<Assembly> GetAllAssemblies()
         {
             var assemblies = new List<Assembly>();
             var referencedPaths = Directory

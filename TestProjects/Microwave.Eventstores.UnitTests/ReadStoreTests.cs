@@ -5,7 +5,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Domain.EventSourcing;
 using Microwave.Domain.Identities;
 using Microwave.Persistence.MongoDb.Eventstores;
-using Microwave.Persistence.MongoDb.UnitTestsSetup;
+using Microwave.Persistence.UnitTestsSetup.MongoDb;
 
 namespace Microwave.Eventstores.UnitTests
 {
@@ -15,7 +15,7 @@ namespace Microwave.Eventstores.UnitTests
         [TestMethod]
         public async Task Entitystream_LoadEventsSince_IdNotDefault()
         {
-            var entityStreamRepository = new EventRepository(EventMongoDb, new VersionCache(EventMongoDb));
+            var entityStreamRepository = new EventRepositoryMongoDb(EventMongoDb, new VersionCache(EventMongoDb));
 
             var entityStreamTestEvent = new TestEv3(GuidIdentity.Create(Guid.NewGuid()));
             await entityStreamRepository.AppendAsync(new[] {entityStreamTestEvent}, 0);

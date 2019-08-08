@@ -7,7 +7,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Discovery.EventLocations;
 using Microwave.Discovery.ServiceMaps;
 using Microwave.Persistence.MongoDb.Querries;
-using Microwave.Persistence.MongoDb.UnitTestsSetup;
+using Microwave.Persistence.UnitTestsSetup.MongoDb;
 using Microwave.WebApi;
 using Microwave.WebApi.Discovery;
 
@@ -19,7 +19,7 @@ namespace Microwave.Discovery.UnitTests
         [TestMethod]
         public async Task GetConsumingServices()
         {
-            var statusRepository = new StatusRepository(EventMongoDb, new EventLocationCache());
+            var statusRepository = new StatusRepositoryMongoDb(EventMongoDb, new EventLocationCache());
             await statusRepository.SaveEventLocation(new EventLocation(new List<EventsPublishedByService>(), new EventsSubscribedByService(new List<EventSchema>(), new List<ReadModelSubscription>())
         ));
 
@@ -39,7 +39,7 @@ namespace Microwave.Discovery.UnitTests
         [TestMethod]
         public async Task GetConsumingServices_Null()
         {
-            var statusRepository = new StatusRepository(EventMongoDb, new EventLocationCache());
+            var statusRepository = new StatusRepositoryMongoDb(EventMongoDb, new EventLocationCache());
 
             var discoveryHandler = new DiscoveryHandler(
                 new ServiceBaseAddressCollection(),

@@ -11,13 +11,13 @@ using MongoDB.Driver;
 
 namespace Microwave.Persistence.MongoDb.Eventstores
 {
-    public class EventRepository : IEventRepository
+    public class EventRepositoryMongoDb : IEventRepository
     {
         private readonly IMongoDatabase _database;
         private readonly string _eventCollectionName = "DomainEventDbos";
         private readonly IVersionCache _versions;
 
-        public EventRepository(MicrowaveMongoDb mongoDb, IVersionCache versions)
+        public EventRepositoryMongoDb(MicrowaveMongoDb mongoDb, IVersionCache versions)
         {
             _versions = versions;
             _database = mongoDb.Database;
@@ -84,16 +84,6 @@ namespace Microwave.Persistence.MongoDb.Eventstores
                 };
             });
             return Result<IEnumerable<DomainEventWrapper>>.Ok(domainEvents);
-        }
-
-        public async Task<Result<DateTimeOffset>> GetLastEventOccuredOn(string domainEventType)
-        {
-            var mongoCollection = _database.GetCollection<DomainEventDbo>(_eventCollectionName);
-            var dbo = await mongoCollection
-                .Find(e => e.EventType == domainEventType)
-                .SortByDescending(a => a.Created)
-                .FirstOrDefaultAsync();
-            return dbo == null ? Result<DateTimeOffset>.NotFound(StringIdentity.Create(domainEventType)) : Result<DateTimeOffset>.Ok(dbo.Created);
         }
 
         public async Task<Result> AppendAsync(IEnumerable<IDomainEvent> domainEvents, long currentEntityVersion)

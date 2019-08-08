@@ -8,7 +8,7 @@ using Microwave.Domain.Exceptions;
 using Microwave.Domain.Identities;
 using Microwave.Domain.Results;
 using Microwave.EventStores.Ports;
-using Microwave.Persistence.UnitTestSetupPorts;
+using Microwave.Persistence.UnitTestsSetup;
 
 namespace Microwave.Persistence.UnitTests.Eventstores
 {
@@ -37,23 +37,6 @@ namespace Microwave.Persistence.UnitTests.Eventstores
             Assert.AreEqual(2, entityGuids.Count);
             Assert.AreEqual(newGuid, entityGuids[0]);
             Assert.AreEqual(newGuid, entityGuids[1]);
-        }
-
-        [DataTestMethod]
-        [PersistenceTypeTest]
-        public async Task LoadAndSaveSnapshotWithoutPrivateSetters_DoesNotWork(PersistenceLayerProvider layerProvider)
-        {
-            var repo = layerProvider.SnapShotRepository;
-            var entityId = GuidIdentity.Create();
-            var newGuid = Guid.NewGuid();
-            var userSnapshot = new UserSnapshotWithoutPrivateSetters(entityId, new List<Guid> {newGuid, newGuid });
-
-
-            await repo.SaveSnapShot(new SnapShotWrapper<UserSnapshotWithoutPrivateSetters>(userSnapshot, entityId, 0));
-            var snapShotResult = await repo.LoadSnapShot<UserSnapshotWithoutPrivateSetters>(entityId);
-
-            Assert.IsNull(snapShotResult.Value.Guids);
-            Assert.IsNull(snapShotResult.Value.Id);
         }
 
         [DataTestMethod]

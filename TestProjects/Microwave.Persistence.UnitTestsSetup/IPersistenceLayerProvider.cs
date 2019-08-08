@@ -3,7 +3,7 @@ using Microwave.EventStores.Ports;
 using Microwave.Queries;
 using Microwave.Queries.Ports;
 
-namespace Microwave.Persistence.UnitTestSetupPorts
+namespace Microwave.Persistence.UnitTestsSetup
 {
     public abstract class PersistenceLayerProvider
     {

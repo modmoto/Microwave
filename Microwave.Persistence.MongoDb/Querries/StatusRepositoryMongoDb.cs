@@ -10,13 +10,13 @@ using MongoDB.Driver;
 
 namespace Microwave.Persistence.MongoDb.Querries
 {
-    public class StatusRepository : IStatusRepository
+    public class StatusRepositoryMongoDb : IStatusRepository
     {
         private readonly IEventLocationCache _cache;
         private readonly IMongoDatabase _database;
         private const string StatusDbName = "MicrowaveStatusCollection";
 
-        public StatusRepository(MicrowaveMongoDb mongoDb, IEventLocationCache cache)
+        public StatusRepositoryMongoDb(MicrowaveMongoDb mongoDb, IEventLocationCache cache)
         {
             _cache = cache;
             _database = mongoDb.Database;
