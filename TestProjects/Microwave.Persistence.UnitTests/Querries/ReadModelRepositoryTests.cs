@@ -78,7 +78,7 @@ namespace Microwave.Persistence.UnitTests.Querries
             await queryRepository.Save(testQuerry2, GuidIdentity.Create(), 1);
 
             var loadAll = await queryRepository.LoadAll<TestReadModel2>();
-            Assert.IsTrue(loadAll.Is<NotFound>());
+            Assert.IsTrue(!loadAll.Value.Any());
         }
 
         [DataTestMethod]
