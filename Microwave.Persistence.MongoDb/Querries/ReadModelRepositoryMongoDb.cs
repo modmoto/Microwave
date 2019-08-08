@@ -80,7 +80,7 @@ namespace Microwave.Persistence.MongoDb.Querries
         {
             var mongoCollection = _database.GetCollection<ReadModelDbo<T>>(GetReadModelCollectionName<T>());
             var allElements = await mongoCollection.FindSync(_ => true).ToListAsync();
-            if (!allElements.Any()) return Result<IEnumerable<T>>.NotFound(StringIdentity.Create(nameof(T)));
+            if (!allElements.Any()) return Result<IEnumerable<T>>.Ok(new List<T>());
             return Result<IEnumerable<T>>.Ok(allElements.Select(r => r.Payload));
         }
     }
