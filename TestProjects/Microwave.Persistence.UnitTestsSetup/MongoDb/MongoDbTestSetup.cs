@@ -4,7 +4,6 @@ using Microwave.EventStores.Ports;
 using Microwave.Persistence.MongoDb;
 using Microwave.Persistence.MongoDb.Eventstores;
 using Microwave.Persistence.MongoDb.Querries;
-using Microwave.Persistence.UnitTestSetupPorts;
 using Microwave.Queries;
 using Microwave.Queries.Ports;
 
