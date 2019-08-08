@@ -22,7 +22,12 @@ namespace Microwave.Persistence.InMemory
             addEventSeeding.Invoke(domainEventSeeding);
 
             var eventRepositoryInMemory = new EventRepositoryInMemory();
-            eventRepositoryInMemory.AppendAsync(domainEventSeeding.DomainEventSeeds, 0).Wait();
+            var groupedEvents = domainEventSeeding.DomainEventSeeds.GroupBy(de => de.EntityId).ToList();
+
+            foreach (var domainEvents in groupedEvents)
+            {
+                eventRepositoryInMemory.AppendAsync(domainEvents, 0).Wait();
+            }
 
             services.AddSingleton<IStatusRepository, StatusRepositoryInMemory>();
             services.AddSingleton<IVersionRepository, VersionRepositoryInMemory>();
