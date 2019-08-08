@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,7 +13,7 @@ namespace Microwave.Persistence.InMemory.Eventstores
 {
     public class EventRepositoryInMemory : IEventRepository
     {
-        private readonly List<DomainEventWrapper> _domainEvents = new List<DomainEventWrapper>();
+        private readonly BlockingCollection<DomainEventWrapper> _domainEvents = new BlockingCollection<DomainEventWrapper>();
 
         public Task<Result<IEnumerable<DomainEventWrapper>>> LoadEventsByEntity(Identity entityId, long from = 0)
         {
@@ -52,8 +53,11 @@ namespace Microwave.Persistence.InMemory.Eventstores
                 Created = DateTimeOffset.Now,
                 DomainEvent = e,
                 Version = ++newVersion
-            }).ToList();
-            _domainEvents.AddRange(domainEventWrappers);
+            }).ToArray();
+            foreach (var eventWrapper in domainEventWrappers)
+            {
+                _domainEvents.Add(eventWrapper);
+            }
             return Task.FromResult(Result.Ok());
         }
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -10,8 +11,8 @@ namespace Microwave.Persistence.InMemory.Querries
 {
     public class ReadModelRepositoryInMemory : IReadModelRepository
     {
-        private readonly Dictionary<Type, object> _querryDictionary = new Dictionary<Type, object>();
-        private readonly Dictionary<Identity, object> _readModelDictionary = new Dictionary<Identity, object>();
+        private readonly ConcurrentDictionary<Type, object> _querryDictionary = new ConcurrentDictionary<Type, object>();
+        private readonly ConcurrentDictionary<Identity, object> _readModelDictionary = new ConcurrentDictionary<Identity, object>();
         public Task<Result<T>> Load<T>() where T : Query
         {
             if (!_querryDictionary.TryGetValue(typeof(T), out var query)) return Task.FromResult(Result<T>.NotFound
