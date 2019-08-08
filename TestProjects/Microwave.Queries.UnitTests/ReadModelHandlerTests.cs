@@ -6,7 +6,7 @@ using Microwave.Domain.EventSourcing;
 using Microwave.Domain.Identities;
 using Microwave.Domain.Results;
 using Microwave.Persistence.MongoDb.Querries;
-using Microwave.Persistence.MongoDb.UnitTestsSetup;
+using Microwave.Persistence.UnitTestsSetup.MongoDb;
 using Microwave.Queries.Handler;
 using Microwave.Queries.Ports;
 

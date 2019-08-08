@@ -7,7 +7,7 @@ using Microwave.Domain.EventSourcing;
 using Microwave.Domain.Exceptions;
 using Microwave.Domain.Identities;
 using Microwave.Domain.Results;
-using Microwave.Persistence.UnitTestSetupPorts;
+using Microwave.Persistence.UnitTestsSetup;
 
 namespace Microwave.Persistence.UnitTests.Eventstores
 {

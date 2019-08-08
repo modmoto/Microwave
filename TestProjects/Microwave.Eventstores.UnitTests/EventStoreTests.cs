@@ -9,7 +9,7 @@ using Microwave.Domain.Results;
 using Microwave.EventStores;
 using Microwave.EventStores.Ports;
 using Microwave.Persistence.MongoDb.Eventstores;
-using Microwave.Persistence.MongoDb.UnitTestsSetup;
+using Microwave.Persistence.UnitTestsSetup.MongoDb;
 using Moq;
 
 namespace Microwave.Eventstores.UnitTests

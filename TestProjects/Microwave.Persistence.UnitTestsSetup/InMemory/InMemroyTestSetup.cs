@@ -2,11 +2,10 @@ using Microwave.Discovery;
 using Microwave.EventStores.Ports;
 using Microwave.Persistence.InMemory.Eventstores;
 using Microwave.Persistence.InMemory.Querries;
-using Microwave.Persistence.UnitTestSetupPorts;
 using Microwave.Queries;
 using Microwave.Queries.Ports;
 
-namespace Microwave.Persistence.InMemory.UnitTestsSetup
+namespace Microwave.Persistence.UnitTestsSetup.InMemory
 {
     public class InMemroyTestSetup : PersistenceLayerProvider
     {

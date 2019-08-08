@@ -7,7 +7,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Discovery.EventLocations;
 using Microwave.Discovery.ServiceMaps;
 using Microwave.Persistence.MongoDb.Querries;
-using Microwave.Persistence.MongoDb.UnitTestsSetup;
+using Microwave.Persistence.UnitTestsSetup.MongoDb;
 using Microwave.WebApi;
 using Microwave.WebApi.Discovery;
 
