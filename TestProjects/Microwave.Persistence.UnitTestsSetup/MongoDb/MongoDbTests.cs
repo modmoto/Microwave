@@ -12,7 +12,7 @@ using Microwave.Persistence.MongoDb.Eventstores;
 using MongoDB.Bson.Serialization;
 using Moq;
 
-namespace Microwave.Persistence.MongoDb.UnitTestsSetup
+namespace Microwave.Persistence.UnitTestsSetup.MongoDb
 {
     [TestClass]
     public class MongoDbTests : IntegrationTests

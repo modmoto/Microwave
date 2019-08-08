@@ -15,10 +15,9 @@
     <ItemGroup>
       <ProjectReference Include="..\..\Microwave.Discovery\Microwave.Discovery.csproj" />
       <ProjectReference Include="..\..\Microwave.Domain\Microwave.Domain.csproj" />
-      <ProjectReference Include="..\Microwave.Persistence.InMemory.UnitTestsSetup\Microwave.Persistence.InMemory.UnitTestsSetup.csproj" />
-      <ProjectReference Include="..\Microwave.Persistence.MongoDb.UnitTestsSetup\Microwave.Persistence.MongoDb.UnitTestsSetup.csproj" />
       <ProjectReference Include="..\Microwave.Persistence.UnitTestSetupPorts\Microwave.Persistence.UnitTestSetupPorts.csproj" />
       <ProjectReference Include="..\..\Microwave\Microwave.csproj" />
+      <ProjectReference Include="..\Microwave.Persistence.UnitTestsSetup\Microwave.Persistence.UnitTestsSetup.csproj" />
     </ItemGroup>
 
     <ItemGroup>

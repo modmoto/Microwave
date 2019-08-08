@@ -1,13 +1,14 @@
 using Microwave.Discovery;
 using Microwave.Discovery.EventLocations;
 using Microwave.EventStores.Ports;
+using Microwave.Persistence.MongoDb;
 using Microwave.Persistence.MongoDb.Eventstores;
 using Microwave.Persistence.MongoDb.Querries;
 using Microwave.Persistence.UnitTestSetupPorts;
 using Microwave.Queries;
 using Microwave.Queries.Ports;
 
-namespace Microwave.Persistence.MongoDb.UnitTestsSetup
+namespace Microwave.Persistence.UnitTestsSetup.MongoDb
 {
     public class MongoDbTestSetup : PersistenceLayerProvider
     {
