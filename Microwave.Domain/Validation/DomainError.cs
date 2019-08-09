@@ -4,7 +4,13 @@ namespace Microwave.Domain.Validation
 {
     public abstract class DomainError
     {
-        protected DomainError(string errorType = null, string detail = null)
+        protected DomainError(string detail = null)
+        {
+            ErrorType = GetType().Name;
+            Detail = detail;
+        }
+
+        internal DomainError(string errorType = null, string detail = null)
         {
             ErrorType = errorType ?? GetType().Name;
             Detail = detail;
@@ -20,7 +26,7 @@ namespace Microwave.Domain.Validation
             return new TypelessDomainError(errorType, detail);
         }
 
-        public string ErrorType { get; protected set; }
-        public string Detail { get; protected set; }
+        public string ErrorType { get; }
+        public string Detail { get; }
     }
 }

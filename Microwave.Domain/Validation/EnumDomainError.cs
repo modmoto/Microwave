@@ -4,10 +4,8 @@ namespace Microwave.Domain.Validation
 {
     public class EnumDomainError : DomainError
     {
-        internal EnumDomainError(Enum enumErrorType, string detail = null)
+        internal EnumDomainError(Enum enumErrorType, string detail = null) : base(enumErrorType.ToString(), detail)
         {
-            Detail = detail;
-            ErrorType = enumErrorType.ToString();
         }
     }
 }
