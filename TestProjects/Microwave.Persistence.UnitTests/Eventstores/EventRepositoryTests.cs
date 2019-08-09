@@ -386,14 +386,14 @@ namespace Microwave.Persistence.UnitTests.Eventstores
             await eventRepository.AppendAsync(domainEvents, 100);
 
             var result = await eventRepository.LoadEvents(DateTimeOffset.MinValue);
-            var dateTimeOffset = result.Value.Last().Created;
+            var dateTimeOffset = result.Value.Skip(78).First().Created;
 
             Assert.AreEqual(200, result.Value.Count());
 
             for (int i = 0; i < 10; i++)
             {
                 var result2 = await eventRepository.LoadEvents(dateTimeOffset);
-                Assert.AreEqual(0, result2.Value.Count());
+                Assert.AreEqual(121, result2.Value.Count());
             }
         }
 
