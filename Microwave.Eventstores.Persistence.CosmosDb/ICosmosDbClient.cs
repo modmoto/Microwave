@@ -15,8 +15,6 @@ namespace Microwave.Persistence.CosmosDb
         Task<IEnumerable<DomainEventWrapper>> GetDomainEventsAsync(DateTimeOffset tickSince);
         Task<IEnumerable<DomainEventWrapper>> LoadEventsByTypeAsync(string eventType, DateTimeOffset tickSince);
         Task<Result> CreateItemAsync(DomainEventWrapper domainEvent);
-        Task<IEnumerable<DomainEventWrapper>> GetDomainEventsAsync(Identity identity);
-        Task<SnapShotResult<T>> LoadSnapshotAsync<T>(Identity entityId);
-        Task SaveSnapshotAsync<T>(SnapShotWrapper<T> snapShot);
+        Task<IEnumerable<DomainEventWrapper>> GetDomainEventsAsync(Identity identity, long from);
     }
 }

@@ -8,6 +8,9 @@ namespace Microwave.Persistence.CosmosDb
 
         string EventsCollectionId { get; }
         string SnapshotsCollectionId { get; }
+        string ServiceMapCollectionId { get; }
+
+        string StatusCollectionId { get; }
         DocumentClient GetCosmosDbClient();
     }
 }

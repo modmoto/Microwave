@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
+using Microwave.Discovery;
 using Microwave.EventStores;
 using Microwave.EventStores.Ports;
+using Microwave.Queries;
 
 namespace Microwave.Persistence.CosmosDb
 {
@@ -16,16 +18,12 @@ namespace Microwave.Persistence.CosmosDb
             var cosmosDb = new CosmosDb();
             cosmosDb.InitializeCosmosDb().Wait();
 
-            //services.AddTransient<IStatusRepository, CosmosDbStatusRepository>();
-
-            //services.AddTransient<IVersionRepository, CosmosDbVersionRepository>();
-            //services.AddTransient<IReadModelRepository, CosmosDbReadModelRepository>();
-            //services.AddSingleton(MicrowaveCosmosDb);
-            //services.AddSingleton(new CosmosDbEventLocationCache());
+            services.AddTransient<IStatusRepository, CosmosDbStatusRepository>();
+            services.AddTransient<IReadModelRepository, CosmosDbReadModelRepository>();
+            services.AddSingleton(MicrowaveCosmosDb);
 
             services.AddTransient<IEventRepository, CosmosDbEventRepository>();
-            //services.AddSingleton<IVersionCache, CosmosDbVersionCache>();
-            //services.AddTransient<ISnapShotRepository, CosmosDbSnapShotRepository>();
+            services.AddTransient<ISnapShotRepository, CosmosDbSnapshotRepository>();
 
             return services;
         }

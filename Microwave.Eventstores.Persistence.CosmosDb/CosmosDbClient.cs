@@ -34,12 +34,12 @@ namespace Microwave.Persistence.CosmosDb
 
         }
 
-        public async Task<IEnumerable<DomainEventWrapper>> GetDomainEventsAsync(Identity identity)
+        public async Task<IEnumerable<DomainEventWrapper>> GetDomainEventsAsync(Identity identity, long from)
         {   
             var query = _client.CreateDocumentQuery<DomainEventWrapper>(
                     UriFactory.CreateDocumentCollectionUri(_cosmosDb.DatabaseId, _cosmosDb.EventsCollectionId),
                     new FeedOptions { MaxItemCount = -1 })
-                .Where(e => e.DomainEvent.EntityId  == identity)
+                .Where(e => e.DomainEvent.EntityId  == identity && e.Version >= from)
                 .AsDocumentQuery();
 
             var wrappedEvents = new List<JObject>();
@@ -53,48 +53,15 @@ namespace Microwave.Persistence.CosmosDb
             {
                 result.Add(new DomainEventWrapper
                 {
-                    Created = (DateTimeOffset)wrappedEvent.GetValue("Created"),
-                    DomainEvent = (IDomainEvent)JsonConvert.DeserializeObject(wrappedEvent.GetValue("DomainEvent").ToString(), _domainEventTypes.Single(x => x.Name == wrappedEvent.GetValue("DomainEventType").ToString())),
-                    Version = (long)wrappedEvent.GetValue("Version")
+                    Created = (DateTimeOffset)wrappedEvent.GetValue(nameof(DomainEventWrapper.Created)),
+                    DomainEvent = (IDomainEvent)JsonConvert.DeserializeObject(wrappedEvent.GetValue(nameof(DomainEventWrapper.DomainEvent)).ToString(), _domainEventTypes.Single(x => x.Name == wrappedEvent.GetValue(nameof(DomainEventWrapper.DomainEvent)).ToString())),
+                    Version = (long)wrappedEvent.GetValue(nameof(DomainEventWrapper.Version))
                 });
             }
 
             return result;
         }
 
-        public async Task<SnapShotResult<T>> LoadSnapshotAsync<T>(Identity entityId)
-        {
-            var query = _client.CreateDocumentQuery<SnapShotWrapper<T>>(
-                    UriFactory.CreateDocumentCollectionUri(_cosmosDb.DatabaseId, _cosmosDb.SnapshotsCollectionId),
-                    new FeedOptions { MaxItemCount = -1 })
-                .Where(e => e.Id == entityId)
-                .AsDocumentQuery();
-
-            var wrappedEvents = new List<JObject>();
-            while (query.HasMoreResults)
-            {
-                wrappedEvents.AddRange(await query.ExecuteNextAsync<JObject>());
-            }
-            var allSnapshots = new List<SnapShotWrapper<T>>();
-            foreach (var wrappedEvent in wrappedEvents)
-            {
-                var entity =  JsonConvert.DeserializeObject<T>(wrappedEvent.GetValue("Entity").ToString());
-                var version = (long) wrappedEvent.GetValue("Version");
-                Guid.TryParse(wrappedEvent.GetValue("id").ToString(), out var guid);
-                Identity identity = null;
-                if (guid != Guid.Empty)
-                {
-                    identity = Identity.Create(guid);
-                }
-                else
-                {
-                    identity = Identity.Create(wrappedEvent.GetValue("id").ToString());
-                }
-                allSnapshots.Add(new SnapShotWrapper<T>(entity, identity, version));
-            }
-            var result = allSnapshots.Single(x => x.Version == allSnapshots.Max(s => s.Version));
-            return new SnapShotResult<T>(result.Entity, result.Version);
-        }
 
         public async Task SaveSnapshotAsync<T>(SnapShotWrapper<T> snapShot)
         {
@@ -135,9 +102,9 @@ namespace Microwave.Persistence.CosmosDb
             {
                 await _client.CreateDocumentAsync(UriFactory.CreateDocumentCollectionUri(_cosmosDb.DatabaseId, _cosmosDb.EventsCollectionId), domainEvent);
             }
-            catch (DocumentClientException e)
+            catch (DocumentClientException)
             {
-                var actualVersion = (await GetDomainEventsAsync(domainEvent.DomainEvent.EntityId)).Max(x => x.Version);
+                var actualVersion = (await GetDomainEventsAsync(domainEvent.DomainEvent.EntityId, domainEvent.Version)).Max(x => x.Version);
                 return Result.ConcurrencyResult(domainEvent.Version, actualVersion);
             }
             return Result.Ok();

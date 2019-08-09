@@ -22,6 +22,8 @@ namespace Microwave.Persistence.CosmosDb
         public string DatabaseId => "Eventstore";
         public string EventsCollectionId => "DomainEvents";
         public string SnapshotsCollectionId => "Snapshots";
+        public string ServiceMapCollectionId => "ServiceMap";
+        public string StatusCollectionId => "Status";
 
         public async Task InitializeCosmosDb()
         {
@@ -61,12 +63,16 @@ namespace Microwave.Persistence.CosmosDb
                     domainEventsCollection);
                 await client.CreateDocumentCollectionIfNotExistsAsync(
                     UriFactory.CreateDatabaseUri(DatabaseId),
+                    new DocumentCollection{Id = StatusCollectionId});
+                await client.CreateDocumentCollectionIfNotExistsAsync(
+                    UriFactory.CreateDatabaseUri(DatabaseId),
                     snapShotCollection);
             }
             catch (DocumentClientException e)
             {
                 throw new ArgumentException(
-                    "Could not create Database or Collection with given CosmosDb Configuration Parameters!");
+                    $"Could not create Database or Collection with given CosmosDb Configuration Parameters! Exception : {e}" );
+
             }
         }
     }
