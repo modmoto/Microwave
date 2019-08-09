@@ -4,22 +4,22 @@ namespace Microwave.Domain.Validation
 {
     public abstract class DomainError
     {
-        protected DomainError(string description = null)
+        protected DomainError(string detail = null)
         {
-            Description = description;
+            Detail = detail;
         }
 
-        public static DomainError Create(Enum errorType)
+        public static DomainError Create(Enum errorType, string detail = null)
         {
-            return new EnumDomainError(errorType);
+            return new EnumDomainError(errorType, detail);
         }
 
-        public static DomainError Create(string errorType)
+        public static DomainError Create(string errorType, string detail = null)
         {
-            return new TypelessDomainError(errorType);
+            return new TypelessDomainError(errorType, detail);
         }
 
         public virtual string ErrorType => GetType().Name;
-        public string Description { get; }
+        public virtual string Detail { get; }
     }
 }

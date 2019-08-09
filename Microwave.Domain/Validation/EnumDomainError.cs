@@ -6,11 +6,13 @@ namespace Microwave.Domain.Validation
     {
         private readonly Enum _enumErrorType;
 
-        public EnumDomainError(Enum enumErrorType)
+        internal EnumDomainError(Enum enumErrorType, string detail = null)
         {
+            Detail = detail;
             _enumErrorType = enumErrorType;
         }
 
         public override string ErrorType => _enumErrorType.ToString();
+        public override string Detail { get; }
     }
 }

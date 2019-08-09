@@ -23,6 +23,9 @@ namespace Microwave.WebApi.Filters
         [JsonProperty("problem-details", NullValueHandling = NullValueHandling.Ignore)]
         public IEnumerable<ProblemDocument> ProblemDetails { get; }
 
+        [JsonIgnore]
+        public IEnumerable<DomainError> DomainErrors => ProblemDetails.Select(p => DomainError.Create(p.Type, p.Detail));
+
         public ProblemDocument(
             string type,
             string title,
@@ -52,7 +55,22 @@ namespace Microwave.WebApi.Filters
             Title = title;
             Status = HttpStatusCode.BadRequest;
             ProblemDetails =
-                domainErrors.Select(error => new ProblemDocument(error.ErrorType, error.Description));
+                domainErrors.Select(error => new ProblemDocument(error.ErrorType, error.Detail));
+        }
+
+        [JsonConstructor]
+        private ProblemDocument(
+            string title,
+            string type,
+            HttpStatusCode? status,
+            string detail,
+            IEnumerable<ProblemDocument> problemDetails)
+        {
+            Title = title;
+            Type = type;
+            Status = status;
+            Detail = detail;
+            ProblemDetails = problemDetails;
         }
     }
 }
