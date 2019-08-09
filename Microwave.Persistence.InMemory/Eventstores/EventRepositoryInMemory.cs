@@ -48,12 +48,20 @@ namespace Microwave.Persistence.InMemory.Eventstores
             if (maxVersion != currentEntityVersion) return Task.FromResult(
                 Result.ConcurrencyResult(currentEntityVersion, maxVersion));
             var newVersion = currentEntityVersion;
-            var domainEventWrappers = domainEvents.Select(e => new DomainEventWrapper
+
+            var domainEventWrappers = new List<DomainEventWrapper>();
+            foreach (var domainEvent in domainEvents)
             {
-                Created = DateTimeOffset.Now,
-                DomainEvent = e,
-                Version = ++newVersion
-            }).ToArray();
+                Task.Delay(1);
+                var domainEventWrapper = new DomainEventWrapper
+                {
+                    Created = DateTimeOffset.Now,
+                    DomainEvent = domainEvent,
+                    Version = ++newVersion
+                };
+                domainEventWrappers.Add(domainEventWrapper);
+            }
+
             foreach (var eventWrapper in domainEventWrappers)
             {
                 _domainEvents.Add(eventWrapper);
