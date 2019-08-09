@@ -366,6 +366,37 @@ namespace Microwave.Persistence.UnitTests.Eventstores
             Assert.AreEqual(typeof(TestEvent1), result.Value.ToList()[0].DomainEvent.GetType());
         }
 
+        [DataTestMethod]
+        [PersistenceTypeTest]
+        public async Task AddMultipleEvents_GlobalVersionIsUpdatedCorrectly(PersistenceLayerProvider layerProvider)
+        {
+            var eventRepository = layerProvider.EventRepository;
+
+            var newGuid = GuidIdentity.Create(Guid.NewGuid());
+            var domainEvents = new List<IDomainEvent>();
+            var domainEvents2 = new List<IDomainEvent>();
+            for (int i = 0; i < 100; i++)
+            {
+                domainEvents.Add(new TestEvent1(newGuid));
+                domainEvents2.Add(new TestEvent2(newGuid));
+            }
+
+
+            await eventRepository.AppendAsync(domainEvents, 0);
+            await eventRepository.AppendAsync(domainEvents, 100);
+
+            var result = await eventRepository.LoadEvents(DateTimeOffset.MinValue);
+            var dateTimeOffset = result.Value.Last().Created;
+
+            Assert.AreEqual(200, result.Value.Count());
+
+            for (int i = 0; i < 10; i++)
+            {
+                var result2 = await eventRepository.LoadEvents(dateTimeOffset);
+                Assert.AreEqual(0, result2.Value.Count());
+            }
+        }
+
         private static void CheckAllResults(Result[] whenAll)
         {
             foreach (var result in whenAll)
