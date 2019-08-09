@@ -95,6 +95,25 @@ namespace Microwave.Persistence.UnitTests.Querries
 
         [DataTestMethod]
         [PersistenceTypeTest]
+        public async Task InsertReadModelDifferentTypeButSameId(PersistenceLayerProvider layerProvider)
+        {
+            var queryRepository = layerProvider.ReadModelRepository;
+            var testRm1 = new TestReadModel();
+            var testRm2 = new TestReadModel2();
+
+            var guidIdentity = GuidIdentity.Create();
+            await queryRepository.Save(testRm1, guidIdentity, 0);
+            await queryRepository.Save(testRm2, guidIdentity, 0);
+
+            var res1 = await queryRepository.Load<TestReadModel>(guidIdentity);
+            var res2 = await queryRepository.Load<TestReadModel2>(guidIdentity);
+
+            Assert.IsNotNull(res1.Value);
+            Assert.IsNotNull(res2.Value);
+        }
+
+        [DataTestMethod]
+        [PersistenceTypeTest]
         public async Task InsertQuery_ConcurrencyProblem(PersistenceLayerProvider layerProvider)
         {
             var queryRepository = layerProvider.ReadModelRepository;

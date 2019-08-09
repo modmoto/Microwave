@@ -12,7 +12,8 @@ namespace Microwave.Persistence.InMemory.Querries
     public class ReadModelRepositoryInMemory : IReadModelRepository
     {
         private readonly ConcurrentDictionary<Type, object> _querryDictionary = new ConcurrentDictionary<Type, object>();
-        private readonly ConcurrentDictionary<Identity, object> _readModelDictionary = new ConcurrentDictionary<Identity, object>();
+        private readonly ConcurrentDictionary<Type, ConcurrentDictionary<Identity, object>> _readModelDictionary = new
+            ConcurrentDictionary<Type, ConcurrentDictionary<Identity, object>> ();
         public Task<Result<T>> Load<T>() where T : Query
         {
             if (!_querryDictionary.TryGetValue(typeof(T), out var query)) return Task.FromResult(Result<T>.NotFound
@@ -23,10 +24,13 @@ namespace Microwave.Persistence.InMemory.Querries
 
         public Task<ReadModelResult<T>> Load<T>(Identity id) where T : ReadModel
         {
-            if (id == null || !_readModelDictionary.TryGetValue(id, out var readModel)) return Task.FromResult
-            (ReadModelResult<T>.NotFound(id));
-            var model = readModel as T;
-            if (model == null) return Task.FromResult(ReadModelResult<T>.NotFound(id));
+            if (id != null || !_readModelDictionary.TryGetValue(typeof(T), out var readModelDictionary))
+                return Task.FromResult(ReadModelResult<T>.NotFound(id));
+
+            if (!readModelDictionary.TryGetValue(id, out var readModel))
+                return Task.FromResult(ReadModelResult<T>.NotFound(id));
+
+            if (!(readModel is T model)) return Task.FromResult(ReadModelResult<T>.NotFound(id));
 
             return Task.FromResult(new ReadModelResult<T>(model, id, 0));
         }
@@ -39,7 +43,7 @@ namespace Microwave.Persistence.InMemory.Querries
 
         public Task<Result> Save<T>(T readModel, Identity identity, long version) where T : ReadModel, new()
         {
-            _readModelDictionary[identity] = readModel;
+            _readModelDictionary[typeof(T)][identity] = readModel;
             return Task.FromResult(Result.Ok());
         }
 
