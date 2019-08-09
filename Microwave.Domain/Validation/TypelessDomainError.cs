@@ -7,8 +7,5 @@ namespace Microwave.Domain.Validation
             ErrorType = errorType;
             Detail = detail;
         }
-
-        public override string ErrorType { get; }
-        public override string Detail { get; }
     }
 }
