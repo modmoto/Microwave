@@ -52,8 +52,10 @@ namespace Microwave.Persistence.InMemory.Querries
 
         public Task<Result<IEnumerable<T>>> LoadAll<T>() where T : ReadModel
         {
-            var loadAll = _readModelDictionary.Values.Where(v => v.GetType() == typeof(T)).ToList();
-            if (loadAll.Count == 0) return Task.FromResult(Result<IEnumerable<T>>.Ok(new List<T>()));
+            if (!_readModelDictionary.TryGetValue(typeof(T), out var readModelDictionary))
+                return Task.FromResult(Result<IEnumerable<T>>.Ok(new List<T>()));
+
+            var loadAll = readModelDictionary.Values.ToList();
             return Task.FromResult(Result<IEnumerable<T>>.Ok(loadAll.Select(l => l as T)));
         }
     }
