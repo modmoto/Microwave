@@ -10,7 +10,7 @@ namespace Microwave.Domain.Validation
             Detail = detail;
         }
 
-        internal DomainError(string errorType = null, string detail = null)
+        protected DomainError(string errorType = null, string detail = null)
         {
             ErrorType = errorType ?? GetType().Name;
             Detail = detail;
