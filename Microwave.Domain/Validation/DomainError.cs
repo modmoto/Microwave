@@ -4,13 +4,7 @@ namespace Microwave.Domain.Validation
 {
     public abstract class DomainError
     {
-        protected DomainError(string detail = null)
-        {
-            ErrorType = GetType().Name;
-            Detail = detail;
-        }
-
-        protected DomainError(string errorType = null, string detail = null)
+        protected DomainError(string detail = null, string errorType = null)
         {
             ErrorType = errorType ?? GetType().Name;
             Detail = detail;
