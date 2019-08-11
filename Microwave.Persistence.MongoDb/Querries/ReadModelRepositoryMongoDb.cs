@@ -65,10 +65,10 @@ namespace Microwave.Persistence.MongoDb.Querries
             var findOneAndReplaceOptions = new FindOneAndReplaceOptions<ReadModelDbo<T>>();
             findOneAndReplaceOptions.IsUpsert = true;
             await mongoCollection.FindOneAndReplaceAsync(
-                (Expression<Func<ReadModelDbo<T>, bool>>) (e => e.Id == readModel.Id.Id),
+                (Expression<Func<ReadModelDbo<T>, bool>>) (e => e.Id == readModel.Identity.Id),
                 new ReadModelDbo<T>
                 {
-                    Id = readModel.Id.Id,
+                    Id = readModel.Identity.Id,
                     Version = readModel.Version,
                     Payload = readModel
                 }, findOneAndReplaceOptions);

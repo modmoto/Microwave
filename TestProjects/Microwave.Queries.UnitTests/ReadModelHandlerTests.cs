@@ -127,7 +127,7 @@ namespace Microwave.Queries.UnitTests
 
             var result = await queryRepository.LoadAsync<TestReadModelQuerries_VerionedHandle>(EntityGuid);
             Assert.AreEqual(EntityGuid.Id, result.Value.EntityId.Id);
-            Assert.AreEqual(12, result.Value.Version);
+            Assert.AreEqual(12, result.Value.InnerVersion);
             Assert.AreEqual(14, result.Value.Version);
         }
 
@@ -174,11 +174,11 @@ namespace Microwave.Queries.UnitTests
         public void Handle(TestEvnt2 domainEvent, long version)
         {
             EntityId = domainEvent.EntityId;
-            Version = version;
+            InnerVersion = version;
         }
 
         public Identity EntityId { get; set; }
-        public long Version { get; set; }
+        public long InnerVersion { get; set; }
         public override Type GetsCreatedOn => typeof(TestEvnt2);
         public void Handle(TestEvnt3 domainEvent)
         {

@@ -7,6 +7,6 @@ namespace Microwave.Queries
     {
         public abstract Type GetsCreatedOn { get; }
         public long Version { get; set; }
-        public Identity Id { get; set; }
+        public Identity Identity { get; set; }
     }
 }

@@ -22,13 +22,13 @@ namespace Microwave.Persistence.UnitTests.Querries
             var queryRepository = layerProvider.ReadModelRepository;
 
             var guid = GuidIdentity.Create(Guid.NewGuid());
-            var testQuerry = new TestReadModel();
+            var testQuerry = new TestReadModel { Identity = guid };
             testQuerry.SetVars("Test", new[] {"Jeah", "jeah2"});
             await queryRepository.SaveReadModelAsync(testQuerry);
 
             var querry1 = await queryRepository.LoadAsync<TestReadModel>(guid);
 
-            Assert.AreEqual(guid, querry1.Value.Id);
+            Assert.AreEqual(guid, querry1.Value.Identity);
             Assert.AreEqual("Test", querry1.Value.UserName);
             Assert.AreEqual("Jeah", querry1.Value.Strings.First());
         }
@@ -51,8 +51,8 @@ namespace Microwave.Persistence.UnitTests.Querries
         {
             var queryRepository = layerProvider.ReadModelRepository;
 
-            var testQuerry = new TestReadModel();
-            var testQuerry2 = new TestReadModel();
+            var testQuerry = new TestReadModel {Identity = GuidIdentity.Create()};
+            var testQuerry2 = new TestReadModel {Identity = GuidIdentity.Create()};
             testQuerry.SetVars("Test", new[] {"Jeah", "jeah2"});
             testQuerry2.SetVars("Test", new[] {"Jeah", "jeah2"});
             await queryRepository.SaveReadModelAsync(testQuerry);
@@ -70,8 +70,8 @@ namespace Microwave.Persistence.UnitTests.Querries
         {
             var queryRepository = layerProvider.ReadModelRepository;
 
-            var testQuerry = new TestReadModel();
-            var testQuerry2 = new TestReadModel();
+            var testQuerry = new TestReadModel{Identity = GuidIdentity.Create()};
+            var testQuerry2 = new TestReadModel{Identity = GuidIdentity.Create()};
             testQuerry.SetVars("Test", new[] {"Jeah", "jeah2"});
             testQuerry2.SetVars("Test", new[] {"Jeah", "jeah2"});
             await queryRepository.SaveReadModelAsync(testQuerry);
@@ -98,10 +98,11 @@ namespace Microwave.Persistence.UnitTests.Querries
         public async Task InsertReadModelDifferentTypeButSameId(PersistenceLayerProvider layerProvider)
         {
             var queryRepository = layerProvider.ReadModelRepository;
-            var testRm1 = new TestReadModel();
-            var testRm2 = new TestReadModel2();
 
             var guidIdentity = GuidIdentity.Create();
+            var testRm1 = new TestReadModel {Identity = guidIdentity};
+            var testRm2 = new TestReadModel2 {Identity = guidIdentity};
+
             await queryRepository.SaveReadModelAsync(testRm1);
             await queryRepository.SaveReadModelAsync(testRm2);
 
@@ -143,7 +144,7 @@ namespace Microwave.Persistence.UnitTests.Querries
         {
             var queryRepository = layerProvider.ReadModelRepository;
             var guid2 = GuidIdentity.Create(Guid.NewGuid());
-            var testQuery2 = new TestReadModel2();
+            var testQuery2 = new TestReadModel2 { Identity = guid2 };
             testQuery2.SetVars("Test2", new []{ "Jeah", "jeah2"});
 
             await queryRepository.SaveReadModelAsync(testQuery2);

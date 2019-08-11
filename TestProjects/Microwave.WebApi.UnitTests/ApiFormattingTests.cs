@@ -5,7 +5,6 @@ using Microwave.Domain.Validation;
 using Microwave.Queries;
 using Microwave.WebApi.ApiFormatting.DateTimeOffsets;
 using Microwave.WebApi.ApiFormatting.Identities;
-using Microwave.WebApi.ApiFormatting.ReadModels;
 using Newtonsoft.Json;
 
 namespace Microwave.WebApi.UnitTests
@@ -63,27 +62,6 @@ namespace Microwave.WebApi.UnitTests
             var time = identityConverter.ReadJson(new Mockreader(expected), typeof(Identity), null, JsonSerializer
                 .Create());
             Assert.IsNull(time);
-        }
-
-        [TestMethod]
-        public  void ReadModelIsFound()
-        {
-            var domainErrorsConverter = new ReadModelsConverter();
-            var canWrite = domainErrorsConverter.CanConvert(typeof(ReadModelTest));
-            Assert.IsTrue(canWrite);
-        }
-
-        [TestMethod]
-        public  void ReadModelIsConvertedCorrectly()
-        {
-            var domainErrorsConverter = new ReadModelsConverter();
-            var jsonTextWriterMock = new JsonTextWriterMock();
-            var readModelTest = new ReadModelTest { TestProp = "test", IdentityField = StringIdentity.Create("TestId")};
-            domainErrorsConverter.WriteJson(jsonTextWriterMock, readModelTest, null);
-
-            var jobject = jsonTextWriterMock.StringValue;
-            Assert.AreEqual($"{{{Environment.NewLine}  \"IdentityField\": \"TestId\",{Environment.NewLine}  \"TestProp\": \"test\"{Environment.NewLine}}}",
-            jobject);
         }
     }
 

@@ -52,7 +52,7 @@ namespace Microwave.Queries.Handler
                 if (latestEventVersion < result.Value.Version) latestEventVersion = result.Value.Version;
 
                 readModel.Version = latestEventVersion;
-                readModel.Id = domainEventEntityId;
+                readModel.Identity = domainEventEntityId;
 
                 await _readModelRepository.SaveReadModelAsync(readModel);
                 await _versionRepository.SaveVersion(new LastProcessedVersion(redaModelVersionCounter, latestEvent.Created));

@@ -45,7 +45,7 @@ namespace Microwave.Persistence.InMemory.Querries
         {
             if (!_readModelDictionary.TryGetValue(typeof(T), out var readModelDictionary))
                 readModelDictionary = new ConcurrentDictionary<Identity, object>();
-            readModelDictionary[readModel.Id] = readModel;
+            readModelDictionary[readModel.Identity] = readModel;
             _readModelDictionary[typeof(T)] = readModelDictionary;
             return Task.FromResult(Result.Ok());
         }
