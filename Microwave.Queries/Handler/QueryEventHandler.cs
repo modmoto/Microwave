@@ -29,7 +29,7 @@ namespace Microwave.Queries.Handler
             var domainEvents = latestEvents.ToList();
             if (!domainEvents.Any()) return;
 
-            var querry = await _readModelRepository.Load<TQuerry>();
+            var querry = await _readModelRepository.LoadAsync<TQuerry>();
             if (querry.Is<NotFound>()) querry = Result<TQuerry>.Ok(new TQuerry());
             var querryValue = querry.Value;
             foreach (var latestEvent in domainEvents)
@@ -38,7 +38,7 @@ namespace Microwave.Queries.Handler
                 await _versionRepository.SaveVersion(new LastProcessedVersion(domainEventType, latestEvent.Created));
             }
 
-            await _readModelRepository.Save(querryValue);
+            await _readModelRepository.SaveQueryAsync(querryValue);
         }
     }
 }

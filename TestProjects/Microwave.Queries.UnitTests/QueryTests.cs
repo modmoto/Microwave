@@ -31,9 +31,8 @@ namespace Microwave.Queries.UnitTests
         }
     }
 
-    public class ReadModelTestForQuery : ReadModel, IHandle<TestEv>, IHandleVersioned<TestEv2>
+    public class ReadModelTestForQuery : ReadModel<TestEv>, IHandle<TestEv>, IHandleVersioned<TestEv2>
     {
-        public override Type GetsCreatedOn { get; }
         public void Handle(TestEv domainEvent)
         {
             EntityId = domainEvent.EntityId;

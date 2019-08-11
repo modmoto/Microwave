@@ -47,13 +47,11 @@ namespace Microwave.UnitTests.PublishedEventsDll
         }
     }
 
-    public class TestReadModel_NotImplementingIApply : ReadModel, IHandle<TestDomainEvent_OnlySubscribedEvent>
+    public class TestReadModel_NotImplementingIApply : ReadModel<TestDomainEvent_OnlySubscribedEvent>, IHandle<TestDomainEvent_OnlySubscribedEvent>
     {
         public void Handle(TestDomainEvent_OnlySubscribedEvent domainEvent)
         {
         }
-
-        public override Type GetsCreatedOn => typeof(TestDomainEvent_OnlySubscribedEvent);
     }
 
     public class TestQuerry_NotImplementingIApply : Query, IHandle<TestDomainEvent_OnlySubscribedEvent>

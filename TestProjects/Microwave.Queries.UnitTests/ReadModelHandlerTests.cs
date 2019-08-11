@@ -26,9 +26,9 @@ namespace Microwave.Queries.UnitTests
                 new VersionRepositoryMongoDb(EventMongoDb), new FeedMock2());
             await readModelHandler.Update();
 
-            var result = await queryRepository.Load<TestReadModelQuerries>(EntityGuid);
-            Assert.AreEqual(EntityGuid, result.Id);
-            Assert.AreEqual(14, result.Version);
+            var result = await queryRepository.LoadAsync<TestReadModelQuerries>(EntityGuid);
+            Assert.AreEqual(EntityGuid, result.Value.Id);
+            Assert.AreEqual(14, result.Value.Version);
             Assert.AreEqual("testName", result.Value.Name);
         }
 
@@ -45,10 +45,10 @@ namespace Microwave.Queries.UnitTests
 
             await readModelHandler.Update();
 
-            var result = await queryRepository.Load<TestReadModelQuerries>(EntityGuid);
-            var result2 = await queryRepository.Load<TestReadModelQuerries>(EntityGuid2);
-            Assert.AreEqual(EntityGuid, result.Id);
-            Assert.AreEqual(EntityGuid2, result2.Id);
+            var result = await queryRepository.LoadAsync<TestReadModelQuerries>(EntityGuid);
+            var result2 = await queryRepository.LoadAsync<TestReadModelQuerries>(EntityGuid2);
+            Assert.AreEqual(EntityGuid, result.Value.Id);
+            Assert.AreEqual(EntityGuid2, result2.Value.Id);
         }
 
         [TestMethod]
@@ -63,9 +63,9 @@ namespace Microwave.Queries.UnitTests
 
             await readModelHandler.Update();
 
-            var result = await queryRepository.Load<TestReadModelQuerries>(EntityGuid);
-            var result2 = await queryRepository.Load<TestReadModelQuerries>(EntityGuid2);
-            Assert.AreEqual(EntityGuid, result.Id);
+            var result = await queryRepository.LoadAsync<TestReadModelQuerries>(EntityGuid);
+            var result2 = await queryRepository.LoadAsync<TestReadModelQuerries>(EntityGuid2);
+            Assert.AreEqual(EntityGuid, result.Value.Id);
             var condition = result2.Is<NotFound>();
             Assert.IsTrue(condition);
         }
@@ -84,8 +84,8 @@ namespace Microwave.Queries.UnitTests
 
             await readModelHandler.Update();
 
-            var result = await queryRepository.Load<TestReadModelQuerries_OnlyOneEventAndVersionIsCounted>(EntityGuid);
-            Assert.AreEqual(14, result.Version);
+            var result = await queryRepository.LoadAsync<TestReadModelQuerries_OnlyOneEventAndVersionIsCounted>(EntityGuid);
+            Assert.AreEqual(14, result.Value.Version);
             Assert.AreEqual(null, result.Value.Name);
             Assert.AreEqual(EntityGuid.Id, result.Value.Id.Id);
         }
@@ -105,8 +105,8 @@ namespace Microwave.Queries.UnitTests
             await readModelHandler.Update();
             await readModelHandler2.Update();
 
-            var result = await queryRepository.Load<TestReadModelQuerries_TwoParallelFeeds1>(EntityGuid);
-            var result2 = await queryRepository.Load<TestReadModelQuerries_TwoParallelFeeds2>(EntityGuid2);
+            var result = await queryRepository.LoadAsync<TestReadModelQuerries_TwoParallelFeeds1>(EntityGuid);
+            var result2 = await queryRepository.LoadAsync<TestReadModelQuerries_TwoParallelFeeds2>(EntityGuid2);
             Assert.AreEqual(EntityGuid.Id, result.Value.Id.Id);
             Assert.AreEqual(EntityGuid2.Id, result2.Value.IdTotallyDifferenzt.Id);
         }
@@ -125,10 +125,10 @@ namespace Microwave.Queries.UnitTests
 
             await readModelHandler.Update();
 
-            var result = await queryRepository.Load<TestReadModelQuerries_VerionedHandle>(EntityGuid);
+            var result = await queryRepository.LoadAsync<TestReadModelQuerries_VerionedHandle>(EntityGuid);
             Assert.AreEqual(EntityGuid.Id, result.Value.EntityId.Id);
-            Assert.AreEqual(12, result.Value.Version);
-            Assert.AreEqual(14, result.Version);
+            Assert.AreEqual(12, result.Value.InnerVersion);
+            Assert.AreEqual(14, result.Value.Version);
         }
 
         public static GuidIdentity EntityGuid { get; set; }
@@ -152,7 +152,7 @@ namespace Microwave.Queries.UnitTests
         }
     }
 
-    public class TestReadModelQuerries : ReadModel, IHandle<TestEvnt2>, IHandle<TestEvnt1>
+    public class TestReadModelQuerries : ReadModel<TestEvnt2>, IHandle<TestEvnt2>, IHandle<TestEvnt1>
     {
         public void Handle(TestEvnt2 domainEvent)
         {
@@ -166,26 +166,24 @@ namespace Microwave.Queries.UnitTests
         }
 
         public string Name { get; set; }
-        public override Type GetsCreatedOn => typeof(TestEvnt2);
     }
 
-    public class TestReadModelQuerries_VerionedHandle : ReadModel, IHandleVersioned<TestEvnt2>, IHandle<TestEvnt3>
+    public class TestReadModelQuerries_VerionedHandle : ReadModel<TestEvnt2>, IHandleVersioned<TestEvnt2>, IHandle<TestEvnt3>
     {
         public void Handle(TestEvnt2 domainEvent, long version)
         {
             EntityId = domainEvent.EntityId;
-            Version = version;
+            InnerVersion = version;
         }
 
         public Identity EntityId { get; set; }
-        public long Version { get; set; }
-        public override Type GetsCreatedOn => typeof(TestEvnt2);
+        public long InnerVersion { get; set; }
         public void Handle(TestEvnt3 domainEvent)
         {
         }
     }
 
-    public class TestReadModelQuerries_OnlyOneEventAndVersionIsCounted : ReadModel, IHandle<TestEvnt2>
+    public class TestReadModelQuerries_OnlyOneEventAndVersionIsCounted : ReadModel<TestEvnt2>, IHandle<TestEvnt2>
     {
         public void Handle(TestEvnt2 domainEvent)
         {
@@ -194,7 +192,6 @@ namespace Microwave.Queries.UnitTests
 
         public Identity Id { get; set; }
         public string Name { get; set; }
-        public override Type GetsCreatedOn => typeof(TestEvnt2);
     }
 
     public class FeedMock2 : IEventFeed<ReadModelEventHandler<TestReadModelQuerries>>
@@ -262,7 +259,7 @@ namespace Microwave.Queries.UnitTests
         }
     }
 
-    public class TestReadModelQuerries_TwoParallelFeeds1 : ReadModel, IHandle<TestEvnt1>
+    public class TestReadModelQuerries_TwoParallelFeeds1 : ReadModel<TestEvnt1>, IHandle<TestEvnt1>
     {
         public void Handle(TestEvnt1 domainEvent)
         {
@@ -270,7 +267,6 @@ namespace Microwave.Queries.UnitTests
         }
 
         public Identity Id { get; set; }
-        public override Type GetsCreatedOn => typeof(TestEvnt1);
     }
 
     public class FeedMock7 : IEventFeed<ReadModelEventHandler<TestReadModelQuerries_TwoParallelFeeds2>>
@@ -281,7 +277,7 @@ namespace Microwave.Queries.UnitTests
         }
     }
 
-    public class TestReadModelQuerries_TwoParallelFeeds2 : ReadModel, IHandle<TestEvnt2>
+    public class TestReadModelQuerries_TwoParallelFeeds2 : ReadModel<TestEvnt2>, IHandle<TestEvnt2>
     {
         public void Handle(TestEvnt2 domainEvent)
         {
@@ -289,7 +285,6 @@ namespace Microwave.Queries.UnitTests
         }
 
         public Identity IdTotallyDifferenzt { get; set; }
-        public override Type GetsCreatedOn => typeof(TestEvnt2);
     }
 
     public class FeedMock3 : IEventFeed<ReadModelEventHandler<TestReadModelQuerries>>

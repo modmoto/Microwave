@@ -21,7 +21,7 @@ namespace Microwave.Persistence.MongoDb.Querries
             _database = mongoDb.Database;
         }
 
-        public async Task<Result<T>> Load<T>() where T : Query
+        public async Task<Result<T>> LoadAsync<T>() where T : Query
         {
             var name = typeof(T).Name;
             var mongoCollection = _database.GetCollection<QueryDbo<T>>(GetQuerryCollectionName<T>());
@@ -30,17 +30,17 @@ namespace Microwave.Persistence.MongoDb.Querries
             return Result<T>.Ok(query.Payload);
         }
 
-        public async Task<ReadModelResult<T>> Load<T>(Identity id) where T : ReadModel
+        public async Task<Result<T>> LoadAsync<T>(Identity id) where T : IReadModel
         {
-            if (id == null) return ReadModelResult<T>.NotFound(null);
+            if (id == null) return Result<T>.NotFound(null);
             var mongoCollection = _database.GetCollection<ReadModelDbo<T>>(GetReadModelCollectionName<T>());
             var asyncCursor = await mongoCollection.FindAsync(dbo => dbo.Id == id.Id);
             var identifiableQueryDbo = asyncCursor.FirstOrDefault();
-            if (identifiableQueryDbo == null) return ReadModelResult<T>.NotFound(id);
-            return ReadModelResult<T>.Ok(identifiableQueryDbo.Payload, id, identifiableQueryDbo.Version);
+            if (identifiableQueryDbo == null) return Result<T>.NotFound(id);
+            return Result<T>.Ok(identifiableQueryDbo.Payload);
         }
 
-        public async Task<Result> Save<T>(T query) where T : Query
+        public async Task<Result> SaveQueryAsync<T>(T query) where T : Query
          {
             var mongoCollection = _database.GetCollection<QueryDbo<T>>(GetQuerryCollectionName<T>());
 
@@ -58,25 +58,25 @@ namespace Microwave.Persistence.MongoDb.Querries
             return Result.Ok();
         }
 
-        public async Task<Result> Save<T>(T readModel, Identity identity, long version) where T : ReadModel, new()
+        public async Task<Result> SaveReadModelAsync<T>(T readModel) where T : IReadModel, new()
         {
             var mongoCollection = _database.GetCollection<ReadModelDbo<T>>(GetReadModelCollectionName<T>());
 
             var findOneAndReplaceOptions = new FindOneAndReplaceOptions<ReadModelDbo<T>>();
             findOneAndReplaceOptions.IsUpsert = true;
             await mongoCollection.FindOneAndReplaceAsync(
-                (Expression<Func<ReadModelDbo<T>, bool>>) (e => e.Id == identity.Id),
+                (Expression<Func<ReadModelDbo<T>, bool>>) (e => e.Id == readModel.Identity.Id),
                 new ReadModelDbo<T>
                 {
-                    Id = identity.Id,
-                    Version = version,
+                    Id = readModel.Identity.Id,
+                    Version = readModel.Version,
                     Payload = readModel
                 }, findOneAndReplaceOptions);
 
             return Result.Ok();
         }
 
-        public async Task<Result<IEnumerable<T>>> LoadAll<T>() where T : ReadModel
+        public async Task<Result<IEnumerable<T>>> LoadAllAsync<T>() where T : IReadModel
         {
             var mongoCollection = _database.GetCollection<ReadModelDbo<T>>(GetReadModelCollectionName<T>());
             var allElements = await mongoCollection.FindSync(_ => true).ToListAsync();

@@ -10,7 +10,7 @@ namespace Microwave.Queries.Handler
         Task Update();
     }
 
-    public class ReadModelEventHandler<T> : IReadModelEventHandler where T : ReadModel, new()
+    public class ReadModelEventHandler<T> : IReadModelEventHandler where T : IReadModel, new()
     {
         private readonly IReadModelRepository _readModelRepository;
         private readonly IEventFeed<ReadModelEventHandler<T>> _eventFeed;
@@ -41,17 +41,20 @@ namespace Microwave.Queries.Handler
                 var latestEventVersion = latestEvent.Version;
 
                 var result = new T().GetsCreatedOn == latestEventDomainEvent.GetType()
-                    ? ReadModelResult<T>.Ok(new T(), domainEventEntityId, latestEventVersion)
-                    : await _readModelRepository.Load<T>(domainEventEntityId);
+                    ? Result<T>.Ok(new T())
+                    : await _readModelRepository.LoadAsync<T>(domainEventEntityId);
 
                 if (result.Is<NotFound>()) continue;
 
                 var readModel = result.Value;
                 readModel.Handle(latestEventDomainEvent, latestEventVersion);
 
-                if (latestEventVersion < result.Version) latestEventVersion = result.Version;
+                if (latestEventVersion < result.Value.Version) latestEventVersion = result.Value.Version;
 
-                await _readModelRepository.Save(readModel, domainEventEntityId, latestEventVersion);
+                readModel.Version = latestEventVersion;
+                readModel.Identity = domainEventEntityId;
+
+                await _readModelRepository.SaveReadModelAsync(readModel);
                 await _versionRepository.SaveVersion(new LastProcessedVersion(redaModelVersionCounter, latestEvent.Created));
             }
         }

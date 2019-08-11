@@ -63,7 +63,7 @@ namespace Microwave.Queries.UnitTests
             var eventDelegateHandler = new QueryEventHandler<TestQ, TestEv>(queryRepository, versionRepo.Object, mock.Object);
             await eventDelegateHandler.Update();
 
-            var result = await queryRepository.Load<TestQ>();
+            var result = await queryRepository.LoadAsync<TestQ>();
             Assert.AreEqual(1, result.Value.WasCalled);
         }
     }

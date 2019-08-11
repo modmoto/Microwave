@@ -6,6 +6,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Domain.Exceptions;
 using Microwave.Domain.Identities;
 using Microwave.Domain.Results;
+using Microwave.Persistence.UnitTests.Eventstores;
 using Microwave.Persistence.UnitTestsSetup;
 using Microwave.Queries;
 
@@ -22,13 +23,13 @@ namespace Microwave.Persistence.UnitTests.Querries
             var queryRepository = layerProvider.ReadModelRepository;
 
             var guid = GuidIdentity.Create(Guid.NewGuid());
-            var testQuerry = new TestReadModel();
+            var testQuerry = new TestReadModel { Identity = guid };
             testQuerry.SetVars("Test", new[] {"Jeah", "jeah2"});
-            await queryRepository.Save(testQuerry, guid, 1);
+            await queryRepository.SaveReadModelAsync(testQuerry);
 
-            var querry1 = await queryRepository.Load<TestReadModel>(guid);
+            var querry1 = await queryRepository.LoadAsync<TestReadModel>(guid);
 
-            Assert.AreEqual(guid, querry1.Id);
+            Assert.AreEqual(guid, querry1.Value.Identity);
             Assert.AreEqual("Test", querry1.Value.UserName);
             Assert.AreEqual("Jeah", querry1.Value.Strings.First());
         }
@@ -39,7 +40,7 @@ namespace Microwave.Persistence.UnitTests.Querries
         public async Task LoadWithNullId(PersistenceLayerProvider layerProvider)
         {
             var queryRepository = layerProvider.ReadModelRepository;
-            var querry1 = await queryRepository.Load<TestReadModel>(null);
+            var querry1 = await queryRepository.LoadAsync<TestReadModel>(null);
 
             Assert.IsTrue(querry1.Is<NotFound>());
             Assert.ThrowsException<NotFoundException>(() => querry1.Value);
@@ -51,14 +52,14 @@ namespace Microwave.Persistence.UnitTests.Querries
         {
             var queryRepository = layerProvider.ReadModelRepository;
 
-            var testQuerry = new TestReadModel();
-            var testQuerry2 = new TestReadModel();
+            var testQuerry = new TestReadModel {Identity = GuidIdentity.Create()};
+            var testQuerry2 = new TestReadModel {Identity = GuidIdentity.Create()};
             testQuerry.SetVars("Test", new[] {"Jeah", "jeah2"});
             testQuerry2.SetVars("Test", new[] {"Jeah", "jeah2"});
-            await queryRepository.Save(testQuerry, GuidIdentity.Create(), 1);
-            await queryRepository.Save(testQuerry2, GuidIdentity.Create(), 1);
+            await queryRepository.SaveReadModelAsync(testQuerry);
+            await queryRepository.SaveReadModelAsync(testQuerry2);
 
-            var querry1 = await queryRepository.LoadAll<TestReadModel>();
+            var querry1 = await queryRepository.LoadAllAsync<TestReadModel>();
 
             Assert.AreEqual(2, querry1.Value.Count());
             Assert.AreEqual("Test", querry1.Value.First().UserName);
@@ -70,14 +71,14 @@ namespace Microwave.Persistence.UnitTests.Querries
         {
             var queryRepository = layerProvider.ReadModelRepository;
 
-            var testQuerry = new TestReadModel();
-            var testQuerry2 = new TestReadModel();
+            var testQuerry = new TestReadModel{Identity = GuidIdentity.Create()};
+            var testQuerry2 = new TestReadModel{Identity = GuidIdentity.Create()};
             testQuerry.SetVars("Test", new[] {"Jeah", "jeah2"});
             testQuerry2.SetVars("Test", new[] {"Jeah", "jeah2"});
-            await queryRepository.Save(testQuerry, GuidIdentity.Create(), 1);
-            await queryRepository.Save(testQuerry2, GuidIdentity.Create(), 1);
+            await queryRepository.SaveReadModelAsync(testQuerry);
+            await queryRepository.SaveReadModelAsync(testQuerry2);
 
-            var loadAll = await queryRepository.LoadAll<TestReadModel2>();
+            var loadAll = await queryRepository.LoadAllAsync<TestReadModel2>();
             Assert.IsTrue(!loadAll.Value.Any());
         }
 
@@ -87,8 +88,8 @@ namespace Microwave.Persistence.UnitTests.Querries
         {
             var queryRepository = layerProvider.ReadModelRepository;
             var testQuery = new TestQuerry { UserName = "Test"};
-            await queryRepository.Save(testQuery);
-            var query = (await queryRepository.Load<TestQuerry>()).Value;
+            await queryRepository.SaveQueryAsync(testQuery);
+            var query = (await queryRepository.LoadAsync<TestQuerry>()).Value;
 
             Assert.AreEqual("Test", query.UserName);
         }
@@ -98,15 +99,16 @@ namespace Microwave.Persistence.UnitTests.Querries
         public async Task InsertReadModelDifferentTypeButSameId(PersistenceLayerProvider layerProvider)
         {
             var queryRepository = layerProvider.ReadModelRepository;
-            var testRm1 = new TestReadModel();
-            var testRm2 = new TestReadModel2();
 
             var guidIdentity = GuidIdentity.Create();
-            await queryRepository.Save(testRm1, guidIdentity, 0);
-            await queryRepository.Save(testRm2, guidIdentity, 0);
+            var testRm1 = new TestReadModel {Identity = guidIdentity};
+            var testRm2 = new TestReadModel2 {Identity = guidIdentity};
 
-            var res1 = await queryRepository.Load<TestReadModel>(guidIdentity);
-            var res2 = await queryRepository.Load<TestReadModel2>(guidIdentity);
+            await queryRepository.SaveReadModelAsync(testRm1);
+            await queryRepository.SaveReadModelAsync(testRm2);
+
+            var res1 = await queryRepository.LoadAsync<TestReadModel>(guidIdentity);
+            var res2 = await queryRepository.LoadAsync<TestReadModel2>(guidIdentity);
 
             Assert.IsNotNull(res1.Value);
             Assert.IsNotNull(res2.Value);
@@ -119,8 +121,8 @@ namespace Microwave.Persistence.UnitTests.Querries
             var queryRepository = layerProvider.ReadModelRepository;
             var testQuery = new TestQuerry { UserName = "Test1"};
             var testQuery2 = new TestQuerry { UserName = "Test2"};
-            var save = queryRepository.Save(testQuery);
-            var save2 = queryRepository.Save(testQuery2);
+            var save = queryRepository.SaveQueryAsync(testQuery);
+            var save2 = queryRepository.SaveQueryAsync(testQuery2);
 
             await Task.WhenAll(new List<Task> { save, save2 });
         }
@@ -130,9 +132,9 @@ namespace Microwave.Persistence.UnitTests.Querries
         public async Task UpdateQuery(PersistenceLayerProvider layerProvider)
         {
             var queryRepository = layerProvider.ReadModelRepository;
-            await queryRepository.Save(new TestQuerry { UserName = "Test"});
-            await queryRepository.Save(new TestQuerry { UserName = "NewName"});
-            var query = (await queryRepository.Load<TestQuerry>()).Value;
+            await queryRepository.SaveQueryAsync(new TestQuerry { UserName = "Test"});
+            await queryRepository.SaveQueryAsync(new TestQuerry { UserName = "NewName"});
+            var query = (await queryRepository.LoadAsync<TestQuerry>()).Value;
 
             Assert.AreEqual("NewName", query.UserName);
         }
@@ -143,12 +145,12 @@ namespace Microwave.Persistence.UnitTests.Querries
         {
             var queryRepository = layerProvider.ReadModelRepository;
             var guid2 = GuidIdentity.Create(Guid.NewGuid());
-            var testQuery2 = new TestReadModel2();
+            var testQuery2 = new TestReadModel2 { Identity = guid2 };
             testQuery2.SetVars("Test2", new []{ "Jeah", "jeah2"});
 
-            await queryRepository.Save(testQuery2, guid2, 1);
+            await queryRepository.SaveReadModelAsync(testQuery2);
 
-            var loadAll2 = await queryRepository.Load<TestReadModel>(guid2);
+            var loadAll2 = await queryRepository.LoadAsync<TestReadModel>(guid2);
 
             Assert.IsTrue(loadAll2.Is<NotFound>());
         }
@@ -159,7 +161,7 @@ namespace Microwave.Persistence.UnitTests.Querries
         {
             var queryRepository = layerProvider.ReadModelRepository;
             var guid2 = GuidIdentity.Create(Guid.NewGuid());
-            var result = await queryRepository.Load<TestReadModel>(guid2);
+            var result = await queryRepository.LoadAsync<TestReadModel>(guid2);
 
             var notFoundException = Assert.ThrowsException<NotFoundException>(() => result.Value);
             Assert.IsTrue(notFoundException.Message.StartsWith("Could not find TestReadModel"));
@@ -171,7 +173,7 @@ namespace Microwave.Persistence.UnitTests.Querries
         public string UserName { get; set; }
     }
 
-    public class TestReadModel : ReadModel
+    public class TestReadModel : ReadModel<Event1>
     {
         public string UserName { get; private set; }
         public IEnumerable<string> Strings { get; private set; } = new List<string>();
@@ -181,11 +183,9 @@ namespace Microwave.Persistence.UnitTests.Querries
             UserName = test;
             Strings = str;
         }
-
-        public override Type GetsCreatedOn { get; }
     }
 
-    public class TestReadModel2 : ReadModel
+    public class TestReadModel2 : ReadModel<Event1>
     {
         public string UserNameAllDifferent { get; private set; }
         public IEnumerable<string> StringsAllDifferent { get; private set; } = new List<string>();
@@ -195,7 +195,5 @@ namespace Microwave.Persistence.UnitTests.Querries
             UserNameAllDifferent = test;
             StringsAllDifferent = str;
         }
-
-        public override Type GetsCreatedOn { get; }
     }
 }

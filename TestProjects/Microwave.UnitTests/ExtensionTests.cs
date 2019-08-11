@@ -291,7 +291,7 @@ namespace Microwave.UnitTests
         }
     }
 
-    public class TestIdQuery : ReadModel, IHandle<TestDomainEvent1>, IHandle<TestDomainEvent2>
+    public class TestIdQuery : ReadModel<TestDomainEvent1>, IHandle<TestDomainEvent1>, IHandle<TestDomainEvent2>
     {
         public void Handle(TestDomainEvent1 domainEvent)
         {
@@ -300,17 +300,13 @@ namespace Microwave.UnitTests
         public void Handle(TestDomainEvent2 domainEvent)
         {
         }
-
-        public override Type GetsCreatedOn => typeof(TestDomainEvent1);
     }
 
-    public class TestIdQuerySingle : ReadModel, IHandle<TestDomainEvent3>
+    public class TestIdQuerySingle : ReadModel<TestDomainEvent3>, IHandle<TestDomainEvent3>
     {
         public void Handle(TestDomainEvent3 domainEvent)
         {
         }
-
-        public override Type GetsCreatedOn => typeof(TestDomainEvent3);
     }
 
     public class TestDomainEvent3 : ISubscribedDomainEvent
@@ -325,13 +321,11 @@ namespace Microwave.UnitTests
         public int Age { get; }
     }
 
-    public class TestIdQuery2 : ReadModel, IHandle<TestDomainEvent1>
+    public class TestIdQuery2 : ReadModel<TestDomainEvent1>, IHandle<TestDomainEvent1>
     {
         public void Handle(TestDomainEvent1 domainEvent)
         {
         }
-
-        public override Type GetsCreatedOn  => typeof(TestDomainEvent1);
     }
 
     public class TestQuery1 : Query, IHandle<TestDomainEvent1>, IHandle<TestDomainEvent2>
@@ -404,13 +398,11 @@ namespace Microwave.UnitTests
         public string Name { get; }
     }
 
-    public class TestReadModel : ReadModel, IHandle<Ev>
+    public class TestReadModel : ReadModel<Ev>, IHandle<Ev>
     {
         public void Handle(Ev domainEvent)
         {
         }
-
-        public override Type GetsCreatedOn => typeof(Ev);
     }
 
     public class Ev : IDomainEvent, ISubscribedDomainEvent

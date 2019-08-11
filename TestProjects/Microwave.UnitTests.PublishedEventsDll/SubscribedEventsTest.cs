@@ -32,9 +32,8 @@ namespace Microwave.UnitTests.PublishedEventsDll
         }
     }
 
-    public class TestReadModelSubscriptions : ReadModel, IHandle<TestDomainEvent_PublishedEvent2>, IHandle<TestDomainEvent_PublishedEvent1>
+    public class TestReadModelSubscriptions : ReadModel<TestDomainEvent_PublishedEvent1>, IHandle<TestDomainEvent_PublishedEvent2>, IHandle<TestDomainEvent_PublishedEvent1>
     {
-        public override Type GetsCreatedOn => typeof(TestDomainEvent_PublishedEvent1);
         public void Handle(TestDomainEvent_PublishedEvent2 domainEvent)
         {
         }
