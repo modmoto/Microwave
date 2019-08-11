@@ -417,7 +417,9 @@ namespace Microwave
         private static bool ImplementsIhandleInterfaceAndReadModel(Type myType)
         {
             return myType.GetInterfaces()
-                       .Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IHandle<>)) && myType.BaseType == typeof(IReadModel);
+                       .Any(i => i.IsGenericType
+                                 && i.GetGenericTypeDefinition() == typeof(IHandle<>))
+                                 && typeof(IReadModel).IsAssignableFrom(myType);
         }
     }
 }
