@@ -249,7 +249,7 @@ namespace Microwave
             {
                 var instance = Activator.CreateInstance(readModel);
                 var model = instance as IReadModel;
-                var createdType = model.GetsCreatedOn();
+                var createdType = model?.GetsCreatedOn;
                 if (createdType == null) throw new InvalidReadModelCreationTypeException(readModel.Name);
 
                 var propertyTypes = createdType.GetProperties().Select(p => new PropertyType(p.Name, p.PropertyType.Name));

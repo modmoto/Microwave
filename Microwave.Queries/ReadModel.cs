@@ -6,6 +6,7 @@ namespace Microwave.Queries
 {
     public abstract class ReadModel<T> : Query, IReadModel
     {
+        public Type GetsCreatedOn => typeof(T);
         public long Version { get; set; }
         public Identity Identity { get; set; }
     }
@@ -13,18 +14,8 @@ namespace Microwave.Queries
     public interface IReadModel
     {
         Identity Identity { get; set; }
+        Type GetsCreatedOn { get; }
         long Version { get; set; }
         void Handle(ISubscribedDomainEvent domainEvent, long version);
-    }
-
-    public static class ReadModelExtensions
-    {
-        public static Type GetsCreatedOn(this IReadModel readModel)
-        {
-            var type = readModel.GetType();
-            var genericTypeArguments = type.BaseType?.GenericTypeArguments;
-            return genericTypeArguments?.First();
-        }
-
     }
 }

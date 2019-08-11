@@ -40,7 +40,7 @@ namespace Microwave.Queries.Handler
                 var domainEventEntityId = latestEventDomainEvent.EntityId;
                 var latestEventVersion = latestEvent.Version;
 
-                var result = new T().GetsCreatedOn() == latestEventDomainEvent.GetType()
+                var result = new T().GetsCreatedOn == latestEventDomainEvent.GetType()
                     ? Result<T>.Ok(new T())
                     : await _readModelRepository.LoadAsync<T>(domainEventEntityId);
 
