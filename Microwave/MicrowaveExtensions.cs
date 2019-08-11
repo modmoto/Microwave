@@ -242,14 +242,14 @@ namespace Microwave
                 ev.GetInterfaces().Any(x =>
                     x.IsGenericType &&
                     x.GetGenericTypeDefinition() == typeof(IHandle<>)) &&
-                typeof(ReadModel).IsAssignableFrom(ev)).ToList();
+                typeof(IReadModel).IsAssignableFrom(ev)).ToList();
             var subscriptions = new List<ReadModelSubscription>();
 
             foreach (var readModel in readModels)
             {
                 var instance = Activator.CreateInstance(readModel);
-                var propertyInfo = readModel.GetProperty(nameof(ReadModel.GetsCreatedOn));
-                var createdType = propertyInfo?.GetValue(instance) as Type;
+                var model = instance as IReadModel;
+                var createdType = model.GetsCreatedOn();
                 if (createdType == null) throw new InvalidReadModelCreationTypeException(readModel.Name);
 
                 var propertyTypes = createdType.GetProperties().Select(p => new PropertyType(p.Name, p.PropertyType.Name));
@@ -417,7 +417,7 @@ namespace Microwave
         private static bool ImplementsIhandleInterfaceAndReadModel(Type myType)
         {
             return myType.GetInterfaces()
-                       .Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IHandle<>)) && myType.BaseType == typeof(ReadModel);
+                       .Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IHandle<>)) && myType.BaseType == typeof(IReadModel);
         }
     }
 }

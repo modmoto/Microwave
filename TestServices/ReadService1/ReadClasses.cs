@@ -48,10 +48,8 @@ namespace ReadService1
         public Identity EntityId { get; }
     }
 
-    public class ReadModel1 : ReadModel, IHandle<Event2>, IHandle<Event4>
+    public class ReadModel1 : ReadModel<Event2>, IHandle<Event2>, IHandle<Event4>
     {
-        public override Type GetsCreatedOn => typeof(Event2);
-
         public void Handle(Event2 domainEvent)
         {
             Console.WriteLine($"{DateTime.UtcNow.Second} jeah 25 secs");
@@ -72,10 +70,8 @@ namespace ReadService1
         public int Counter { get; set; }
     }
 
-    public class ReadModelNotPublished : ReadModel, IHandle<EventNotPublished>
+    public class ReadModelNotPublished : ReadModel<EventNotPublished>, IHandle<EventNotPublished>
     {
-        public override Type GetsCreatedOn => typeof(EventNotPublished);
-
         public void Handle(EventNotPublished domainEvent)
         {
         }

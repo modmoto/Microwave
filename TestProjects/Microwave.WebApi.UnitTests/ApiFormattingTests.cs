@@ -92,11 +92,10 @@ namespace Microwave.WebApi.UnitTests
         public string StringValue { get; private set; }
     }
 
-    public class ReadModelTest : ReadModel
+    public class ReadModelTest : ReadModel<Mockreader>
     {
         public Identity IdentityField { get; set; }
         public string TestProp { get; set; }
-        public override Type GetsCreatedOn => typeof(Mockreader);
     }
 
     public class Mockreader : JsonReader

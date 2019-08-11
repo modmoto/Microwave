@@ -6,6 +6,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Domain.Exceptions;
 using Microwave.Domain.Identities;
 using Microwave.Domain.Results;
+using Microwave.Persistence.UnitTests.Eventstores;
 using Microwave.Persistence.UnitTestsSetup;
 using Microwave.Queries;
 
@@ -172,7 +173,7 @@ namespace Microwave.Persistence.UnitTests.Querries
         public string UserName { get; set; }
     }
 
-    public class TestReadModel : ReadModel
+    public class TestReadModel : ReadModel<Event1>
     {
         public string UserName { get; private set; }
         public IEnumerable<string> Strings { get; private set; } = new List<string>();
@@ -182,11 +183,9 @@ namespace Microwave.Persistence.UnitTests.Querries
             UserName = test;
             Strings = str;
         }
-
-        public override Type GetsCreatedOn { get; }
     }
 
-    public class TestReadModel2 : ReadModel
+    public class TestReadModel2 : ReadModel<Event1>
     {
         public string UserNameAllDifferent { get; private set; }
         public IEnumerable<string> StringsAllDifferent { get; private set; } = new List<string>();
@@ -196,7 +195,5 @@ namespace Microwave.Persistence.UnitTests.Querries
             UserNameAllDifferent = test;
             StringsAllDifferent = str;
         }
-
-        public override Type GetsCreatedOn { get; }
     }
 }

@@ -21,9 +21,4 @@ namespace Microwave.Domain.UnitTests
     public class TestClass
     {
     }
-
-    public class ReadModelTest : ReadModel
-    {
-        public override Type GetsCreatedOn { get; }
-    }
 }

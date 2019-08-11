@@ -22,7 +22,7 @@ namespace Microwave.Persistence.InMemory.Querries
             return Task.FromResult(Result<T>.Ok(queryParsed));
         }
 
-        public Task<Result<T>> LoadAsync<T>(Identity id) where T : ReadModel
+        public Task<Result<T>> LoadAsync<T>(Identity id) where T : IReadModel
         {
             if (!_readModelDictionary.TryGetValue(typeof(T), out var readModelDictionary))
                 return Task.FromResult(Result<T>.NotFound(id));
@@ -41,7 +41,7 @@ namespace Microwave.Persistence.InMemory.Querries
             return Task.FromResult(Result.Ok());
         }
 
-        public Task<Result> SaveReadModelAsync<T>(T readModel) where T : ReadModel, new()
+        public Task<Result> SaveReadModelAsync<T>(T readModel) where T : IReadModel, new()
         {
             if (!_readModelDictionary.TryGetValue(typeof(T), out var readModelDictionary))
                 readModelDictionary = new ConcurrentDictionary<Identity, object>();
@@ -50,13 +50,13 @@ namespace Microwave.Persistence.InMemory.Querries
             return Task.FromResult(Result.Ok());
         }
 
-        public Task<Result<IEnumerable<T>>> LoadAllAsync<T>() where T : ReadModel
+        public Task<Result<IEnumerable<T>>> LoadAllAsync<T>() where T : IReadModel
         {
             if (!_readModelDictionary.TryGetValue(typeof(T), out var readModelDictionary))
                 return Task.FromResult(Result<IEnumerable<T>>.Ok(new List<T>()));
 
             var loadAll = readModelDictionary.Values.ToList();
-            return Task.FromResult(Result<IEnumerable<T>>.Ok(loadAll.Select(l => l as T)));
+            return Task.FromResult(Result<IEnumerable<T>>.Ok(loadAll.Select(l => (T) l)));
         }
     }
 }
