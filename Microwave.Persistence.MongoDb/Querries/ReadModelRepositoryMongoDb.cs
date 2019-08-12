@@ -30,7 +30,7 @@ namespace Microwave.Persistence.MongoDb.Querries
             return Result<T>.Ok(query.Payload);
         }
 
-        public async Task<Result<T>> LoadAsync<T>(Identity id) where T : IReadModel
+        public async Task<Result<T>> LoadAsync<T>(Identity id) where T : ReadModelBase
         {
             if (id == null) return Result<T>.NotFound(null);
             var mongoCollection = _database.GetCollection<ReadModelDbo<T>>(GetReadModelCollectionName<T>());
@@ -58,7 +58,7 @@ namespace Microwave.Persistence.MongoDb.Querries
             return Result.Ok();
         }
 
-        public async Task<Result> SaveReadModelAsync<T>(T readModel) where T : IReadModel, new()
+        public async Task<Result> SaveReadModelAsync<T>(T readModel) where T : ReadModelBase, new()
         {
             var mongoCollection = _database.GetCollection<ReadModelDbo<T>>(GetReadModelCollectionName<T>());
 
@@ -76,7 +76,7 @@ namespace Microwave.Persistence.MongoDb.Querries
             return Result.Ok();
         }
 
-        public async Task<Result<IEnumerable<T>>> LoadAllAsync<T>() where T : IReadModel
+        public async Task<Result<IEnumerable<T>>> LoadAllAsync<T>() where T : ReadModelBase
         {
             var mongoCollection = _database.GetCollection<ReadModelDbo<T>>(GetReadModelCollectionName<T>());
             var allElements = await mongoCollection.FindSync(_ => true).ToListAsync();

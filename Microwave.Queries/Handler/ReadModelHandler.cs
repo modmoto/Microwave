@@ -10,7 +10,7 @@ namespace Microwave.Queries.Handler
         Task Update();
     }
 
-    public class ReadModelEventHandler<T> : IReadModelEventHandler where T : IReadModel, new()
+    public class ReadModelEventHandler<T> : IReadModelEventHandler where T : ReadModelBase, new()
     {
         private readonly IReadModelRepository _readModelRepository;
         private readonly IEventFeed<ReadModelEventHandler<T>> _eventFeed;

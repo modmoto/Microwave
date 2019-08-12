@@ -8,9 +8,9 @@ namespace Microwave.Queries
     public interface IReadModelRepository
     {
         Task<Result<T>> LoadAsync<T>() where T : Query;
-        Task<Result<T>> LoadAsync<T>(Identity id) where T : IReadModel;
+        Task<Result<T>> LoadAsync<T>(Identity id) where T : ReadModelBase;
         Task<Result> SaveQueryAsync<T>(T query) where T : Query;
-        Task<Result> SaveReadModelAsync<T>(T readModel) where T : IReadModel, new();
-        Task<Result<IEnumerable<T>>> LoadAllAsync<T>() where T : IReadModel;
+        Task<Result> SaveReadModelAsync<T>(T readModel) where T : ReadModelBase, new();
+        Task<Result<IEnumerable<T>>> LoadAllAsync<T>() where T : ReadModelBase;
     }
 }

@@ -1,21 +1,21 @@
 using System;
-using System.Linq;
+using System.Runtime.CompilerServices;
 using Microwave.Domain.Identities;
 
+[assembly: InternalsVisibleTo("Microwave.Persistence.UnitTests")]
 namespace Microwave.Queries
 {
-    public abstract class ReadModel<T> : Query, IReadModel
+    public abstract class ReadModel<T> : ReadModelBase
     {
-        public Type GetsCreatedOn => typeof(T);
-        public long Version { get; set; }
-        public Identity Identity { get; set; }
+        public override Type GetsCreatedOn => typeof(T);
+        public override long Version { get; internal set; }
+        public override Identity Identity { get; internal set; }
     }
 
-    public interface IReadModel
+    public abstract class ReadModelBase : Query
     {
-        Identity Identity { get; set; }
-        Type GetsCreatedOn { get; }
-        long Version { get; set; }
-        void Handle(ISubscribedDomainEvent domainEvent, long version);
+        public abstract Identity Identity { get; internal set; }
+        public abstract Type GetsCreatedOn { get; }
+        public abstract long Version { get; internal set; }
     }
 }
