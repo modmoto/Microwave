@@ -22,7 +22,7 @@ namespace Microwave.WebApi.UnitTests
                 new ServiceEndPoint(new Uri("http://123.de"), "Name"),
                 new List<EventSchema>());
             mock.Setup(m => m.GetPublishedEvents()).ReturnsAsync(eventsPublishedByService);
-            var discoveryController = new DiscoveryController(mock.Object);
+            var discoveryController = new DiscoveryController(mock.Object, null);
 
             await discoveryController.GetPublishedEvents();
 

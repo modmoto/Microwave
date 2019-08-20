@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -70,12 +71,11 @@ namespace Microwave.Discovery
                 var microwaveServiceNode = eventLocation.GetServiceForEvent(subscribedEvent.Name);
                 await _subscriptionRepository.SubscribeForEvent(microwaveServiceNode, subscribedEvent);
             }
+        }
 
-            foreach (var subscribedReadModel in _eventsSubscribedByService.ReadModelSubcriptions)
-            {
-                var microwaveServiceNode = eventLocation.GetServiceForReadModel(subscribedReadModel.ReadModelName);
-                await _subscriptionRepository.SubscribeForReadModel(microwaveServiceNode, subscribedReadModel);
-            }
+        public Task SubscribeForEvent(EventSchema schema, Uri requestOrigin)
+        {
+            throw new NotImplementedException();
         }
 
         public async Task DiscoverServiceMap()

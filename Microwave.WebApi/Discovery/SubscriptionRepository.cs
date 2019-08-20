@@ -11,10 +11,5 @@ namespace Microwave.WebApi.Discovery
         {
             throw new System.NotImplementedException();
         }
-
-        public Task SubscribeForReadModel(MicrowaveServiceNode microwaveServiceNode, ReadModelSubscription subscribedReadModel)
-        {
-            throw new System.NotImplementedException();
-        }
     }
 }
