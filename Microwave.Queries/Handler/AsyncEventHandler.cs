@@ -27,6 +27,8 @@ namespace Microwave.Queries.Handler
             var handleType = _handler.GetType();
             var domainEventType = $"{handleType.Name}-{typeof(T).Name}";
             var lastVersion = await _versionRepository.GetVersionAsync(domainEventType);
+            var lastVersionRemote = await _versionRepository.GetRemoteVersionAsync(domainEventType);
+            if (lastVersion > lastVersionRemote) return;
             var latestEvents = await _eventFeed.GetEventsAsync(lastVersion);
             foreach (var latestEvent in latestEvents)
             {
@@ -36,7 +38,7 @@ namespace Microwave.Queries.Handler
                                                                  && m.GetParameters().First().ParameterType == latestEvent.DomainEvent.GetType());
                 if (methodInfo == null) continue;
                 await (Task) methodInfo.Invoke(_handler, new object[] { latestEvent.DomainEvent });
-                await _versionRepository.SaveVersion(new LastProcessedVersion(domainEventType, latestEvent.Created));
+                await _versionRepository.SaveVersionAsync(new LastProcessedVersion(domainEventType, latestEvent.Created));
             }
         }
     }

@@ -16,8 +16,8 @@ namespace Microwave.Persistence.UnitTests.Querries
             var versionRepository = layerProvider.VersionRepository;
 
             var dateTimeOffset = DateTimeOffset.Now;
-            await versionRepository.SaveVersion(new LastProcessedVersion("Type", dateTimeOffset));
-            await versionRepository.SaveVersion(new LastProcessedVersion("Type", dateTimeOffset));
+            await versionRepository.SaveVersionAsync(new LastProcessedVersion("Type", dateTimeOffset));
+            await versionRepository.SaveVersionAsync(new LastProcessedVersion("Type", dateTimeOffset));
 
             var count = await versionRepository.GetVersionAsync("Type");
             Assert.AreEqual(dateTimeOffset, count);
