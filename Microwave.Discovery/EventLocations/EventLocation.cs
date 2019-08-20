@@ -82,9 +82,19 @@ namespace Microwave.Discovery.EventLocations
             return Services.FirstOrDefault(s => s.SubscribedEvents.Any(e => e.Name == eventType.Name));
         }
 
+        public MicrowaveServiceNode GetServiceForEvent(string eventType)
+        {
+            return Services.FirstOrDefault(s => s.SubscribedEvents.Any(e => e.Name == eventType));
+        }
+
         public MicrowaveServiceNode GetServiceForReadModel(Type readModel)
         {
             return Services.FirstOrDefault(s => s.ReadModels.Any(rm => rm.ReadModelName == readModel.Name));
+        }
+
+        public MicrowaveServiceNode GetServiceForReadModel(string readModel)
+        {
+            return Services.FirstOrDefault(s => s.ReadModels.Any(rm => rm.ReadModelName == readModel));
         }
 
         private void SetDomainEventLocation(MicrowaveServiceNode microwaveServiceNodePublishStuff)

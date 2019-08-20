@@ -12,5 +12,6 @@ namespace Microwave.Discovery
         Task DiscoverServiceMap();
         Task<MicrowaveServiceNode> GetConsumingServiceNodes();
         Task<EventsPublishedByService> GetPublishedEvents();
+        Task SubscribeOnDiscoveredServices();
     }
 }

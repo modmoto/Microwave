@@ -13,6 +13,7 @@ namespace Microwave.Discovery
         private readonly EventsPublishedByService _eventsPublishedByService;
         private readonly IServiceDiscoveryRepository _discoveryRepository;
         private readonly IStatusRepository _statusRepository;
+        private readonly ISubscriptionRepository _subscriptionRepository;
         private readonly DiscoveryConfiguration _configuration;
 
         public DiscoveryHandler(
@@ -21,6 +22,7 @@ namespace Microwave.Discovery
             EventsPublishedByService eventsPublishedByService,
             IServiceDiscoveryRepository discoveryRepository,
             IStatusRepository statusRepository,
+            ISubscriptionRepository subscriptionRepository,
             DiscoveryConfiguration configuration)
         {
             _serviceBaseAddressCollection = serviceBaseAddressCollection;
@@ -28,6 +30,7 @@ namespace Microwave.Discovery
             _eventsPublishedByService = eventsPublishedByService;
             _discoveryRepository = discoveryRepository;
             _statusRepository = statusRepository;
+            _subscriptionRepository = subscriptionRepository;
             _configuration = configuration;
         }
 
@@ -57,6 +60,22 @@ namespace Microwave.Discovery
 
             var eventLocation = new EventLocation(allServices, _eventsSubscribedByService);
             await _statusRepository.SaveEventLocation(eventLocation);
+        }
+
+        public async Task SubscribeOnDiscoveredServices()
+        {
+            var eventLocation = await _statusRepository.GetEventLocation();
+            foreach (var subscribedEvent in _eventsSubscribedByService.Events)
+            {
+                var microwaveServiceNode = eventLocation.GetServiceForEvent(subscribedEvent.Name);
+                await _subscriptionRepository.SubscribeForEvent(microwaveServiceNode, subscribedEvent);
+            }
+
+            foreach (var subscribedReadModel in _eventsSubscribedByService.ReadModelSubcriptions)
+            {
+                var microwaveServiceNode = eventLocation.GetServiceForReadModel(subscribedReadModel.ReadModelName);
+                await _subscriptionRepository.SubscribeForReadModel(microwaveServiceNode, subscribedReadModel);
+            }
         }
 
         public async Task DiscoverServiceMap()

@@ -10,12 +10,22 @@ using Microwave.Persistence.MongoDb.Querries;
 using Microwave.Persistence.UnitTestsSetup.MongoDb;
 using Microwave.WebApi;
 using Microwave.WebApi.Discovery;
+using Moq;
 
 namespace Microwave.Discovery.UnitTests
 {
     [TestClass]
     public class DiscoveryHandlerTests : IntegrationTests
     {
+        private ISubscriptionRepository _subscriptionRepository;
+
+        [TestInitialize]
+        public void Setup()
+        {
+            var mock = new Mock<ISubscriptionRepository>();
+            _subscriptionRepository = mock.Object;
+        }
+
         [TestMethod]
         public async Task GetConsumingServices()
         {
@@ -29,6 +39,7 @@ namespace Microwave.Discovery.UnitTests
                 null,
                 new DiscoveryRepository(new DiscoveryClientFactory(new MyMicrowaveHttpClientFactory())),
                 statusRepository,
+                _subscriptionRepository,
                 new DiscoveryConfiguration());
 
             var consumingServices = await discoveryHandler.GetConsumingServices();
@@ -47,6 +58,7 @@ namespace Microwave.Discovery.UnitTests
                 null,
                 new DiscoveryRepository(new DiscoveryClientFactory(new MyMicrowaveHttpClientFactory())),
                 statusRepository,
+                _subscriptionRepository,
                 new DiscoveryConfiguration());
 
             var consumingServices = await discoveryHandler.GetConsumingServices();
@@ -65,6 +77,7 @@ namespace Microwave.Discovery.UnitTests
                     new List<EventSchema>()),
                 null,
                 null,
+                _subscriptionRepository,
                 null);
 
             var events = await discoveryHandler.GetPublishedEvents();
