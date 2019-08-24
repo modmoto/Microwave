@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Primitives;
 using Microwave.Discovery;
 
 namespace Microwave.WebApi.Discovery
@@ -13,12 +8,10 @@ namespace Microwave.WebApi.Discovery
     public class DiscoveryController : Controller
     {
         private readonly IDiscoveryHandler _discoveryHandler;
-        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public DiscoveryController(IDiscoveryHandler discoveryHandler, IHttpContextAccessor httpContextAccessor)
+        public DiscoveryController(IDiscoveryHandler discoveryHandler)
         {
             _discoveryHandler = discoveryHandler;
-            _httpContextAccessor = httpContextAccessor;
         }
 
         [HttpGet("PublishedEvents")]
