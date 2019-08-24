@@ -31,6 +31,7 @@ namespace Microwave
         {
             var serviceScope = builder.ApplicationServices.CreateScope();
             var asyncEventDelegator = serviceScope.ServiceProvider.GetService<AsyncEventDelegator>();
+            builder.UseMicrowaveContext();
 
             Task.Run(() =>
             {
