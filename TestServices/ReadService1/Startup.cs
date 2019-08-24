@@ -14,8 +14,7 @@ namespace ReadService1
     {
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc()
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             services.AddMicrowaveUi();
             services.AddMicrowave(config =>
@@ -23,8 +22,6 @@ namespace ReadService1
                     config.PollingIntervals.Add(new PollingInterval<Handler2>(10));
                     config.PollingIntervals.Add(new PollingInterval<ReadModel1>(25));
                     config.PollingIntervals.Add(new PollingInterval<Querry1>(5));
-
-                    config.WithHttpClientFactory(new MyMicrowaveHttpClientFactory());
 
                     config.ServiceLocations.AddRange(ServiceConfiguration.ServiceAdresses);
 

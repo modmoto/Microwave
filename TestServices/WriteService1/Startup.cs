@@ -21,7 +21,6 @@ namespace WriteService1
             {
                 config.WithServiceName("WriteService1");
                 config.ServiceLocations.AddRange(ServiceConfiguration.ServiceAdresses);
-                config.WithHttpClientFactory(new MyMicrowaveHttpClientFactory());
                 config.SnapShots.Add(new SnapShot<EntityTest>(3));
             });
 
