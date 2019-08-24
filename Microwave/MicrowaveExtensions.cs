@@ -5,7 +5,6 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microwave.Discovery;
 using Microwave.Discovery.EventLocations;
@@ -30,8 +29,11 @@ namespace Microwave
         public static IApplicationBuilder RunMicrowaveQueries(this IApplicationBuilder builder)
         {
             var serviceScope = builder.ApplicationServices.CreateScope();
+            var url = builder.ServerFeatures.Get<Microsoft.AspNetCore.Hosting.Server.Features.IServerAddressesFeature>().Addresses.Single();
+            var microwaveHttpContext = serviceScope.ServiceProvider.GetService<MicrowaveHttpContext>();
+            microwaveHttpContext.Configure(url);
+
             var asyncEventDelegator = serviceScope.ServiceProvider.GetService<AsyncEventDelegator>();
-            builder.UseMicrowaveContext();
 
             Task.Run(() =>
             {
@@ -107,7 +109,7 @@ namespace Microwave
             services.AddTransient<DiscoveryController>();
             services.AddTransient<IDiscoveryClientFactory, DiscoveryClientFactory>();
             services.AddTransient<ISubscriptionRepository, SubscriptionRepository>();
-            services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddSingleton<MicrowaveHttpContext>();
 
             services.AddTransient<IEventStore, EventStore>();
 
