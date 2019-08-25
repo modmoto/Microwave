@@ -21,10 +21,10 @@ namespace Microwave.WebApi.Discovery
         }
 
         public async Task SubscribeForEvent(
-            MicrowaveServiceNode microwaveServiceNode,
+            ServiceEndPoint microwaveServiceNode,
             EventSchema subscribedEvent)
         {
-            var serviceToSubscribeTo = microwaveServiceNode.ServiceEndPoint.ServiceBaseAddress;
+            var serviceToSubscribeTo = microwaveServiceNode.ServiceBaseAddress;
             var subscriberUrl = _microwaveHttpContext.AppBaseUrl;
             var httpClient = await _httpClientFactory.CreateHttpClient(serviceToSubscribeTo);
             var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, "Discovery/Subscriptions");

@@ -70,7 +70,7 @@ namespace Microwave.Discovery
             {
                 var microwaveServiceNode = eventLocation.GetServiceForEvent(subscribedEvent.Name);
                 if (microwaveServiceNode == null) continue;
-                await _subscriptionRepository.SubscribeForEvent(microwaveServiceNode, subscribedEvent);
+                await _subscriptionRepository.SubscribeForEvent(microwaveServiceNode.ServiceEndPoint, subscribedEvent);
             }
         }
 

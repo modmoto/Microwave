@@ -6,6 +6,6 @@ namespace Microwave.Discovery
 {
     public interface ISubscriptionRepository
     {
-        Task SubscribeForEvent(MicrowaveServiceNode microwaveServiceNode, EventSchema subscribedEvent);
+        Task SubscribeForEvent(ServiceEndPoint microwaveServiceNode, EventSchema subscribedEvent);
     }
 }

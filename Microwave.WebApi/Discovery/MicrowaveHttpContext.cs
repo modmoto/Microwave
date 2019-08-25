@@ -4,12 +4,11 @@ namespace Microwave.WebApi.Discovery
 {
     public class MicrowaveHttpContext
     {
-        private string _rawUri;
-        public Uri AppBaseUrl => new Uri(_rawUri);
+        public Uri AppBaseUrl { get; private set; }
 
-        public void Configure(string rawUri)
+        public void Configure(Uri appBaseUri)
         {
-            _rawUri = rawUri;
+            AppBaseUrl = appBaseUri;
         }
     }
 }

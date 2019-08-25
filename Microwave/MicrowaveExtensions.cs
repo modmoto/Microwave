@@ -31,7 +31,7 @@ namespace Microwave
             var serviceScope = builder.ApplicationServices.CreateScope();
             var url = builder.ServerFeatures.Get<Microsoft.AspNetCore.Hosting.Server.Features.IServerAddressesFeature>().Addresses.Single();
             var microwaveHttpContext = serviceScope.ServiceProvider.GetService<MicrowaveHttpContext>();
-            microwaveHttpContext.Configure(url);
+            microwaveHttpContext.Configure(new Uri(url));
 
             var asyncEventDelegator = serviceScope.ServiceProvider.GetService<AsyncEventDelegator>();
 
