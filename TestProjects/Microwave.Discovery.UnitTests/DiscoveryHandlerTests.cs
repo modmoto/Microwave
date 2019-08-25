@@ -30,10 +30,15 @@ namespace Microwave.Discovery.UnitTests
         public async Task GetConsumingServices()
         {
             var statusRepository = new StatusRepositoryMongoDb(EventMongoDb, new EventLocationCache());
-            await statusRepository.SaveEventLocation(new EventLocation(new List<EventsPublishedByService>(), new EventsSubscribedByService(new List<EventSchema>(), new List<ReadModelSubscription>())
-        ));
+            await statusRepository.SaveEventLocation(
+                new EventLocation(
+                    new List<EventsPublishedByService>(),
+                    new EventsSubscribedByService(
+                        new List<EventSchema>(),
+                        new List<ReadModelSubscription>())
+            ));
 
-        var discoveryHandler = new DiscoveryHandler(
+            var discoveryHandler = new DiscoveryHandler(
                 new ServiceBaseAddressCollection(),
                 new EventsSubscribedByService(new List<EventSchema>(), new List<ReadModelSubscription>()),
                 null,
@@ -83,6 +88,36 @@ namespace Microwave.Discovery.UnitTests
             var events = await discoveryHandler.GetPublishedEvents();
 
             Assert.IsNotNull(events);
+        }
+
+        [TestMethod]
+        public async Task SubscribeOnServices()
+        {
+            var mock = new Mock<ISubscriptionRepository>();
+
+            var statusRepository = new StatusRepositoryMongoDb(EventMongoDb, new EventLocationCache());
+            var eventSchemata = new List<EventSchema> {new EventSchema("egal"), new EventSchema("egal2" )};
+            await statusRepository.SaveEventLocation(
+                new EventLocation(
+                    new List<EventsPublishedByService> { EventsPublishedByService.Reachable(
+                            new ServiceEndPoint(new Uri("http://123.de")), eventSchemata)},
+                    new EventsSubscribedByService(
+                        eventSchemata,
+                        new List<ReadModelSubscription>())
+                ));
+
+            var discoveryHandler = new DiscoveryHandler(
+                null,
+                new EventsSubscribedByService(eventSchemata, new List<ReadModelSubscription>()),
+                null,
+                null,
+                statusRepository,
+                mock.Object,
+                null);
+
+            await discoveryHandler.SubscribeOnDiscoveredServices();
+
+            mock.Verify(m => m.SubscribeForEvent(It.IsAny<ServiceEndPoint>(), It.IsAny<EventSchema>()), Times.Exactly(2));
         }
     }
 
