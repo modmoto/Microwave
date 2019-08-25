@@ -42,7 +42,7 @@ namespace Microwave.Persistence.UnitTests.Querries
             await versionRepository.SaveRemoteVersionAsync(new LastProcessedVersion("Type", dateTimeOffset));
             await versionRepository.SaveRemoteVersionAsync(new LastProcessedVersion("Type", dateTimeOffset));
 
-            var count = await versionRepository.GetVersionAsync("Type");
+            var count = await versionRepository.GetRemoteVersionAsync("Type");
             Assert.AreEqual(dateTimeOffset, count);
         }
 
