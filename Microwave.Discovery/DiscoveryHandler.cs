@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microwave.Discovery.EventLocations;
 using Microwave.Discovery.ServiceMaps;
+using Microwave.Discovery.Subscriptions;
 
 namespace Microwave.Discovery
 {

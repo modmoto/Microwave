@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Discovery.EventLocations;
 using Microwave.Discovery.ServiceMaps;
+using Microwave.Discovery.Subscriptions;
 using Microwave.Persistence.MongoDb.Querries;
 using Microwave.Persistence.UnitTestsSetup.MongoDb;
 using Moq;

@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microwave.Discovery;
+using Microwave.Discovery.Subscriptions;
 
 namespace Microwave.WebApi.Discovery
 {
@@ -17,7 +18,7 @@ namespace Microwave.WebApi.Discovery
         [HttpPost("Subscriptions")]
         public async Task<ActionResult> SubscribeEvent([FromBody] Subscription subscribeEventDto)
         {
-            await _subscriptionHandler.SubscribeForEvent(subscribeEventDto);
+            await _subscriptionHandler.StoreSubscription(subscribeEventDto);
             return Ok();
         }
     }

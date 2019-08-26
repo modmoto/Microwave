@@ -1,8 +1,7 @@
-using System;
 using System.Threading.Tasks;
 using Microwave.Discovery.EventLocations;
 
-namespace Microwave.Discovery
+namespace Microwave.Discovery.Subscriptions
 {
     public class SubscriptionHandler : ISubscriptionHandler
     {
@@ -29,21 +28,14 @@ namespace Microwave.Discovery
             }
         }
 
-        public Task SubscribeForEvent(Subscription subscription)
+        public async Task StoreSubscription(Subscription subscription)
         {
-            throw new NotImplementedException();
         }
 
-        public Task StoreSubscription(Subscription subscription)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task PushNewChanges()
+        public async Task PushNewChanges()
         {
             //load all changes
             //publish them
-            throw new NotImplementedException();
         }
     }
 }

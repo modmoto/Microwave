@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 
-namespace Microwave.Discovery
+namespace Microwave.Discovery.Subscriptions
 {
     public interface ISubscriptionRepository
     {

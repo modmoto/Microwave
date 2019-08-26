@@ -1,16 +1,7 @@
 using System;
-using System.Threading.Tasks;
 
-namespace Microwave.Discovery
+namespace Microwave.Discovery.Subscriptions
 {
-    public interface ISubscriptionHandler
-    {
-        Task SubscribeOnDiscoveredServices();
-        Task SubscribeForEvent(Subscription subscription);
-        Task StoreSubscription(Subscription subscription);
-        Task PushNewChanges();
-    }
-
     public class Subscription
     {
         public Subscription(string subscribedEvent, Uri subscriberUrl)
