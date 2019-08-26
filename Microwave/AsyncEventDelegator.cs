@@ -16,12 +16,14 @@ namespace Microwave
         private readonly IEnumerable<IReadModelEventHandler> _readModelHandlers;
         private readonly IEnumerable<IPollingInterval> _updateEveryAttributes;
         private readonly IDiscoveryHandler _discoveryHandler;
+        private readonly ISubscriptionHandler _subscriptionHandler;
 
         public AsyncEventDelegator(
             IEnumerable<IAsyncEventHandler> asyncEventHandlers,
             IEnumerable<IQueryEventHandler> queryHandlers,
             IEnumerable<IReadModelEventHandler> readModelHandlers,
             IDiscoveryHandler discoveryHandler,
+            ISubscriptionHandler subscriptionHandler,
             IEnumerable<IPollingInterval> updateEveryAttributes = null)
         {
             _asyncEventHandlers = asyncEventHandlers;
@@ -29,6 +31,7 @@ namespace Microwave
             _readModelHandlers = readModelHandlers;
             _updateEveryAttributes = updateEveryAttributes ?? new List<IPollingInterval>();
             _discoveryHandler = discoveryHandler;
+            _subscriptionHandler = subscriptionHandler;
         }
 
         public void StartEventPolling()
@@ -104,7 +107,7 @@ namespace Microwave
             while (true)
             {
                 _discoveryHandler.DiscoverConsumingServices().Wait();
-                await _discoveryHandler.SubscribeOnDiscoveredServices();
+                await _subscriptionHandler.SubscribeOnDiscoveredServices();
                 await Task.Delay(60000);
             }
         }

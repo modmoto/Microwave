@@ -3,8 +3,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microwave.Discovery.EventLocations;
-using Microwave.Discovery.ServiceMaps;
+using Microwave.Discovery;
 using Microwave.WebApi.Discovery;
 using Moq;
 using RichardSzalay.MockHttp;
@@ -31,9 +30,7 @@ namespace Microwave.WebApi.UnitTests
             mock.Setup(m => m.CreateHttpClient(It.IsAny<Uri>())).ReturnsAsync(client);
 
             var subscriptionRepository = new SubscriptionRepository(mock.Object, microwaveHttpContext);
-            await subscriptionRepository.SubscribeForEvent(
-                new ServiceEndPoint(new Uri("http://456.de")),
-                new EventSchema("ev"));
+            await subscriptionRepository.SubscribeForEvent(new Subscription("ev", new Uri("http://456.de")));
         }
     }
 }

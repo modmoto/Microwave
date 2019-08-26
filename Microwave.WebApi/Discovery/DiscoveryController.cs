@@ -1,8 +1,6 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microwave.Discovery;
-using Microwave.Discovery.EventLocations;
 
 namespace Microwave.WebApi.Discovery
 {
@@ -60,18 +58,5 @@ namespace Microwave.WebApi.Discovery
             await _discoveryHandler.DiscoverConsumingServices();
             return Ok();
         }
-
-        [HttpPost("Subscriptions")]
-        public async Task<ActionResult> SubscribeEvent([FromBody] SubscribeEventDto subscribeEventDto)
-        {
-            await _discoveryHandler.SubscribeForEvent(subscribeEventDto.SubscribedEvent, subscribeEventDto.SubscriberUrl);
-            return Ok();
-        }
-    }
-
-    public class SubscribeEventDto
-    {
-        public EventSchema SubscribedEvent { get; set; }
-        public Uri SubscriberUrl { get; set; }
     }
 }

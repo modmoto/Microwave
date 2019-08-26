@@ -1,8 +1,6 @@
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microwave.Discovery;
-using Microwave.Discovery.EventLocations;
-using Microwave.Discovery.ServiceMaps;
 using Newtonsoft.Json;
 
 namespace Microwave.WebApi.Discovery
@@ -21,14 +19,13 @@ namespace Microwave.WebApi.Discovery
         }
 
         public async Task SubscribeForEvent(
-            ServiceEndPoint microwaveServiceNode,
-            EventSchema subscribedEvent)
+            Subscription subscription)
         {
-            var serviceToSubscribeTo = microwaveServiceNode.ServiceBaseAddress;
+            var serviceToSubscribeTo = subscription.SubscriberUrl;
             var subscriberUrl = _microwaveHttpContext.AppBaseUrl;
             var httpClient = await _httpClientFactory.CreateHttpClient(serviceToSubscribeTo);
             var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, "Discovery/Subscriptions");
-            string serialized = JsonConvert.SerializeObject(new { subscribedEvent, subscriberUrl });
+            string serialized = JsonConvert.SerializeObject(new { subscription.SubscribedEvent, subscriberUrl });
             httpRequestMessage.Content = new StringContent(serialized);
             await httpClient.SendAsync(httpRequestMessage);
         }
