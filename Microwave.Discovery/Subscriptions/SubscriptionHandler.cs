@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microwave.Discovery.EventLocations;
 
@@ -7,12 +8,18 @@ namespace Microwave.Discovery.Subscriptions
     {
         private readonly EventsSubscribedByService _eventsSubscribedByService;
         private readonly IStatusRepository _statusRepository;
+        private readonly IRemoteSubscriptionRepository _remoteSubscriptionRepository;
         private readonly ISubscriptionRepository _subscriptionRepository;
 
-        public SubscriptionHandler(EventsSubscribedByService eventsSubscribedByService, IStatusRepository statusRepository, ISubscriptionRepository subscriptionRepository)
+        public SubscriptionHandler(
+            EventsSubscribedByService eventsSubscribedByService,
+            IStatusRepository statusRepository,
+            IRemoteSubscriptionRepository remoteSubscriptionRepository,
+            ISubscriptionRepository subscriptionRepository)
         {
             _eventsSubscribedByService = eventsSubscribedByService;
             _statusRepository = statusRepository;
+            _remoteSubscriptionRepository = remoteSubscriptionRepository;
             _subscriptionRepository = subscriptionRepository;
         }
 
@@ -23,19 +30,33 @@ namespace Microwave.Discovery.Subscriptions
             {
                 var microwaveServiceNode = eventLocation.GetServiceForEvent(subscribedEvent.Name);
                 if (microwaveServiceNode == null) continue;
-                await _subscriptionRepository.SubscribeForEvent(
+                await _remoteSubscriptionRepository.SubscribeForEvent(
                     new Subscription(subscribedEvent.Name, microwaveServiceNode.ServiceEndPoint.ServiceBaseAddress));
             }
         }
 
         public async Task StoreSubscription(Subscription subscription)
         {
+            await _subscriptionRepository.StoreSubscription(subscription);
         }
 
         public async Task PushNewChanges()
         {
-            //load all changes
-            //publish them
+            var subscriptions = await _subscriptionRepository.LoadSubscriptions();
+            foreach (var subscription in subscriptions)
+            {
+                long newVersion = 0; // get from versionRepo
+                await _remoteSubscriptionRepository.PushChangesForType(
+                    subscription.SubscriberUrl,
+                    subscription.SubscribedEvent,
+                    newVersion);
+            }
         }
+    }
+
+    public interface ISubscriptionRepository
+    {
+        Task StoreSubscription(Subscription subscription);
+        Task<IEnumerable<Subscription>> LoadSubscriptions();
     }
 }

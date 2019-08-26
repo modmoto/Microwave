@@ -14,7 +14,7 @@ namespace Microwave.Discovery
         private readonly EventsPublishedByService _eventsPublishedByService;
         private readonly IServiceDiscoveryRepository _discoveryRepository;
         private readonly IStatusRepository _statusRepository;
-        private readonly ISubscriptionRepository _subscriptionRepository;
+        private readonly IRemoteSubscriptionRepository _remoteSubscriptionRepository;
         private readonly DiscoveryConfiguration _configuration;
 
         public DiscoveryHandler(
@@ -23,7 +23,7 @@ namespace Microwave.Discovery
             EventsPublishedByService eventsPublishedByService,
             IServiceDiscoveryRepository discoveryRepository,
             IStatusRepository statusRepository,
-            ISubscriptionRepository subscriptionRepository,
+            IRemoteSubscriptionRepository remoteSubscriptionRepository,
             DiscoveryConfiguration configuration)
         {
             _serviceBaseAddressCollection = serviceBaseAddressCollection;
@@ -31,7 +31,7 @@ namespace Microwave.Discovery
             _eventsPublishedByService = eventsPublishedByService;
             _discoveryRepository = discoveryRepository;
             _statusRepository = statusRepository;
-            _subscriptionRepository = subscriptionRepository;
+            _remoteSubscriptionRepository = remoteSubscriptionRepository;
             _configuration = configuration;
         }
 

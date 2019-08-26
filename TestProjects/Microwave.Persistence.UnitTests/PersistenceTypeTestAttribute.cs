@@ -13,7 +13,7 @@ namespace Microwave.Persistence.UnitTests
         public IEnumerable<object[]> GetData(MethodInfo methodInfo)
         {
             yield return new object[] { new MongoDbTestSetup() };
-            yield return new object[] { new InMemroyTestSetup() };
+            yield return new object[] { new InMemoryTestSetup() };
         }
 
         public string GetDisplayName(MethodInfo methodInfo, object[] data)

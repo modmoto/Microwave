@@ -17,7 +17,7 @@ namespace Microwave.Discovery.UnitTests
         [TestMethod]
         public async Task SubscribeOnServices()
         {
-            var mock = new Mock<ISubscriptionRepository>();
+            var mock = new Mock<IRemoteSubscriptionRepository>();
 
             var statusRepository = new StatusRepositoryMongoDb(EventMongoDb, new EventLocationCache());
             var eventSchemata = new List<EventSchema> {new EventSchema("egal"), new EventSchema("egal2" )};
@@ -33,7 +33,8 @@ namespace Microwave.Discovery.UnitTests
             var discoveryHandler = new SubscriptionHandler(
                 new EventsSubscribedByService(eventSchemata, new List<ReadModelSubscription>()),
                 statusRepository,
-                mock.Object);
+                mock.Object,
+                null);
 
             await discoveryHandler.SubscribeOnDiscoveredServices();
 

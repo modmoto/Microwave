@@ -109,7 +109,7 @@ namespace Microwave
             services.AddTransient<DomainEventController>();
             services.AddTransient<DiscoveryController>();
             services.AddTransient<IDiscoveryClientFactory, DiscoveryClientFactory>();
-            services.AddTransient<ISubscriptionRepository, SubscriptionRepository>();
+            services.AddTransient<IRemoteSubscriptionRepository, RemoteSubscriptionRepository>();
             services.AddSingleton<MicrowaveHttpContext>();
 
             services.AddTransient<IEventStore, EventStore>();

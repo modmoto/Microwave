@@ -29,7 +29,7 @@ namespace Microwave.WebApi.UnitTests
             var mock = new Mock<IMicrowaveHttpClientFactory>();
             mock.Setup(m => m.CreateHttpClient(It.IsAny<Uri>())).ReturnsAsync(client);
 
-            var subscriptionRepository = new SubscriptionRepository(mock.Object, microwaveHttpContext);
+            var subscriptionRepository = new RemoteSubscriptionRepository(mock.Object, microwaveHttpContext);
             await subscriptionRepository.SubscribeForEvent(new Subscription("ev", new Uri("http://456.de")));
         }
     }

@@ -18,13 +18,13 @@ namespace Microwave.Discovery.UnitTests
     [TestClass]
     public class DiscoveryHandlerTests : IntegrationTests
     {
-        private ISubscriptionRepository _subscriptionRepository;
+        private IRemoteSubscriptionRepository _remoteSubscriptionRepository;
 
         [TestInitialize]
         public void Setup()
         {
-            var mock = new Mock<ISubscriptionRepository>();
-            _subscriptionRepository = mock.Object;
+            var mock = new Mock<IRemoteSubscriptionRepository>();
+            _remoteSubscriptionRepository = mock.Object;
         }
 
         [TestMethod]
@@ -45,7 +45,7 @@ namespace Microwave.Discovery.UnitTests
                 null,
                 new DiscoveryRepository(new DiscoveryClientFactory(new MyMicrowaveHttpClientFactory())),
                 statusRepository,
-                _subscriptionRepository,
+                _remoteSubscriptionRepository,
                 new DiscoveryConfiguration());
 
             var consumingServices = await discoveryHandler.GetConsumingServices();
@@ -64,7 +64,7 @@ namespace Microwave.Discovery.UnitTests
                 null,
                 new DiscoveryRepository(new DiscoveryClientFactory(new MyMicrowaveHttpClientFactory())),
                 statusRepository,
-                _subscriptionRepository,
+                _remoteSubscriptionRepository,
                 new DiscoveryConfiguration());
 
             var consumingServices = await discoveryHandler.GetConsumingServices();
@@ -83,7 +83,7 @@ namespace Microwave.Discovery.UnitTests
                     new List<EventSchema>()),
                 null,
                 null,
-                _subscriptionRepository,
+                _remoteSubscriptionRepository,
                 null);
 
             var events = await discoveryHandler.GetPublishedEvents();

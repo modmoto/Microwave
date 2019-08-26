@@ -6,12 +6,12 @@ using MongoDB.Driver;
 
 namespace Microwave.Persistence.MongoDb.Querries
 {
-    public class VersionRepositoryMongoDb : IVersionRepository
+    public class RemoteVersionRepositoryMongoDb : IRemoteVersionRepository
     {
         private readonly IMongoDatabase _dataBase;
-        private readonly string _lastProcessedVersions = "LastProcessedVersions";
+        private readonly string _lastProcessedVersions = "LastProcessedRemoteVersions";
 
-        public VersionRepositoryMongoDb(MicrowaveMongoDb dataBase)
+        public RemoteVersionRepositoryMongoDb(MicrowaveMongoDb dataBase)
         {
             _dataBase = dataBase.Database;
         }

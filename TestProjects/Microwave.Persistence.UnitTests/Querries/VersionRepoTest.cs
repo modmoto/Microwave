@@ -36,13 +36,13 @@ namespace Microwave.Persistence.UnitTests.Querries
         [PersistenceTypeTest]
         public async Task VersionRepoRemoteVersion_DuplicateUpdate(PersistenceLayerProvider layerProvider)
         {
-            var versionRepository = layerProvider.VersionRepository;
+            var versionRepository = layerProvider.RemoteVersionRepository;
 
             var dateTimeOffset = DateTimeOffset.Now;
-            await versionRepository.SaveRemoteVersionAsync(new LastProcessedVersion("Type", dateTimeOffset));
-            await versionRepository.SaveRemoteVersionAsync(new LastProcessedVersion("Type", dateTimeOffset));
+            await versionRepository.SaveVersionAsync(new LastProcessedVersion("Type", dateTimeOffset));
+            await versionRepository.SaveVersionAsync(new LastProcessedVersion("Type", dateTimeOffset));
 
-            var count = await versionRepository.GetRemoteVersionAsync("Type");
+            var count = await versionRepository.GetVersionAsync("Type");
             Assert.AreEqual(dateTimeOffset, count);
         }
 
@@ -50,8 +50,8 @@ namespace Microwave.Persistence.UnitTests.Querries
         [PersistenceTypeTest]
         public async Task VersionRepoRemoteVersion_LoadWithNull(PersistenceLayerProvider layerProvider)
         {
-            var versionRepository = layerProvider.VersionRepository;
-            var count = await versionRepository.GetRemoteVersionAsync(null);
+            var versionRepository = layerProvider.RemoteVersionRepository;
+            var count = await versionRepository.GetVersionAsync(null);
             Assert.AreEqual(DateTimeOffset.MinValue, count);
         }
     }

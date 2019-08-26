@@ -9,23 +9,26 @@ namespace Microwave.Queries.Handler
     {
         private readonly IReadModelRepository _readModelRepository;
         private readonly IEventFeed<QueryEventHandler<TQuerry, TEvent>> _eventFeed;
+        private readonly IRemoteVersionRepository _remoteVersionRepository;
         private readonly IVersionRepository _versionRepository;
 
         public QueryEventHandler(
             IReadModelRepository readModelRepository,
             IVersionRepository versionRepository,
-            IEventFeed<QueryEventHandler<TQuerry, TEvent>> eventFeed)
+            IEventFeed<QueryEventHandler<TQuerry, TEvent>> eventFeed,
+            IRemoteVersionRepository remoteVersionRepository)
         {
             _readModelRepository = readModelRepository;
             _versionRepository = versionRepository;
             _eventFeed = eventFeed;
+            _remoteVersionRepository = remoteVersionRepository;
         }
 
         public async Task Update()
         {
             var domainEventType = $"QuerryHandler-{typeof(TQuerry).Name}-{typeof(TEvent).Name}";
             var lastVersion = await _versionRepository.GetVersionAsync(domainEventType);
-            var lastVersionRemote = await _versionRepository.GetRemoteVersionAsync(domainEventType);
+            var lastVersionRemote = await _remoteVersionRepository.GetVersionAsync(domainEventType);
             if (lastVersion > lastVersionRemote) return;
             var latestEvents = await _eventFeed.GetEventsAsync(lastVersion);
             var domainEvents = latestEvents.ToList();
