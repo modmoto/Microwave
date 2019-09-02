@@ -1,5 +1,6 @@
 using Microwave.Discovery;
 using Microwave.Discovery.EventLocations;
+using Microwave.Discovery.Subscriptions;
 using Microwave.EventStores.Ports;
 using Microwave.Persistence.MongoDb;
 using Microwave.Persistence.MongoDb.Eventstores;
@@ -30,6 +31,9 @@ namespace Microwave.Persistence.UnitTestsSetup.MongoDb
         public override ISnapShotRepository SnapShotRepository => new SnapShotRepositoryMongoDb(EventMongoDb);
         public override IEventRepository EventRepository => new EventRepositoryMongoDb(EventMongoDb, new VersionCache
         (EventMongoDb));
+
+        public override ISubscriptionRepository SubscriptionRepository =>
+            new SubscriptionRepositoryMongoDb(EventMongoDb, VersionRepository);
     }
 
     public class CacheThatNeverHasAnything : IEventLocationCache

@@ -1,4 +1,5 @@
 using Microwave.Discovery;
+using Microwave.Discovery.Subscriptions;
 using Microwave.EventStores.Ports;
 using Microwave.Persistence.InMemory.Eventstores;
 using Microwave.Persistence.InMemory.Querries;
@@ -15,5 +16,6 @@ namespace Microwave.Persistence.UnitTestsSetup.InMemory
         public override IReadModelRepository ReadModelRepository => new ReadModelRepositoryInMemory();
         public override ISnapShotRepository SnapShotRepository => new SnapShotRepositoryInMemory();
         public override IEventRepository EventRepository => new EventRepositoryInMemory();
+        public override ISubscriptionRepository SubscriptionRepository => new SubscriptionRepositoryInMemory(VersionRepository);
     }
 }

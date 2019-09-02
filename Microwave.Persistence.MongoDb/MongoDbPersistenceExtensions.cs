@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using Microwave.Discovery;
+using Microwave.Discovery.Subscriptions;
 using Microwave.EventStores.Ports;
 using Microwave.Persistence.MongoDb.Eventstores;
 using Microwave.Persistence.MongoDb.Querries;
@@ -34,6 +35,7 @@ namespace Microwave.Persistence.MongoDb
             services.AddSingleton<IVersionCache, VersionCache>();
             services.AddTransient<ISnapShotRepository, SnapShotRepositoryMongoDb>();
             services.AddTransient<IRemoteVersionRepository, RemoteVersionRepositoryMongoDb>();
+            services.AddTransient<ISubscriptionRepository, SubscriptionRepositoryMongoDb>();
 
             foreach (var assembly in GetAllAssemblies())
             {

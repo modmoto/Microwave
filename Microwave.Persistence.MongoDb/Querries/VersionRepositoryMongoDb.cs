@@ -19,17 +19,16 @@ namespace Microwave.Persistence.MongoDb.Querries
         public async Task<DateTimeOffset> GetVersionAsync(string domainEventType)
         {
             var mongoCollection = _dataBase.GetCollection<LastProcessedVersionDbo>(_lastProcessedVersions);
-            return await GetVersion(domainEventType, mongoCollection);
+            var lastProcessedVersion =
+                (await mongoCollection.FindAsync(version => version.EventType == domainEventType)).FirstOrDefault();
+            var ret = lastProcessedVersion == null ? DateTimeOffset.MinValue : lastProcessedVersion.LastVersion;
+            return ret;
         }
 
         public async Task SaveVersionAsync(LastProcessedVersion version)
         {
             var mongoCollection = _dataBase.GetCollection<LastProcessedVersionDbo>(_lastProcessedVersions);
 
-            await SaveVersion(version, mongoCollection);
-        }
-        private static async Task SaveVersion(LastProcessedVersion version, IMongoCollection<LastProcessedVersionDbo> mongoCollection)
-        {
             var findOneAndReplaceOptions = new FindOneAndReplaceOptions<LastProcessedVersionDbo>();
             findOneAndReplaceOptions.IsUpsert = true;
 
@@ -40,14 +39,6 @@ namespace Microwave.Persistence.MongoDb.Querries
                     EventType = version.EventType,
                     LastVersion = version.LastVersion
                 }, findOneAndReplaceOptions);
-        }
-
-        private static async Task<DateTimeOffset> GetVersion(string domainEventType, IMongoCollection<LastProcessedVersionDbo> mongoCollection)
-        {
-            var lastProcessedVersion =
-                (await mongoCollection.FindAsync(version => version.EventType == domainEventType)).FirstOrDefault();
-            if (lastProcessedVersion == null) return DateTimeOffset.MinValue;
-            return lastProcessedVersion.LastVersion;
         }
     }
 }

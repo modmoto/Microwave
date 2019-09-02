@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microwave.Discovery.EventLocations;
 
@@ -45,18 +44,12 @@ namespace Microwave.Discovery.Subscriptions
             var subscriptions = await _subscriptionRepository.LoadSubscriptions();
             foreach (var subscription in subscriptions)
             {
-                long newVersion = 0; // get from versionRepo
+                var newVersion = await _subscriptionRepository.GetCurrentVersion(subscription);
                 await _remoteSubscriptionRepository.PushChangesForType(
                     subscription.SubscriberUrl,
                     subscription.SubscribedEvent,
                     newVersion);
             }
         }
-    }
-
-    public interface ISubscriptionRepository
-    {
-        Task StoreSubscription(Subscription subscription);
-        Task<IEnumerable<Subscription>> LoadSubscriptions();
     }
 }

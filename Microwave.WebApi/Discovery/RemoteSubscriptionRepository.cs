@@ -31,7 +31,7 @@ namespace Microwave.WebApi.Discovery
             await httpClient.SendAsync(httpRequestMessage);
         }
 
-        public async Task PushChangesForType(Uri remoteService, string eventType, long newVersion)
+        public async Task PushChangesForType(Uri remoteService, string eventType, DateTimeOffset newVersion)
         {
             var httpClient = await _httpClientFactory.CreateHttpClient(remoteService);
             var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, $"Discovery/Subscriptions/{eventType}");
@@ -43,7 +43,7 @@ namespace Microwave.WebApi.Discovery
         public async Task PushChangesForAll(Uri remoteService, DateTimeOffset newVersion)
         {
             var httpClient = await _httpClientFactory.CreateHttpClient(remoteService);
-            var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, $"Discovery/Subscriptions");
+            var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, "Discovery/Subscriptions");
             string serialized = JsonConvert.SerializeObject(new { newVersion });
             httpRequestMessage.Content = new StringContent(serialized);
             await httpClient.SendAsync(httpRequestMessage);

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Microwave.Discovery;
+using Microwave.Discovery.Subscriptions;
 using Microwave.Domain.EventSourcing;
 using Microwave.EventStores.Ports;
 using Microwave.Persistence.InMemory.Eventstores;
@@ -38,6 +39,7 @@ namespace Microwave.Persistence.InMemory
             services.AddSingleton<IEventRepository>(eventRepositoryInMemory);
             services.AddSingleton<ISnapShotRepository, SnapShotRepositoryInMemory>();
             services.AddSingleton<IRemoteVersionRepository, RemoteVersionRepositoryInMemory>();
+            services.AddSingleton<ISubscriptionRepository, SubscriptionRepositoryInMemory>();
 
             return services;
         }
