@@ -6,8 +6,8 @@ namespace Microwave.Discovery.Subscriptions
 {
     public interface ISubscriptionRepository
     {
-        Task StoreSubscription(Subscription subscription);
-        Task<IEnumerable<Subscription>> LoadSubscriptions();
+        Task StoreSubscriptionAsync(Subscription subscription);
+        Task<IEnumerable<Subscription>> LoadSubscriptionsAsync();
         Task<DateTimeOffset> GetCurrentVersion(Subscription subscription);
     }
 }

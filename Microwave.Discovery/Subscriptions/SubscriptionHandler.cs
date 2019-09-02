@@ -36,12 +36,12 @@ namespace Microwave.Discovery.Subscriptions
 
         public async Task StoreSubscription(Subscription subscription)
         {
-            await _subscriptionRepository.StoreSubscription(subscription);
+            await _subscriptionRepository.StoreSubscriptionAsync(subscription);
         }
 
         public async Task PushNewChanges()
         {
-            var subscriptions = await _subscriptionRepository.LoadSubscriptions();
+            var subscriptions = await _subscriptionRepository.LoadSubscriptionsAsync();
             foreach (var subscription in subscriptions)
             {
                 var newVersion = await _subscriptionRepository.GetCurrentVersion(subscription);

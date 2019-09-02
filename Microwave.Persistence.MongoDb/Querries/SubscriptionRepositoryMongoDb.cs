@@ -18,12 +18,12 @@ namespace Microwave.Persistence.MongoDb.Querries
             _dataBase = eventMongoDb.Database;
         }
 
-        public Task StoreSubscription(Subscription subscription)
+        public Task StoreSubscriptionAsync(Subscription subscription)
         {
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<Subscription>> LoadSubscriptions()
+        public Task<IEnumerable<Subscription>> LoadSubscriptionsAsync()
         {
             throw new NotImplementedException();
         }
