@@ -4,7 +4,7 @@ using Microwave.Discovery.Subscriptions;
 
 namespace Microwave.WebApi.Discovery
 {
-    [Route("Dicovery")]
+    [Route("Subscriptions")]
     public class SubscriptionController : Controller
     {
         private readonly ISubscriptionHandler _subscriptionHandler;
@@ -19,6 +19,13 @@ namespace Microwave.WebApi.Discovery
         {
             await _subscriptionHandler.StoreSubscription(subscribeEventDto);
             return Ok();
+        }
+
+        [HttpGet("Subscriptions")]
+        public async Task<ActionResult> GetSubscriptions()
+        {
+            var res = await _subscriptionHandler.GetSubscriptions();
+            return Ok(res);
         }
     }
 }

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microwave;
+using Microwave.Persistence.InMemory;
 using Microwave.Persistence.MongoDb;
 using Microwave.UI;
 using ServerConfig;
@@ -22,10 +23,12 @@ namespace WriteService2
                 config.ServiceLocations.AddRange(ServiceConfiguration.ServiceAdresses);
             });
 
-            services.AddMicrowavePersistenceLayerMongoDb(p =>
-            {
-                p.WithDatabaseName("TestWriteService2ReadDb");
-            });
+//            services.AddMicrowavePersistenceLayerMongoDb(p =>
+//            {
+//                p.WithDatabaseName("TestWriteService2ReadDb");
+//            });
+
+            services.AddMicrowavePersistenceLayerInMemory();
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)

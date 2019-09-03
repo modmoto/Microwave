@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Microwave.Discovery.Subscriptions
@@ -7,5 +8,6 @@ namespace Microwave.Discovery.Subscriptions
         Task SubscribeOnDiscoveredServices();
         Task StoreSubscription(Subscription subscription);
         Task PushNewChanges();
+        Task<IEnumerable<Subscription>> GetSubscriptions();
     }
 }

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microwave.Discovery.EventLocations;
 
@@ -50,6 +51,11 @@ namespace Microwave.Discovery.Subscriptions
                     subscription.SubscribedEvent,
                     newVersion);
             }
+        }
+
+        public Task<IEnumerable<Subscription>> GetSubscriptions()
+        {
+            return _subscriptionRepository.LoadSubscriptionsAsync();
         }
     }
 }

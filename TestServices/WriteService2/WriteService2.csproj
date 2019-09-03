@@ -12,10 +12,11 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\Microwave.Persistence.MongoDb\Microwave.Persistence.MongoDb.csproj" />
-      <ProjectReference Include="..\..\Microwave.UI\Microwave.UI.csproj" />
-      <ProjectReference Include="..\..\Microwave\Microwave.csproj" />
-      <ProjectReference Include="..\ServerConfig\ServerConfig.csproj" />
+        <ProjectReference Include="..\..\Microwave.Persistence.InMemory\Microwave.Persistence.InMemory.csproj" />
+        <ProjectReference Include="..\..\Microwave.Persistence.MongoDb\Microwave.Persistence.MongoDb.csproj" />
+        <ProjectReference Include="..\..\Microwave.UI\Microwave.UI.csproj" />
+        <ProjectReference Include="..\..\Microwave\Microwave.csproj" />
+        <ProjectReference Include="..\ServerConfig\ServerConfig.csproj" />
     </ItemGroup>
 
 </Project>

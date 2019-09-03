@@ -1,5 +1,6 @@
 using System;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using Microwave.Discovery.Subscriptions;
 using Newtonsoft.Json;
@@ -25,27 +26,30 @@ namespace Microwave.WebApi.Discovery
             var serviceToSubscribeTo = subscription.SubscriberUrl;
             var subscriberUrl = _microwaveHttpContext.AppBaseUrl;
             var httpClient = await _httpClientFactory.CreateHttpClient(serviceToSubscribeTo);
-            var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, "Discovery/Subscriptions");
-            string serialized = JsonConvert.SerializeObject(new { subscription.SubscribedEvent, subscriberUrl });
-            httpRequestMessage.Content = new StringContent(serialized);
+            httpClient.BaseAddress = serviceToSubscribeTo;
+            var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, "Subscriptions/Subscriptions");
+            var serialized = JsonConvert.SerializeObject(new { subscription.SubscribedEvent, subscriberUrl });
+            httpRequestMessage.Content = new StringContent(serialized, Encoding.UTF8, "application/json");
             await httpClient.SendAsync(httpRequestMessage);
         }
 
         public async Task PushChangesForType(Uri remoteService, string eventType, DateTimeOffset newVersion)
         {
             var httpClient = await _httpClientFactory.CreateHttpClient(remoteService);
-            var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, $"Discovery/Subscriptions/{eventType}");
+            var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, $"Subscriptions/Subscriptions/{eventType}");
             string serialized = JsonConvert.SerializeObject(new { newVersion });
-            httpRequestMessage.Content = new StringContent(serialized);
+            httpRequestMessage.Content = new StringContent(serialized, Encoding.UTF8, "application/json");
+            httpClient.BaseAddress = remoteService;
             await httpClient.SendAsync(httpRequestMessage);
         }
 
         public async Task PushChangesForAll(Uri remoteService, DateTimeOffset newVersion)
         {
             var httpClient = await _httpClientFactory.CreateHttpClient(remoteService);
-            var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, "Discovery/Subscriptions");
+            httpClient.BaseAddress = remoteService;
+            var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, "Subscriptions/Subscriptions");
             string serialized = JsonConvert.SerializeObject(new { newVersion });
-            httpRequestMessage.Content = new StringContent(serialized);
+            httpRequestMessage.Content = new StringContent(serialized, Encoding.UTF8, "application/json");
             await httpClient.SendAsync(httpRequestMessage);
         }
     }
