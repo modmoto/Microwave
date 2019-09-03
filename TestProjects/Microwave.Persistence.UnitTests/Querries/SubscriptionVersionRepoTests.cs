@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Discovery.Subscriptions;
@@ -14,7 +15,7 @@ namespace Microwave.Persistence.UnitTests.Querries
     {
         [TestMethod]
         [PersistenceTypeTest]
-        public async Task TestSaveAndStoreVersion(PersistenceLayerProvider layerProvider)
+        public async Task GetCurrentVersion(PersistenceLayerProvider layerProvider)
         {
             var subscriptionRepository = layerProvider.SubscriptionRepository;
             var versionRepository = layerProvider.VersionRepository;
@@ -28,9 +29,25 @@ namespace Microwave.Persistence.UnitTests.Querries
 
             await versionRepository.SaveVersionAsync(new LastProcessedVersion("TestEv", DateTimeOffset.Now));
             var subscription = new Subscription("TestEv", new Uri("http://123.de"));
-            var currentVersion = subscriptionRepository.GetCurrentVersion(subscription);
+            var currentVersion = await subscriptionRepository.GetCurrentVersion(subscription);
 
-            Assert.AreEqual(DateTimeOffset.Now.Day, currentVersion.Result.Day);
+            Assert.AreEqual(DateTimeOffset.Now.Day, currentVersion.Day);
+        }
+
+        [TestMethod]
+        [PersistenceTypeTest]
+        public async Task SaveAndGetSubscription(PersistenceLayerProvider layerProvider)
+        {
+            var subscriptionRepository = layerProvider.SubscriptionRepository;
+
+            var subscribedEvent = "TestEv";
+            var subscriberUrl = new Uri("http://123.de");
+            var subscription = new Subscription(subscribedEvent, subscriberUrl);
+            await subscriptionRepository.StoreSubscriptionAsync(subscription);
+            var res = (await subscriptionRepository.LoadSubscriptionsAsync()).ToList();
+
+            Assert.AreEqual(subscribedEvent, res.Single().SubscribedEvent);
+            Assert.AreEqual(subscriberUrl, res.Single().SubscriberUrl);
         }
     }
 }
