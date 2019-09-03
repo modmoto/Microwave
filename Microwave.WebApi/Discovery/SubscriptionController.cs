@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microwave.Discovery.Subscriptions;
 
@@ -9,7 +10,8 @@ namespace Microwave.WebApi.Discovery
     {
         private readonly ISubscriptionHandler _subscriptionHandler;
 
-        public SubscriptionController(ISubscriptionHandler subscriptionHandler)
+        public SubscriptionController(
+            ISubscriptionHandler subscriptionHandler)
         {
             _subscriptionHandler = subscriptionHandler;
         }
@@ -18,6 +20,21 @@ namespace Microwave.WebApi.Discovery
         public async Task<ActionResult> SubscribeEvent([FromBody] Subscription subscribeEventDto)
         {
             await _subscriptionHandler.StoreSubscription(subscribeEventDto);
+            return Ok();
+        }
+
+        [HttpPost("Subscriptions/{eventType}")]
+        public async Task<ActionResult> SubscribeEvent(string eventType, [FromBody] StoreNewVersionCommand command)
+        {
+            command.EventType = eventType;
+            await _subscriptionHandler.StoreNewRemoteVersion(command);
+            return Ok();
+        }
+
+        [HttpPost("Subscriptions/Overall")]
+        public async Task<ActionResult> SubscribeEvent([FromBody] StoreNewOverallVersionCommand command)
+        {
+            await _subscriptionHandler.StoreNewRemoteOverallVersion(command);
             return Ok();
         }
 

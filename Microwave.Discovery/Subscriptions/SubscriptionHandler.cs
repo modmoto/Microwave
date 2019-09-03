@@ -57,5 +57,15 @@ namespace Microwave.Discovery.Subscriptions
         {
             return _subscriptionRepository.LoadSubscriptionsAsync();
         }
+
+        public Task StoreNewRemoteVersion(StoreNewVersionCommand newVersionNewVersion)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public Task StoreNewRemoteOverallVersion(StoreNewOverallVersionCommand commandNewVersion)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }
