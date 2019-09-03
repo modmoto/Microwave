@@ -16,7 +16,7 @@ namespace Microwave.Queries.UnitTests
     public class EventDelegateHandlerTests : IntegrationTests
     {
         private Mock<IVersionRepository> _versionRepo;
-        private Mock<IRemoteVersionRepository> _remoteVersionRepo;
+        private Mock<IRemoteVersionReadRepository> _remoteVersionRepo;
 
         [TestInitialize]
         public void Setup()
@@ -25,8 +25,7 @@ namespace Microwave.Queries.UnitTests
             _versionRepo.Setup(repo => repo.SaveVersionAsync(It.IsAny<LastProcessedVersion>())).Returns(Task.CompletedTask);
             _versionRepo.Setup(repo => repo.GetVersionAsync(It.IsAny<string>())).ReturnsAsync(DateTimeOffset.MinValue);
 
-            _remoteVersionRepo = new Mock<IRemoteVersionRepository>();
-            _remoteVersionRepo.Setup(repo => repo.SaveVersionAsync(It.IsAny<LastProcessedVersion>())).Returns(Task.CompletedTask);
+            _remoteVersionRepo = new Mock<IRemoteVersionReadRepository>();
             _remoteVersionRepo.Setup(repo => repo.GetVersionAsync(It.IsAny<string>())).ReturnsAsync(DateTimeOffset.MinValue);
         }
 

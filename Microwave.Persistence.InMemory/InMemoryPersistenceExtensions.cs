@@ -38,8 +38,9 @@ namespace Microwave.Persistence.InMemory
             services.AddSingleton<IReadModelRepository, ReadModelRepositoryInMemory>();
             services.AddSingleton<IEventRepository>(eventRepositoryInMemory);
             services.AddSingleton<ISnapShotRepository, SnapShotRepositoryInMemory>();
-            services.AddSingleton<IRemoteVersionRepository, RemoteVersionRepositoryInMemory>();
+            services.AddSingleton<IRemoteVersionReadRepository, RemoteVersionReadRepositoryInMemory>();
             services.AddSingleton<ISubscriptionRepository, SubscriptionRepositoryInMemory>();
+            services.AddSingleton<SharedMemoryClass>();
 
             return services;
         }

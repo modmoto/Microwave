@@ -11,11 +11,13 @@ namespace Microwave.Persistence.UnitTestsSetup.InMemory
     public class InMemoryTestSetup : PersistenceLayerProvider
     {
         public override IVersionRepository VersionRepository => new VersionRepositoryInMemory();
-        public override IRemoteVersionRepository RemoteVersionRepository => new RemoteVersionRepositoryInMemory();
+        public override IRemoteVersionReadRepository RemoteVersionReadRepository =>
+            new RemoteVersionReadRepositoryInMemory(new SharedMemoryClass());
         public override IStatusRepository StatusRepository => new StatusRepositoryInMemory();
         public override IReadModelRepository ReadModelRepository => new ReadModelRepositoryInMemory();
         public override ISnapShotRepository SnapShotRepository => new SnapShotRepositoryInMemory();
         public override IEventRepository EventRepository => new EventRepositoryInMemory();
-        public override ISubscriptionRepository SubscriptionRepository => new SubscriptionRepositoryInMemory(VersionRepository);
+        public override ISubscriptionRepository SubscriptionRepository =>
+            new SubscriptionRepositoryInMemory(VersionRepository, new SharedMemoryClass());
     }
 }

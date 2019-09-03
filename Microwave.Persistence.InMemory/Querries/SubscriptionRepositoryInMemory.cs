@@ -11,11 +11,15 @@ namespace Microwave.Persistence.InMemory.Querries
     public class SubscriptionRepositoryInMemory : ISubscriptionRepository
     {
         private readonly IVersionRepository _versionRepository;
+        private readonly SharedMemoryClass _sharedMemoryClass;
         private readonly BlockingCollection<Subscription> _subscriptions = new BlockingCollection<Subscription>();
 
-        public SubscriptionRepositoryInMemory(IVersionRepository versionRepository)
+        public SubscriptionRepositoryInMemory(
+            IVersionRepository versionRepository,
+            SharedMemoryClass sharedMemoryClass)
         {
             _versionRepository = versionRepository;
+            _sharedMemoryClass = sharedMemoryClass;
         }
 
         public Task StoreSubscriptionAsync(Subscription subscription)
@@ -36,6 +40,13 @@ namespace Microwave.Persistence.InMemory.Querries
         public Task<DateTimeOffset> GetCurrentVersion(Subscription subscription)
         {
             return _versionRepository.GetVersionAsync(subscription.SubscribedEvent);
+        }
+
+        public Task SaveVersionAsync(RemoteVersion version)
+        {
+            _sharedMemoryClass.Save(version);
+            return Task.CompletedTask;
+
         }
     }
 }

@@ -9,7 +9,7 @@ namespace Microwave.Persistence.UnitTestsSetup
     public abstract class PersistenceLayerProvider
     {
         public abstract IVersionRepository VersionRepository { get; }
-        public abstract IRemoteVersionRepository RemoteVersionRepository { get; }
+        public abstract IRemoteVersionReadRepository RemoteVersionReadRepository { get; }
         public abstract IStatusRepository StatusRepository { get; }
         public abstract IReadModelRepository ReadModelRepository { get; }
         public abstract ISnapShotRepository SnapShotRepository { get; }

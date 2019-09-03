@@ -5,7 +5,6 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microwave.Discovery.Subscriptions;
 using Microwave.Queries.Ports;
-using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Driver;
 
 namespace Microwave.Persistence.MongoDb.Querries
@@ -15,6 +14,8 @@ namespace Microwave.Persistence.MongoDb.Querries
         private readonly IVersionRepository _versionRepository;
         private readonly IMongoDatabase _dataBase;
         private string _subscriptionCollection = "ServiceSubscriptions";
+        private readonly string _lastProcessedVersions = "LastProcessedRemoteVersions";
+
 
         public SubscriptionRepositoryMongoDb(MicrowaveMongoDb eventMongoDb, IVersionRepository versionRepository)
         {
@@ -50,6 +51,22 @@ namespace Microwave.Persistence.MongoDb.Querries
         public Task<DateTimeOffset> GetCurrentVersion(Subscription subscription)
         {
             return _versionRepository.GetVersionAsync(subscription.SubscribedEvent);
+        }
+
+        public async Task SaveVersionAsync(RemoteVersion version)
+        {
+            var mongoCollection = _dataBase.GetCollection<LastProcessedVersionDbo>(_lastProcessedVersions);
+
+            var findOneAndReplaceOptions = new FindOneAndReplaceOptions<LastProcessedVersionDbo>();
+            findOneAndReplaceOptions.IsUpsert = true;
+
+            await mongoCollection.FindOneAndReplaceAsync(
+                (Expression<Func<LastProcessedVersionDbo, bool>>) (e => e.EventType == version.EventType),
+                new LastProcessedVersionDbo
+                {
+                    EventType = version.EventType,
+                    LastVersion = version.LastVersion
+                }, findOneAndReplaceOptions);
         }
     }
 

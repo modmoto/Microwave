@@ -3,9 +3,8 @@ using System.Threading.Tasks;
 
 namespace Microwave.Queries.Ports
 {
-    public interface IRemoteVersionRepository
+    public interface IRemoteVersionReadRepository
     {
         Task<DateTimeOffset> GetVersionAsync(string domainEventType);
-        Task SaveVersionAsync(LastProcessedVersion version);
     }
 }

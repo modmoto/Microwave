@@ -34,7 +34,7 @@ namespace Microwave.Persistence.MongoDb
             services.AddTransient<IEventRepository, EventRepositoryMongoDb>();
             services.AddSingleton<IVersionCache, VersionCache>();
             services.AddTransient<ISnapShotRepository, SnapShotRepositoryMongoDb>();
-            services.AddTransient<IRemoteVersionRepository, RemoteVersionRepositoryMongoDb>();
+            services.AddTransient<IRemoteVersionReadRepository, RemoteVersionReadRepositoryMongoDb>();
             services.AddTransient<ISubscriptionRepository, SubscriptionRepositoryMongoDb>();
 
             foreach (var assembly in GetAllAssemblies())

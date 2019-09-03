@@ -9,5 +9,6 @@ namespace Microwave.Discovery.Subscriptions
         Task StoreSubscriptionAsync(Subscription subscription);
         Task<IEnumerable<Subscription>> LoadSubscriptionsAsync();
         Task<DateTimeOffset> GetCurrentVersion(Subscription subscription);
+        Task SaveVersionAsync(RemoteVersion version);
     }
 }

@@ -24,7 +24,7 @@ namespace Microwave.Persistence.UnitTests.Querries
             if (layerProvider.GetType() == typeof(InMemoryTestSetup))
             {
                 versionRepository = new VersionRepositoryInMemory();
-                subscriptionRepository = new SubscriptionRepositoryInMemory(versionRepository);
+                subscriptionRepository = new SubscriptionRepositoryInMemory(versionRepository, new SharedMemoryClass());
             }
 
             await versionRepository.SaveVersionAsync(new LastProcessedVersion("TestEv", DateTimeOffset.Now));
