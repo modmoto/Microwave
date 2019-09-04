@@ -17,7 +17,6 @@ namespace Microwave.Persistence.UnitTests.Querries
     {
         [DataTestMethod]
         [PersistenceTypeTest]
-
         public async Task IdentifiableQuerySaveAndLoad(PersistenceLayerProvider layerProvider)
         {
             var queryRepository = layerProvider.ReadModelRepository;
@@ -36,7 +35,6 @@ namespace Microwave.Persistence.UnitTests.Querries
 
         [DataTestMethod]
         [PersistenceTypeTest]
-
         public async Task LoadWithNullId(PersistenceLayerProvider layerProvider)
         {
             var queryRepository = layerProvider.ReadModelRepository;
