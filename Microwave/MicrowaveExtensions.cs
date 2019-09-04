@@ -16,6 +16,7 @@ using Microwave.Queries;
 using Microwave.Queries.Handler;
 using Microwave.Queries.Ports;
 using Microwave.Subscriptions;
+using Microwave.Subscriptions.Ports;
 using Microwave.WebApi.ApiFormatting;
 using Microwave.WebApi.ApiFormatting.DateTimeOffsets;
 using Microwave.WebApi.ApiFormatting.Identities;

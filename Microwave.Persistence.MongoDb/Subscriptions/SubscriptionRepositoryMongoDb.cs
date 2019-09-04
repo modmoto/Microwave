@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microwave.Persistence.MongoDb.Querries;
 using Microwave.Queries.Ports;
 using Microwave.Subscriptions;
+using Microwave.Subscriptions.Ports;
 using MongoDB.Driver;
 
 namespace Microwave.Persistence.MongoDb.Subscriptions

@@ -3,6 +3,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Microwave.Subscriptions;
+using Microwave.Subscriptions.Ports;
 using Newtonsoft.Json;
 
 namespace Microwave.WebApi.Discovery

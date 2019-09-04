@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
 
-namespace Microwave.Subscriptions
+namespace Microwave.Subscriptions.Ports
 {
     public interface IRemoteSubscriptionRepository
     {

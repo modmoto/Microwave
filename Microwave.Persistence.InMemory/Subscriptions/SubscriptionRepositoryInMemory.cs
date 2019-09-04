@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microwave.Queries.Ports;
 using Microwave.Subscriptions;
+using Microwave.Subscriptions.Ports;
 
 namespace Microwave.Persistence.InMemory.Subscriptions
 {

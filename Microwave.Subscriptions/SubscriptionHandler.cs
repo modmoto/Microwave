@@ -1,6 +1,7 @@
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microwave.Subscriptions.Ports;
+using Microwave.Subscriptions.ReadModels;
 
 namespace Microwave.Subscriptions
 {
@@ -68,33 +69,5 @@ namespace Microwave.Subscriptions
             return _subscriptionRepository.SaveRemoteOverallVersionAsync(
                 new OverallVersion(command.ServiceUri, command.NewVersion));
         }
-    }
-
-    public class EventsSubscribedByServiceReadModel
-    {
-        public IEnumerable<EventReadModel> Events { get; set; }
-    }
-
-    public class EventReadModel
-    {
-        public string Name { get; set; }
-    }
-
-    public interface IStatusReadmodelRepository
-    {
-        Task<EventLocationReadModel> GetEventLocation();
-    }
-
-    public class EventLocationReadModel
-    {
-        public ServiceNodeReadModel GetServiceForEvent(string name)
-        {
-            return null;
-        }
-    }
-
-    public class ServiceNodeReadModel
-    {
-        public Uri ServiceBaseAddress { get; set; }
     }
 }

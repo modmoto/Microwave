@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Microwave.Subscriptions
+namespace Microwave.Subscriptions.Ports
 {
     public interface ISubscriptionRepository
     {

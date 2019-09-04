@@ -11,6 +11,7 @@ using Microwave.Persistence.InMemory.Subscriptions;
 using Microwave.Queries;
 using Microwave.Queries.Ports;
 using Microwave.Subscriptions;
+using Microwave.Subscriptions.Ports;
 
 namespace Microwave.Persistence.InMemory
 {

@@ -12,6 +12,7 @@ using Microwave.Persistence.MongoDb.Subscriptions;
 using Microwave.Queries;
 using Microwave.Queries.Ports;
 using Microwave.Subscriptions;
+using Microwave.Subscriptions.Ports;
 
 namespace Microwave.Persistence.MongoDb
 {

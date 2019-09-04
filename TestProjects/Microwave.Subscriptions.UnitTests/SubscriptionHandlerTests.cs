@@ -1,5 +1,7 @@
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microwave.Subscriptions.Ports;
+using Microwave.Subscriptions.ReadModels;
 using Moq;
 
 namespace Microwave.Subscriptions.UnitTests
