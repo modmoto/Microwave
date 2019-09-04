@@ -3,7 +3,7 @@ using Microwave.Subscriptions.ReadModels;
 
 namespace Microwave.Subscriptions.Ports
 {
-    public interface IStatusReadmodelRepository
+    public interface IEventLocationReadModelRepository
     {
         Task<EventLocationReadModel> GetEventLocation();
     }

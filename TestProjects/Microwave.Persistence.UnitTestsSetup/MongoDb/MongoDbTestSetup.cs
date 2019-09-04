@@ -26,8 +26,8 @@ namespace Microwave.Persistence.UnitTestsSetup.MongoDb
         public MicrowaveMongoDb EventMongoDb { get; }
         public override IVersionRepository VersionRepository => new VersionRepositoryMongoDb(EventMongoDb);
 
-        public override IRemoteVersionReadRepository RemoteVersionReadRepository =>
-            new RemoteVersionReadRepositoryMongoDb(EventMongoDb);
+        public override IRemoteVersionReadModelRepository RemoteVersionReadModelRepository =>
+            new RemoteVersionReadModelRepositoryMongoDb(EventMongoDb);
         public override IStatusRepository StatusRepository =>
             new StatusRepositoryMongoDb(EventMongoDb, new CacheThatNeverHasAnything());
         public override IReadModelRepository ReadModelRepository => new ReadModelRepositoryMongoDb(EventMongoDb);
@@ -36,7 +36,10 @@ namespace Microwave.Persistence.UnitTestsSetup.MongoDb
             new EventRepositoryMongoDb(EventMongoDb, new VersionCache(EventMongoDb));
 
         public override ISubscriptionRepository SubscriptionRepository =>
-            new SubscriptionRepositoryMongoDb(EventMongoDb, VersionRepository);
+            new SubscriptionRepositoryMongoDb(EventMongoDb);
+
+        public override IRemoteVersionRepository RemoteVersionRepository =>
+            new RemoteVersionRepositoryMongoDb(VersionRepository, EventMongoDb);
     }
 
     public class CacheThatNeverHasAnything : IEventLocationCache

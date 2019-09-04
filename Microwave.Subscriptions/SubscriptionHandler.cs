@@ -8,20 +8,23 @@ namespace Microwave.Subscriptions
     public class SubscriptionHandler : ISubscriptionHandler
     {
         private readonly EventsSubscribedByServiceReadModel _eventsSubscribedByService;
-        private readonly IStatusReadmodelRepository _statusRepository;
+        private readonly IEventLocationReadModelRepository _statusRepository;
         private readonly IRemoteSubscriptionRepository _remoteSubscriptionRepository;
         private readonly ISubscriptionRepository _subscriptionRepository;
+        private readonly IRemoteVersionRepository _remoteVersionRepository;
 
         public SubscriptionHandler(
             EventsSubscribedByServiceReadModel eventsSubscribedByService,
-            IStatusReadmodelRepository statusRepository,
+            IEventLocationReadModelRepository statusRepository,
             IRemoteSubscriptionRepository remoteSubscriptionRepository,
-            ISubscriptionRepository subscriptionRepository)
+            ISubscriptionRepository subscriptionRepository,
+            IRemoteVersionRepository remoteVersionRepository)
         {
             _eventsSubscribedByService = eventsSubscribedByService;
             _statusRepository = statusRepository;
             _remoteSubscriptionRepository = remoteSubscriptionRepository;
             _subscriptionRepository = subscriptionRepository;
+            _remoteVersionRepository = remoteVersionRepository;
         }
 
         public async Task SubscribeOnDiscoveredServices()
@@ -46,7 +49,7 @@ namespace Microwave.Subscriptions
             var subscriptions = await _subscriptionRepository.LoadSubscriptionsAsync();
             foreach (var subscription in subscriptions)
             {
-                var newVersion = await _subscriptionRepository.GetCurrentVersion(subscription);
+                var newVersion = await _remoteVersionRepository.GetCurrentVersion(subscription);
                 await _remoteSubscriptionRepository.PushChangesForType(
                     subscription.SubscriberUrl,
                     subscription.SubscribedEvent,
@@ -61,12 +64,12 @@ namespace Microwave.Subscriptions
 
         public Task StoreNewRemoteVersion(StoreNewVersionCommand command)
         {
-            return _subscriptionRepository.SaveRemoteVersionAsync(new RemoteVersion(command.EventType, command.NewVersion));
+            return _remoteVersionRepository.SaveRemoteVersionAsync(new RemoteVersion(command.EventType, command.NewVersion));
         }
 
         public Task StoreNewRemoteOverallVersion(StoreNewOverallVersionCommand command)
         {
-            return _subscriptionRepository.SaveRemoteOverallVersionAsync(
+            return _remoteVersionRepository.SaveRemoteOverallVersionAsync(
                 new OverallVersion(command.ServiceUri, command.NewVersion));
         }
     }

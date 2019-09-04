@@ -5,11 +5,11 @@ using Microwave.Queries.Ports;
 
 namespace Microwave.Persistence.InMemory.Querries
 {
-    public class RemoteVersionReadRepositoryInMemory : IRemoteVersionReadRepository
+    public class RemoteVersionReadModelRepositoryInMemory : IRemoteVersionReadModelRepository
     {
         private readonly SharedMemoryClass _sharedMemoryClass;
 
-        public RemoteVersionReadRepositoryInMemory(SharedMemoryClass sharedMemoryClass)
+        public RemoteVersionReadModelRepositoryInMemory(SharedMemoryClass sharedMemoryClass)
         {
             _sharedMemoryClass = sharedMemoryClass;
         }

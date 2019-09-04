@@ -40,14 +40,14 @@ namespace Microwave.Persistence.UnitTests.Querries
         [PersistenceTypeTest]
         public async Task VersionRepoRemoteVersion_DuplicateUpdate(PersistenceLayerProvider layerProvider)
         {
-            var remoteRepo = layerProvider.RemoteVersionReadRepository;
-            var versionRepository = layerProvider.SubscriptionRepository;
+            var remoteRepo = layerProvider.RemoteVersionReadModelRepository;
+            var versionRepository = layerProvider.RemoteVersionRepository;
 
             if (layerProvider.GetType() == typeof(InMemoryTestSetup))
             {
                 var sharedMemoryClass = new SharedMemoryClass();
-                remoteRepo = new RemoteVersionReadRepositoryInMemory(sharedMemoryClass);
-                versionRepository = new SubscriptionRepositoryInMemory(layerProvider.VersionRepository, sharedMemoryClass);
+                remoteRepo = new RemoteVersionReadModelRepositoryInMemory(sharedMemoryClass);
+                versionRepository = new RemoteVersionRepositoryInMemory(layerProvider.VersionRepository, sharedMemoryClass);
             }
 
             var dateTimeOffset = DateTimeOffset.Now;
@@ -62,7 +62,7 @@ namespace Microwave.Persistence.UnitTests.Querries
         [PersistenceTypeTest]
         public async Task VersionRepoRemoteVersion_LoadWithNull(PersistenceLayerProvider layerProvider)
         {
-            var versionRepository = layerProvider.RemoteVersionReadRepository;
+            var versionRepository = layerProvider.RemoteVersionReadModelRepository;
             var count = await versionRepository.GetVersionAsync(null);
             Assert.AreEqual(DateTimeOffset.MinValue, count);
         }

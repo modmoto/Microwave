@@ -18,14 +18,14 @@ namespace Microwave.Persistence.UnitTests.Querries
         [PersistenceTypeTest]
         public async Task GetCurrentVersion(PersistenceLayerProvider layerProvider)
         {
-            var subscriptionRepository = layerProvider.SubscriptionRepository;
+            var subscriptionRepository = layerProvider.RemoteVersionRepository;
             var versionRepository = layerProvider.VersionRepository;
 
             // this is because it is registered as singleton in DI, only ok because of this
             if (layerProvider.GetType() == typeof(InMemoryTestSetup))
             {
                 versionRepository = new VersionRepositoryInMemory();
-                subscriptionRepository = new SubscriptionRepositoryInMemory(versionRepository, new SharedMemoryClass());
+                subscriptionRepository = new RemoteVersionRepositoryInMemory(versionRepository, new SharedMemoryClass());
             }
 
             await versionRepository.SaveVersionAsync(new LastProcessedVersion("TestEv", DateTimeOffset.Now));

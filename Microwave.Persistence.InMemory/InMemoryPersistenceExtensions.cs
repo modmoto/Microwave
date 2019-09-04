@@ -10,7 +10,6 @@ using Microwave.Persistence.InMemory.Querries;
 using Microwave.Persistence.InMemory.Subscriptions;
 using Microwave.Queries;
 using Microwave.Queries.Ports;
-using Microwave.Subscriptions;
 using Microwave.Subscriptions.Ports;
 
 namespace Microwave.Persistence.InMemory
@@ -40,8 +39,9 @@ namespace Microwave.Persistence.InMemory
             services.AddSingleton<IReadModelRepository, ReadModelRepositoryInMemory>();
             services.AddSingleton<IEventRepository>(eventRepositoryInMemory);
             services.AddSingleton<ISnapShotRepository, SnapShotRepositoryInMemory>();
-            services.AddSingleton<IRemoteVersionReadRepository, RemoteVersionReadRepositoryInMemory>();
+            services.AddSingleton<IRemoteVersionReadModelRepository, RemoteVersionReadModelRepositoryInMemory>();
             services.AddSingleton<ISubscriptionRepository, SubscriptionRepositoryInMemory>();
+            services.AddSingleton<IRemoteVersionRepository, RemoteVersionRepositoryInMemory>();
             services.AddSingleton<SharedMemoryClass>();
 
             return services;

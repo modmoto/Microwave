@@ -10,17 +10,17 @@ namespace Microwave.Queries.Handler
         private readonly IEventFeed<AsyncEventHandler<T>>  _eventFeed;
         private readonly IHandleAsync<T> _handler;
         private readonly IVersionRepository _versionRepository;
-        private readonly IRemoteVersionReadRepository _remoteVersionReadRepository;
+        private readonly IRemoteVersionReadModelRepository _remoteVersionReadModelRepository;
         public Type HandlerClassType => _handler.GetType();
 
         public AsyncEventHandler(
             IVersionRepository versionRepository,
-            IRemoteVersionReadRepository remoteVersionReadRepository,
+            IRemoteVersionReadModelRepository remoteVersionReadModelRepository,
             IEventFeed<AsyncEventHandler<T>> eventFeed,
             IHandleAsync<T> handler)
         {
             _versionRepository = versionRepository;
-            _remoteVersionReadRepository = remoteVersionReadRepository;
+            _remoteVersionReadModelRepository = remoteVersionReadModelRepository;
             _eventFeed = eventFeed;
             _handler = handler;
         }
@@ -30,7 +30,7 @@ namespace Microwave.Queries.Handler
             var handleType = _handler.GetType();
             var domainEventType = $"{handleType.Name}-{typeof(T).Name}";
             var lastVersion = await _versionRepository.GetVersionAsync(domainEventType);
-            var lastVersionRemote = await _remoteVersionReadRepository.GetVersionAsync(domainEventType);
+            var lastVersionRemote = await _remoteVersionReadModelRepository.GetVersionAsync(domainEventType);
             if (lastVersion > lastVersionRemote) return;
             var latestEvents = await _eventFeed.GetEventsAsync(lastVersion);
             foreach (var latestEvent in latestEvents)

@@ -18,9 +18,10 @@ namespace Microwave.Subscriptions.UnitTests
                 new EventsSubscribedByServiceReadModel(),
                 null,
                 mock.Object,
+                null,
                 null);
 
-            await discoveryHandler.SubscribeOnDiscoveredServices();
+            //  await discoveryHandler.SubscribeOnDiscoveredServices();
 
            // mock.Verify(m => m.SubscribeForEvent(It.IsAny<Subscription>()), Times.Exactly(2));
         }

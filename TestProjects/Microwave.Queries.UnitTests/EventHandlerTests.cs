@@ -26,11 +26,11 @@ namespace Microwave.Queries.UnitTests
             var handleAsync = new Handler1();
             var handleAsync2 = new Handler2();
             var eventDelegateHandler1 = new AsyncEventHandler<TestEv2>(
-                new VersionRepositoryMongoDb(EventMongoDb), new RemoteVersionReadRepositoryMongoDb(EventMongoDb),
+                new VersionRepositoryMongoDb(EventMongoDb), new RemoteVersionReadModelRepositoryMongoDb(EventMongoDb),
                 new EventFeedMock(dateTimeOffset, domainEventWrapper), handleAsync);
 
             var eventDelegateHandler2 = new AsyncEventHandler<TestEv2>(
-                new VersionRepositoryMongoDb(EventMongoDb), new RemoteVersionReadRepositoryMongoDb(EventMongoDb),
+                new VersionRepositoryMongoDb(EventMongoDb), new RemoteVersionReadModelRepositoryMongoDb(EventMongoDb),
                 new EventFeedMock(dateTimeOffset, domainEventWrapper), handleAsync2);
 
             await eventDelegateHandler1.Update();

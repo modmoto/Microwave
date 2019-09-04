@@ -371,7 +371,7 @@ namespace Microwave
                     services.AddTransient(genericTypeOfHandlerInterface, s =>
                     {
                         var versionRepo = s.GetRequiredService<IVersionRepository>();
-                        var remoteVersionRepo = s.GetRequiredService<IRemoteVersionReadRepository>();
+                        var remoteVersionRepo = s.GetRequiredService<IRemoteVersionReadModelRepository>();
                         var feedInstance = s.GetRequiredService(feedInterface);
                         var handleAsyncInstance = s.GetRequiredService(handleAsync);
                         var constructorInfo = genericHandler.GetConstructors().Single();
