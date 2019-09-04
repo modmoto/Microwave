@@ -1,10 +1,11 @@
 using Microwave.Discovery;
-using Microwave.Discovery.Subscriptions;
 using Microwave.EventStores.Ports;
 using Microwave.Persistence.InMemory.Eventstores;
 using Microwave.Persistence.InMemory.Querries;
+using Microwave.Persistence.InMemory.Subscriptions;
 using Microwave.Queries;
 using Microwave.Queries.Ports;
+using Microwave.Subscriptions;
 
 namespace Microwave.Persistence.UnitTestsSetup.InMemory
 {

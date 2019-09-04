@@ -7,6 +7,7 @@
       <ProjectReference Include="..\Microwave.Discovery\Microwave.Discovery.csproj" />
       <ProjectReference Include="..\Microwave.EventStores\Microwave.EventStores.csproj" />
       <ProjectReference Include="..\Microwave.Queries\Microwave.Queries.csproj" />
+      <ProjectReference Include="..\Microwave.Subscriptions\Microwave.Subscriptions.csproj" />
     </ItemGroup>
     <ItemGroup>
         <PackageReference Include="Microsoft.AspNetCore.Mvc">

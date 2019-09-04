@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microwave.Discovery.EventLocations;
 using Microwave.Discovery.ServiceMaps;
-using Microwave.Discovery.Subscriptions;
 
 namespace Microwave.Discovery
 {
@@ -14,7 +13,6 @@ namespace Microwave.Discovery
         private readonly EventsPublishedByService _eventsPublishedByService;
         private readonly IServiceDiscoveryRepository _discoveryRepository;
         private readonly IStatusRepository _statusRepository;
-        private readonly IRemoteSubscriptionRepository _remoteSubscriptionRepository;
         private readonly DiscoveryConfiguration _configuration;
 
         public DiscoveryHandler(
@@ -23,7 +21,6 @@ namespace Microwave.Discovery
             EventsPublishedByService eventsPublishedByService,
             IServiceDiscoveryRepository discoveryRepository,
             IStatusRepository statusRepository,
-            IRemoteSubscriptionRepository remoteSubscriptionRepository,
             DiscoveryConfiguration configuration)
         {
             _serviceBaseAddressCollection = serviceBaseAddressCollection;
@@ -31,7 +28,6 @@ namespace Microwave.Discovery
             _eventsPublishedByService = eventsPublishedByService;
             _discoveryRepository = discoveryRepository;
             _statusRepository = statusRepository;
-            _remoteSubscriptionRepository = remoteSubscriptionRepository;
             _configuration = configuration;
         }
 

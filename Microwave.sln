@@ -53,6 +53,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microwave.Persistence.InMem
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microwave.Persistence.UnitTestsSetup", "TestProjects\Microwave.Persistence.UnitTestsSetup\Microwave.Persistence.UnitTestsSetup.csproj", "{A1C79B11-FAAB-4D3F-822F-08C93C16D4BE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microwave.Subscriptions", "Microwave.Subscriptions\Microwave.Subscriptions.csproj", "{17485E47-2042-41FE-B413-0A34D46B3576}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microwave.Subscriptions.UnitTests", "TestProjects\Microwave.Subscriptions.UnitTests\Microwave.Subscriptions.UnitTests.csproj", "{9C05E271-8584-41A1-84AE-D07AB28CC7CC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -151,6 +155,14 @@ Global
 		{A1C79B11-FAAB-4D3F-822F-08C93C16D4BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A1C79B11-FAAB-4D3F-822F-08C93C16D4BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A1C79B11-FAAB-4D3F-822F-08C93C16D4BE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{17485E47-2042-41FE-B413-0A34D46B3576}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{17485E47-2042-41FE-B413-0A34D46B3576}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{17485E47-2042-41FE-B413-0A34D46B3576}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{17485E47-2042-41FE-B413-0A34D46B3576}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9C05E271-8584-41A1-84AE-D07AB28CC7CC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9C05E271-8584-41A1-84AE-D07AB28CC7CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9C05E271-8584-41A1-84AE-D07AB28CC7CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9C05E271-8584-41A1-84AE-D07AB28CC7CC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -170,6 +182,7 @@ Global
 		{73988DBC-1385-4332-9733-DE74F6656D53} = {4DA39CBA-8A2D-4C97-9B79-B118325D7D04}
 		{A12C678F-D971-4FAC-8E82-9F307770CD92} = {2DFC8EF1-71B5-4F61-9E1D-B06DAA1BC199}
 		{A1C79B11-FAAB-4D3F-822F-08C93C16D4BE} = {2DFC8EF1-71B5-4F61-9E1D-B06DAA1BC199}
+		{9C05E271-8584-41A1-84AE-D07AB28CC7CC} = {2DFC8EF1-71B5-4F61-9E1D-B06DAA1BC199}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {10681780-EDC2-4AAC-8551-A22B38DC45CE}

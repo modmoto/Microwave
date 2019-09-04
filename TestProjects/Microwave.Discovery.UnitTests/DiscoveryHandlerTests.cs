@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Discovery.EventLocations;
 using Microwave.Discovery.ServiceMaps;
-using Microwave.Discovery.Subscriptions;
 using Microwave.Persistence.MongoDb.Querries;
 using Microwave.Persistence.UnitTestsSetup.MongoDb;
+using Microwave.Subscriptions;
 using Microwave.WebApi;
 using Microwave.WebApi.Discovery;
 using Moq;
@@ -18,15 +18,6 @@ namespace Microwave.Discovery.UnitTests
     [TestClass]
     public class DiscoveryHandlerTests : IntegrationTests
     {
-        private IRemoteSubscriptionRepository _remoteSubscriptionRepository;
-
-        [TestInitialize]
-        public void Setup()
-        {
-            var mock = new Mock<IRemoteSubscriptionRepository>();
-            _remoteSubscriptionRepository = mock.Object;
-        }
-
         [TestMethod]
         public async Task GetConsumingServices()
         {
@@ -45,7 +36,6 @@ namespace Microwave.Discovery.UnitTests
                 null,
                 new DiscoveryRepository(new DiscoveryClientFactory(new MyMicrowaveHttpClientFactory())),
                 statusRepository,
-                _remoteSubscriptionRepository,
                 new DiscoveryConfiguration());
 
             var consumingServices = await discoveryHandler.GetConsumingServices();
@@ -64,7 +54,6 @@ namespace Microwave.Discovery.UnitTests
                 null,
                 new DiscoveryRepository(new DiscoveryClientFactory(new MyMicrowaveHttpClientFactory())),
                 statusRepository,
-                _remoteSubscriptionRepository,
                 new DiscoveryConfiguration());
 
             var consumingServices = await discoveryHandler.GetConsumingServices();
@@ -83,7 +72,6 @@ namespace Microwave.Discovery.UnitTests
                     new List<EventSchema>()),
                 null,
                 null,
-                _remoteSubscriptionRepository,
                 null);
 
             var events = await discoveryHandler.GetPublishedEvents();

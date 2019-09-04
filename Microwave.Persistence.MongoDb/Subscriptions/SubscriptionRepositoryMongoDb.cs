@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using Microwave.Discovery.Subscriptions;
+using Microwave.Persistence.MongoDb.Querries;
 using Microwave.Queries.Ports;
+using Microwave.Subscriptions;
 using MongoDB.Driver;
 
-namespace Microwave.Persistence.MongoDb.Querries
+namespace Microwave.Persistence.MongoDb.Subscriptions
 {
     public class SubscriptionRepositoryMongoDb : ISubscriptionRepository
     {
@@ -53,7 +54,7 @@ namespace Microwave.Persistence.MongoDb.Querries
             return _versionRepository.GetVersionAsync(subscription.SubscribedEvent);
         }
 
-        public async Task SaveVersionAsync(RemoteVersion version)
+        public async Task SaveRemoteVersionAsync(RemoteVersion version)
         {
             var mongoCollection = _dataBase.GetCollection<LastProcessedVersionDbo>(_lastProcessedVersions);
 
@@ -67,6 +68,11 @@ namespace Microwave.Persistence.MongoDb.Querries
                     EventType = version.EventType,
                     LastVersion = version.LastVersion
                 }, findOneAndReplaceOptions);
+        }
+
+        public Task SaveRemoteOverallVersionAsync(OverallVersion overallVersion)
+        {
+            throw new NotImplementedException();
         }
     }
 

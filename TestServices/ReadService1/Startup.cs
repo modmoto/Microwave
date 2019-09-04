@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microwave;
 using Microwave.Persistence.InMemory;
-using Microwave.Persistence.MongoDb;
 using Microwave.Queries.Polling;
 using Microwave.UI;
 using ServerConfig;

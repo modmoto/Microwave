@@ -5,7 +5,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microwave;
 using Microwave.EventStores.SnapShots;
 using Microwave.Persistence.InMemory;
-using Microwave.Persistence.MongoDb;
 using Microwave.UI;
 using ServerConfig;
 

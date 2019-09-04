@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microwave.Discovery;
-using Microwave.Discovery.Subscriptions;
 using Microwave.Queries.Handler;
 using Microwave.Queries.Polling;
+using Microwave.Subscriptions;
 using Microwave.WebApi.Queries;
 
 namespace Microwave

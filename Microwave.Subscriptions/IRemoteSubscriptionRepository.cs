@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
 
-namespace Microwave.Discovery.Subscriptions
+namespace Microwave.Subscriptions
 {
     public interface IRemoteSubscriptionRepository
     {

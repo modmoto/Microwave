@@ -3,10 +3,10 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microwave.Discovery.Subscriptions;
 using Microwave.Queries.Ports;
+using Microwave.Subscriptions;
 
-namespace Microwave.Persistence.InMemory.Querries
+namespace Microwave.Persistence.InMemory.Subscriptions
 {
     public class SubscriptionRepositoryInMemory : ISubscriptionRepository
     {
@@ -42,11 +42,16 @@ namespace Microwave.Persistence.InMemory.Querries
             return _versionRepository.GetVersionAsync(subscription.SubscribedEvent);
         }
 
-        public Task SaveVersionAsync(RemoteVersion version)
+        public Task SaveRemoteVersionAsync(RemoteVersion version)
         {
             _sharedMemoryClass.Save(version);
             return Task.CompletedTask;
 
+        }
+
+        public Task SaveRemoteOverallVersionAsync(OverallVersion overallVersion)
+        {
+            throw new NotImplementedException();
         }
     }
 }

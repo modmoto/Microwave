@@ -5,12 +5,13 @@ using System.Linq;
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using Microwave.Discovery;
-using Microwave.Discovery.Subscriptions;
 using Microwave.EventStores.Ports;
 using Microwave.Persistence.MongoDb.Eventstores;
 using Microwave.Persistence.MongoDb.Querries;
+using Microwave.Persistence.MongoDb.Subscriptions;
 using Microwave.Queries;
 using Microwave.Queries.Ports;
+using Microwave.Subscriptions;
 
 namespace Microwave.Persistence.MongoDb
 {

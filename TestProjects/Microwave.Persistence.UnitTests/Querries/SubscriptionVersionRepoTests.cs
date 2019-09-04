@@ -2,11 +2,12 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microwave.Discovery.Subscriptions;
 using Microwave.Persistence.InMemory.Querries;
+using Microwave.Persistence.InMemory.Subscriptions;
 using Microwave.Persistence.UnitTestsSetup;
 using Microwave.Persistence.UnitTestsSetup.InMemory;
 using Microwave.Queries.Ports;
+using Microwave.Subscriptions;
 
 namespace Microwave.Persistence.UnitTests.Querries
 {

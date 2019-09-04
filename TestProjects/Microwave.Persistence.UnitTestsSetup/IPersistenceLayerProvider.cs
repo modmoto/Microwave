@@ -1,8 +1,8 @@
 using Microwave.Discovery;
-using Microwave.Discovery.Subscriptions;
 using Microwave.EventStores.Ports;
 using Microwave.Queries;
 using Microwave.Queries.Ports;
+using Microwave.Subscriptions;
 
 namespace Microwave.Persistence.UnitTestsSetup
 {

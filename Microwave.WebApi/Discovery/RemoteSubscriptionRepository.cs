@@ -2,7 +2,7 @@ using System;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using Microwave.Discovery.Subscriptions;
+using Microwave.Subscriptions;
 using Newtonsoft.Json;
 
 namespace Microwave.WebApi.Discovery

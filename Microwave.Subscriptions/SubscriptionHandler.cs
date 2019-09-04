@@ -1,19 +1,19 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microwave.Discovery.EventLocations;
 
-namespace Microwave.Discovery.Subscriptions
+namespace Microwave.Subscriptions
 {
     public class SubscriptionHandler : ISubscriptionHandler
     {
-        private readonly EventsSubscribedByService _eventsSubscribedByService;
-        private readonly IStatusRepository _statusRepository;
+        private readonly EventsSubscribedByServiceReadModel _eventsSubscribedByService;
+        private readonly IStatusReadmodelRepository _statusRepository;
         private readonly IRemoteSubscriptionRepository _remoteSubscriptionRepository;
         private readonly ISubscriptionRepository _subscriptionRepository;
 
         public SubscriptionHandler(
-            EventsSubscribedByService eventsSubscribedByService,
-            IStatusRepository statusRepository,
+            EventsSubscribedByServiceReadModel eventsSubscribedByService,
+            IStatusReadmodelRepository statusRepository,
             IRemoteSubscriptionRepository remoteSubscriptionRepository,
             ISubscriptionRepository subscriptionRepository)
         {
@@ -31,7 +31,7 @@ namespace Microwave.Discovery.Subscriptions
                 var microwaveServiceNode = eventLocation.GetServiceForEvent(subscribedEvent.Name);
                 if (microwaveServiceNode == null) continue;
                 await _remoteSubscriptionRepository.SubscribeForEvent(
-                    new Subscription(subscribedEvent.Name, microwaveServiceNode.ServiceEndPoint.ServiceBaseAddress));
+                    new Subscription(subscribedEvent.Name, microwaveServiceNode.ServiceBaseAddress));
             }
         }
 
@@ -58,14 +58,43 @@ namespace Microwave.Discovery.Subscriptions
             return _subscriptionRepository.LoadSubscriptionsAsync();
         }
 
-        public Task StoreNewRemoteVersion(StoreNewVersionCommand newVersionNewVersion)
+        public Task StoreNewRemoteVersion(StoreNewVersionCommand command)
         {
-            throw new System.NotImplementedException();
+            return _subscriptionRepository.SaveRemoteVersionAsync(new RemoteVersion(command.EventType, command.NewVersion));
         }
 
-        public Task StoreNewRemoteOverallVersion(StoreNewOverallVersionCommand commandNewVersion)
+        public Task StoreNewRemoteOverallVersion(StoreNewOverallVersionCommand command)
         {
-            throw new System.NotImplementedException();
+            return _subscriptionRepository.SaveRemoteOverallVersionAsync(
+                new OverallVersion(command.ServiceUri, command.NewVersion));
         }
+    }
+
+    public class EventsSubscribedByServiceReadModel
+    {
+        public IEnumerable<EventReadModel> Events { get; set; }
+    }
+
+    public class EventReadModel
+    {
+        public string Name { get; set; }
+    }
+
+    public interface IStatusReadmodelRepository
+    {
+        Task<EventLocationReadModel> GetEventLocation();
+    }
+
+    public class EventLocationReadModel
+    {
+        public ServiceNodeReadModel GetServiceForEvent(string name)
+        {
+            return null;
+        }
+    }
+
+    public class ServiceNodeReadModel
+    {
+        public Uri ServiceBaseAddress { get; set; }
     }
 }

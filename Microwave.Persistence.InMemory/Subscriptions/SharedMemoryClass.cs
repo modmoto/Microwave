@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Concurrent;
 using System.Threading.Tasks;
-using Microwave.Discovery.Subscriptions;
+using Microwave.Subscriptions;
 
-namespace Microwave.Persistence.InMemory.Querries
+namespace Microwave.Persistence.InMemory.Subscriptions
 {
     public class SharedMemoryClass
     {

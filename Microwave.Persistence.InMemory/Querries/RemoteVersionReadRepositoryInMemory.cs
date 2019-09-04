@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using Microwave.Persistence.InMemory.Subscriptions;
 using Microwave.Queries.Ports;
 
 namespace Microwave.Persistence.InMemory.Querries

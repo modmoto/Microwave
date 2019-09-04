@@ -1,7 +1,6 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microwave.Discovery.Subscriptions;
+using Microwave.Subscriptions;
 
 namespace Microwave.WebApi.Discovery
 {

@@ -1,6 +1,6 @@
 using System;
 
-namespace Microwave.Discovery.Subscriptions
+namespace Microwave.Subscriptions
 {
     public class Subscription
     {

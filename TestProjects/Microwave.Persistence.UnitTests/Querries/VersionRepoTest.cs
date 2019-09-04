@@ -1,11 +1,12 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microwave.Discovery.Subscriptions;
 using Microwave.Persistence.InMemory.Querries;
+using Microwave.Persistence.InMemory.Subscriptions;
 using Microwave.Persistence.UnitTestsSetup;
 using Microwave.Persistence.UnitTestsSetup.InMemory;
 using Microwave.Queries.Ports;
+using Microwave.Subscriptions;
 
 namespace Microwave.Persistence.UnitTests.Querries
 {
@@ -50,8 +51,8 @@ namespace Microwave.Persistence.UnitTests.Querries
             }
 
             var dateTimeOffset = DateTimeOffset.Now;
-            await versionRepository.SaveVersionAsync(new RemoteVersion("Type", dateTimeOffset));
-            await versionRepository.SaveVersionAsync(new RemoteVersion("Type", dateTimeOffset));
+            await versionRepository.SaveRemoteVersionAsync(new RemoteVersion("Type", dateTimeOffset));
+            await versionRepository.SaveRemoteVersionAsync(new RemoteVersion("Type", dateTimeOffset));
 
             var count = await remoteRepo.GetVersionAsync("Type");
             Assert.AreEqual(dateTimeOffset, count);
