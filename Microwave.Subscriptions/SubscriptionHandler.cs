@@ -49,11 +49,12 @@ namespace Microwave.Subscriptions
             var subscriptions = await _subscriptionRepository.LoadSubscriptionsAsync();
             foreach (var subscription in subscriptions)
             {
-                var newVersion = await _remoteVersionRepository.GetCurrentVersion(subscription);
+                var newVersion = await _remoteVersionRepository.GetSubscriptionState(subscription);
+                if (!newVersion.NeedsPush) continue;
                 await _remoteSubscriptionRepository.PushChangesForType(
                     subscription.SubscriberUrl,
                     subscription.SubscribedEvent,
-                    newVersion);
+                    newVersion.NewVersion);
             }
         }
 

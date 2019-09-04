@@ -10,7 +10,7 @@ using Microwave.WebApi.Queries;
 
 namespace Microwave
 {
-    public class AsyncEventDelegator
+    public class AsyncCallCoordinator
     {
         private readonly IEnumerable<IAsyncEventHandler> _asyncEventHandlers;
         private readonly IEnumerable<IQueryEventHandler> _queryHandlers;
@@ -19,7 +19,7 @@ namespace Microwave
         private readonly IDiscoveryHandler _discoveryHandler;
         private readonly ISubscriptionHandler _subscriptionHandler;
 
-        public AsyncEventDelegator(
+        public AsyncCallCoordinator(
             IEnumerable<IAsyncEventHandler> asyncEventHandlers,
             IEnumerable<IQueryEventHandler> queryHandlers,
             IEnumerable<IReadModelEventHandler> readModelHandlers,
@@ -114,6 +114,15 @@ namespace Microwave
                 _discoveryHandler.DiscoverConsumingServices().Wait();
                 await _subscriptionHandler.SubscribeOnDiscoveredServices();
                 await Task.Delay(60000);
+            }
+        }
+
+        public async Task StartPushingChangesToSubscribedServices()
+        {
+            while (true)
+            {
+                await _subscriptionHandler.PushNewChanges();
+                await Task.Delay(1000);
             }
         }
     }

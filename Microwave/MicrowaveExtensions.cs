@@ -35,19 +35,27 @@ namespace Microwave
             var microwaveHttpContext = serviceScope.ServiceProvider.GetService<MicrowaveHttpContext>();
             microwaveHttpContext.Configure(new Uri(url));
 
-            var asyncEventDelegator = serviceScope.ServiceProvider.GetService<AsyncEventDelegator>();
+            var asyncCallCoordinator = serviceScope.ServiceProvider.GetService<AsyncCallCoordinator>();
 
             Task.Run(() =>
             {
                 Task.Delay(10000).Wait();
-                asyncEventDelegator.StartEventPolling();
+                asyncCallCoordinator.StartEventPolling();
             });
 
             Task.Run(() =>
             {
                 Task.Delay(10000).Wait();
                 #pragma warning disable 4014
-                asyncEventDelegator.StartDependencyDiscovery();
+                asyncCallCoordinator.StartDependencyDiscovery();
+                #pragma warning restore 4014
+            });
+
+            Task.Run(() =>
+            {
+                Task.Delay(10000).Wait();
+                #pragma warning disable 4014
+                asyncCallCoordinator.StartPushingChangesToSubscribedServices();
                 #pragma warning restore 4014
             });
 
@@ -116,7 +124,7 @@ namespace Microwave
 
             services.AddTransient<IEventStore, EventStore>();
 
-            services.AddTransient<AsyncEventDelegator>();
+            services.AddTransient<AsyncCallCoordinator>();
             services.AddTransient<IDomainEventFactory, DomainEventFactory>();
             services.AddTransient<IDomainEventClientFactory, DomainEventClientFactory>();
 

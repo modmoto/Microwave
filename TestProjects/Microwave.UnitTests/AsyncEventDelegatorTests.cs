@@ -16,7 +16,7 @@ namespace Microwave.UnitTests
         public void RunMockWithoutAttribute()
         {
             var mock = new Mock<IDiscoveryHandler>();
-            var asyncEventDelegator = new AsyncEventDelegator(new List<IAsyncEventHandler> {new AsyncHandlerMock()}, new
+            var asyncEventDelegator = new AsyncCallCoordinator(new List<IAsyncEventHandler> {new AsyncHandlerMock()}, new
                 List<IQueryEventHandler>(), new List<IReadModelEventHandler>(), mock.Object, null, new List<IPollingInterval>
             {
                 new PollingInterval<AsyncHandlerImplemented>(3)
@@ -29,7 +29,7 @@ namespace Microwave.UnitTests
         public void RunMockWithAttribute()
         {
             var mock = new Mock<IDiscoveryHandler>();
-            var asyncEventDelegator = new AsyncEventDelegator(
+            var asyncEventDelegator = new AsyncCallCoordinator(
                 new List<IAsyncEventHandler>
                 {
                     new

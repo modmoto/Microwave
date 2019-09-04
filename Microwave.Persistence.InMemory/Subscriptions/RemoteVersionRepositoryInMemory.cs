@@ -18,9 +18,10 @@ namespace Microwave.Persistence.InMemory.Subscriptions
         }
 
 
-        public Task<DateTimeOffset> GetCurrentVersion(Subscription subscription)
+        public async Task<SubscriptionState> GetSubscriptionState(Subscription subscription)
         {
-            return _versionRepository.GetVersionAsync(subscription.SubscribedEvent);
+            var currentVersion = await _versionRepository.GetVersionAsync(subscription.SubscribedEvent);
+            return new SubscriptionState(currentVersion, default(DateTimeOffset));
         }
 
         public Task SaveRemoteVersionAsync(RemoteVersion version)

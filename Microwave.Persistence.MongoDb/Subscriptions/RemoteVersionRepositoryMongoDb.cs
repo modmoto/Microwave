@@ -21,9 +21,10 @@ namespace Microwave.Persistence.MongoDb.Subscriptions
             _dataBase = eventMongoDb.Database;
         }
 
-        public Task<DateTimeOffset> GetCurrentVersion(Subscription subscription)
+        public async Task<SubscriptionState> GetSubscriptionState(Subscription subscription)
         {
-            return _versionRepository.GetVersionAsync(subscription.SubscribedEvent);
+            var subscriptionState = await _versionRepository.GetVersionAsync(subscription.SubscribedEvent);
+            return new SubscriptionState(subscriptionState, default(DateTimeOffset));
         }
 
         public async Task SaveRemoteVersionAsync(RemoteVersion version)

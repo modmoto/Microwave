@@ -9,7 +9,7 @@ using Microwave.Persistence.UnitTestsSetup.InMemory;
 using Microwave.Queries.Ports;
 using Microwave.Subscriptions;
 
-namespace Microwave.Persistence.UnitTests.Querries
+namespace Microwave.Persistence.UnitTests.Subscriptions
 {
     [TestClass]
     public class SubscriptionVersionRepoTests
@@ -30,9 +30,9 @@ namespace Microwave.Persistence.UnitTests.Querries
 
             await versionRepository.SaveVersionAsync(new LastProcessedVersion("TestEv", DateTimeOffset.Now));
             var subscription = new Subscription("TestEv", new Uri("http://123.de"));
-            var currentVersion = await subscriptionRepository.GetCurrentVersion(subscription);
+            var currentVersion = await subscriptionRepository.GetSubscriptionState(subscription);
 
-            Assert.AreEqual(DateTimeOffset.Now.Day, currentVersion.Day);
+            Assert.AreEqual(DateTimeOffset.Now.Day, currentVersion.NewVersion.Day);
         }
 
         [TestMethod]
