@@ -6,10 +6,10 @@ namespace Microwave.Subscriptions
     {
         private readonly DateTimeOffset _oldVersion;
 
-        public SubscriptionState(DateTimeOffset newVersion, DateTimeOffset OldVersion)
+        public SubscriptionState(DateTimeOffset newVersion, DateTimeOffset oldVersion)
         {
             NewVersion = newVersion;
-            _oldVersion = OldVersion;
+            _oldVersion = oldVersion;
         }
 
         public bool NeedsPush => NewVersion > _oldVersion;
