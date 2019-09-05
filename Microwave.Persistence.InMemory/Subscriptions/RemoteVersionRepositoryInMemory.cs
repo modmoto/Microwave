@@ -46,7 +46,7 @@ namespace Microwave.Persistence.InMemory.Subscriptions
             throw new NotImplementedException();
         }
 
-        public Task SaveCurrentVersionAsLastVersion(string eventType, DateTimeOffset newVersion)
+        public Task SaveLastVersion(RemoteVersion version)
         {
             throw new NotImplementedException();
         }

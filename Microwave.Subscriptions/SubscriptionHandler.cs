@@ -82,7 +82,8 @@ namespace Microwave.Subscriptions
                 var newVersion = await _remoteVersionRepository.GetCurrentVersionOfEventType(subscription);
                 var oldVersion = await _remoteVersionRepository.GetLastVersionOfEventType(subscription);
                 if (oldVersion == newVersion) continue;
-                await _remoteVersionRepository.SaveCurrentVersionAsLastVersion(subscription.SubscribedEvent, newVersion);
+                await _remoteVersionRepository.SaveLastVersion(
+                    new RemoteVersion(subscription.SubscribedEvent, newVersion));
             }
         }
     }

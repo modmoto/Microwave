@@ -38,18 +38,18 @@ namespace Microwave.Persistence.MongoDb.Subscriptions
             return currentVersion;
         }
 
-        public async Task SaveCurrentVersionAsLastVersion(string eventType, DateTimeOffset newVersion)
+        public async Task SaveLastVersion(RemoteVersion version)
         {
-            var mongoCollection = _dataBase.GetCollection<LastProcessedVersionDbo>(_lastProcessedRemoteVersions);
+            var mongoCollection = _dataBase.GetCollection<LastProcessedVersionDbo>(_lastProcessedVersionsOld);
 
             var findOneAndReplaceOptions = new FindOneAndReplaceOptions<LastProcessedVersionDbo> { IsUpsert = true };
 
             await mongoCollection.FindOneAndReplaceAsync(
-                (Expression<Func<LastProcessedVersionDbo, bool>>) (e => e.EventType == eventType),
+                (Expression<Func<LastProcessedVersionDbo, bool>>) (e => e.EventType == version.EventType),
                 new LastProcessedVersionDbo
                 {
-                    EventType = eventType,
-                    LastVersion = newVersion
+                    EventType = version.EventType,
+                    LastVersion = version.LastVersion
                 }, findOneAndReplaceOptions);
         }
 

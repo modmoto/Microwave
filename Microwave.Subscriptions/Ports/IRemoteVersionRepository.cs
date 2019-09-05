@@ -10,6 +10,6 @@ namespace Microwave.Subscriptions.Ports
         Task SaveRemoteOverallVersionAsync(OverallVersion overallVersion);
         Task<DateTimeOffset> GetLastVersionOfEventType(Subscription subscription);
         Task<DateTimeOffset> GetCurrentVersionOfEventType(Subscription subscription);
-        Task SaveCurrentVersionAsLastVersion(string eventType, DateTimeOffset newVersion);
+        Task SaveLastVersion(RemoteVersion version);
     }
 }
