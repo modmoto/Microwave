@@ -39,7 +39,7 @@ namespace Microwave.Persistence.UnitTestsSetup.MongoDb
             new SubscriptionRepositoryMongoDb(EventMongoDb);
 
         public override IRemoteVersionRepository RemoteVersionRepository =>
-            new RemoteVersionRepositoryMongoDb(VersionRepository, EventMongoDb);
+            new RemoteVersionRepositoryMongoDb(EventMongoDb);
     }
 
     public class CacheThatNeverHasAnything : IEventLocationCache

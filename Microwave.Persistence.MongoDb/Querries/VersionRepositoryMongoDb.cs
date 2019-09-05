@@ -21,7 +21,7 @@ namespace Microwave.Persistence.MongoDb.Querries
             var mongoCollection = _dataBase.GetCollection<LastProcessedVersionDbo>(_lastProcessedVersions);
             var lastProcessedVersion =
                 (await mongoCollection.FindAsync(version => version.EventType == domainEventType)).FirstOrDefault();
-            var ret = lastProcessedVersion == null ? DateTimeOffset.MinValue : lastProcessedVersion.LastVersion;
+            var ret = lastProcessedVersion?.LastVersion ?? DateTimeOffset.MinValue;
             return ret;
         }
 
@@ -29,8 +29,7 @@ namespace Microwave.Persistence.MongoDb.Querries
         {
             var mongoCollection = _dataBase.GetCollection<LastProcessedVersionDbo>(_lastProcessedVersions);
 
-            var findOneAndReplaceOptions = new FindOneAndReplaceOptions<LastProcessedVersionDbo>();
-            findOneAndReplaceOptions.IsUpsert = true;
+            var findOneAndReplaceOptions = new FindOneAndReplaceOptions<LastProcessedVersionDbo> { IsUpsert = true };
 
             await mongoCollection.FindOneAndReplaceAsync(
                 (Expression<Func<LastProcessedVersionDbo, bool>>) (e => e.EventType == version.EventType),
