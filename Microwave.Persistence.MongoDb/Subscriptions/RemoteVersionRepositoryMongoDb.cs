@@ -32,8 +32,7 @@ namespace Microwave.Persistence.MongoDb.Subscriptions
         {
             var mongoCollection = _dataBase.GetCollection<LastProcessedVersionDbo>(_lastProcessedRemoteVersions);
 
-            var findOneAndReplaceOptions = new FindOneAndReplaceOptions<LastProcessedVersionDbo>();
-            findOneAndReplaceOptions.IsUpsert = true;
+            var findOneAndReplaceOptions = new FindOneAndReplaceOptions<LastProcessedVersionDbo> { IsUpsert = true };
 
             await mongoCollection.FindOneAndReplaceAsync(
                 (Expression<Func<LastProcessedVersionDbo, bool>>) (e => e.EventType == version.EventType),
