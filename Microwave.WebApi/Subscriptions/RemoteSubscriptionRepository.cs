@@ -4,9 +4,10 @@ using System.Text;
 using System.Threading.Tasks;
 using Microwave.Subscriptions;
 using Microwave.Subscriptions.Ports;
+using Microwave.WebApi.Discovery;
 using Newtonsoft.Json;
 
-namespace Microwave.WebApi.Discovery
+namespace Microwave.WebApi.Subscriptions
 {
     public class RemoteSubscriptionRepository : IRemoteSubscriptionRepository
     {

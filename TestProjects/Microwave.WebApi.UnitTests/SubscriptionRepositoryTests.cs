@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Subscriptions;
 using Microwave.WebApi.Discovery;
+using Microwave.WebApi.Subscriptions;
 using Moq;
 using RichardSzalay.MockHttp;
 

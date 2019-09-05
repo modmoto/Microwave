@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microwave.Subscriptions;
 
-namespace Microwave.WebApi.Discovery
+namespace Microwave.WebApi.Subscriptions
 {
     [Route("Subscriptions")]
     public class SubscriptionController : Controller

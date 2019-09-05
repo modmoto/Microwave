@@ -23,6 +23,7 @@ using Microwave.WebApi.ApiFormatting.Identities;
 using Microwave.WebApi.Discovery;
 using Microwave.WebApi.Filters;
 using Microwave.WebApi.Queries;
+using Microwave.WebApi.Subscriptions;
 
 namespace Microwave
 {
