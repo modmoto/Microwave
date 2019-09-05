@@ -12,6 +12,7 @@ namespace Microwave.Subscriptions
         Task<IEnumerable<Subscription>> GetSubscriptions();
         Task StoreNewRemoteVersion(StoreNewVersionCommand command);
         Task StoreNewRemoteOverallVersion(StoreNewOverallVersionCommand commandNewVersion);
+        Task UpdateVersionStates();
     }
 
     public class StoreNewOverallVersionCommand

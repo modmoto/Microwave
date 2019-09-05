@@ -35,5 +35,20 @@ namespace Microwave.Persistence.InMemory.Subscriptions
         {
             throw new NotImplementedException();
         }
+
+        public Task<DateTimeOffset> GetLastVersionOfEventType(Subscription subscription)
+        {
+            return _versionRepository.GetVersionAsync(subscription.SubscribedEvent);
+        }
+
+        public Task<DateTimeOffset> GetCurrentVersionOfEventType(Subscription subscription)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task SaveCurrentVersionAsLastVersion(string eventType, DateTimeOffset newVersion)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
