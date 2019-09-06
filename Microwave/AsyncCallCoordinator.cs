@@ -121,7 +121,6 @@ namespace Microwave
         {
             while (true)
             {
-                _subscriptionHandler.UpdateVersionStates().Wait();
                 await _subscriptionHandler.PushNewChanges();
                 await Task.Delay(1000);
             }

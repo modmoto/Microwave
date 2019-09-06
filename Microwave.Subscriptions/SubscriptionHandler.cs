@@ -51,10 +51,14 @@ namespace Microwave.Subscriptions
             {
                 var newVersion = await _remoteVersionRepository.GetSubscriptionState(subscription);
                 if (!newVersion.NeedsPush) continue;
-                await _remoteSubscriptionRepository.PushChangesForType(
+                var result = await _remoteSubscriptionRepository.PushChangesForType(
                     subscription.SubscriberUrl,
                     subscription.SubscribedEvent,
                     newVersion.NewVersion);
+                if (result)
+                {
+                    // new version speichern
+                }
             }
         }
 
@@ -72,19 +76,6 @@ namespace Microwave.Subscriptions
         {
             return _remoteVersionRepository.SaveRemoteOverallVersionAsync(
                 new OverallVersion(command.ServiceUri, command.NewVersion));
-        }
-
-        public async Task UpdateVersionStates()
-        {
-            var subscriptions = await _subscriptionRepository.LoadSubscriptionsAsync();
-            foreach (var subscription in subscriptions)
-            {
-                var newVersion = await _remoteVersionRepository.GetCurrentVersionOfEventType(subscription);
-                var oldVersion = await _remoteVersionRepository.GetLastVersionOfEventType(subscription);
-                if (oldVersion == newVersion) continue;
-                await _remoteVersionRepository.SaveLastVersion(
-                    new RemoteVersion(subscription.SubscribedEvent, newVersion));
-            }
         }
     }
 }

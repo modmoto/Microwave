@@ -35,14 +35,15 @@ namespace Microwave.WebApi.Subscriptions
             await httpClient.SendAsync(httpRequestMessage);
         }
 
-        public async Task PushChangesForType(Uri remoteService, string eventType, DateTimeOffset newVersion)
+        public async Task<bool> PushChangesForType(Uri remoteService, string eventType, DateTimeOffset newVersion)
         {
             var httpClient = await _httpClientFactory.CreateHttpClient(remoteService);
             var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, $"Subscriptions/Subscriptions/{eventType}");
             string serialized = JsonConvert.SerializeObject(new { newVersion });
             httpRequestMessage.Content = new StringContent(serialized, Encoding.UTF8, "application/json");
             httpClient.BaseAddress = remoteService;
-            await httpClient.SendAsync(httpRequestMessage);
+            var result = await httpClient.SendAsync(httpRequestMessage);
+            return result.IsSuccessStatusCode;
         }
 
         public async Task PushChangesForAll(Uri remoteService, DateTimeOffset newVersion)
