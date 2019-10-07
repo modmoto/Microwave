@@ -25,7 +25,7 @@ namespace Microwave.Persistence.CosmosDb.UnitTests
         public Uri CosmosDbLocation => new Uri("https://spoppinga.documents.azure.com:443/");
 
         [TestInitialize]
-        public void SetupMongoDb()
+        public void SetupCosmosDb()
         {
             Database = new CosmosDb
             {
