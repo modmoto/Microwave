@@ -10,6 +10,7 @@ namespace Microwave.Discovery
     {
         private readonly ServiceBaseAddressCollection _serviceBaseAddressCollection;
         private readonly EventsSubscribedByService _eventsSubscribedByService;
+        private readonly EventsPublishedByService _eventsPublishedByService;
         private readonly IServiceDiscoveryRepository _discoveryRepository;
         private readonly IStatusRepository _statusRepository;
         private readonly DiscoveryConfiguration _configuration;
@@ -17,12 +18,14 @@ namespace Microwave.Discovery
         public DiscoveryHandler(
             ServiceBaseAddressCollection serviceBaseAddressCollection,
             EventsSubscribedByService eventsSubscribedByService,
+            EventsPublishedByService eventsPublishedByService,
             IServiceDiscoveryRepository discoveryRepository,
             IStatusRepository statusRepository,
             DiscoveryConfiguration configuration)
         {
             _serviceBaseAddressCollection = serviceBaseAddressCollection;
             _eventsSubscribedByService = eventsSubscribedByService;
+            _eventsPublishedByService = eventsPublishedByService;
             _discoveryRepository = discoveryRepository;
             _statusRepository = statusRepository;
             _configuration = configuration;
@@ -74,6 +77,11 @@ namespace Microwave.Discovery
             var eventLocation = await _statusRepository.GetEventLocation();
             return MicrowaveServiceNode.ReachableMicrowaveServiceNode(new ServiceEndPoint(null, _configuration.ServiceName),
                 eventLocation.Services.Select(s => s.ServiceEndPoint));
+        }
+
+        public Task<EventsPublishedByService> GetPublishedEvents()
+        {
+            return Task.FromResult(_eventsPublishedByService);
         }
     }
 }

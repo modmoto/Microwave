@@ -28,7 +28,6 @@ namespace ReadService1
         }
     }
 
-    [UpdateEvery(10)]
     public class Handler2 :
         IHandleAsync<Event2>
     {
@@ -49,11 +48,8 @@ namespace ReadService1
         public Identity EntityId { get; }
     }
 
-    [UpdateEvery(25)]
-    public class ReadModel1 : ReadModel, IHandle<Event2>, IHandle<Event4>
+    public class ReadModel1 : ReadModel<Event2>, IHandle<Event2>, IHandle<Event4>
     {
-        public override Type GetsCreatedOn => typeof(Event2);
-
         public void Handle(Event2 domainEvent)
         {
             Console.WriteLine($"{DateTime.UtcNow.Second} jeah 25 secs");
@@ -64,19 +60,18 @@ namespace ReadService1
         }
     }
 
-    [UpdateEvery(5)]
     public class Querry1 : Query, IHandle<Event2>
     {
         public void Handle(Event2 domainEvent)
         {
-            Console.WriteLine($"{DateTime.UtcNow.Second} Calling Querry 5 secs");
+            Counter += 1;
         }
+
+        public int Counter { get; set; }
     }
 
-    public class ReadModelNotPublished : ReadModel, IHandle<EventNotPublished>
+    public class ReadModelNotPublished : ReadModel<EventNotPublished>, IHandle<EventNotPublished>
     {
-        public override Type GetsCreatedOn => typeof(EventNotPublished);
-
         public void Handle(EventNotPublished domainEvent)
         {
         }

@@ -5,8 +5,9 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Discovery.EventLocations;
+using Microwave.Discovery.ServiceMaps;
 using Microwave.Persistence.MongoDb.Querries;
-using Microwave.Persistence.MongoDb.UnitTestsSetup;
+using Microwave.Persistence.UnitTestsSetup.MongoDb;
 using Microwave.WebApi;
 using Microwave.WebApi.Discovery;
 
@@ -18,14 +19,15 @@ namespace Microwave.Discovery.UnitTests
         [TestMethod]
         public async Task GetConsumingServices()
         {
-            var statusRepository = new StatusRepository(EventMongoDb, new EventLocationCache());
+            var statusRepository = new StatusRepositoryMongoDb(EventMongoDb, new EventLocationCache());
             await statusRepository.SaveEventLocation(new EventLocation(new List<EventsPublishedByService>(), new EventsSubscribedByService(new List<EventSchema>(), new List<ReadModelSubscription>())
         ));
 
         var discoveryHandler = new DiscoveryHandler(
                 new ServiceBaseAddressCollection(),
                 new EventsSubscribedByService(new List<EventSchema>(), new List<ReadModelSubscription>()),
-                new DiscoveryRepository(new DiscoveryClientFactory(new MyMicrowaveHttpClientCreator())),
+                null,
+                new DiscoveryRepository(new DiscoveryClientFactory(new MyMicrowaveHttpClientFactory())),
                 statusRepository,
                 new DiscoveryConfiguration());
 
@@ -37,12 +39,13 @@ namespace Microwave.Discovery.UnitTests
         [TestMethod]
         public async Task GetConsumingServices_Null()
         {
-            var statusRepository = new StatusRepository(EventMongoDb, new EventLocationCache());
+            var statusRepository = new StatusRepositoryMongoDb(EventMongoDb, new EventLocationCache());
 
             var discoveryHandler = new DiscoveryHandler(
                 new ServiceBaseAddressCollection(),
                 new EventsSubscribedByService(new List<EventSchema>(), new List<ReadModelSubscription>()),
-                new DiscoveryRepository(new DiscoveryClientFactory(new MyMicrowaveHttpClientCreator())),
+                null,
+                new DiscoveryRepository(new DiscoveryClientFactory(new MyMicrowaveHttpClientFactory())),
                 statusRepository,
                 new DiscoveryConfiguration());
 
@@ -50,9 +53,27 @@ namespace Microwave.Discovery.UnitTests
 
             Assert.IsNotNull(consumingServices);
         }
+
+        [TestMethod]
+        public async Task GetPublishedEvents()
+        {
+            var discoveryHandler = new DiscoveryHandler(
+                null,
+                null,
+                EventsPublishedByService.Reachable(
+                    new ServiceEndPoint(null),
+                    new List<EventSchema>()),
+                null,
+                null,
+                null);
+
+            var events = await discoveryHandler.GetPublishedEvents();
+
+            Assert.IsNotNull(events);
+        }
     }
 
-    public class MyMicrowaveHttpClientCreator : IMicrowaveHttpClientCreator
+    public class MyMicrowaveHttpClientFactory : IMicrowaveHttpClientFactory
     {
         public Task<HttpClient> CreateHttpClient(Uri serviceAdress)
         {

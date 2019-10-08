@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Discovery.EventLocations;
 using Microwave.Discovery.ServiceMaps;
-using Microwave.Persistence.UnitTestSetupPorts;
+using Microwave.Persistence.UnitTestsSetup;
 
 namespace Microwave.Persistence.UnitTests.Querries
 {
@@ -14,7 +14,7 @@ namespace Microwave.Persistence.UnitTests.Querries
     {
         [DataTestMethod]
         [PersistenceTypeTest]
-        public async Task StatusLoadAndSafe_HappyPath(IPersistenceLayerProvider layerProvider)
+        public async Task StatusLoadAndSafe_HappyPath(PersistenceLayerProvider layerProvider)
         {
             var statusRepository = layerProvider.StatusRepository;
 
@@ -49,7 +49,7 @@ namespace Microwave.Persistence.UnitTests.Querries
 
         [DataTestMethod]
         [PersistenceTypeTest]
-        public async Task StatusLoadAndSafe_NoSaveBeforeGet(IPersistenceLayerProvider layerProvider)
+        public async Task StatusLoadAndSafe_NoSaveBeforeGet(PersistenceLayerProvider layerProvider)
         {
             var statusRepository = layerProvider.StatusRepository;
 
@@ -60,7 +60,7 @@ namespace Microwave.Persistence.UnitTests.Querries
 
         [DataTestMethod]
         [PersistenceTypeTest]
-        public async Task StatusLoadAndSafe_OneUnresolvedEvent(IPersistenceLayerProvider layerProvider)
+        public async Task StatusLoadAndSafe_OneUnresolvedEvent(PersistenceLayerProvider layerProvider)
         {
             var statusRepository = layerProvider.StatusRepository;
 
@@ -89,7 +89,7 @@ namespace Microwave.Persistence.UnitTests.Querries
 
         [DataTestMethod]
         [PersistenceTypeTest]
-        public async Task StatusLoadAndSafe_OneUnresolvedReadModel(IPersistenceLayerProvider layerProvider)
+        public async Task StatusLoadAndSafe_OneUnresolvedReadModel(PersistenceLayerProvider layerProvider)
         {
             var statusRepository = layerProvider.StatusRepository;
 
@@ -121,7 +121,7 @@ namespace Microwave.Persistence.UnitTests.Querries
 
         [DataTestMethod]
         [PersistenceTypeTest]
-        public async Task SaveAndLoadServiceMap(IPersistenceLayerProvider layerProvider)
+        public async Task SaveAndLoadServiceMap(PersistenceLayerProvider layerProvider)
         {
             var statusRepository = layerProvider.StatusRepository;
 

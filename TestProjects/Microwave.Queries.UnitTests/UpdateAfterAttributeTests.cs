@@ -1,6 +1,7 @@
 using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Queries.Exceptions;
+using Microwave.Queries.Polling;
 
 namespace Microwave.Queries.UnitTests
 {
@@ -10,7 +11,7 @@ namespace Microwave.Queries.UnitTests
         [TestMethod]
         public void Constructor()
         {
-            var attribute = new UpdateEveryAttribute("* * * * *");
+            var attribute = new PollingInterval<FakeThing>("* * * * *");
             var attributeNext = attribute.Next;
 
             Assert.AreEqual(attributeNext.Minute, DateTime.UtcNow.AddMinutes(1).Minute);
@@ -19,7 +20,7 @@ namespace Microwave.Queries.UnitTests
         [TestMethod]
         public void ConstructorSeconds()
         {
-            var attribute = new UpdateEveryAttribute(20);
+            var attribute = new PollingInterval<FakeThing>(20);
             var attributeNext = attribute.Next;
 
             Assert.IsTrue(attributeNext.Second % 20 == 0);
@@ -28,7 +29,7 @@ namespace Microwave.Queries.UnitTests
         [TestMethod]
         public void ConstructorSeconds_1()
         {
-            var attribute = new UpdateEveryAttribute(1);
+            var attribute = new PollingInterval<FakeThing>(1);
             var attributeNext = attribute.Next;
 
             Assert.IsTrue(attributeNext.Second % 1 == 0);
@@ -37,7 +38,7 @@ namespace Microwave.Queries.UnitTests
         [TestMethod]
         public void ConstructorSeconds_0()
         {
-            Assert.ThrowsException<InvalidTimeNotationException>(() => new UpdateEveryAttribute(0));
+            Assert.ThrowsException<InvalidTimeNotationException>(() => new PollingInterval<FakeThing>(0));
         }
 
         [TestMethod]
@@ -49,10 +50,14 @@ namespace Microwave.Queries.UnitTests
         [DataRow(5, 3, 5, 0)]
         public void AttributeCombinationTests(int secondsInput, int secondsForTest, int secondsOutput, int minuteOffset)
         {
-            var updateEveryAttribute = new UpdateEveryAttribute(secondsInput, secondsForTest);
+            var updateEveryAttribute = new PollingInterval<FakeThing>(secondsInput, secondsForTest);
             var dateTime = updateEveryAttribute.Next;
             Assert.AreEqual(dateTime.Second, secondsOutput);
             Assert.AreEqual(dateTime.Minute, minuteOffset);
         }
+    }
+
+    public class FakeThing
+    {
     }
 }

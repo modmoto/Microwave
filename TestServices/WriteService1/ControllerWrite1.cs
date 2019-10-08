@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microwave.Domain.Identities;
 using Microwave.Domain.Results;
 using Microwave.EventStores;
-using Microwave.EventStores.Ports;
 
 namespace WriteService1
 {
@@ -30,6 +29,18 @@ namespace WriteService1
             {
                 (await _eventStore.AppendAsync(new Event2(_entityId, "jeah"), appendAsync.Version)).Check();
             }
+            return Ok();
+        }
+
+        [HttpPost("{guidId}")]
+        public ActionResult WriteEvent(GuidIdentity guidId)
+        {
+            return Ok();
+        }
+
+        [HttpPost("{guidId}/tests")]
+        public ActionResult WriteEventSecond(GuidIdentity guidId)
+        {
             return Ok();
         }
     }

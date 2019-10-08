@@ -43,6 +43,14 @@ namespace Microwave.Domain.UnitTests
             testUser.Apply(new [] { new TestUserCreatedEvent(GuidIdentity.Create(Guid.NewGuid())) } );
             Assert.AreEqual(Guid.Empty, ((TestUserWithNoApplyMethod)testUser).Id);
         }
+
+        [TestMethod]
+        public void ApplyGenericMethod_PrivateApplyWithoutInterface()
+        {
+            var testUser = (Entity) new TestUser_PrivateApply();
+            testUser.Apply(new [] { new TestUserCreatedEvent(GuidIdentity.Create(Guid.NewGuid())) } );
+            Assert.AreEqual(null, ((TestUser_PrivateApply)testUser).Id);
+        }
     }
 
     public class TestUser_PrivateApply : Entity
@@ -70,7 +78,7 @@ namespace Microwave.Domain.UnitTests
         public Identity Id { get; set; }
     }
 
-    internal class TestUserWithNoApplyMethod : Entity
+    public class TestUserWithNoApplyMethod : Entity
     {
         public void Apply()
         {
@@ -99,7 +107,7 @@ namespace Microwave.Domain.UnitTests
         public Identity EntityId { get; }
     }
 
-    internal class TestUser : Entity
+    public class TestUser : Entity
     {
         public void Apply(TestUserCreatedEvent domainEvent)
         {
@@ -109,7 +117,7 @@ namespace Microwave.Domain.UnitTests
         public Identity Id { get; set; }
     }
 
-    internal class TestUserNormal : Entity, IApply<TestUserCreatedEvent>
+    public class TestUserNormal : Entity, IApply<TestUserCreatedEvent>
     {
         public void Apply(TestUserCreatedEvent domainEvent)
         {

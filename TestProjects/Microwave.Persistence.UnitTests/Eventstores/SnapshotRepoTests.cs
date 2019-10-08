@@ -4,9 +4,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Domain.EventSourcing;
+using Microwave.Domain.Exceptions;
 using Microwave.Domain.Identities;
+using Microwave.Domain.Results;
 using Microwave.EventStores.Ports;
-using Microwave.Persistence.UnitTestSetupPorts;
+using Microwave.Persistence.UnitTestsSetup;
 
 namespace Microwave.Persistence.UnitTests.Eventstores
 {
@@ -15,7 +17,7 @@ namespace Microwave.Persistence.UnitTests.Eventstores
     {
         [DataTestMethod]
         [PersistenceTypeTest]
-        public async Task LoadAndSaveSnapshotWithGuidList(IPersistenceLayerProvider layerProvider)
+        public async Task LoadAndSaveSnapshotWithGuidList(PersistenceLayerProvider layerProvider)
         {
             var repo = layerProvider.SnapShotRepository;
             var userSnapshot = new UserSnapshot();
@@ -30,15 +32,25 @@ namespace Microwave.Persistence.UnitTests.Eventstores
             await repo.SaveSnapShot(new SnapShotWrapper<UserSnapshot>(userSnapshot, entityId, 0));
             var snapShotResult = await repo.LoadSnapShot<UserSnapshot>(entityId);
 
-            var entityGuids = snapShotResult.Entity.Guids.ToList();
-            Assert.AreEqual(entityId.Id, snapShotResult.Entity.Id.Id);
+            var entityGuids = snapShotResult.Value.Guids.ToList();
+            Assert.AreEqual(entityId.Id, snapShotResult.Value.Id.Id);
             Assert.AreEqual(2, entityGuids.Count);
             Assert.AreEqual(newGuid, entityGuids[0]);
             Assert.AreEqual(newGuid, entityGuids[1]);
         }
+
+        [DataTestMethod]
+        [PersistenceTypeTest]
+        public async Task LoadWithNull(PersistenceLayerProvider layerProvider)
+        {
+            var repo = layerProvider.SnapShotRepository;
+            var snapShotResult = await repo.LoadSnapShot<UserSnapshotWithoutPrivateSetters>(null);
+
+            Assert.IsTrue(snapShotResult.Is<NotFound>());
+            Assert.ThrowsException<NotFoundException>(() => snapShotResult.Value);
+        }
     }
 
-    [SnapShotAfter(3)]
     public class UserSnapshot : Entity
     {
         public Identity Id { get; private set; }
@@ -54,5 +66,22 @@ namespace Microwave.Persistence.UnitTests.Eventstores
         {
             Id = guid;
         }
+    }
+
+    public class UserSnapshotWithoutPrivateSetters : Entity
+    {
+        public UserSnapshotWithoutPrivateSetters(Identity id, IEnumerable<Guid> guids)
+        {
+            Id = id;
+            Guids = guids;
+        }
+
+        public UserSnapshotWithoutPrivateSetters()
+        {
+        }
+
+        public Identity Id { get; }
+
+        public IEnumerable<Guid> Guids { get; }
     }
 }

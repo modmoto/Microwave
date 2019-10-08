@@ -1,8 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microwave.Persistence.UnitTestSetupPorts;
-using Microwave.Queries;
+using Microwave.Persistence.UnitTestsSetup;
 using Microwave.Queries.Ports;
 
 namespace Microwave.Persistence.UnitTests.Querries
@@ -12,7 +11,7 @@ namespace Microwave.Persistence.UnitTests.Querries
     {
         [DataTestMethod]
         [PersistenceTypeTest]
-        public async Task VersionRepo_DuplicateUpdate(IPersistenceLayerProvider layerProvider)
+        public async Task VersionRepo_DuplicateUpdate(PersistenceLayerProvider layerProvider)
         {
             var versionRepository = layerProvider.VersionRepository;
 
@@ -22,6 +21,15 @@ namespace Microwave.Persistence.UnitTests.Querries
 
             var count = await versionRepository.GetVersionAsync("Type");
             Assert.AreEqual(dateTimeOffset, count);
+        }
+
+        [DataTestMethod]
+        [PersistenceTypeTest]
+        public async Task LoadWithNull(PersistenceLayerProvider layerProvider)
+        {
+            var versionRepository = layerProvider.VersionRepository;
+            var count = await versionRepository.GetVersionAsync(null);
+            Assert.AreEqual(DateTimeOffset.MinValue, count);
         }
     }
 }

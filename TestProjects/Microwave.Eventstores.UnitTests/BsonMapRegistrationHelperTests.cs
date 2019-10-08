@@ -8,7 +8,7 @@ using Microwave.Domain.Identities;
 using Microwave.EventStores;
 using Microwave.EventStores.Ports;
 using Microwave.Persistence.MongoDb.Eventstores;
-using Microwave.Persistence.MongoDb.UnitTestsSetup;
+using Microwave.Persistence.UnitTestsSetup.MongoDb;
 using Moq;
 
 namespace Microwave.Eventstores.UnitTests
@@ -21,10 +21,10 @@ namespace Microwave.Eventstores.UnitTests
         {
             BsonMapRegistrationHelpers.AddBsonMapFor<TestEvent_BsonBug>();
 
-            var eventRepository = new EventRepository(EventMongoDb, new VersionCache(EventMongoDb));
+            var eventRepository = new EventRepositoryMongoDb(EventMongoDb, new VersionCache(EventMongoDb));
             var snapShotRepo = new Mock<ISnapShotRepository>();
             snapShotRepo.Setup(re => re.LoadSnapShot<TestEntity>(It.IsAny<Identity>()))
-                .ReturnsAsync(new DefaultSnapshot<TestEntity>());
+                .ReturnsAsync(SnapShotResult<TestEntity>.Default());
 
             var eventStore = new EventStore(eventRepository, snapShotRepo.Object);
 
@@ -45,10 +45,10 @@ namespace Microwave.Eventstores.UnitTests
         {
             BsonMapRegistrationHelpers.AddBsonMapFor<TestEvent_BsonBug_AutoProperty>();
 
-            var eventRepository = new EventRepository(EventMongoDb, new VersionCache(EventMongoDb));
+            var eventRepository = new EventRepositoryMongoDb(EventMongoDb, new VersionCache(EventMongoDb));
             var snapShotRepo = new Mock<ISnapShotRepository>();
             snapShotRepo.Setup(re => re.LoadSnapShot<TestEntity>(It.IsAny<Identity>()))
-                .ReturnsAsync(new DefaultSnapshot<TestEntity>());
+                .ReturnsAsync(SnapShotResult<TestEntity>.Default());
 
             var eventStore = new EventStore(eventRepository, snapShotRepo.Object);
 
@@ -70,10 +70,10 @@ namespace Microwave.Eventstores.UnitTests
         {
             BsonMapRegistrationHelpers.AddBsonMapFor<TestEvent_UnconventionalOderring>();
 
-            var eventRepository = new EventRepository(EventMongoDb, new VersionCache(EventMongoDb));
+            var eventRepository = new EventRepositoryMongoDb(EventMongoDb, new VersionCache(EventMongoDb));
             var snapShotRepo = new Mock<ISnapShotRepository>();
             snapShotRepo.Setup(re => re.LoadSnapShot<TestEntity>(It.IsAny<Identity>()))
-                .ReturnsAsync(new DefaultSnapshot<TestEntity>());
+                .ReturnsAsync(SnapShotResult<TestEntity>.Default());
 
             var eventStore = new EventStore(eventRepository, snapShotRepo.Object);
 
@@ -92,10 +92,10 @@ namespace Microwave.Eventstores.UnitTests
         {
             BsonMapRegistrationHelpers.AddBsonMapFor<TestEvent_TwoIdentitiesInConstructor>();
 
-            var eventRepository = new EventRepository(EventMongoDb, new VersionCache(EventMongoDb));
+            var eventRepository = new EventRepositoryMongoDb(EventMongoDb, new VersionCache(EventMongoDb));
             var snapShotRepo = new Mock<ISnapShotRepository>();
             snapShotRepo.Setup(re => re.LoadSnapShot<TestEntity>(It.IsAny<Identity>()))
-                .ReturnsAsync(new DefaultSnapshot<TestEntity>());
+                .ReturnsAsync(SnapShotResult<TestEntity>.Default());
 
             var eventStore = new EventStore(eventRepository, snapShotRepo.Object);
 
@@ -117,10 +117,10 @@ namespace Microwave.Eventstores.UnitTests
         {
             BsonMapRegistrationHelpers.AddBsonMapFor<TestEvent_BsonBug_AutoProperty_NotWithEntityIdName>();
 
-            var eventRepository = new EventRepository(EventMongoDb, new VersionCache(EventMongoDb));
+            var eventRepository = new EventRepositoryMongoDb(EventMongoDb, new VersionCache(EventMongoDb));
             var snapShotRepo = new Mock<ISnapShotRepository>();
             snapShotRepo.Setup(re => re.LoadSnapShot<TestEntity>(It.IsAny<Identity>()))
-                .ReturnsAsync(new DefaultSnapshot<TestEntity>());
+                .ReturnsAsync(SnapShotResult<TestEntity>.Default());
 
             var eventStore = new EventStore(eventRepository, snapShotRepo.Object);
 

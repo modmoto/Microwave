@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Domain.Identities;
 using Microwave.Persistence.MongoDb.Querries;
-using Microwave.Persistence.MongoDb.UnitTestsSetup;
+using Microwave.Persistence.UnitTestsSetup.MongoDb;
 using Microwave.Queries.Handler;
 using Microwave.Queries.Ports;
 
@@ -26,11 +26,11 @@ namespace Microwave.Queries.UnitTests
             var handleAsync = new Handler1();
             var handleAsync2 = new Handler2();
             var eventDelegateHandler1 = new AsyncEventHandler<TestEv2>(
-                new VersionRepository(EventMongoDb),
+                new VersionRepositoryMongoDb(EventMongoDb),
                 new EventFeedMock(dateTimeOffset, domainEventWrapper), handleAsync);
 
             var eventDelegateHandler2 = new AsyncEventHandler<TestEv2>(
-                new VersionRepository(EventMongoDb),
+                new VersionRepositoryMongoDb(EventMongoDb),
                 new EventFeedMock(dateTimeOffset, domainEventWrapper), handleAsync2);
 
             await eventDelegateHandler1.Update();
@@ -53,8 +53,9 @@ namespace Microwave.Queries.UnitTests
         }
 
         #pragma warning disable 1998
-        public async Task<IEnumerable<SubscribedDomainEventWrapper>> GetEventsAsync(DateTimeOffset since = default(DateTimeOffset))
+        public async Task<IEnumerable<SubscribedDomainEventWrapper>> GetEventsAsync(DateTimeOffset since = default
         #pragma warning restore 1998
+            (DateTimeOffset))
         {
             if (since < _dateTimeOffset)
                 return new List<SubscribedDomainEventWrapper> {_domainEventWrapper};

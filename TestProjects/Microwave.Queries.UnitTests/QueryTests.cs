@@ -27,13 +27,12 @@ namespace Microwave.Queries.UnitTests
             readModelTestForQuery.Handle(new TestEv2(guidIdentity), 14);
 
             Assert.AreEqual(guidIdentity, readModelTestForQuery.EntityId);
-            Assert.AreEqual(14, readModelTestForQuery.Version);
+            Assert.AreEqual(14, readModelTestForQuery.InnerVersion);
         }
     }
 
-    internal class ReadModelTestForQuery : ReadModel, IHandle<TestEv>, IHandleVersioned<TestEv2>
+    public class ReadModelTestForQuery : ReadModel<TestEv>, IHandle<TestEv>, IHandleVersioned<TestEv2>
     {
-        public override Type GetsCreatedOn { get; }
         public void Handle(TestEv domainEvent)
         {
             EntityId = domainEvent.EntityId;
@@ -42,10 +41,10 @@ namespace Microwave.Queries.UnitTests
         public void Handle(TestEv2 domainEvent, long version)
         {
             EntityId = domainEvent.EntityId;
-            Version = version;
+            InnerVersion = version;
         }
 
-        public long Version { get; set; }
+        public long InnerVersion { get; set; }
 
         public Identity EntityId { get; set; }
     }

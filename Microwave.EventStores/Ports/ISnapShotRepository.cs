@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Microwave.Domain.Identities;
+using Microwave.Domain.Results;
 
 namespace Microwave.EventStores.Ports
 {
@@ -23,15 +24,30 @@ namespace Microwave.EventStores.Ports
         public Identity Id { get; }
     }
 
-    public class SnapShotResult<T>
+    public class SnapShotResult<T> : Result<T> where T : new()
     {
-        public SnapShotResult(T entity, long version)
+        public static SnapShotResult<T> Default()
+        {
+            return new SnapShotResult<T>(new T(), 0);
+        }
+
+        public new static SnapShotResult<T> NotFound(Identity identity)
+        {
+            return new SnapShotResult<T>(new T(), 0, new NotFound(typeof(T), identity));
+        }
+
+        public SnapShotResult(T value, long version) : base(new Ok())
         {
             Version = version;
-            Entity = entity;
+            Value = value;
+        }
+
+        private SnapShotResult(T value, long version, NotFound notFound) : base(notFound)
+        {
+            Version = version;
+            Value = value;
         }
 
         public long Version { get; }
-        public T Entity { get; }
     }
 }

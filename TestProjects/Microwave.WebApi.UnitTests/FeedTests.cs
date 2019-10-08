@@ -8,7 +8,7 @@ using Microwave.Domain.EventSourcing;
 using Microwave.Domain.Identities;
 using Microwave.Queries;
 using Microwave.Queries.Handler;
-using Microwave.WebApi.Querries;
+using Microwave.WebApi.Queries;
 using Moq;
 using RichardSzalay.MockHttp;
 
@@ -86,7 +86,7 @@ namespace Microwave.WebApi.UnitTests
         }
     }
 
-    public class TestReadModel : ReadModel
+    public class TestReadModel : ReadModel<TestEv>
     {
         public void Handle(TestEv ev)
         {
@@ -94,7 +94,6 @@ namespace Microwave.WebApi.UnitTests
         }
 
         public Identity Id { get; set; }
-        public override Type GetsCreatedOn { get; }
     }
 
     public class TestEv : IDomainEvent, ISubscribedDomainEvent

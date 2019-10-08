@@ -51,13 +51,13 @@ namespace Microwave.Domain.Validation
 
         public static DomainResult Error(string domainDomainErrorKey)
         {
-            var domainError = new TypelessDomainError(domainDomainErrorKey);
+            var domainError = DomainError.Create(domainDomainErrorKey);
             return new DomainResult(new List<DomainError> { domainError });
         }
 
         public static DomainResult Error(IEnumerable<string> domainDomainErrorKeys)
         {
-            var enumDomainErrors = domainDomainErrorKeys.Select(e => new TypelessDomainError(e));
+            var enumDomainErrors = domainDomainErrorKeys.Select(e => DomainError.Create(e));
             return new DomainResult(enumDomainErrors);
         }
 

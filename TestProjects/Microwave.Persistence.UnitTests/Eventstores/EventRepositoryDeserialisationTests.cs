@@ -5,29 +5,16 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Domain.EventSourcing;
 using Microwave.Domain.Identities;
-using Microwave.Persistence.UnitTestSetupPorts;
+using Microwave.Persistence.UnitTestsSetup;
 
 namespace Microwave.Persistence.UnitTests.Eventstores
 {
     [TestClass]
     public class EventRepositoryDeserialisationTests
     {
-        // This is not supported and might never be
         [DataTestMethod]
         [PersistenceTypeTest]
-        public async Task TestDeserializationOfIdInInterface_OwnBackingField(IPersistenceLayerProvider layerProvider)
-        {
-            var entityStreamRepository = layerProvider.EventRepository;
-            var domainEvent = new TestEv_CustomBackingField(GuidIdentity.Create(Guid.NewGuid()));
-
-            await entityStreamRepository.AppendAsync(new List<IDomainEvent> {domainEvent}, 0);
-            var deserialize = (await entityStreamRepository.LoadEvents()).Value.Single().DomainEvent;
-            Assert.IsNull(deserialize.EntityId);
-        }
-
-        [DataTestMethod]
-        [PersistenceTypeTest]
-        public async Task TestDeserializationOfIdInInterface_GetAutoProperty(IPersistenceLayerProvider layerProvider)
+        public async Task TestDeserializationOfIdInInterface_GetAutoProperty(PersistenceLayerProvider layerProvider)
         {
             var entityStreamRepository = layerProvider.EventRepository;
 
@@ -40,7 +27,7 @@ namespace Microwave.Persistence.UnitTests.Eventstores
 
         [DataTestMethod]
         [PersistenceTypeTest]
-        public async Task TestDeserializationOfIdInInterface(IPersistenceLayerProvider layerProvider)
+        public async Task TestDeserializationOfIdInInterface(PersistenceLayerProvider layerProvider)
         {
             var entityStreamRepository = layerProvider.EventRepository;
 
