@@ -32,7 +32,7 @@ namespace Microwave.Persistence.UnitTests.Eventstores
             var snapShotResult = await repo.LoadSnapShot<UserSnapshot>(entityId.ToString());
 
             var entityGuids = snapShotResult.Value.Guids.ToList();
-            Assert.AreEqual(entityId, snapShotResult.Value.Id);
+            Assert.AreEqual(entityId.ToString(), snapShotResult.Value.Id);
             Assert.AreEqual(2, entityGuids.Count);
             Assert.AreEqual(newGuid, entityGuids[0]);
             Assert.AreEqual(newGuid, entityGuids[1]);

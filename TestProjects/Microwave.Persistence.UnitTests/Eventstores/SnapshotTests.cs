@@ -46,17 +46,17 @@ namespace Microwave.Persistence.UnitTests.Eventstores
             Assert.AreEqual(4, eventstoreResult.Version);
             Assert.AreEqual(14, user.Value.Age);
             Assert.AreEqual("PeterNeu", user.Value.Name);
-            Assert.AreEqual(entityId, user.Value.Id);
+            Assert.AreEqual(entityId.ToString(), user.Value.Id);
 
             var snapShotDbo = await snapShotRepository.LoadSnapShot<User>(entityId.ToString());
 
             Assert.AreEqual(4, snapShotDbo.Version);
-            Assert.AreEqual(entityId, snapShotDbo.Value.Id);
+            Assert.AreEqual(entityId.ToString(), snapShotDbo.Value.Id);
             var userSnapShot = snapShotDbo.Value;
 
             Assert.AreEqual(14, userSnapShot.Age);
             Assert.AreEqual("PeterNeu", userSnapShot.Name);
-            Assert.AreEqual(entityId, userSnapShot.Id);
+            Assert.AreEqual(entityId.ToString(), userSnapShot.Id);
         }
 
         [TestMethod]
