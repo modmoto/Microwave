@@ -248,7 +248,7 @@ namespace Microwave.Persistence.UnitTests.Eventstores
             var result = await eventRepository.LoadEvents();
             Assert.AreEqual(4, result.Value.Count());
             Assert.AreEqual(1, result.Value.ToList()[0].Version);
-            Assert.AreEqual(newGuid, result.Value.ToList()[0].DomainEvent.EntityId);
+            Assert.AreEqual(newGuid.ToString(), result.Value.ToList()[0].DomainEvent.EntityId);
         }
 
         [DataTestMethod]
@@ -267,7 +267,7 @@ namespace Microwave.Persistence.UnitTests.Eventstores
             Assert.AreEqual(1, result.Value.ToList()[0].Version);
             Assert.AreEqual(2, result.Value.ToList()[1].Version);
             Assert.AreEqual(3, result.Value.ToList()[2].Version);
-            Assert.AreEqual(newGuid, result.Value.ToList()[0].DomainEvent.EntityId);
+            Assert.AreEqual(newGuid.ToString(), result.Value.ToList()[0].DomainEvent.EntityId);
         }
 
         [DataTestMethod]
@@ -311,7 +311,7 @@ namespace Microwave.Persistence.UnitTests.Eventstores
             var result = await eventRepository.LoadEventsByTypeAsync(typeof(TestEvent1).Name);
             Assert.AreEqual(1, result.Value.Count());
             Assert.AreEqual(1, result.Value.ToList()[0].Version);
-            Assert.AreEqual(newGuid, result.Value.ToList()[0].DomainEvent.EntityId);
+            Assert.AreEqual(newGuid.ToString(), result.Value.ToList()[0].DomainEvent.EntityId);
             Assert.AreEqual(typeof(TestEvent1), result.Value.ToList()[0].DomainEvent.GetType());
         }
 
@@ -361,7 +361,7 @@ namespace Microwave.Persistence.UnitTests.Eventstores
             Assert.AreEqual(2, result.Value.Count());
             Assert.AreEqual(1, result.Value.ToList()[0].Version);
             Assert.AreEqual(3, result.Value.ToList()[1].Version);
-            Assert.IsTrue(newGuid.Equals(result.Value.ToList()[0].DomainEvent.EntityId));
+            Assert.AreEqual(newGuid.ToString(), result.Value.ToList()[0].DomainEvent.EntityId);
             Assert.AreEqual(typeof(TestEvent1), result.Value.ToList()[0].DomainEvent.GetType());
         }
 
