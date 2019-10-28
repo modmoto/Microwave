@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Microwave.Domain.EventSourcing;
-using Microwave.Domain.Identities;
 using Microwave.Domain.Results;
 using Microwave.EventStores.Ports;
 using Microwave.EventStores.SnapShots;
@@ -39,7 +38,7 @@ namespace Microwave.EventStores
             return AppendAsync(new[] {domainEvent}, entityVersion);
         }
 
-        public async Task<EventStoreResult<T>> LoadAsync<T>(Identity entityId) where T : IApply, new()
+        public async Task<EventStoreResult<T>> LoadAsync<T>(string entityId) where T : IApply, new()
         {
             if (entityId == null) return EventStoreResult<T>.NotFound(null);
             var snapShot = await _snapShotRepository.LoadSnapShot<T>(entityId);

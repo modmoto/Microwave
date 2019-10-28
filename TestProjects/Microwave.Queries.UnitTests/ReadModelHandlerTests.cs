@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Domain.EventSourcing;
-using Microwave.Domain.Identities;
 using Microwave.Domain.Results;
 using Microwave.Persistence.MongoDb.Querries;
 using Microwave.Persistence.UnitTestsSetup.MongoDb;
@@ -18,7 +17,7 @@ namespace Microwave.Queries.UnitTests
         [TestMethod]
         public async Task UpdateReadmodelHandler()
         {
-            EntityGuid = GuidIdentity.Create(Guid.NewGuid());
+            EntityGuid = Guid.NewGuid();
 
             var queryRepository = new ReadModelRepositoryMongoDb(EventMongoDb);
 
@@ -26,8 +25,8 @@ namespace Microwave.Queries.UnitTests
                 new VersionRepositoryMongoDb(EventMongoDb), new FeedMock2());
             await readModelHandler.Update();
 
-            var result = await queryRepository.LoadAsync<TestReadModelQuerries>(EntityGuid);
-            Assert.AreEqual(EntityGuid, result.Value.Id);
+            var result = await queryRepository.LoadAsync<TestReadModelQuerries>(EntityGuid.ToString());
+            Assert.AreEqual(EntityGuid.ToString(), result.Value.Id);
             Assert.AreEqual(14, result.Value.Version);
             Assert.AreEqual("testName", result.Value.Name);
         }
@@ -35,8 +34,8 @@ namespace Microwave.Queries.UnitTests
         [TestMethod]
         public async Task UpdateModel_TwoEntities()
         {
-            EntityGuid = GuidIdentity.Create(Guid.NewGuid());
-            EntityGuid2 = GuidIdentity.Create(Guid.NewGuid());
+            EntityGuid = Guid.NewGuid();
+            EntityGuid2 = Guid.NewGuid();
 
             var queryRepository = new ReadModelRepositoryMongoDb(EventMongoDb);
 
@@ -45,17 +44,17 @@ namespace Microwave.Queries.UnitTests
 
             await readModelHandler.Update();
 
-            var result = await queryRepository.LoadAsync<TestReadModelQuerries>(EntityGuid);
-            var result2 = await queryRepository.LoadAsync<TestReadModelQuerries>(EntityGuid2);
-            Assert.AreEqual(EntityGuid, result.Value.Id);
-            Assert.AreEqual(EntityGuid2, result2.Value.Id);
+            var result = await queryRepository.LoadAsync<TestReadModelQuerries>(EntityGuid.ToString());
+            var result2 = await queryRepository.LoadAsync<TestReadModelQuerries>(EntityGuid2.ToString());
+            Assert.AreEqual(EntityGuid.ToString(), result.Value.Id);
+            Assert.AreEqual(EntityGuid2.ToString(), result2.Value.Id);
         }
 
         [TestMethod]
         public async Task UpdateModel_EventsPresentThatAreNotHandleble()
         {
-            EntityGuid = GuidIdentity.Create(Guid.NewGuid());
-            EntityGuid2 = GuidIdentity.Create(Guid.NewGuid());
+            EntityGuid = Guid.NewGuid();
+            EntityGuid2 = Guid.NewGuid();
 
             var queryRepository = new ReadModelRepositoryMongoDb(EventMongoDb);
 
@@ -63,9 +62,9 @@ namespace Microwave.Queries.UnitTests
 
             await readModelHandler.Update();
 
-            var result = await queryRepository.LoadAsync<TestReadModelQuerries>(EntityGuid);
-            var result2 = await queryRepository.LoadAsync<TestReadModelQuerries>(EntityGuid2);
-            Assert.AreEqual(EntityGuid, result.Value.Id);
+            var result = await queryRepository.LoadAsync<TestReadModelQuerries>(EntityGuid.ToString());
+            var result2 = await queryRepository.LoadAsync<TestReadModelQuerries>(EntityGuid2.ToString());
+            Assert.AreEqual(EntityGuid.ToString(), result.Value.Id);
             var condition = result2.Is<NotFound>();
             Assert.IsTrue(condition);
         }
@@ -73,7 +72,7 @@ namespace Microwave.Queries.UnitTests
         [TestMethod]
         public async Task UpdateModel_EventsNotAppliedStillUpdatesVersion()
         {
-            EntityGuid = GuidIdentity.Create(Guid.NewGuid());
+            EntityGuid = Guid.NewGuid();
 
             var queryRepository = new ReadModelRepositoryMongoDb(EventMongoDb);
 
@@ -84,17 +83,18 @@ namespace Microwave.Queries.UnitTests
 
             await readModelHandler.Update();
 
-            var result = await queryRepository.LoadAsync<TestReadModelQuerries_OnlyOneEventAndVersionIsCounted>(EntityGuid);
+            var result = await queryRepository.LoadAsync<TestReadModelQuerries_OnlyOneEventAndVersionIsCounted>
+            (EntityGuid.ToString());
             Assert.AreEqual(14, result.Value.Version);
             Assert.AreEqual(null, result.Value.Name);
-            Assert.AreEqual(EntityGuid.Id, result.Value.Id.Id);
+            Assert.AreEqual(EntityGuid.ToString(), result.Value.Id);
         }
 
         [TestMethod]
         public async Task UpdateModel_TwoParallelReadModelHandler_SerializationBug()
         {
-            EntityGuid = GuidIdentity.Create(Guid.NewGuid());
-            EntityGuid2 = GuidIdentity.Create(Guid.NewGuid());
+            EntityGuid = Guid.NewGuid();
+            EntityGuid2 = Guid.NewGuid();
 
             var queryRepository = new ReadModelRepositoryMongoDb(EventMongoDb);
 
@@ -105,16 +105,16 @@ namespace Microwave.Queries.UnitTests
             await readModelHandler.Update();
             await readModelHandler2.Update();
 
-            var result = await queryRepository.LoadAsync<TestReadModelQuerries_TwoParallelFeeds1>(EntityGuid);
-            var result2 = await queryRepository.LoadAsync<TestReadModelQuerries_TwoParallelFeeds2>(EntityGuid2);
-            Assert.AreEqual(EntityGuid.Id, result.Value.Id.Id);
-            Assert.AreEqual(EntityGuid2.Id, result2.Value.IdTotallyDifferenzt.Id);
+            var result = await queryRepository.LoadAsync<TestReadModelQuerries_TwoParallelFeeds1>(EntityGuid.ToString());
+            var result2 = await queryRepository.LoadAsync<TestReadModelQuerries_TwoParallelFeeds2>(EntityGuid2.ToString());
+            Assert.AreEqual(EntityGuid.ToString(), result.Value.Id);
+            Assert.AreEqual(EntityGuid2.ToString(), result2.Value.IdTotallyDifferenzt);
         }
 
         [TestMethod]
         public async Task UpdateModel_VersionUpdatedExplicitly()
         {
-            EntityGuid = GuidIdentity.Create(Guid.NewGuid());
+            EntityGuid = Guid.NewGuid();
 
             var queryRepository = new ReadModelRepositoryMongoDb(EventMongoDb);
 
@@ -125,14 +125,14 @@ namespace Microwave.Queries.UnitTests
 
             await readModelHandler.Update();
 
-            var result = await queryRepository.LoadAsync<TestReadModelQuerries_VerionedHandle>(EntityGuid);
-            Assert.AreEqual(EntityGuid.Id, result.Value.EntityId.Id);
+            var result = await queryRepository.LoadAsync<TestReadModelQuerries_VerionedHandle>(EntityGuid.ToString());
+            Assert.AreEqual(EntityGuid.ToString(), result.Value.EntityId);
             Assert.AreEqual(12, result.Value.InnerVersion);
             Assert.AreEqual(14, result.Value.Version);
         }
 
-        public static GuidIdentity EntityGuid { get; set; }
-        public static GuidIdentity EntityGuid2 { get; set; }
+        public static Guid EntityGuid { get; set; }
+        public static Guid EntityGuid2 { get; set; }
 
         public static Task<IEnumerable<SubscribedDomainEventWrapper>> MakeEvents()
         {
@@ -159,7 +159,7 @@ namespace Microwave.Queries.UnitTests
             Id = domainEvent.EntityId;
         }
 
-        public Identity Id { get; set; }
+        public string Id { get; set; }
         public void Handle(TestEvnt1 domainEvent)
         {
             Name = domainEvent.Name;
@@ -176,7 +176,7 @@ namespace Microwave.Queries.UnitTests
             InnerVersion = version;
         }
 
-        public Identity EntityId { get; set; }
+        public string EntityId { get; set; }
         public long InnerVersion { get; set; }
         public void Handle(TestEvnt3 domainEvent)
         {
@@ -190,7 +190,7 @@ namespace Microwave.Queries.UnitTests
             Id = domainEvent.EntityId;
         }
 
-        public Identity Id { get; set; }
+        public string Id { get; set; }
         public string Name { get; set; }
     }
 
@@ -266,7 +266,7 @@ namespace Microwave.Queries.UnitTests
             Id = domainEvent.EntityId;
         }
 
-        public Identity Id { get; set; }
+        public string Id { get; set; }
     }
 
     public class FeedMock7 : IEventFeed<ReadModelEventHandler<TestReadModelQuerries_TwoParallelFeeds2>>
@@ -284,7 +284,7 @@ namespace Microwave.Queries.UnitTests
             IdTotallyDifferenzt = domainEvent.EntityId;
         }
 
-        public Identity IdTotallyDifferenzt { get; set; }
+        public string IdTotallyDifferenzt { get; set; }
     }
 
     public class FeedMock3 : IEventFeed<ReadModelEventHandler<TestReadModelQuerries>>
@@ -346,33 +346,33 @@ namespace Microwave.Queries.UnitTests
 
     public class TestEvnt2 : IDomainEvent, ISubscribedDomainEvent
     {
-        public TestEvnt2(GuidIdentity entityId)
+        public TestEvnt2(Guid entityId)
         {
-            EntityId = entityId;
+            EntityId = entityId.ToString();
         }
 
-        public Identity EntityId { get; }
+        public string EntityId { get; }
     }
 
     public class TestEvnt3 : IDomainEvent, ISubscribedDomainEvent
     {
-        public TestEvnt3(GuidIdentity entityId)
+        public TestEvnt3(Guid entityId)
         {
-            EntityId = entityId;
+            EntityId = entityId.ToString();
         }
 
-        public Identity EntityId { get; }
+        public string EntityId { get; }
     }
 
     public class TestEvnt1 : IDomainEvent, ISubscribedDomainEvent
     {
-        public TestEvnt1(GuidIdentity entityId, string name)
+        public TestEvnt1(Guid entityId, string name)
         {
-            EntityId = entityId;
+            EntityId = entityId.ToString();
             Name = name;
         }
 
-        public Identity EntityId { get; }
+        public string EntityId { get; }
         public string Name { get; }
     }
 }

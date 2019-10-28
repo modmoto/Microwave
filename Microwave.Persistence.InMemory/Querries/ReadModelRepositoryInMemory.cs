@@ -3,7 +3,6 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microwave.Domain.Identities;
 using Microwave.Domain.Results;
 using Microwave.Queries;
 
@@ -12,17 +11,17 @@ namespace Microwave.Persistence.InMemory.Querries
     public class ReadModelRepositoryInMemory : IReadModelRepository
     {
         private readonly ConcurrentDictionary<Type, object> _querryDictionary = new ConcurrentDictionary<Type, object>();
-        private readonly ConcurrentDictionary<Type, ConcurrentDictionary<Identity, object>> _readModelDictionary = new
-            ConcurrentDictionary<Type, ConcurrentDictionary<Identity, object>> ();
+        private readonly ConcurrentDictionary<Type, ConcurrentDictionary<string, object>> _readModelDictionary = new
+            ConcurrentDictionary<Type, ConcurrentDictionary<string, object>> ();
         public Task<Result<T>> LoadAsync<T>() where T : Query
         {
-            if (!_querryDictionary.TryGetValue(typeof(T), out var query)) return Task.FromResult(Result<T>.NotFound
-            (StringIdentity.Create(nameof(T))));
+            if (!_querryDictionary.TryGetValue(typeof(T), out var query)) return Task.FromResult(
+                Result<T>.NotFound(nameof(T)));
             var queryParsed = query as T;
             return Task.FromResult(Result<T>.Ok(queryParsed));
         }
 
-        public Task<Result<T>> LoadAsync<T>(Identity id) where T : ReadModelBase
+        public Task<Result<T>> LoadAsync<T>(string id) where T : ReadModelBase
         {
             if (!_readModelDictionary.TryGetValue(typeof(T), out var readModelDictionary))
                 return Task.FromResult(Result<T>.NotFound(id));
@@ -44,7 +43,7 @@ namespace Microwave.Persistence.InMemory.Querries
         public Task<Result> SaveReadModelAsync<T>(T readModel) where T : ReadModelBase, new()
         {
             if (!_readModelDictionary.TryGetValue(typeof(T), out var readModelDictionary))
-                readModelDictionary = new ConcurrentDictionary<Identity, object>();
+                readModelDictionary = new ConcurrentDictionary<string, object>();
             readModelDictionary[readModel.Identity] = readModel;
             _readModelDictionary[typeof(T)] = readModelDictionary;
             return Task.FromResult(Result.Ok());

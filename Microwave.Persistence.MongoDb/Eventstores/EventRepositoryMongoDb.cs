@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microwave.Domain.EventSourcing;
-using Microwave.Domain.Identities;
 using Microwave.Domain.Results;
 using Microwave.EventStores;
 using Microwave.EventStores.Ports;
@@ -23,14 +22,14 @@ namespace Microwave.Persistence.MongoDb.Eventstores
             _database = mongoDb.Database;
         }
 
-        public async Task<Result<IEnumerable<DomainEventWrapper>>> LoadEventsByEntity(Identity entityId, long from = 0)
+        public async Task<Result<IEnumerable<DomainEventWrapper>>> LoadEventsByEntity(string entityId, long from = 0)
         {
             if (entityId == null) return Result<IEnumerable<DomainEventWrapper>>.NotFound(null);
             var mongoCollection = _database.GetCollection<DomainEventDbo>(_eventCollectionName);
-            var domainEventDbos = (await mongoCollection.FindAsync(ev => ev.Key.EntityId == entityId.Id && ev.Key.Version > from)).ToList();
+            var domainEventDbos = (await mongoCollection.FindAsync(ev => ev.Key.EntityId == entityId && ev.Key.Version > from)).ToList();
             if (!domainEventDbos.Any())
             {
-                var eventDbos = await mongoCollection.Find(ev => ev.Key.EntityId == entityId.Id).FirstOrDefaultAsync();
+                var eventDbos = await mongoCollection.Find(ev => ev.Key.EntityId == entityId).FirstOrDefaultAsync();
                 if (eventDbos == null) return Result<IEnumerable<DomainEventWrapper>>.NotFound(entityId);
                 return Result<IEnumerable<DomainEventWrapper>>.Ok(new List<DomainEventWrapper>());
             }
@@ -106,7 +105,7 @@ namespace Microwave.Persistence.MongoDb.Eventstores
                     Key = new DomainEventKey
                     {
                         Version = ++versionTemp,
-                        EntityId = domainEvent.EntityId.Id
+                        EntityId = domainEvent.EntityId
                     },
                     EventType = domainEvent.GetType().Name
                 };

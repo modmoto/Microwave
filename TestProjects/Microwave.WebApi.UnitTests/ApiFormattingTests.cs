@@ -1,10 +1,8 @@
 using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microwave.Domain.Identities;
 using Microwave.Domain.Validation;
 using Microwave.Queries;
 using Microwave.WebApi.ApiFormatting.DateTimeOffsets;
-using Microwave.WebApi.ApiFormatting.Identities;
 using Newtonsoft.Json;
 
 namespace Microwave.WebApi.UnitTests
@@ -13,21 +11,11 @@ namespace Microwave.WebApi.UnitTests
     public class ApiFormattingTests
     {
         [TestMethod]
-        public  void IdentityFormatting()
-        {
-            var identityConverter = new IdentityConverter();
-            var expected = "TestStringID";
-            var identity = identityConverter.ReadJson(new Mockreader(expected), typeof(Identity), null, JsonSerializer
-            .Create());
-            Assert.AreEqual(StringIdentity.Create(expected), identity);
-        }
-
-        [TestMethod]
         public  void DateTimeOffsetFormatting()
         {
             var identityConverter = new DateTimeOffsetConverter();
             var expected = "2019-01-07T22:06:35.3773970+01:00";
-            var time = identityConverter.ReadJson(new Mockreader(expected), typeof(Identity), null, JsonSerializer
+            var time = identityConverter.ReadJson(new Mockreader(expected), typeof(string), null, JsonSerializer
                 .Create());
             Assert.AreEqual(DateTimeOffset.Parse("2019-01-07T22:06:35.3773970+01:00"), time);
         }
@@ -38,7 +26,7 @@ namespace Microwave.WebApi.UnitTests
             var identityConverter = new DateTimeOffsetConverter();
             var expected = "2019-01-07T22:06:35.3773970-01:00";
             var time = identityConverter.ReadJson(new Mockreader(expected),
-                typeof(Identity),
+                typeof(string),
                 null,
                 JsonSerializer.Create());
             Assert.AreEqual(DateTimeOffset.Parse("2019-01-07T22:06:35.3773970-01:00"), time);
@@ -49,7 +37,7 @@ namespace Microwave.WebApi.UnitTests
         {
             var identityConverter = new DateTimeOffsetConverter();
             var expected = "2019-01-07T22:06:35.3773970 01:00";
-            var time = identityConverter.ReadJson(new Mockreader(expected), typeof(Identity), null, JsonSerializer
+            var time = identityConverter.ReadJson(new Mockreader(expected), typeof(string), null, JsonSerializer
                 .Create());
             Assert.AreEqual(DateTimeOffset.Parse("2019-01-07T22:06:35.3773970+01:00"), time);
         }
@@ -59,7 +47,7 @@ namespace Microwave.WebApi.UnitTests
         {
             var identityConverter = new DateTimeOffsetConverter();
             var expected = 14;
-            var time = identityConverter.ReadJson(new Mockreader(expected), typeof(Identity), null, JsonSerializer
+            var time = identityConverter.ReadJson(new Mockreader(expected), typeof(string), null, JsonSerializer
                 .Create());
             Assert.IsNull(time);
         }
@@ -94,7 +82,7 @@ namespace Microwave.WebApi.UnitTests
 
     public class ReadModelTest : ReadModel<Mockreader>
     {
-        public Identity IdentityField { get; set; }
+        public string stringField { get; set; }
         public string TestProp { get; set; }
     }
 

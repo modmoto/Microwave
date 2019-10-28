@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Domain.EventSourcing;
 using Microwave.Domain.Exceptions;
-using Microwave.Domain.Identities;
 using Microwave.Domain.Results;
 using Microwave.Persistence.UnitTestsSetup;
 
@@ -20,16 +19,16 @@ namespace Microwave.Persistence.UnitTests.Eventstores
         {
             var eventRepository = layerProvider.EventRepository;
 
-            var newGuid = GuidIdentity.Create(Guid.NewGuid());
+            var newGuid = Guid.NewGuid();
             var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid), new TestEvent3(newGuid, "TestName")};
             var res = await eventRepository.AppendAsync(events, 0);
             res.Check();
 
-            var loadEventsByEntity = await eventRepository.LoadEventsByEntity(newGuid);
+            var loadEventsByEntity = await eventRepository.LoadEventsByEntity(newGuid.ToString());
             Assert.AreEqual(3, loadEventsByEntity.Value.Count());
             Assert.AreEqual(1, loadEventsByEntity.Value.ToList()[0].Version);
             var domainEvent = (TestEvent3) loadEventsByEntity.Value.ToList()[2].DomainEvent;
-            Assert.AreEqual(newGuid.Id, domainEvent.EntityId.Id);
+            Assert.AreEqual(newGuid.ToString(), domainEvent.EntityId);
             Assert.AreEqual("TestName", domainEvent.Name);
             Assert.AreEqual(2, loadEventsByEntity.Value.ToList()[1].Version);
         }
@@ -51,14 +50,14 @@ namespace Microwave.Persistence.UnitTests.Eventstores
         {
             var eventRepository = layerProvider.EventRepository;
 
-            var newGuid = GuidIdentity.Create(Guid.NewGuid());
+            var newGuid = Guid.NewGuid();
             var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid), new TestEvent3(newGuid, "TestName")};
             var res = await eventRepository.AppendAsync(events, 0);
             var res2 = await eventRepository.AppendAsync(events, 3);
             res.Check();
             res2.Check();
 
-            var loadEventsByEntity = await eventRepository.LoadEventsByEntity(newGuid);
+            var loadEventsByEntity = await eventRepository.LoadEventsByEntity(newGuid.ToString());
             Assert.AreEqual(6, loadEventsByEntity.Value.Count());
         }
 
@@ -68,7 +67,7 @@ namespace Microwave.Persistence.UnitTests.Eventstores
         {
             var eventRepository = layerProvider.EventRepository;
 
-            var newGuid = GuidIdentity.Create(Guid.NewGuid());
+            var newGuid = Guid.NewGuid();
             var testEvent1 = new TestEvent1(newGuid);
             var testEvent2 = new TestEvent2(newGuid);
             var events = new List<IDomainEvent> { testEvent1, testEvent2};
@@ -76,13 +75,13 @@ namespace Microwave.Persistence.UnitTests.Eventstores
             var res = await eventRepository.AppendAsync(events, 0);
             res.Check();
 
-            var loadEventsByEntity = await eventRepository.LoadEventsByEntity(newGuid);
+            var loadEventsByEntity = await eventRepository.LoadEventsByEntity(newGuid.ToString());
             Assert.AreEqual(2, loadEventsByEntity.Value.Count());
             Assert.AreNotEqual(0, loadEventsByEntity.Value.ToList()[0].Created);
             Assert.AreNotEqual(0, loadEventsByEntity.Value.ToList()[1].Created);
             Assert.AreEqual(1, loadEventsByEntity.Value.ToList()[0].Version);
             Assert.AreEqual(2, loadEventsByEntity.Value.ToList()[1].Version);
-            Assert.IsTrue(newGuid == loadEventsByEntity.Value.ToList()[0].DomainEvent.EntityId);
+            Assert.IsTrue(newGuid.ToString() == loadEventsByEntity.Value.ToList()[0].DomainEvent.EntityId);
         }
 
         [DataTestMethod]
@@ -91,7 +90,7 @@ namespace Microwave.Persistence.UnitTests.Eventstores
         {
             var eventRepository = layerProvider.EventRepository;
 
-            var newGuid = GuidIdentity.Create(Guid.NewGuid());
+            var newGuid = Guid.NewGuid();
             var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid)};
             var events2 = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid)};
 
@@ -113,7 +112,7 @@ namespace Microwave.Persistence.UnitTests.Eventstores
         {
             var eventRepository = layerProvider.EventRepository;
 
-            var newGuid = GuidIdentity.Create(Guid.NewGuid());
+            var newGuid = Guid.NewGuid();
             var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid)};
             var events2 = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid)};
 
@@ -134,7 +133,7 @@ namespace Microwave.Persistence.UnitTests.Eventstores
         {
             var eventRepository = layerProvider.EventRepository;
 
-            var newGuid = GuidIdentity.Create(Guid.NewGuid());
+            var newGuid = Guid.NewGuid();
             var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid)};
             var events2 = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid)};
 
@@ -155,7 +154,7 @@ namespace Microwave.Persistence.UnitTests.Eventstores
             var eventRepository = layerProvider.EventRepository;
             var eventRepository2 = layerProvider.EventRepository;
 
-            var newGuid = GuidIdentity.Create(Guid.NewGuid());
+            var newGuid = Guid.NewGuid();
             var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid)};
             var events2 = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid)};
 
@@ -175,11 +174,11 @@ namespace Microwave.Persistence.UnitTests.Eventstores
         {
             var eventRepository = layerProvider.EventRepository;
 
-            var entityId = Identity.Create(Guid.NewGuid());
-            var result = await eventRepository.LoadEventsByEntity(entityId);
+            var entityId = Guid.NewGuid();
+            var result = await eventRepository.LoadEventsByEntity(entityId.ToString());
 
             var notFoundException = Assert.ThrowsException<NotFoundException>(() => result.Value);
-            Assert.AreEqual($"Could not find DomainEvents with ID {entityId.Id}", notFoundException.Message);
+            Assert.AreEqual($"Could not find DomainEvents with ID {entityId}", notFoundException.Message);
         }
 
         [DataTestMethod]
@@ -188,7 +187,7 @@ namespace Microwave.Persistence.UnitTests.Eventstores
         {
             var eventRepository = layerProvider.EventRepository;
 
-            var entityId = Identity.Create(new Guid());
+            var entityId = new Guid();
             var events = new List<IDomainEvent> { new TestEvent1(entityId), new TestEvent2(entityId)};
             await eventRepository.AppendAsync(events, 0);
 
@@ -226,7 +225,7 @@ namespace Microwave.Persistence.UnitTests.Eventstores
         {
             var eventRepository = layerProvider.EventRepository;
 
-            var newGuid = GuidIdentity.Create(Guid.NewGuid());
+            var newGuid = Guid.NewGuid();
             var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid), new TestEvent2(newGuid)};
 
             await eventRepository.AppendAsync(events, 0);
@@ -241,7 +240,7 @@ namespace Microwave.Persistence.UnitTests.Eventstores
         {
             var eventRepository = layerProvider.EventRepository;
 
-            var newGuid = GuidIdentity.Create(Guid.NewGuid());
+            var newGuid = Guid.NewGuid();
             var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid), new TestEvent1(newGuid), new TestEvent2(newGuid)};
 
             await eventRepository.AppendAsync(events, 0);
@@ -249,7 +248,7 @@ namespace Microwave.Persistence.UnitTests.Eventstores
             var result = await eventRepository.LoadEvents();
             Assert.AreEqual(4, result.Value.Count());
             Assert.AreEqual(1, result.Value.ToList()[0].Version);
-            Assert.AreEqual(newGuid.Id, result.Value.ToList()[0].DomainEvent.EntityId.Id);
+            Assert.AreEqual(newGuid, result.Value.ToList()[0].DomainEvent.EntityId);
         }
 
         [DataTestMethod]
@@ -258,7 +257,7 @@ namespace Microwave.Persistence.UnitTests.Eventstores
         {
             var eventRepository = layerProvider.EventRepository;
 
-            var newGuid = GuidIdentity.Create(Guid.NewGuid());
+            var newGuid = Guid.NewGuid();
             var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid), new TestEvent1(newGuid), new TestEvent2(newGuid)};
 
             await eventRepository.AppendAsync(events, 0);
@@ -268,7 +267,7 @@ namespace Microwave.Persistence.UnitTests.Eventstores
             Assert.AreEqual(1, result.Value.ToList()[0].Version);
             Assert.AreEqual(2, result.Value.ToList()[1].Version);
             Assert.AreEqual(3, result.Value.ToList()[2].Version);
-            Assert.AreEqual(newGuid.Id, result.Value.ToList()[0].DomainEvent.EntityId.Id);
+            Assert.AreEqual(newGuid, result.Value.ToList()[0].DomainEvent.EntityId);
         }
 
         [DataTestMethod]
@@ -277,7 +276,7 @@ namespace Microwave.Persistence.UnitTests.Eventstores
         {
             var eventRepository = layerProvider.EventRepository;
 
-            var newGuid = GuidIdentity.Create(Guid.NewGuid());
+            var newGuid = Guid.NewGuid();
             var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid), new TestEvent1(newGuid), new TestEvent2(newGuid)};
 
             var result = await eventRepository.AppendAsync(events, 1);
@@ -291,7 +290,7 @@ namespace Microwave.Persistence.UnitTests.Eventstores
         {
             var eventRepository = layerProvider.EventRepository;
 
-            var newGuid = GuidIdentity.Create(Guid.NewGuid());
+            var newGuid = Guid.NewGuid();
             var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid), new TestEvent1(newGuid), new TestEvent2(newGuid)};
 
             var result = await eventRepository.AppendAsync(events, 5);
@@ -304,7 +303,7 @@ namespace Microwave.Persistence.UnitTests.Eventstores
         {
             var eventRepository = layerProvider.EventRepository;
 
-            var newGuid = GuidIdentity.Create(Guid.NewGuid());
+            var newGuid = Guid.NewGuid();
             var domainEvent = new TestEvent1(newGuid);
 
             await eventRepository.AppendAsync(new List<IDomainEvent> { domainEvent }, 0);
@@ -312,7 +311,7 @@ namespace Microwave.Persistence.UnitTests.Eventstores
             var result = await eventRepository.LoadEventsByTypeAsync(typeof(TestEvent1).Name);
             Assert.AreEqual(1, result.Value.Count());
             Assert.AreEqual(1, result.Value.ToList()[0].Version);
-            Assert.AreEqual(newGuid.Id, result.Value.ToList()[0].DomainEvent.EntityId.Id);
+            Assert.AreEqual(newGuid, result.Value.ToList()[0].DomainEvent.EntityId);
             Assert.AreEqual(typeof(TestEvent1), result.Value.ToList()[0].DomainEvent.GetType());
         }
 
@@ -322,7 +321,7 @@ namespace Microwave.Persistence.UnitTests.Eventstores
         {
             var eventRepository = layerProvider.EventRepository;
 
-            var testEvent1 = new TestEvent1(GuidIdentity.Create(Guid.NewGuid()));
+            var testEvent1 = new TestEvent1(Guid.NewGuid());
             await eventRepository.AppendAsync(new[] {testEvent1}, 0);
 
             var result = await eventRepository.LoadEventsByEntity(testEvent1.EntityId);
@@ -337,7 +336,7 @@ namespace Microwave.Persistence.UnitTests.Eventstores
         {
             var eventRepository = layerProvider.EventRepository;
 
-            var testEvent1 = new TestEvent1(GuidIdentity.Create(Guid.NewGuid()));
+            var testEvent1 = new TestEvent1(Guid.NewGuid());
             await eventRepository.AppendAsync(new List<IDomainEvent> { testEvent1 }, 0);
 
             var result = await eventRepository.LoadEventsByTypeAsync(testEvent1.GetType().Name);
@@ -352,7 +351,7 @@ namespace Microwave.Persistence.UnitTests.Eventstores
         {
             var eventRepository = layerProvider.EventRepository;
 
-            var newGuid = GuidIdentity.Create(Guid.NewGuid());
+            var newGuid = Guid.NewGuid();
             var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid), new TestEvent1(newGuid), new TestEvent2(newGuid)};
 
             await eventRepository.AppendAsync(events, 0);
@@ -372,7 +371,7 @@ namespace Microwave.Persistence.UnitTests.Eventstores
         {
             var eventRepository = layerProvider.EventRepository;
 
-            var newGuid = GuidIdentity.Create(Guid.NewGuid());
+            var newGuid = Guid.NewGuid();
             var domainEvents = new List<IDomainEvent>();
             var domainEvents2 = new List<IDomainEvent>();
             for (int i = 0; i < 100; i++)
@@ -408,33 +407,38 @@ namespace Microwave.Persistence.UnitTests.Eventstores
 
     public class TestEvent1 : IDomainEvent
     {
-        public TestEvent1(Identity entityId)
+        public Guid Id { get; }
+        public TestEvent1(Guid id)
         {
-            EntityId = entityId;
+            Id = id;
         }
 
-        public Identity EntityId { get; }
+        public string EntityId => Id.ToString();
     }
 
     public class TestEvent2 : IDomainEvent
     {
-        public TestEvent2(Identity entityId)
+        public TestEvent2(Guid id)
         {
-            EntityId = entityId;
+            Id = id;
         }
 
-        public Identity EntityId { get; }
+        public string EntityId => Id.ToString();
+
+        public Guid Id { get; }
     }
 
     public class TestEvent3 : IDomainEvent
     {
-        public TestEvent3(Identity entityId, string name)
+        public TestEvent3(Guid id, string name)
         {
-            EntityId = entityId;
+            Id = id;
             Name = name;
         }
 
-        public Identity EntityId { get; }
+        public string EntityId => Id.ToString();
         public string Name { get; }
+
+        public Guid Id { get; }
     }
 }

@@ -2,7 +2,6 @@ using System;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Domain.EventSourcing;
-using Microwave.Domain.Identities;
 using Microwave.EventStores;
 using Microwave.WebApi.Queries;
 using Newtonsoft.Json;
@@ -19,7 +18,7 @@ namespace Microwave.Queries.UnitTests
             {
                 Version = 12,
                 Created = DateTimeOffset.Now,
-                DomainEvent = new Event1(GuidIdentity.Create(Guid.NewGuid()), "Name")
+                DomainEvent = new Event1(Guid.NewGuid(), "Name")
             }};
 
             var serializeObject = JsonConvert.SerializeObject(domainEventWrapper);
@@ -29,7 +28,7 @@ namespace Microwave.Queries.UnitTests
             var domainEventWrappers = ev.ToList();
             var wrapperActual = domainEventWrappers.Single();
             var wrapperExpected = domainEventWrapper.Single();
-            Assert.AreEqual(wrapperExpected.DomainEvent.EntityId.Id, wrapperActual.DomainEvent.EntityId.Id);
+            Assert.AreEqual(wrapperExpected.DomainEvent.EntityId, wrapperActual.DomainEvent.EntityId);
             Assert.AreEqual(wrapperExpected.Version, wrapperActual.Version);
             Assert.AreEqual(wrapperExpected.Created, wrapperActual.Created);
             Assert.AreEqual(((Event1) wrapperExpected.DomainEvent).Name, ((Event1)wrapperActual.DomainEvent).Name);
@@ -43,7 +42,7 @@ namespace Microwave.Queries.UnitTests
             {
                 Version = 12,
                 Created = dateTimeOffset,
-                DomainEvent = new Event2(StringIdentity.Create("luls"), "Name")
+                DomainEvent = new Event2("luls", "Name")
             }};
 
             var serializeObject = JsonConvert.SerializeObject(domainEventWrapper);
@@ -52,7 +51,7 @@ namespace Microwave.Queries.UnitTests
             var domainEventWrappers = domainEventFactory.Deserialize(serializeObject).ToList();
             var wrapperActual = domainEventWrappers.Single();
 
-            Assert.AreEqual("luls", wrapperActual.DomainEvent.EntityId.Id);
+            Assert.AreEqual("luls", wrapperActual.DomainEvent.EntityId);
         }
 
         [TestMethod]
@@ -62,7 +61,7 @@ namespace Microwave.Queries.UnitTests
             {
                 Version = 12,
                 Created = DateTimeOffset.Now,
-                DomainEvent = new Event1(GuidIdentity.Create(Guid.NewGuid()), "Name")
+                DomainEvent = new Event1(Guid.NewGuid(), "Name")
             }};
 
             var serializeObject = JsonConvert.SerializeObject(domainEventWrapper);
@@ -76,22 +75,22 @@ namespace Microwave.Queries.UnitTests
 
     public class Event1 : IDomainEvent, ISubscribedDomainEvent
     {
-        public Identity EntityId { get; }
+        public string EntityId { get; }
         public string Name { get; }
 
-        public Event1(GuidIdentity entityId, string name)
+        public Event1(Guid entityId, string name)
         {
-            EntityId = entityId;
+            EntityId = entityId.ToString();
             Name = name;
         }
     }
 
     public class Event2 : IDomainEvent, ISubscribedDomainEvent
     {
-        public Identity EntityId { get; }
+        public string EntityId { get; }
         public string Name { get; }
 
-        public Event2(StringIdentity entityId, string name)
+        public Event2(string entityId, string name)
         {
             EntityId = entityId;
             Name = name;

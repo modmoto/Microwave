@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microwave.Domain.Identities;
 using Microwave.Persistence.MongoDb.Querries;
 using Microwave.Persistence.UnitTestsSetup.MongoDb;
 using Microwave.Queries.Handler;
@@ -20,7 +19,7 @@ namespace Microwave.Queries.UnitTests
             var domainEventWrapper = new SubscribedDomainEventWrapper
             {
                 Created = dateTimeOffset,
-                DomainEvent = new TestEv2(GuidIdentity.Create())
+                DomainEvent = new TestEv2(Guid.NewGuid())
             };
 
             var handleAsync = new Handler1();

@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microwave.Domain.EventSourcing;
-using Microwave.Domain.Identities;
 using Microwave.Domain.Results;
 using Microwave.EventStores;
 using Microwave.EventStores.Ports;
@@ -15,7 +14,7 @@ namespace Microwave.Persistence.InMemory.Eventstores
     {
         private readonly BlockingCollection<DomainEventWrapper> _domainEvents = new BlockingCollection<DomainEventWrapper>();
 
-        public Task<Result<IEnumerable<DomainEventWrapper>>> LoadEventsByEntity(Identity entityId, long from = 0)
+        public Task<Result<IEnumerable<DomainEventWrapper>>> LoadEventsByEntity(string entityId, long from = 0)
         {
             if (entityId == null) return Task.FromResult(Result<IEnumerable<DomainEventWrapper>>.NotFound(null));
             var mongoCollection = _domainEvents;

@@ -1,5 +1,4 @@
 using Microwave.Domain.EventSourcing;
-using Microwave.Domain.Identities;
 
 namespace WriteService1
 {
@@ -10,6 +9,6 @@ namespace WriteService1
             Id = domainEvent.EntityId;
         }
 
-        public Identity Id { get; private set; }
+        public string Id { get; private set; }
     }
 }

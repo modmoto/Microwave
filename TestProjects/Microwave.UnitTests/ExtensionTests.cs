@@ -6,7 +6,6 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Discovery;
 using Microwave.Discovery.EventLocations;
 using Microwave.Domain.EventSourcing;
-using Microwave.Domain.Identities;
 using Microwave.EventStores;
 using Microwave.Persistence.MongoDb;
 using Microwave.Queries;
@@ -311,13 +310,13 @@ namespace Microwave.UnitTests
 
     public class TestDomainEvent3 : ISubscribedDomainEvent
     {
-        public TestDomainEvent3(Identity entityId, int age)
+        public TestDomainEvent3(string entityId, int age)
         {
             EntityId = entityId;
             Age = age;
         }
 
-        public Identity EntityId { get; }
+        public string EntityId { get; }
         public int Age { get; }
     }
 
@@ -376,25 +375,25 @@ namespace Microwave.UnitTests
 
     public class TestDomainEvent2 : ISubscribedDomainEvent
     {
-        public TestDomainEvent2(GuidIdentity entityId, string otherName)
+        public TestDomainEvent2(string entityId, string otherName)
         {
             EntityId = entityId;
             OtherName = otherName;
         }
 
-        public Identity EntityId { get; }
+        public string EntityId { get; }
         public string OtherName { get; }
     }
 
     public class TestDomainEvent1 : ISubscribedDomainEvent
     {
-        public TestDomainEvent1(GuidIdentity entityId, string name)
+        public TestDomainEvent1(string entityId, string name)
         {
             EntityId = entityId;
             Name = name;
         }
 
-        public Identity EntityId { get; }
+        public string EntityId { get; }
         public string Name { get; }
     }
 
@@ -407,21 +406,21 @@ namespace Microwave.UnitTests
 
     public class Ev : IDomainEvent, ISubscribedDomainEvent
     {
-        public Ev(Identity entityId)
+        public Ev(string entityId)
         {
             EntityId = entityId;
         }
 
-        public Identity EntityId { get; }
+        public string EntityId { get; }
     }
 
     public class TestDomainEvent_OnlySubscribedEventForList : ISubscribedDomainEvent
     {
-        public TestDomainEvent_OnlySubscribedEventForList(Identity entityId)
+        public TestDomainEvent_OnlySubscribedEventForList(string entityId)
         {
             EntityId = entityId;
         }
 
-        public Identity EntityId { get; }
+        public string EntityId { get; }
     }
 }

@@ -17,7 +17,6 @@ using Microwave.Queries.Handler;
 using Microwave.Queries.Ports;
 using Microwave.WebApi.ApiFormatting;
 using Microwave.WebApi.ApiFormatting.DateTimeOffsets;
-using Microwave.WebApi.ApiFormatting.Identities;
 using Microwave.WebApi.Discovery;
 using Microwave.WebApi.Filters;
 using Microwave.WebApi.Queries;
@@ -300,7 +299,6 @@ namespace Microwave
                 config.OutputFormatters.Insert(0, new NewtonsoftOutputFormatter());
                 config.InputFormatters.Insert(0, new NewtonsoftInputFormatter());
 
-                config.ModelBinderProviders.Insert(0, new IdentityModelBinderProvider());
                 config.ModelBinderProviders.Insert(0, new DateTimeOffsetBinderProvider());
             });
             return services;

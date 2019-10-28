@@ -4,7 +4,6 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using Microwave.Domain.EventSourcing;
-using Microwave.Domain.Identities;
 using MongoDB.Bson.Serialization;
 
 namespace Microwave.Persistence.MongoDb.Eventstores
@@ -22,9 +21,6 @@ namespace Microwave.Persistence.MongoDb.Eventstores
                 var addBsonMap = addBsonMapGeneric?.MakeGenericMethod(domainEventType);
                 addBsonMap?.Invoke(null, new object[] { });
             }
-
-            if (!BsonClassMap.IsClassMapRegistered(typeof(GuidIdentity))) BsonClassMap.RegisterClassMap<GuidIdentity>();
-            if (!BsonClassMap.IsClassMapRegistered(typeof(StringIdentity))) BsonClassMap.RegisterClassMap<StringIdentity>();
         }
 
         public static void AddBsonMapFor<T>() where T : IDomainEvent
@@ -69,25 +65,7 @@ namespace Microwave.Persistence.MongoDb.Eventstores
 
         private static Expression ExtractExpression(ParameterExpression lambdaParameter, ParameterInfo parameter)
         {
-            if (IsIdentityParameter(parameter))
-            {
-                var firstProp = Expression.Property(lambdaParameter, parameter.Name);
-                var idOfIdentity = Expression.Property(firstProp, nameof(Identity.Id));
-                var identityCreate = typeof(Identity).GetMethod(nameof(Identity.Create), new[] {typeof(string)});
-                var identity = Expression.Call(identityCreate, idOfIdentity);
-                var idConverted = Expression.Convert(identity, parameter.ParameterType);
-                return idConverted;
-            }
-
             return Expression.Property(lambdaParameter, parameter.Name);
-        }
-
-        private static bool IsIdentityParameter(ParameterInfo parameter)
-        {
-            var parameterType = parameter.ParameterType;
-            return parameterType == typeof(GuidIdentity)
-                || parameterType == typeof(StringIdentity)
-                || parameterType == typeof (Identity);
         }
 
         private static ConstructorInfo GetConstructorWithMostMatchingParameters(Type eventType)

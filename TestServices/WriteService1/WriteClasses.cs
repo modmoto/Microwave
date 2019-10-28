@@ -1,5 +1,4 @@
 using Microwave.Domain.EventSourcing;
-using Microwave.Domain.Identities;
 
 namespace WriteService1
 {
@@ -16,36 +15,36 @@ namespace WriteService1
 
     public class Event1 : IDomainEvent
     {
-        public Event1(Identity entityId)
+        public Event1(string entityId)
         {
             EntityId = entityId;
         }
 
-        public Identity EntityId { get; }
+        public string EntityId { get; }
     }
 
 
     public class Event2 : IDomainEvent
     {
-        public Event2(Identity entityId, string name)
+        public Event2(string entityId, string name)
         {
             EntityId = entityId;
             Name = name;
         }
 
-        public Identity EntityId { get; }
+        public string EntityId { get; }
         public string Name { get; }
     }
 
     public class EventMitSuperLangemNamen : IDomainEvent
     {
-        public EventMitSuperLangemNamen(Identity entityId, string name)
+        public EventMitSuperLangemNamen(string entityId, string name)
         {
             EntityId = entityId;
             Name = name;
         }
 
-        public Identity EntityId { get; }
+        public string EntityId { get; }
         public string Name { get; }
     }
 }
