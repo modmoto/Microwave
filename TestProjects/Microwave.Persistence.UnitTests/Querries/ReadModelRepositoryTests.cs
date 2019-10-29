@@ -26,7 +26,7 @@ namespace Microwave.Persistence.UnitTests.Querries
             testQuerry.SetVars("Test", new[] {"Jeah", "jeah2"});
             await queryRepository.SaveReadModelAsync(testQuerry);
 
-            var querry1 = await queryRepository.LoadAsync<TestReadModel>(guid.ToString());
+            var querry1 = await queryRepository.LoadAsync<TestReadModel>(guid);
 
             Assert.AreEqual(guid.ToString(), querry1.Value.Identity);
             Assert.AreEqual("Test", querry1.Value.UserName);
