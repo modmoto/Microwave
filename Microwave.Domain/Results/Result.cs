@@ -1,4 +1,6 @@
-﻿namespace Microwave.Domain.Results
+﻿using System;
+
+namespace Microwave.Domain.Results
 {
     public abstract class Result
     {
@@ -63,6 +65,11 @@
         public static Result<T> NotFound(string notFoundId)
         {
             return new NotFoundResult<T>(notFoundId);
+        }
+
+        public static Result<T> NotFound(Guid notFoundId)
+        {
+            return NotFound(notFoundId.ToString());
         }
     }
 }
