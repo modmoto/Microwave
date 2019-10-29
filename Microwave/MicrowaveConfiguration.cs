@@ -7,10 +7,6 @@ namespace Microwave
 {
     public class MicrowaveConfiguration
     {
-        public MicrowaveConfiguration()
-        {
-        }
-
         public string ServiceName { get; private set; }
         public ServiceBaseAddressCollection ServiceLocations { get; } = new ServiceBaseAddressCollection();
         public IMicrowaveHttpClientFactory MicrowaveHttpClientFactory { get; private set; } = new DefaultMicrowaveHttpClientFactory();
