@@ -17,7 +17,7 @@ namespace Microwave.Queries.UnitTests
             var domainEventWrapper = new [] { new DomainEventWrapper
             {
                 Version = 12,
-                Created = DateTimeOffset.Now,
+                GlobalVersion = 1,
                 DomainEvent = new Event1(Guid.NewGuid(), "Name")
             }};
 
@@ -30,18 +30,17 @@ namespace Microwave.Queries.UnitTests
             var wrapperExpected = domainEventWrapper.Single();
             Assert.AreEqual(wrapperExpected.DomainEvent.EntityId, wrapperActual.DomainEvent.EntityId);
             Assert.AreEqual(wrapperExpected.Version, wrapperActual.Version);
-            Assert.AreEqual(wrapperExpected.Created, wrapperActual.Created);
+            Assert.AreEqual(wrapperExpected.GlobalVersion, wrapperActual.Created);
             Assert.AreEqual(((Event1) wrapperExpected.DomainEvent).Name, ((Event1)wrapperActual.DomainEvent).Name);
         }
 
         [TestMethod]
         public void ParseDomainEventWrapper_StringKey()
         {
-            var dateTimeOffset = DateTimeOffset.Now;
             var domainEventWrapper = new [] { new DomainEventWrapper
             {
                 Version = 12,
-                Created = dateTimeOffset,
+                GlobalVersion = 0,
                 DomainEvent = new Event2("luls", "Name")
             }};
 
@@ -60,7 +59,7 @@ namespace Microwave.Queries.UnitTests
             var domainEventWrapper = new [] { new DomainEventWrapper
             {
                 Version = 12,
-                Created = DateTimeOffset.Now,
+                GlobalVersion = 0,
                 DomainEvent = new Event1(Guid.NewGuid(), "Name")
             }};
 

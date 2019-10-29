@@ -85,8 +85,8 @@ namespace Microwave.Persistence.UnitTests.Eventstores
 
             var loadEventsByEntity = await eventRepository.LoadEventsByEntity(newGuid.ToString());
             Assert.AreEqual(2, loadEventsByEntity.Value.Count());
-            Assert.AreNotEqual(0, loadEventsByEntity.Value.ToList()[0].Created);
-            Assert.AreNotEqual(0, loadEventsByEntity.Value.ToList()[1].Created);
+            Assert.AreEqual(1, loadEventsByEntity.Value.ToList()[0].GlobalVersion);
+            Assert.AreEqual(2, loadEventsByEntity.Value.ToList()[1].GlobalVersion);
             Assert.AreEqual(1, loadEventsByEntity.Value.ToList()[0].Version);
             Assert.AreEqual(2, loadEventsByEntity.Value.ToList()[1].Version);
             Assert.IsTrue(newGuid.ToString() == loadEventsByEntity.Value.ToList()[0].DomainEvent.EntityId);
@@ -199,8 +199,7 @@ namespace Microwave.Persistence.UnitTests.Eventstores
             var events = new List<IDomainEvent> { new TestEvent1(entityId), new TestEvent2(entityId)};
             await eventRepository.AppendAsync(events, 0);
 
-            var result = await eventRepository.LoadEventsByTypeAsync(nameof(TestEvent1), DateTimeOffset.Now.AddDays
-            (1));
+            var result = await eventRepository.LoadEventsByTypeAsync(nameof(TestEvent1), 1000);
 
             Assert.IsTrue(result.Is<Ok>());
             Assert.AreEqual(0, result.Value.Count());
@@ -407,8 +406,8 @@ namespace Microwave.Persistence.UnitTests.Eventstores
             await eventRepository.AppendAsync(domainEvents, 0);
             await eventRepository.AppendAsync(domainEvents, 100);
 
-            var result = await eventRepository.LoadEvents(DateTimeOffset.MinValue);
-            var dateTimeOffset = result.Value.Skip(78).First().Created;
+            var result = await eventRepository.LoadEvents(0);
+            var dateTimeOffset = result.Value.Skip(78).First().GlobalVersion;
 
             Assert.AreEqual(200, result.Value.Count());
 

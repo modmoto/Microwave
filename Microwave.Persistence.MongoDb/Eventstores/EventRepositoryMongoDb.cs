@@ -38,7 +38,7 @@ namespace Microwave.Persistence.MongoDb.Eventstores
             {
                 return new DomainEventWrapper
                 {
-                    Created = dbo.Created,
+                    GlobalVersion = dbo.GlobalVersion,
                     Version = dbo.Key.Version,
                     DomainEvent = dbo.Payload
                 };
@@ -47,18 +47,17 @@ namespace Microwave.Persistence.MongoDb.Eventstores
             return Result<IEnumerable<DomainEventWrapper>>.Ok(domainEvents);
         }
 
-        public async Task<Result<IEnumerable<DomainEventWrapper>>> LoadEvents(DateTimeOffset tickSince = default(DateTimeOffset))
+        public async Task<Result<IEnumerable<DomainEventWrapper>>> LoadEvents(long tickSince = 0)
         {
-            if (tickSince == default(DateTimeOffset)) tickSince = DateTimeOffset.MinValue;
             var mongoCollection = _database.GetCollection<DomainEventDbo>(_eventCollectionName);
-            var domainEventDbos = (await mongoCollection.FindAsync(ev => ev.Created > tickSince)).ToList();
+            var domainEventDbos = (await mongoCollection.FindAsync(ev => ev.GlobalVersion > tickSince)).ToList();
             if (!domainEventDbos.Any()) return Result<IEnumerable<DomainEventWrapper>>.Ok(new List<DomainEventWrapper>());
 
             var domainEvents = domainEventDbos.Select(dbo =>
             {
                 return new DomainEventWrapper
                 {
-                    Created = dbo.Created,
+                    GlobalVersion = dbo.GlobalVersion,
                     Version = dbo.Key.Version,
                     DomainEvent = dbo.Payload
                 };
@@ -67,17 +66,18 @@ namespace Microwave.Persistence.MongoDb.Eventstores
             return Result<IEnumerable<DomainEventWrapper>>.Ok(domainEvents);
         }
 
-        public async Task<Result<IEnumerable<DomainEventWrapper>>> LoadEventsByTypeAsync(string eventType, DateTimeOffset tickSince = default(DateTimeOffset))
+        public async Task<Result<IEnumerable<DomainEventWrapper>>> LoadEventsByTypeAsync(
+            string eventType,
+            long tickSince = 0)
         {
-            if (tickSince == default(DateTimeOffset)) tickSince = DateTimeOffset.MinValue;
             var mongoCollection = _database.GetCollection<DomainEventDbo>(_eventCollectionName);
-            var domainEventTypeDbos = (await mongoCollection.FindAsync(ev => ev.EventType == eventType && ev.Created > tickSince)).ToList();
+            var domainEventTypeDbos = (await mongoCollection.FindAsync(ev => ev.EventType == eventType && ev.GlobalVersion > tickSince)).ToList();
 
             var domainEvents = domainEventTypeDbos.Select(dbo =>
             {
                 return new DomainEventWrapper
                 {
-                    Created = dbo.Created,
+                    GlobalVersion = dbo.GlobalVersion,
                     Version = dbo.Key.Version,
                     DomainEvent = dbo.Payload
                 };
@@ -101,7 +101,7 @@ namespace Microwave.Persistence.MongoDb.Eventstores
                 return new DomainEventDbo
                 {
                     Payload = domainEvent,
-                    Created = DateTimeOffset.Now,
+                    GlobalVersion = 0,
                     Key = new DomainEventKey
                     {
                         Version = ++versionTemp,

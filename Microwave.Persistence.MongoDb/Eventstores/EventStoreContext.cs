@@ -23,7 +23,7 @@ namespace Microwave.Persistence.MongoDb.Eventstores
             };
         }
         public IDomainEvent Payload { get; set; }
-        public DateTimeOffset Created { get; set; }
+        public long GlobalVersion { get; set; }
         public string EventType { get; set; }
     }
 

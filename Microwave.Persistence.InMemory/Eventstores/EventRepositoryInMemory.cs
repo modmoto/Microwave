@@ -30,7 +30,7 @@ namespace Microwave.Persistence.InMemory.Eventstores
             {
                 return new DomainEventWrapper
                 {
-                    Created = dbo.Created,
+                    GlobalVersion = dbo.GlobalVersion,
                     Version = dbo.Version,
                     DomainEvent = dbo.DomainEvent
                 };
@@ -51,10 +51,9 @@ namespace Microwave.Persistence.InMemory.Eventstores
             var domainEventWrappers = new List<DomainEventWrapper>();
             foreach (var domainEvent in domainEvents)
             {
-                Task.Delay(1);
                 var domainEventWrapper = new DomainEventWrapper
                 {
-                    Created = DateTimeOffset.Now,
+                    GlobalVersion = 0,
                     DomainEvent = domainEvent,
                     Version = ++newVersion
                 };
@@ -68,18 +67,18 @@ namespace Microwave.Persistence.InMemory.Eventstores
             return Task.FromResult(Result.Ok());
         }
 
-        public Task<Result<IEnumerable<DomainEventWrapper>>> LoadEvents(DateTimeOffset tickSince = default(DateTimeOffset))
+        public Task<Result<IEnumerable<DomainEventWrapper>>> LoadEvents(long since = 0)
         {
-            var domainEventWrappers = _domainEvents.OrderBy(e => e.Created).Where(e => e.Created > tickSince);
+            var domainEventWrappers = _domainEvents.OrderBy(e => e.GlobalVersion).Where(e => e.GlobalVersion > since);
             return Task.FromResult(Result<IEnumerable<DomainEventWrapper>>.Ok(domainEventWrappers));
         }
 
-        public Task<Result<IEnumerable<DomainEventWrapper>>> LoadEventsByTypeAsync(string eventType, DateTimeOffset
-        tickSince = default(DateTimeOffset))
+        public Task<Result<IEnumerable<DomainEventWrapper>>> LoadEventsByTypeAsync(string eventType, long
+        tickSince = 0)
         {
             var domainEventWrappers = _domainEvents
-                .OrderBy(e => e.Created)
-                .Where(e => e.DomainEventType == eventType && e.Created > tickSince);
+                .OrderBy(e => e.GlobalVersion)
+                .Where(e => e.DomainEventType == eventType && e.GlobalVersion > tickSince);
             return Task.FromResult(Result<IEnumerable<DomainEventWrapper>>.Ok(domainEventWrappers));
         }
     }
