@@ -157,6 +157,57 @@ namespace Microwave.Persistence.UnitTests.Eventstores
 
         [DataTestMethod]
         [PersistenceTypeTest]
+        public async Task AddAndLoadEventsConcurrent_MultipleEntitiies_GlobalWorks(PersistenceLayerProvider layerProvider)
+        {
+            var eventRepository = layerProvider.EventRepository;
+
+            var newGuid = Guid.NewGuid();
+            var newGuid2 = Guid.NewGuid();
+            var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid)};
+            var events2 = new List<IDomainEvent> { new TestEvent1(newGuid2), new TestEvent2(newGuid2)};
+
+            await eventRepository.AppendAsync(events, 0);
+            await eventRepository.AppendAsync(events2, 0);
+
+            var res = await eventRepository.LoadEvents();
+
+            Assert.IsTrue(res.Is<Ok>());
+            var domainEventWrappers = res.Value.ToList();
+            Assert.AreEqual(1, domainEventWrappers[0].GlobalVersion);
+            Assert.AreEqual(2, domainEventWrappers[1].GlobalVersion);
+            Assert.AreEqual(3, domainEventWrappers[2].GlobalVersion);
+            Assert.AreEqual(4, domainEventWrappers[3].GlobalVersion);
+        }
+
+
+        [DataTestMethod]
+        [PersistenceTypeTest]
+        public async Task AddAndLoadEventsConcurrent_MultipleEntitiies_OnRestartingService_GlobalWorks(PersistenceLayerProvider layerProvider)
+        {
+            var eventRepository = layerProvider.EventRepository;
+            var eventRepository2 = layerProvider.EventRepositoryNewInstance;
+            if (eventRepository2 == null) return;
+
+            var newGuid = Guid.NewGuid();
+            var newGuid2 = Guid.NewGuid();
+            var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid)};
+            var events2 = new List<IDomainEvent> { new TestEvent1(newGuid2), new TestEvent2(newGuid2)};
+
+            await eventRepository.AppendAsync(events, 0);
+            await eventRepository2.AppendAsync(events2, 0);
+
+            var res = await eventRepository.LoadEvents();
+
+            Assert.IsTrue(res.Is<Ok>());
+            var domainEventWrappers = res.Value.ToList();
+            Assert.AreEqual(1, domainEventWrappers[0].GlobalVersion);
+            Assert.AreEqual(2, domainEventWrappers[1].GlobalVersion);
+            Assert.AreEqual(3, domainEventWrappers[2].GlobalVersion);
+            Assert.AreEqual(4, domainEventWrappers[3].GlobalVersion);
+        }
+
+        [DataTestMethod]
+        [PersistenceTypeTest]
         public async Task AddAndLoadEventsConcurrent_AddAfterwardsAgain_DifferentRepo(PersistenceLayerProvider layerProvider)
         {
             var eventRepository = layerProvider.EventRepository;

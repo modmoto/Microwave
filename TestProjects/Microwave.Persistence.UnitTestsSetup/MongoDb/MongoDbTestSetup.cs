@@ -26,8 +26,15 @@ namespace Microwave.Persistence.UnitTestsSetup.MongoDb
         public override IStatusRepository StatusRepository => new StatusRepositoryMongoDb(EventMongoDb, new CacheThatNeverHasAnything());
         public override IReadModelRepository ReadModelRepository => new ReadModelRepositoryMongoDb(EventMongoDb);
         public override ISnapShotRepository SnapShotRepository => new SnapShotRepositoryMongoDb(EventMongoDb);
-        public override IEventRepository EventRepository => new EventRepositoryMongoDb(EventMongoDb, new VersionCache
-        (EventMongoDb));
+        public override IEventRepository EventRepository => new EventRepositoryMongoDb(
+            EventMongoDb,
+            new VersionCache
+            (EventMongoDb));
+
+        public override IEventRepository EventRepositoryNewInstance => new EventRepositoryMongoDb(
+            EventMongoDb,
+            new VersionCache
+            (EventMongoDb));
     }
 
     public class CacheThatNeverHasAnything : IEventLocationCache

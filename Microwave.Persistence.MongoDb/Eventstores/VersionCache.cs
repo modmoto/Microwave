@@ -51,12 +51,20 @@ namespace Microwave.Persistence.MongoDb.Eventstores
         }
 
         public long GlobalVersion { get; private set; }
+        public bool WasInitialized { get; private set; }
+
         public void CountUpGlobalVersion()
         {
             lock (_lock)
             {
                 GlobalVersion++;
             }
+        }
+
+        public async Task UpdateGlobalVersion()
+        {
+            WasInitialized = true;
+            GlobalVersion = 3;
         }
     }
 }
