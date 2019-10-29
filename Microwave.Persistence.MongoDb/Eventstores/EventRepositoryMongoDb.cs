@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microwave.Domain.EventSourcing;
@@ -14,6 +15,7 @@ namespace Microwave.Persistence.MongoDb.Eventstores
         private readonly IMongoDatabase _database;
         private readonly string _eventCollectionName = "DomainEventDbos";
         private readonly IVersionCache _versions;
+        private object _lock = new object();
 
         public EventRepositoryMongoDb(MicrowaveMongoDb mongoDb, IVersionCache versions)
         {
@@ -86,41 +88,51 @@ namespace Microwave.Persistence.MongoDb.Eventstores
 
         public async Task<Result> AppendAsync(IEnumerable<IDomainEvent> domainEvents, long currentEntityVersion)
         {
-            var events = domainEvents.ToList();
-            if (!events.Any()) return Result.Ok();
-
-            var entityId = events.First().EntityId;
-            var versionTemp = currentEntityVersion;
-            var lastVersion = await _versions.Get(entityId);
-
-            if (lastVersion < currentEntityVersion) return Result.ConcurrencyResult(currentEntityVersion, lastVersion);
-
-            var domainEventDbos = events.Select(domainEvent =>
+            lock (_lock)
             {
-                return new DomainEventDbo
+                var events = domainEvents.ToList();
+                if (!events.Any()) return Result.Ok();
+
+                var entityId = events.First().EntityId;
+                var versionTemp = currentEntityVersion;
+                var lastVersion = _versions.Get(entityId).Result;
+
+                if (lastVersion < currentEntityVersion) return Result.ConcurrencyResult(currentEntityVersion, lastVersion);
+
+                var domainEventDbos = events.Select(domainEvent =>
                 {
-                    Payload = domainEvent,
-                    GlobalVersion = 100,
-                    Key = new DomainEventKey
+                    _versions.CountUpGlobalVersion();
+                    return new DomainEventDbo
                     {
-                        Version = ++versionTemp,
-                        EntityId = domainEvent.EntityId
-                    },
-                    EventType = domainEvent.GetType().Name
-                };
-            }).ToList();
+                        Payload = domainEvent,
+                        GlobalVersion = _versions.GlobalVersion,
+                        Key = new DomainEventKey
+                        {
+                            Version = ++versionTemp,
+                            EntityId = domainEvent.EntityId
+                        },
+                        EventType = domainEvent.GetType().Name
+                    };
+                }).ToList();
 
-            try
-            {
-                await _database.GetCollection<DomainEventDbo>(_eventCollectionName).InsertManyAsync(domainEventDbos);
-                _versions.Update(entityId, versionTemp);
+                try
+                {
+                    _database.GetCollection<DomainEventDbo>(_eventCollectionName).InsertManyAsync(domainEventDbos).Wait();
+                    _versions.Update(entityId, versionTemp);
+                }
+                catch (AggregateException aggregateException)
+                {
+                    var innerException = aggregateException.InnerExceptions.SingleOrDefault();
+                    if (innerException?.GetType() == typeof(MongoBulkWriteException<DomainEventDbo>))
+                    {
+                        var actualVersion = _versions.GetForce(entityId).Result;
+                        return Result.ConcurrencyResult(currentEntityVersion, actualVersion);
+                    }
+
+                    throw;
+                }
+                return Result.Ok();
             }
-            catch (MongoBulkWriteException)
-            {
-                var actualVersion = await _versions.GetForce(entityId);
-                return Result.ConcurrencyResult(currentEntityVersion, actualVersion);
-            }
-            return Result.Ok();
         }
     }
 }

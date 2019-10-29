@@ -406,7 +406,7 @@ namespace Microwave.Persistence.UnitTests.Eventstores
             await eventRepository.AppendAsync(domainEvents, 0);
             await eventRepository.AppendAsync(domainEvents, 100);
 
-            var result = await eventRepository.LoadEvents(0);
+            var result = await eventRepository.LoadEvents();
             var dateTimeOffset = result.Value.Skip(78).First().GlobalVersion;
 
             Assert.AreEqual(200, result.Value.Count());

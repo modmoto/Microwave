@@ -10,6 +10,7 @@ namespace Microwave.Persistence.MongoDb.Eventstores
         private readonly ConcurrentDictionary<string, long> _cache = new ConcurrentDictionary<string, long>();
         private readonly IMongoDatabase _database;
         private readonly string _eventCollectionName = "DomainEventDbos";
+        private object _lock = new object();
 
         public VersionCache(MicrowaveMongoDb mongoDb)
         {
@@ -47,6 +48,15 @@ namespace Microwave.Persistence.MongoDb.Eventstores
         public void Update(string entityId, long actualVersion)
         {
             _cache[entityId] = actualVersion;
+        }
+
+        public long GlobalVersion { get; private set; }
+        public void CountUpGlobalVersion()
+        {
+            lock (_lock)
+            {
+                GlobalVersion++;
+            }
         }
     }
 }
