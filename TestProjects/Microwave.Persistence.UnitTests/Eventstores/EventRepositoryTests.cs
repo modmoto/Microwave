@@ -6,6 +6,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Domain.EventSourcing;
 using Microwave.Domain.Exceptions;
 using Microwave.Domain.Results;
+using Microwave.Persistence.MongoDb.Eventstores;
 using Microwave.Persistence.UnitTestsSetup;
 
 namespace Microwave.Persistence.UnitTests.Eventstores
@@ -17,6 +18,10 @@ namespace Microwave.Persistence.UnitTests.Eventstores
         [PersistenceTypeTest]
         public async Task AddAndLoadEvents(PersistenceLayerProvider layerProvider)
         {
+            BsonMapRegistrationHelpers.AddBsonMapFor<TestEvent1>();
+            BsonMapRegistrationHelpers.AddBsonMapFor<TestEvent2>();
+            BsonMapRegistrationHelpers.AddBsonMapFor<TestEvent3>();
+
             var eventRepository = layerProvider.EventRepository;
 
             var newGuid = Guid.NewGuid();
@@ -65,6 +70,9 @@ namespace Microwave.Persistence.UnitTests.Eventstores
         [PersistenceTypeTest]
         public async Task LoadDomainEvents_IdAndStuffIsSetCorreclty(PersistenceLayerProvider layerProvider)
         {
+            BsonMapRegistrationHelpers.AddBsonMapFor<TestEvent1>();
+            BsonMapRegistrationHelpers.AddBsonMapFor<TestEvent2>();
+
             var eventRepository = layerProvider.EventRepository;
 
             var newGuid = Guid.NewGuid();
@@ -238,6 +246,9 @@ namespace Microwave.Persistence.UnitTests.Eventstores
         [PersistenceTypeTest]
         public async Task AddAndLoadEventsByTimeStamp(PersistenceLayerProvider layerProvider)
         {
+            BsonMapRegistrationHelpers.AddBsonMapFor<TestEvent1>();
+            BsonMapRegistrationHelpers.AddBsonMapFor<TestEvent2>();
+
             var eventRepository = layerProvider.EventRepository;
 
             var newGuid = Guid.NewGuid();
@@ -255,6 +266,9 @@ namespace Microwave.Persistence.UnitTests.Eventstores
         [PersistenceTypeTest]
         public async Task AddEvents_FirstEventAfterCreationHasWrongRowVersionBug(PersistenceLayerProvider layerProvider)
         {
+            BsonMapRegistrationHelpers.AddBsonMapFor<TestEvent1>();
+            BsonMapRegistrationHelpers.AddBsonMapFor<TestEvent2>();
+
             var eventRepository = layerProvider.EventRepository;
 
             var newGuid = Guid.NewGuid();
@@ -301,6 +315,8 @@ namespace Microwave.Persistence.UnitTests.Eventstores
         [PersistenceTypeTest]
         public async Task AddAndLoadEventsByTimeStamp_SavedAsType(PersistenceLayerProvider layerProvider)
         {
+            BsonMapRegistrationHelpers.AddBsonMapFor<TestEvent1>();
+
             var eventRepository = layerProvider.EventRepository;
 
             var newGuid = Guid.NewGuid();
@@ -319,6 +335,8 @@ namespace Microwave.Persistence.UnitTests.Eventstores
         [PersistenceTypeTest]
         public async Task AddEvents_IdSet(PersistenceLayerProvider layerProvider)
         {
+            BsonMapRegistrationHelpers.AddBsonMapFor<TestEvent1>();
+
             var eventRepository = layerProvider.EventRepository;
 
             var testEvent1 = new TestEvent1(Guid.NewGuid());
@@ -334,6 +352,8 @@ namespace Microwave.Persistence.UnitTests.Eventstores
         [PersistenceTypeTest]
         public async Task AddEvents_IdOfTypeSet(PersistenceLayerProvider layerProvider)
         {
+            BsonMapRegistrationHelpers.AddBsonMapFor<TestEvent1>();
+
             var eventRepository = layerProvider.EventRepository;
 
             var testEvent1 = new TestEvent1(Guid.NewGuid());
@@ -349,6 +369,9 @@ namespace Microwave.Persistence.UnitTests.Eventstores
         [PersistenceTypeTest]
         public async Task AddEvents_RunTypeProjection(PersistenceLayerProvider layerProvider)
         {
+            BsonMapRegistrationHelpers.AddBsonMapFor<TestEvent1>();
+            BsonMapRegistrationHelpers.AddBsonMapFor<TestEvent2>();
+
             var eventRepository = layerProvider.EventRepository;
 
             var newGuid = Guid.NewGuid();

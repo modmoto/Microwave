@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Domain.EventSourcing;
+using Microwave.Persistence.MongoDb.Eventstores;
 using Microwave.Persistence.UnitTestsSetup;
 
 namespace Microwave.Persistence.UnitTests.Eventstores
@@ -28,6 +29,7 @@ namespace Microwave.Persistence.UnitTests.Eventstores
         [PersistenceTypeTest]
         public async Task TestDeserializationOfIdInInterface(PersistenceLayerProvider layerProvider)
         {
+            BsonMapRegistrationHelpers.AddBsonMapFor<TestEv2>();
             var entityStreamRepository = layerProvider.EventRepository;
 
             var domainEvent = new TestEv2(Guid.NewGuid());

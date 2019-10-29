@@ -5,6 +5,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Domain.EventSourcing;
 using Microwave.EventStores;
 using Microwave.EventStores.SnapShots;
+using Microwave.Persistence.MongoDb.Eventstores;
 using Microwave.Persistence.UnitTestsSetup;
 
 namespace Microwave.Persistence.UnitTests.Eventstores
@@ -16,6 +17,10 @@ namespace Microwave.Persistence.UnitTests.Eventstores
         [PersistenceTypeTest]
         public async Task SnapshotGetSavedAfterThirdEvent(PersistenceLayerProvider layerProvider)
         {
+            BsonMapRegistrationHelpers.AddBsonMapFor<Event1>();
+            BsonMapRegistrationHelpers.AddBsonMapFor<Event2>();
+            BsonMapRegistrationHelpers.AddBsonMapFor<Event3>();
+
             var snapShotRepository = layerProvider.SnapShotRepository;
             var eventStore = new EventStore(layerProvider.EventRepository, snapShotRepository
                 , new SnapShotConfig(new
@@ -63,6 +68,9 @@ namespace Microwave.Persistence.UnitTests.Eventstores
         [PersistenceTypeTest]
         public async Task SnapshotExactlyOnSnapShotTime_DoesNotReturnNotFoundBug(PersistenceLayerProvider layerProvider)
         {
+            BsonMapRegistrationHelpers.AddBsonMapFor<Event1>();
+            BsonMapRegistrationHelpers.AddBsonMapFor<Event2>();
+
             var eventStore = new EventStore(layerProvider.EventRepository, layerProvider.SnapShotRepository);
 
             var entityId = Guid.NewGuid();
@@ -105,35 +113,41 @@ namespace Microwave.Persistence.UnitTests.Eventstores
 
     public class Event1 : IDomainEvent
     {
-        public Event1(Guid entityId)
+        public Event1(Guid id)
         {
-            EntityId = entityId.ToString();
+            Id = id;
         }
 
-        public string EntityId { get; }
+        public Guid Id { get; }
+
+        public string EntityId => Id.ToString();
     }
 
     public class Event2 : IDomainEvent
     {
-        public Event2(Guid entityId, string name)
+        public Event2(Guid id, string name)
         {
-            EntityId = entityId.ToString();
             Name = name;
+            Id = id;
         }
 
-        public string EntityId { get; }
+        public Guid Id { get; }
+
+        public string EntityId => Id.ToString();
         public string Name { get; }
     }
 
     public class Event3 : IDomainEvent
     {
-        public Event3(Guid entityId, int age)
+        public Event3(Guid id, int age)
         {
-            EntityId = entityId.ToString();
             Age = age;
+            Id = id;
         }
 
-        public string EntityId { get; }
+        public Guid Id { get; }
+
+        public string EntityId => Id.ToString();
         public int Age { get; }
     }
 

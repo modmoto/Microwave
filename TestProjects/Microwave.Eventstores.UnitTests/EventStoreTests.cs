@@ -46,7 +46,7 @@ namespace Microwave.Eventstores.UnitTests
             var eventStore = new EventStore(entityStremRepo.Object, snapShotRepo.Object);
             var loadAsync = await eventStore.LoadAsync<TestEntity>(entityId.ToString());
 
-            Assert.AreEqual(entityId.ToString(), loadAsync.Value.Id);
+            Assert.AreEqual(entityId, loadAsync.Value.Id);
         }
 
         [TestMethod]
