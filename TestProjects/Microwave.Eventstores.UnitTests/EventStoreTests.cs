@@ -95,26 +95,31 @@ namespace Microwave.Eventstores.UnitTests
         [TestMethod]
         public async Task IntegrationWithRepo()
         {
+            BsonMapRegistrationHelpers.AddBsonMapFor<TestEventEventStore>();
             var snapShotRepo = new Mock<ISnapShotRepository>();
             snapShotRepo.Setup(re => re.LoadSnapShot<TestEntity>(It.IsAny<string>()))
                 .ReturnsAsync(SnapShotResult<TestEntity>.Default());
             var entityId = Guid.NewGuid();
-            var eventStore = new EventStore(new EventRepositoryMongoDb(EventMongoDb, new VersionCache(EventMongoDb)), snapShotRepo.Object);
+            var eventStore = new EventStore(
+                new EventRepositoryMongoDb(EventMongoDb,
+                new VersionCache(EventMongoDb)),
+                snapShotRepo.Object);
 
             await eventStore.AppendAsync(new List<IDomainEvent> {new TestEventEventStore(entityId, "Test")}, 0);
             var loadAsync = await eventStore.LoadAsync<TestEntity>(entityId.ToString());
             var loadAsync2 = await eventStore.LoadAsync<TestEntity>(entityId.ToString());
 
-            Assert.AreEqual(entityId.ToString(), loadAsync.Value.Id);
+            Assert.AreEqual(entityId, loadAsync.Value.Id);
             Assert.AreEqual("Test", loadAsync.Value.Name);
 
-            Assert.AreEqual(entityId.ToString(), loadAsync2.Value.Id);
+            Assert.AreEqual(entityId, loadAsync2.Value.Id);
             Assert.AreEqual("Test", loadAsync2.Value.Name);
         }
 
         [TestMethod]
         public async Task IntegrationWithRepo_AddSingleEvent()
         {
+            BsonMapRegistrationHelpers.AddBsonMapFor<TestEventEventStore>();
             var snapShotRepo = new Mock<ISnapShotRepository>();
             snapShotRepo.Setup(re => re.LoadSnapShot<TestEntity>(It.IsAny<string>()))
                 .ReturnsAsync(SnapShotResult<TestEntity>.Default());
@@ -124,7 +129,7 @@ namespace Microwave.Eventstores.UnitTests
             await eventStore.AppendAsync(new TestEventEventStore(entityId, "Test"), 0);
             var loadAsync = await eventStore.LoadAsync<TestEntity>(entityId.ToString());
 
-            Assert.AreEqual(entityId.ToString(), loadAsync.Value.Id);
+            Assert.AreEqual(entityId, loadAsync.Value.Id);
             Assert.AreEqual("Test", loadAsync.Value.Name);
         }
 
@@ -204,23 +209,24 @@ namespace Microwave.Eventstores.UnitTests
     {
         public void Apply(TestEventEventStore domainEvent)
         {
-            Id = domainEvent.EntityId;
+            Id = domainEvent.Id;
             Name = domainEvent.Name;
         }
 
-        public string Id { get; private set; }
+        public Guid Id { get; private set; }
         public string Name { get; set; }
     }
 
     public class TestEventEventStore : IDomainEvent
     {
-        public TestEventEventStore(Guid entityId, string name = null)
+        public TestEventEventStore(Guid id, string name = null)
         {
-            EntityId = entityId.ToString();
+            Id = id;
             Name = name;
         }
 
-        public string EntityId { get; }
+        public Guid Id { get; }
         public string Name { get; }
+        public string EntityId => Id.ToString();
     }
 }

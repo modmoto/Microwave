@@ -135,22 +135,22 @@ namespace Microwave.Persistence.UnitTestsSetup.MongoDb
 
     public class TestEvent1 : IDomainEvent
     {
-        public TestEvent1(Guid entityId)
+        public TestEvent1(Guid id)
         {
-            EntityId = entityId.ToString();
+            Id = id;
         }
-
-        public string EntityId { get; }
+        public string EntityId => Id.ToString();
+        public Guid Id { get; }
     }
 
     public class TestEvent2 : IDomainEvent
     {
-        public TestEvent2(Guid entityId)
+        public TestEvent2(Guid id)
         {
-            EntityId = entityId.ToString();
+            Id = id;
         }
-
-        public string EntityId { get; }
+        public string EntityId => Id.ToString();
+        public Guid Id { get; }
     }
 
 
@@ -170,13 +170,14 @@ namespace Microwave.Persistence.UnitTestsSetup.MongoDb
 
     public class TestEventAllOk : IDomainEvent
     {
-        public TestEventAllOk(Guid entityId, string name)
+        public TestEventAllOk(Guid id, string name)
         {
-            EntityId = entityId.ToString();
+            Id = id;
             Name = name;
         }
 
-        public string EntityId { get; }
+        public string EntityId => Id.ToString();
+        public Guid Id { get; }
         public string Name { get; }
     }
 

@@ -41,11 +41,9 @@ namespace Microwave.Persistence.UnitTests.Eventstores
 
     public class TestEv2 : IDomainEvent
     {
-
         public Guid TypeId { get; }
         public TestEv2(Guid typeId)
         {
-
             TypeId = typeId;
         }
 

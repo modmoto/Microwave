@@ -53,7 +53,8 @@ namespace Microwave.Eventstores.UnitTests
 
             var newGuid = Guid.NewGuid();
 
-            await eventStore.AppendAsync(new List<IDomainEvent> { new TestEvent_BsonBug_AutoProperty(newGuid, "Simon")},
+            await eventStore.AppendAsync(new List<IDomainEvent> { new TestEvent_BsonBug_AutoProperty(newGuid.ToString(),
+            "Simon")},
                 0);
 
             var result = await eventRepository.LoadEvents();
@@ -84,29 +85,6 @@ namespace Microwave.Eventstores.UnitTests
             Assert.AreEqual(1, result.Value.Count());
             Assert.AreEqual("whatever", result.Value.Single().DomainEvent.EntityId);
             Assert.AreEqual("Simon", ((TestEvent_UnconventionalOderring)result.Value.Single().DomainEvent).Name);
-        }
-
-        [TestMethod]
-        public async Task AddEvents_ConstructorBson_TwoIdentitiesInConstructor()
-        {
-            BsonMapRegistrationHelpers.AddBsonMapFor<TestEvent_TwoIdentitiesInConstructor>();
-
-            var eventRepository = new EventRepositoryMongoDb(EventMongoDb, new VersionCache(EventMongoDb));
-            var snapShotRepo = new Mock<ISnapShotRepository>();
-            snapShotRepo.Setup(re => re.LoadSnapShot<TestEntity>(It.IsAny<string>()))
-                .ReturnsAsync(SnapShotResult<TestEntity>.Default());
-
-            var eventStore = new EventStore(eventRepository, snapShotRepo.Object);
-
-            var newGuid = Guid.NewGuid();
-            await eventStore.AppendAsync(new List<IDomainEvent> { new TestEvent_TwoIdentitiesInConstructor("whatever", newGuid)},
-                0);
-
-            var result = await eventRepository.LoadEvents();
-
-            Assert.AreEqual(1, result.Value.Count());
-            Assert.AreEqual("whatever", result.Value.Single().DomainEvent.EntityId);
-            Assert.AreEqual(newGuid.ToString(), ((TestEvent_TwoIdentitiesInConstructor)result.Value.Single().DomainEvent).Guidstring);
         }
 
         [TestMethod]
@@ -158,18 +136,6 @@ namespace Microwave.Eventstores.UnitTests
         public string Name { get; }
     }
 
-    public class TestEvent_TwoIdentitiesInConstructor : IDomainEvent
-    {
-        public TestEvent_TwoIdentitiesInConstructor(string entityId, Guid guidstring)
-        {
-            EntityId = entityId;
-            Guidstring = guidstring.ToString();
-        }
-
-        public string EntityId { get; }
-        public string Guidstring { get; }
-    }
-
     public class TestEvent_UnconventionalOderring : IDomainEvent
     {
         public string EntityId { get; }
@@ -186,23 +152,24 @@ namespace Microwave.Eventstores.UnitTests
     {
         public string Name { get; }
 
-        public TestEvent_BsonBug(Guid entityId, string name)
+        public TestEvent_BsonBug(Guid id, string name)
         {
             Name = name;
-            EntityId = entityId.ToString();
+            Id = id;
         }
 
-        public string EntityId { get; }
+        public string EntityId => Id.ToString();
+        public Guid Id { get; }
     }
 
     public class TestEvent_BsonBug_AutoProperty : IDomainEvent
     {
         public string Name { get; }
 
-        public TestEvent_BsonBug_AutoProperty(Guid entityId, string name)
+        public TestEvent_BsonBug_AutoProperty(string entityId, string name)
         {
             Name = name;
-            EntityId = entityId.ToString();
+            EntityId = entityId;
         }
 
         public string EntityId { get; }

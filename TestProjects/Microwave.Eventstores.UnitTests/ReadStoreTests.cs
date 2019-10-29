@@ -14,6 +14,7 @@ namespace Microwave.Eventstores.UnitTests
         [TestMethod]
         public async Task Entitystream_LoadEventsSince_IdNotDefault()
         {
+            BsonMapRegistrationHelpers.AddBsonMapFor<TestEv3>();
             var entityStreamRepository = new EventRepositoryMongoDb(EventMongoDb, new VersionCache(EventMongoDb));
 
             var entityStreamTestEvent = new TestEv3(Guid.NewGuid());
@@ -28,11 +29,13 @@ namespace Microwave.Eventstores.UnitTests
 
     public class TestEv3 : IDomainEvent
     {
-        public TestEv3(Guid entityId)
+        public TestEv3(Guid id)
         {
-            EntityId = entityId.ToString();
+            Id = id;
         }
 
-        public string EntityId { get; }
+        public Guid Id { get; }
+
+        public string EntityId => Id.ToString();
     }
 }

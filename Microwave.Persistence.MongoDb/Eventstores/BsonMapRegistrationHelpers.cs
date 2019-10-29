@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -21,6 +22,33 @@ namespace Microwave.Persistence.MongoDb.Eventstores
                 var addBsonMap = addBsonMapGeneric?.MakeGenericMethod(domainEventType);
                 addBsonMap?.Invoke(null, new object[] { });
             }
+        }
+
+        public static void AddBsonMapsForMicrowave()
+        {
+            foreach (var assembly in GetAllAssemblies())
+            {
+                AddBsonMapsForMicrowave(assembly);
+            }
+        }
+
+        private static List<Assembly> GetAllAssemblies()
+        {
+            var assemblies = new List<Assembly>();
+            var referencedPaths = Directory
+                .GetFiles(AppDomain.CurrentDomain.BaseDirectory, "*.dll", SearchOption.AllDirectories).ToList();
+            referencedPaths.ForEach(path =>
+            {
+                try
+                {
+                    var assemblyName = AssemblyName.GetAssemblyName(path);
+                    assemblies.Add(AppDomain.CurrentDomain.Load(assemblyName));
+                }
+                catch (FileNotFoundException)
+                {
+                }
+            });
+            return assemblies;
         }
 
         public static void AddBsonMapFor<T>() where T : IDomainEvent
