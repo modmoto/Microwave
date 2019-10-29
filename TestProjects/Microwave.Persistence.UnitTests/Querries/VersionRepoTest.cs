@@ -15,7 +15,7 @@ namespace Microwave.Persistence.UnitTests.Querries
         {
             var versionRepository = layerProvider.VersionRepository;
 
-            var dateTimeOffset = DateTimeOffset.Now;
+            var dateTimeOffset = 0;
             await versionRepository.SaveVersion(new LastProcessedVersion("Type", dateTimeOffset));
             await versionRepository.SaveVersion(new LastProcessedVersion("Type", dateTimeOffset));
 

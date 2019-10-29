@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microwave.Domain.EventSourcing;
@@ -101,7 +100,7 @@ namespace Microwave.Persistence.MongoDb.Eventstores
                 return new DomainEventDbo
                 {
                     Payload = domainEvent,
-                    GlobalVersion = 0,
+                    GlobalVersion = 100,
                     Key = new DomainEventKey
                     {
                         Version = ++versionTemp,

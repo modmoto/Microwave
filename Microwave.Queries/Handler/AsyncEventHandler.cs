@@ -36,7 +36,7 @@ namespace Microwave.Queries.Handler
                                                                  && m.GetParameters().First().ParameterType == latestEvent.DomainEvent.GetType());
                 if (methodInfo == null) continue;
                 await (Task) methodInfo.Invoke(_handler, new object[] { latestEvent.DomainEvent });
-                await _versionRepository.SaveVersion(new LastProcessedVersion(domainEventType, latestEvent.Created));
+                await _versionRepository.SaveVersion(new LastProcessedVersion(domainEventType, latestEvent.GlobalVersion));
             }
         }
     }

@@ -32,8 +32,7 @@ namespace Microwave.WebApi.Queries
                 if (!_eventTypeRegistration.ContainsKey(value)) continue;
                 var type = _eventTypeRegistration[value];
                 var version = jObject.GetValue(nameof(SubscribedDomainEventWrapper.Version), StringComparison.OrdinalIgnoreCase).Value<long>();
-                var created = (DateTimeOffset) jObject.GetValue(nameof(SubscribedDomainEventWrapper.Created), StringComparison
-                .OrdinalIgnoreCase);
+                var globalVersion = jObject.GetValue(nameof(SubscribedDomainEventWrapper.GlobalVersion), StringComparison.OrdinalIgnoreCase).Value<long>();
                 var domainEventJObject = jObject.GetValue(nameof(SubscribedDomainEventWrapper.DomainEvent), StringComparison
                 .OrdinalIgnoreCase);
                 var domainevent = (ISubscribedDomainEvent) domainEventJObject.ToObject(type, serializer);
@@ -41,7 +40,7 @@ namespace Microwave.WebApi.Queries
                 if (domainevent.EntityId == null) throw new DomainEventNotAssignableToEntityException(domainevent);
                 yield return new SubscribedDomainEventWrapper
                 {
-                    Created = created,
+                    GlobalVersion = globalVersion,
                     Version = version,
                     DomainEvent = domainevent
                 };

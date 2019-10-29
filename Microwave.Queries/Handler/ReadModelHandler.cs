@@ -55,7 +55,7 @@ namespace Microwave.Queries.Handler
                 readModel.Identity = domainEventEntityId;
 
                 await _readModelRepository.SaveReadModelAsync(readModel);
-                await _versionRepository.SaveVersion(new LastProcessedVersion(redaModelVersionCounter, latestEvent.Created));
+                await _versionRepository.SaveVersion(new LastProcessedVersion(redaModelVersionCounter, latestEvent.GlobalVersion));
             }
         }
     }

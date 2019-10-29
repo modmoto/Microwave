@@ -29,10 +29,10 @@ namespace Microwave.Queries.UnitTests
                 }
             };
 
-            mock.Setup(feed => feed.GetEventsAsync(It.IsAny<DateTimeOffset>())).ReturnsAsync(list);
+            mock.Setup(feed => feed.GetEventsAsync(It.IsAny<long>())).ReturnsAsync(list);
             var versionRepo = new Mock<IVersionRepository>();
             versionRepo.Setup(repo => repo.SaveVersion(It.IsAny<LastProcessedVersion>())).Returns(Task.CompletedTask);
-            versionRepo.Setup(repo => repo.GetVersionAsync(It.IsAny<string>())).ReturnsAsync(DateTimeOffset.MinValue);
+            versionRepo.Setup(repo => repo.GetVersionAsync(It.IsAny<string>())).ReturnsAsync(0);
             var handler = new Handler();
             var eventDelegateHandler = new AsyncEventHandler<TestEv>(versionRepo.Object, mock.Object, handler);
             await eventDelegateHandler.Update();
@@ -52,10 +52,10 @@ namespace Microwave.Queries.UnitTests
                     DomainEvent = new TestEv2(Guid.NewGuid())
                 }
             };
-            mock.Setup(feed => feed.GetEventsAsync(It.IsAny<DateTimeOffset>())).ReturnsAsync(list);
+            mock.Setup(feed => feed.GetEventsAsync(It.IsAny<long>())).ReturnsAsync(list);
             var versionRepo = new Mock<IVersionRepository>();
             versionRepo.Setup(repo => repo.SaveVersion(It.IsAny<LastProcessedVersion>())).Returns(Task.CompletedTask);
-            versionRepo.Setup(repo => repo.GetVersionAsync(It.IsAny<string>())).ReturnsAsync(DateTimeOffset.MinValue);
+            versionRepo.Setup(repo => repo.GetVersionAsync(It.IsAny<string>())).ReturnsAsync(0);
 
             var queryRepository = new ReadModelRepositoryMongoDb(EventMongoDb);
 

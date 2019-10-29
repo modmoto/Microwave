@@ -15,10 +15,10 @@ namespace Microwave.Queries.UnitTests
         [TestMethod]
         public async Task HandleIsOnlyCalledOnce()
         {
-            var dateTimeOffset = DateTimeOffset.Now;
+            var dateTimeOffset = 1;
             var domainEventWrapper = new SubscribedDomainEventWrapper
             {
-                Created = dateTimeOffset,
+                GlobalVersion = dateTimeOffset,
                 DomainEvent = new TestEv2(Guid.NewGuid())
             };
 
@@ -42,21 +42,19 @@ namespace Microwave.Queries.UnitTests
 
     public class EventFeedMock : IEventFeed<AsyncEventHandler<TestEv2>>
     {
-        private readonly DateTimeOffset _dateTimeOffset;
+        private readonly long _globalVersion;
         private readonly SubscribedDomainEventWrapper _domainEventWrapper;
 
-        public EventFeedMock(DateTimeOffset dateTimeOffset, SubscribedDomainEventWrapper domainEventWrapper)
+        public EventFeedMock(long globalVersion, SubscribedDomainEventWrapper domainEventWrapper)
         {
-            _dateTimeOffset = dateTimeOffset;
+            _globalVersion = globalVersion;
             _domainEventWrapper = domainEventWrapper;
         }
 
         #pragma warning disable 1998
-        public async Task<IEnumerable<SubscribedDomainEventWrapper>> GetEventsAsync(DateTimeOffset since = default
-        #pragma warning restore 1998
-            (DateTimeOffset))
+        public async Task<IEnumerable<SubscribedDomainEventWrapper>> GetEventsAsync(long since = 0)
         {
-            if (since < _dateTimeOffset)
+            if (since < _globalVersion)
                 return new List<SubscribedDomainEventWrapper> {_domainEventWrapper};
             return new List<SubscribedDomainEventWrapper>();
         }
