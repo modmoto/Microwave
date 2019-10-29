@@ -34,6 +34,11 @@ namespace Microwave.Persistence.InMemory.Querries
             return Task.FromResult(Result<T>.Ok(model));
         }
 
+        public Task<Result<T>> LoadAsync<T>(Guid id) where T : ReadModelBase
+        {
+            return LoadAsync<T>(id.ToString());
+        }
+
         public Task<Result> SaveQueryAsync<T>(T query) where T : Query
         {
             _querryDictionary[typeof(T)] = query;

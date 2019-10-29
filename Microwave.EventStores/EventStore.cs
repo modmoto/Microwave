@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microwave.Domain.EventSourcing;
@@ -51,6 +52,11 @@ namespace Microwave.EventStores
             if (_snapShotConfig.NeedSnapshot<T>(snapShot.Version, version))
                 await _snapShotRepository.SaveSnapShot(new SnapShotWrapper<T>(entity, entityId, version));
             return EventStoreResult<T>.Ok(entity, version);
+        }
+
+        public async Task<EventStoreResult<T>> LoadAsync<T>(Guid entityId) where T : IApply, new()
+        {
+            return await LoadAsync<T>(entityId.ToString());
         }
     }
 }

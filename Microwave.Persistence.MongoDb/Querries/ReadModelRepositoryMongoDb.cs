@@ -39,6 +39,11 @@ namespace Microwave.Persistence.MongoDb.Querries
             return Result<T>.Ok(identifiableQueryDbo.Payload);
         }
 
+        public Task<Result<T>> LoadAsync<T>(Guid id) where T : ReadModelBase
+        {
+            return LoadAsync<T>(id.ToString());
+        }
+
         public async Task<Result> SaveQueryAsync<T>(T query) where T : Query
          {
             var mongoCollection = _database.GetCollection<QueryDbo<T>>(GetQuerryCollectionName<T>());
