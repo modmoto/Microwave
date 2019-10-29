@@ -13,18 +13,12 @@ namespace Microwave.Persistence.UnitTestsSetup.MongoDb
     {
         public MongoDbTestSetup()
         {
-//            EventMongoDb = new MicrowaveMongoDb()
-//                .WithConnectionString(
-//                    "mongodb+srv://mongoDbTestUser:meinTestPw@cluster0-xhbcb.azure.mongodb.net/test?retryWrites=true&w=majority")
-//                .WithDatabaseName("MicrowaveIntegrationTest");
-
             EventMongoDb = new MicrowaveMongoDb()
-                .WithConnectionString("mongodb://localhost:27017/")
+                .WithConnectionString(
+                    "mongodb+srv://mongoDbTestUser:meinTestPw@cluster0-xhbcb.azure.mongodb.net/test?retryWrites=true&w=majority")
                 .WithDatabaseName("MicrowaveIntegrationTest");
 
             EventMongoDb.Database.Client.DropDatabase("MicrowaveIntegrationTest");
-
-           // BsonMapRegistrationHelpers.AddBsonMapsForMicrowave();
         }
 
         public MicrowaveMongoDb EventMongoDb { get; }
