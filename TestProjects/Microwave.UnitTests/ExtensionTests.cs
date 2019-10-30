@@ -7,6 +7,7 @@ using Microwave.Discovery;
 using Microwave.Discovery.EventLocations;
 using Microwave.Domain.EventSourcing;
 using Microwave.EventStores;
+using Microwave.Persistence.InMemory;
 using Microwave.Persistence.MongoDb;
 using Microwave.Queries;
 using Microwave.Queries.Handler;
@@ -34,7 +35,7 @@ namespace Microwave.UnitTests
         {
             var collection = (IServiceCollection) new ServiceCollection();
 
-            var storeDependencies = collection.AddMicrowave().AddMicrowavePersistenceLayerMongoDb();
+            var storeDependencies = collection.AddMicrowave().AddMicrowavePersistenceLayerInMemory();
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
             var eventDelegateHandlers = buildServiceProvider.GetServices<IAsyncEventHandler>().OrderBy(
@@ -116,7 +117,7 @@ namespace Microwave.UnitTests
         {
             var collection = (IServiceCollection) new ServiceCollection();
 
-            var storeDependencies = collection.AddMicrowave().AddMicrowavePersistenceLayerMongoDb();
+            var storeDependencies = collection.AddMicrowave().AddMicrowavePersistenceLayerInMemory();
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
             var eventRegister = buildServiceProvider.GetServices<EventRegistration>().Single();
@@ -133,8 +134,8 @@ namespace Microwave.UnitTests
             var collection = (IServiceCollection) new ServiceCollection();
 
             var storeDependencies = collection
-                .AddMicrowave().AddMicrowavePersistenceLayerMongoDb()
-                .AddMicrowave().AddMicrowavePersistenceLayerMongoDb();
+                .AddMicrowave().AddMicrowavePersistenceLayerInMemory()
+                .AddMicrowave().AddMicrowavePersistenceLayerInMemory();
 
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
@@ -151,15 +152,12 @@ namespace Microwave.UnitTests
         {
             var collection = (IServiceCollection) new ServiceCollection();
 
-            var storeDependencies = collection.AddMicrowave().AddMicrowavePersistenceLayerMongoDb();
+            var storeDependencies = collection.AddMicrowave().AddMicrowavePersistenceLayerInMemory();
 
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
             var store = buildServiceProvider.GetServices<IEventStore>().FirstOrDefault();
             Assert.IsNotNull(store);
-
-            Assert.IsTrue(BsonClassMap.IsClassMapRegistered(typeof(TestDomainEvent_PublishedEvent1)));
-            Assert.IsTrue(BsonClassMap.IsClassMapRegistered(typeof(TestDomainEvent_PublishedEvent2)));
         }
 
         [TestMethod]
@@ -167,7 +165,7 @@ namespace Microwave.UnitTests
         {
             var collection = (IServiceCollection) new ServiceCollection();
 
-            var storeDependencies = collection.AddMicrowave().AddMicrowavePersistenceLayerMongoDb();
+            var storeDependencies = collection.AddMicrowave().AddMicrowavePersistenceLayerInMemory();
 
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
@@ -188,7 +186,7 @@ namespace Microwave.UnitTests
         public void AddMicrowaveDependencies_SubscribedEventsCorrect()
         {
             var collection = (IServiceCollection) new ServiceCollection();
-            var storeDependencies = collection.AddMicrowave().AddMicrowavePersistenceLayerMongoDb();
+            var storeDependencies = collection.AddMicrowave().AddMicrowavePersistenceLayerInMemory();
 
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
@@ -227,7 +225,7 @@ namespace Microwave.UnitTests
         public void AddMicrowaveDependencies_DepedencyControllerIsResolved()
         {
             var collection = (IServiceCollection) new ServiceCollection();
-            var storeDependencies = collection.AddMicrowave().AddMicrowavePersistenceLayerMongoDb();
+            var storeDependencies = collection.AddMicrowave().AddMicrowavePersistenceLayerInMemory();
 
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
