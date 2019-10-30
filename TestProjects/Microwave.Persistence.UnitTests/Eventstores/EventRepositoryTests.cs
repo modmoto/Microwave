@@ -185,8 +185,6 @@ namespace Microwave.Persistence.UnitTests.Eventstores
         public async Task AddAndLoadEventsConcurrent_MultipleEntitiies_OnRestartingService_GlobalWorks(PersistenceLayerProvider layerProvider)
         {
             var eventRepository = layerProvider.EventRepository;
-            var eventRepository2 = layerProvider.EventRepositoryNewInstance;
-            if (eventRepository2 == null) return;
 
             var newGuid = Guid.NewGuid();
             var newGuid2 = Guid.NewGuid();
@@ -194,6 +192,10 @@ namespace Microwave.Persistence.UnitTests.Eventstores
             var events2 = new List<IDomainEvent> { new TestEvent1(newGuid2), new TestEvent2(newGuid2)};
 
             await eventRepository.AppendAsync(events, 0);
+
+            var eventRepository2 = layerProvider.EventRepositoryNewInstance;
+            if (eventRepository2 == null) return;
+
             await eventRepository2.AppendAsync(events2, 0);
 
             var res = await eventRepository.LoadEvents();

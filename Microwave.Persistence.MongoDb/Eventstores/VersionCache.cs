@@ -10,11 +10,16 @@ namespace Microwave.Persistence.MongoDb.Eventstores
         private readonly ConcurrentDictionary<string, long> _cache = new ConcurrentDictionary<string, long>();
         private readonly IMongoDatabase _database;
         private readonly string _eventCollectionName = "DomainEventDbos";
+        public long GlobalVersion { get; private set; }
         private object _lock = new object();
 
         public VersionCache(MicrowaveMongoDb mongoDb)
         {
             _database = mongoDb.Database;
+            var mongoCollection = _database.GetCollection<DomainEventDbo>(_eventCollectionName);
+            var domainEventDbos = mongoCollection.FindAsync(a => true).Result.ToListAsync().Result;
+            var maxGlobalVersion = domainEventDbos.Any() ? domainEventDbos.Max(a => a.GlobalVersion) : 0;
+            GlobalVersion = maxGlobalVersion;
         }
 
         public async Task<long> Get(string entityId)
@@ -50,21 +55,12 @@ namespace Microwave.Persistence.MongoDb.Eventstores
             _cache[entityId] = actualVersion;
         }
 
-        public long GlobalVersion { get; private set; }
-        public bool WasInitialized { get; private set; }
-
         public void CountUpGlobalVersion()
         {
             lock (_lock)
             {
                 GlobalVersion++;
             }
-        }
-
-        public async Task UpdateGlobalVersion()
-        {
-            WasInitialized = true;
-            GlobalVersion = 3;
         }
     }
 }

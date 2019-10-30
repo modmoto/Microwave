@@ -8,8 +8,6 @@ namespace Microwave.Persistence.MongoDb.Eventstores
         Task<long> GetForce(string entityId);
         void Update(string entityId, long actualVersion);
         long GlobalVersion { get; }
-        bool WasInitialized { get; }
         void CountUpGlobalVersion();
-        Task UpdateGlobalVersion();
     }
 }
