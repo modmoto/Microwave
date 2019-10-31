@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microwave.Domain.Identities;
 using Microwave.EventStores.Ports;
 
 namespace Microwave.WebApi.Queries
@@ -17,24 +16,23 @@ namespace Microwave.WebApi.Queries
         }
 
         [HttpGet("DomainEventTypeStreams/{eventType}")]
-        public async Task<ActionResult> GetDomainEventsByType(string eventType, [FromQuery] DateTimeOffset timeStamp)
+        public async Task<ActionResult> GetDomainEventsByType(string eventType, [FromQuery] long lastVersion)
         {
-            var result = await _eventRepository.LoadEventsByTypeAsync(eventType, timeStamp);
+            var result = await _eventRepository.LoadEventsByTypeAsync(eventType, lastVersion);
             return Ok(result.Value);
         }
 
         [HttpGet("EntityStreams/{entityId}")]
-        public async Task<ActionResult> GetDomainEventsByEntityIdType(string entityId, [FromQuery] long version)
+        public async Task<ActionResult> GetDomainEventsByEntityId(string entityId, [FromQuery] long lastVersion)
         {
-            var id = Identity.Create(entityId);
-            var result = await _eventRepository.LoadEventsByEntity(id, version);
+            var result = await _eventRepository.LoadEventsByEntity(entityId, lastVersion);
             return Ok(result.Value);
         }
 
         [HttpGet("DomainEvents")]
-        public async Task<ActionResult> GetAllDomainEvents([FromQuery] DateTimeOffset timeStamp)
+        public async Task<ActionResult> GetAllDomainEvents([FromQuery] long lastVersion)
         {
-            var result = await _eventRepository.LoadEvents(timeStamp);
+            var result = await _eventRepository.LoadEvents(lastVersion);
             return Ok(result.Value);
         }
     }

@@ -1,6 +1,5 @@
 using System.Threading.Tasks;
 using Microwave.Domain.EventSourcing;
-using Microwave.Domain.Identities;
 using Microwave.Queries;
 
 namespace WriteService2
@@ -24,18 +23,18 @@ namespace WriteService2
     }
     public class Event3 : IDomainEvent
     {
-        public Event3(Identity entityId)
+        public Event3(string entityId)
         {
             EntityId = entityId;
         }
 
-        public Identity EntityId { get; }
+        public string EntityId { get; }
     }
 
 
     public class Event4 : IDomainEvent
     {
-        public Event4(Identity entityId)
+        public Event4(string entityId)
         {
             EntityId = entityId;
         }
@@ -43,27 +42,27 @@ namespace WriteService2
         public int Age { get; }
         public string Name { get; }
 
-        public Identity EntityId { get; }
+        public string EntityId { get; }
     }
     
     public class Event2 : ISubscribedDomainEvent
     {
-        public Event2(Identity entityId)
+        public Event2(string entityId)
         {
             EntityId = entityId;
         }
 
-        public Identity EntityId { get; }
+        public string EntityId { get; }
     }
 
     //Event that is not used by Entity for Test
     public class Event1 : IDomainEvent
     {
-        public Event1(Identity entityId)
+        public Event1(string entityId)
         {
             EntityId = entityId;
         }
 
-        public Identity EntityId { get; }
+        public string EntityId { get; }
     }
 }

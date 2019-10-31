@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Domain.EventSourcing;
-using Microwave.Domain.Identities;
 using Microwave.EventStores;
 using Microwave.EventStores.SnapShots;
+using Microwave.Persistence.MongoDb.Eventstores;
 using Microwave.Persistence.UnitTestsSetup;
 
 namespace Microwave.Persistence.UnitTests.Eventstores
@@ -17,21 +17,25 @@ namespace Microwave.Persistence.UnitTests.Eventstores
         [PersistenceTypeTest]
         public async Task SnapshotGetSavedAfterThirdEvent(PersistenceLayerProvider layerProvider)
         {
+            BsonMapRegistrationHelpers.AddBsonMapFor<Event1>();
+            BsonMapRegistrationHelpers.AddBsonMapFor<Event2>();
+            BsonMapRegistrationHelpers.AddBsonMapFor<Event3>();
+
             var snapShotRepository = layerProvider.SnapShotRepository;
             var eventStore = new EventStore(layerProvider.EventRepository, snapShotRepository
                 , new SnapShotConfig(new
             List<ISnapShot> { new SnapShot<User>(3)}));
 
-            var entityId = GuidIdentity.Create(Guid.NewGuid());
+            var entityId = Guid.NewGuid();
             await eventStore.AppendAsync(new List<IDomainEvent>
             {
                 new Event1(entityId),
                 new Event2(entityId, "Peter")
             }, 0);
 
-            await eventStore.LoadAsync<User>(entityId);
+            await eventStore.LoadAsync<User>(entityId.ToString());
 
-            var snapShotDboOld = await snapShotRepository.LoadSnapShot<User>(entityId);
+            var snapShotDboOld = await snapShotRepository.LoadSnapShot<User>(entityId.ToString());
             Assert.IsNull(snapShotDboOld.Value.Id);
             Assert.IsNull(snapShotDboOld.Value.Name);
 
@@ -41,32 +45,35 @@ namespace Microwave.Persistence.UnitTests.Eventstores
                 new Event2(entityId, "PeterNeu")
             }, 2);
 
-            var eventstoreResult = await eventStore.LoadAsync<User>(entityId);
+            var eventstoreResult = await eventStore.LoadAsync<User>(entityId.ToString());
 
             var user = eventstoreResult;
             Assert.AreEqual(4, eventstoreResult.Version);
             Assert.AreEqual(14, user.Value.Age);
             Assert.AreEqual("PeterNeu", user.Value.Name);
-            Assert.AreEqual(entityId.Id, user.Value.Id.Id);
+            Assert.AreEqual(entityId.ToString(), user.Value.Id);
 
-            var snapShotDbo = await snapShotRepository.LoadSnapShot<User>(entityId);
+            var snapShotDbo = await snapShotRepository.LoadSnapShot<User>(entityId.ToString());
 
             Assert.AreEqual(4, snapShotDbo.Version);
-            Assert.AreEqual(entityId.Id, snapShotDbo.Value.Id.Id);
+            Assert.AreEqual(entityId.ToString(), snapShotDbo.Value.Id);
             var userSnapShot = snapShotDbo.Value;
 
             Assert.AreEqual(14, userSnapShot.Age);
             Assert.AreEqual("PeterNeu", userSnapShot.Name);
-            Assert.AreEqual(entityId.Id, userSnapShot.Id.Id);
+            Assert.AreEqual(entityId.ToString(), userSnapShot.Id);
         }
 
         [TestMethod]
         [PersistenceTypeTest]
         public async Task SnapshotExactlyOnSnapShotTime_DoesNotReturnNotFoundBug(PersistenceLayerProvider layerProvider)
         {
+            BsonMapRegistrationHelpers.AddBsonMapFor<Event1>();
+            BsonMapRegistrationHelpers.AddBsonMapFor<Event2>();
+
             var eventStore = new EventStore(layerProvider.EventRepository, layerProvider.SnapShotRepository);
 
-            var entityId = GuidIdentity.Create(Guid.NewGuid());
+            var entityId = Guid.NewGuid();
             await eventStore.AppendAsync(new List<IDomainEvent>
             {
                 new Event1(entityId),
@@ -74,8 +81,8 @@ namespace Microwave.Persistence.UnitTests.Eventstores
                 new Event2(entityId, "Peterneu")
             }, 0);
 
-            await eventStore.LoadAsync<User>(entityId);
-            var result = await eventStore.LoadAsync<User>(entityId);
+            await eventStore.LoadAsync<User>(entityId.ToString());
+            var result = await eventStore.LoadAsync<User>(entityId.ToString());
 
             Assert.AreEqual("Peterneu", result.Value.Name);
             Assert.AreEqual(3, result.Version);
@@ -86,7 +93,7 @@ namespace Microwave.Persistence.UnitTests.Eventstores
     {
         public string Name { get; set; }
         public int Age { get; set; }
-        public Identity Id { get; set; }
+        public string Id { get; set; }
 
         public void Apply(Event1 domainEvent)
         {
@@ -106,47 +113,53 @@ namespace Microwave.Persistence.UnitTests.Eventstores
 
     public class Event1 : IDomainEvent
     {
-        public Event1(Identity entityId)
+        public Event1(Guid id)
         {
-            EntityId = entityId;
+            Id = id;
         }
 
-        public Identity EntityId { get; }
+        public Guid Id { get; }
+
+        public string EntityId => Id.ToString();
     }
 
     public class Event2 : IDomainEvent
     {
-        public Event2(Identity entityId, string name)
+        public Event2(Guid id, string name)
         {
-            EntityId = entityId;
             Name = name;
+            Id = id;
         }
 
-        public Identity EntityId { get; }
+        public Guid Id { get; }
+
+        public string EntityId => Id.ToString();
         public string Name { get; }
     }
 
     public class Event3 : IDomainEvent
     {
-        public Event3(Identity entityId, int age)
+        public Event3(Guid id, int age)
         {
-            EntityId = entityId;
             Age = age;
+            Id = id;
         }
 
-        public Identity EntityId { get; }
+        public Guid Id { get; }
+
+        public string EntityId => Id.ToString();
         public int Age { get; }
     }
 
     public class Event4 : IDomainEvent
     {
-        public Event4(Identity entityId, int age)
+        public Event4(string entityId, int age)
         {
             EntityId = entityId;
             Age = age;
         }
 
-        public Identity EntityId { get; }
+        public string EntityId { get; }
         public int Age { get; }
     }
 }

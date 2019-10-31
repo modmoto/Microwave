@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Concurrent;
 using System.Threading.Tasks;
 using Microwave.Queries.Ports;
@@ -7,11 +6,12 @@ namespace Microwave.Persistence.InMemory.Querries
 {
     public class VersionRepositoryInMemory : IVersionRepository
     {
-        private readonly ConcurrentDictionary<string, DateTimeOffset> _versionDictionray = new ConcurrentDictionary<string, DateTimeOffset>();
-        public Task<DateTimeOffset> GetVersionAsync(string domainEventType)
+        private readonly ConcurrentDictionary<string, long> _versionDictionray =
+            new ConcurrentDictionary<string, long>();
+        public Task<long> GetVersionAsync(string domainEventType)
         {
-            if (domainEventType == null) return Task.FromResult(DateTimeOffset.MinValue);
-            if (!_versionDictionray.TryGetValue(domainEventType, out var version)) return Task.FromResult(DateTimeOffset.MinValue);
+            if (domainEventType == null) return Task.FromResult(0L);
+            if (!_versionDictionray.TryGetValue(domainEventType, out var version)) return Task.FromResult(0L);
 
             return Task.FromResult(version);
         }

@@ -1,6 +1,6 @@
+using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microwave.Domain.Identities;
 using Microwave.Domain.Results;
 using Microwave.EventStores;
 
@@ -10,7 +10,7 @@ namespace WriteService1
     public class ControllerWrite1 : Controller
     {
         private readonly IEventStore _eventStore;
-        private readonly Identity _entityId = Identity.Create("1FFE7557-CAC4-4904-84D1-0FD561453DE7");
+        private readonly string _entityId = "1FFE7557-CAC4-4904-84D1-0FD561453DE7";
 
         public ControllerWrite1(IEventStore eventStore)
         {
@@ -33,13 +33,13 @@ namespace WriteService1
         }
 
         [HttpPost("{guidId}")]
-        public ActionResult WriteEvent(GuidIdentity guidId)
+        public ActionResult WriteEvent(Guid guidId)
         {
             return Ok();
         }
 
         [HttpPost("{guidId}/tests")]
-        public ActionResult WriteEventSecond(GuidIdentity guidId)
+        public ActionResult WriteEventSecond(Guid guidId)
         {
             return Ok();
         }

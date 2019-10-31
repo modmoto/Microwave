@@ -1,6 +1,5 @@
 using System;
 using System.Threading.Tasks;
-using Microwave.Domain.Identities;
 using Microwave.Queries;
 
 namespace ReadService1
@@ -40,12 +39,12 @@ namespace ReadService1
 
     public class EventNotPublished : ISubscribedDomainEvent
     {
-        public EventNotPublished(Identity entityId)
+        public EventNotPublished(string entityId)
         {
             EntityId = entityId;
         }
 
-        public Identity EntityId { get; }
+        public string EntityId { get; }
     }
 
     public class ReadModel1 : ReadModel<Event2>, IHandle<Event2>, IHandle<Event4>
@@ -79,18 +78,18 @@ namespace ReadService1
 
     public class Event1 : ISubscribedDomainEvent
     {
-        public Event1(Identity entityId)
+        public Event1(string entityId)
         {
             EntityId = entityId;
         }
 
-        public Identity EntityId { get; }
+        public string EntityId { get; }
     }
 
 
     public class Event2 : ISubscribedDomainEvent
     {
-        public Event2(Identity entityId)
+        public Event2(string entityId)
         {
             EntityId = entityId;
         }
@@ -99,25 +98,25 @@ namespace ReadService1
         public string Name { get; }
         public string SurName { get; }
 
-        public Identity EntityId { get; }
+        public string EntityId { get; }
     }
 
     public class Event3 : ISubscribedDomainEvent
     {
-        public Event3(Identity entityId)
+        public Event3(string entityId)
         {
             EntityId = entityId;
         }
 
         public string RmName { get; }
         public string RmSurName { get; }
-        public Identity EntityId { get; }
+        public string EntityId { get; }
     }
 
 
     public class Event4 : ISubscribedDomainEvent
     {
-        public Event4(Identity entityId)
+        public Event4(string entityId)
         {
             EntityId = entityId;
         }
@@ -126,6 +125,6 @@ namespace ReadService1
         public string Name { get; }
         public string WeirdName { get; }
 
-        public Identity EntityId { get; }
+        public string EntityId { get; }
     }
 }

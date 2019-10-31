@@ -1,4 +1,4 @@
-﻿using Microwave.Domain.Identities;
+﻿using System;
 
 namespace Microwave.Domain.Results
 {
@@ -62,9 +62,14 @@ namespace Microwave.Domain.Results
             return typeof(TCheck) == Status.GetType();
         }
 
-        public static Result<T> NotFound(Identity notFoundId)
+        public static Result<T> NotFound(string notFoundId)
         {
             return new NotFoundResult<T>(notFoundId);
+        }
+
+        public static Result<T> NotFound(Guid notFoundId)
+        {
+            return NotFound(notFoundId.ToString());
         }
     }
 }

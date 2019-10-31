@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Domain.EventSourcing;
-using Microwave.Domain.Identities;
 
 namespace Microwave.Domain.UnitTests
 {
@@ -13,26 +12,26 @@ namespace Microwave.Domain.UnitTests
         public void ApplyGenericMethod()
         {
             var testUser = (Entity) new TestUserNormal();
-            var newGuid = GuidIdentity.Create(Guid.NewGuid());
+            var newGuid = Guid.NewGuid();
             testUser.Apply(new [] { new TestUserCreatedEvent(newGuid)});
-            Assert.AreEqual(newGuid, ((TestUserNormal)testUser).Id);
+            Assert.AreEqual(newGuid.ToString(), ((TestUserNormal)testUser).Id);
         }
 
         [TestMethod]
         public void ApplyGenericMethod_MultipleApply()
         {
             var testUser = (Entity) new TestUser_MultipleApply();
-            var newGuid = GuidIdentity.Create(Guid.NewGuid());
-            var secondGuid = GuidIdentity.Create(Guid.NewGuid());
+            var newGuid = Guid.NewGuid();
+            var secondGuid = Guid.NewGuid();
             testUser.Apply(new List<IDomainEvent> { new TestUserCreatedEvent(newGuid), new TestUserNeverDidThatEvent(secondGuid) });
-            Assert.AreEqual(secondGuid, ((TestUser_MultipleApply) testUser).Id);
+            Assert.AreEqual(secondGuid.ToString(), ((TestUser_MultipleApply) testUser).Id);
         }
 
         [TestMethod]
         public void ApplyGenericMethod_NoApplyMethodFound()
         {
             var testUser = (Entity) new TestUser();
-            testUser.Apply(new [] { new TestUserNeverDidThatEvent(GuidIdentity.Create(Guid.NewGuid())) });
+            testUser.Apply(new [] { new TestUserNeverDidThatEvent(Guid.NewGuid()) });
             Assert.AreEqual(null, ((TestUser)testUser).Id);
         }
 
@@ -40,7 +39,7 @@ namespace Microwave.Domain.UnitTests
         public void ApplyGenericMethod_ApplyMethodWithNotParameter()
         {
             var testUser = (Entity) new TestUserWithNoApplyMethod();
-            testUser.Apply(new [] { new TestUserCreatedEvent(GuidIdentity.Create(Guid.NewGuid())) } );
+            testUser.Apply(new [] { new TestUserCreatedEvent(Guid.NewGuid()) } );
             Assert.AreEqual(Guid.Empty, ((TestUserWithNoApplyMethod)testUser).Id);
         }
 
@@ -48,7 +47,7 @@ namespace Microwave.Domain.UnitTests
         public void ApplyGenericMethod_PrivateApplyWithoutInterface()
         {
             var testUser = (Entity) new TestUser_PrivateApply();
-            testUser.Apply(new [] { new TestUserCreatedEvent(GuidIdentity.Create(Guid.NewGuid())) } );
+            testUser.Apply(new [] { new TestUserCreatedEvent(Guid.NewGuid()) } );
             Assert.AreEqual(null, ((TestUser_PrivateApply)testUser).Id);
         }
     }
@@ -60,7 +59,7 @@ namespace Microwave.Domain.UnitTests
             Id = domainEvent.EntityId;
         }
 
-        public Identity Id { get; set; }
+        public string Id { get; set; }
     }
 
     public class TestUser_MultipleApply : Entity, IApply<TestUserCreatedEvent>, IApply<TestUserNeverDidThatEvent>
@@ -75,7 +74,7 @@ namespace Microwave.Domain.UnitTests
             Id = domainEvent.EntityId;
         }
 
-        public Identity Id { get; set; }
+        public string Id { get; set; }
     }
 
     public class TestUserWithNoApplyMethod : Entity
@@ -89,22 +88,22 @@ namespace Microwave.Domain.UnitTests
 
     public class TestUserNeverDidThatEvent : IDomainEvent
     {
-        public TestUserNeverDidThatEvent(GuidIdentity newGuid)
+        public TestUserNeverDidThatEvent(Guid newGuid)
         {
-            EntityId = newGuid;
+            EntityId = newGuid.ToString();
         }
 
-        public Identity EntityId { get; }
+        public string EntityId { get; }
     }
 
     public class TestUserCreatedEvent : IDomainEvent
     {
-        public TestUserCreatedEvent(GuidIdentity newGuid)
+        public TestUserCreatedEvent(Guid newGuid)
         {
-            EntityId = newGuid;
+            EntityId = newGuid.ToString();
         }
 
-        public Identity EntityId { get; }
+        public string EntityId { get; }
     }
 
     public class TestUser : Entity
@@ -114,7 +113,7 @@ namespace Microwave.Domain.UnitTests
             Id = domainEvent.EntityId;
         }
 
-        public Identity Id { get; set; }
+        public string Id { get; set; }
     }
 
     public class TestUserNormal : Entity, IApply<TestUserCreatedEvent>
@@ -124,6 +123,6 @@ namespace Microwave.Domain.UnitTests
             Id = domainEvent.EntityId;
         }
 
-        public Identity Id { get; set; }
+        public string Id { get; set; }
     }
 }

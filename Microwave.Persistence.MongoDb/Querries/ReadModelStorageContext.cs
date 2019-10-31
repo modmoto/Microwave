@@ -22,6 +22,6 @@ namespace Microwave.Persistence.MongoDb.Querries
     {
         [BsonId]
         public string EventType { get; set; }
-        public DateTimeOffset LastVersion { get; set; }
+        public long LastVersion { get; set; }
     }
 }

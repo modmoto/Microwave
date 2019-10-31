@@ -5,19 +5,19 @@ namespace Microwave.Queries.Ports
 {
     public interface IVersionRepository
     {
-        Task<DateTimeOffset> GetVersionAsync(string domainEventType);
+        Task<long> GetVersionAsync(string domainEventType);
         Task SaveVersion(LastProcessedVersion version);
     }
 
     public class LastProcessedVersion
     {
-        public LastProcessedVersion(string eventType, DateTimeOffset lastVersion)
+        public LastProcessedVersion(string eventType, long lastVersion)
         {
             EventType = eventType;
             LastVersion = lastVersion;
         }
 
-        public string EventType { get; set; }
-        public DateTimeOffset LastVersion { get; set; }
+        public string EventType { get; }
+        public long LastVersion { get; }
     }
 }

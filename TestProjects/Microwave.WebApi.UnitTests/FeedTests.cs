@@ -5,7 +5,6 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Domain.EventSourcing;
-using Microwave.Domain.Identities;
 using Microwave.Queries;
 using Microwave.Queries.Handler;
 using Microwave.WebApi.Queries;
@@ -26,8 +25,8 @@ namespace Microwave.WebApi.UnitTests
         public async Task ReadModelFeed()
         {
             var mockHttp = new MockHttpMessageHandler();
-            mockHttp.When("http://localost:5000/api/DomainEvents/?timeStamp=0001-01-01T00:00:00.0000000+00:00")
-                .Respond("application/json", "[{ \"domainEventType\": \"UNKNOWN_TYPE\",\"version\": 12, \"created\": \"2018-01-07T19:07:21.227631+01:00\", \"domainEvent\": {\"EntityId\" : \"5a8b63c8-0f7f-4de7-a9e5-b6b377aa2180\"}}, { \"domainEventType\": \"TestEv\",\"version\": 12, \"created\": \"2018-01-07T19:07:31.227631+01:00\", \"domainEvent\": {\"EntityId\" : \"5a8b63c8-0f7f-4de7-a9e5-b6b377aa2180\" }}]");
+            mockHttp.When("http://localost:5000/api/DomainEvents/?lastVersion=0")
+                .Respond("application/json", "[{ \"domainEventType\": \"UNKNOWN_TYPE\",\"entityStreamVersion\": 12, \"overallVersion\": \"1\", \"domainEvent\": {\"EntityId\" : \"5a8b63c8-0f7f-4de7-a9e5-b6b377aa2180\"}}, { \"domainEventType\": \"TestEv\",\"entityStreamVersion\": 12, \"overallVersion\": \"2\", \"domainEvent\": {\"EntityId\" : \"5a8b63c8-0f7f-4de7-a9e5-b6b377aa2180\" }}]");
 
             var domainOverallEventClient = new HttpClient(mockHttp);
             domainOverallEventClient.BaseAddress = new Uri("http://localost:5000/api/DomainEvents/");
@@ -42,14 +41,14 @@ namespace Microwave.WebApi.UnitTests
             var domainEventWrappers = domainEvents.ToList();
             Assert.AreEqual(1, domainEventWrappers.Count);
             Assert.AreEqual(new Guid("5a8b63c8-0f7f-4de7-a9e5-b6b377aa2180").ToString(), domainEventWrappers[0].DomainEvent
-                .EntityId.Id);
+                .EntityId);
         }
 
         [TestMethod]
         public async Task ReadModelFeed_Exception()
         {
             var mockHttp = new MockHttpMessageHandler();
-            mockHttp.When("http://localost:5000/api/DomainEvents/?timeStamp=0001-01-01T00:00:00.0000000+00:00")
+            mockHttp.When("http://localost:5000/api/DomainEvents/?lastVersion=0")
                 .Throw(new HttpRequestException());
             var domainOverallEventClient = new HttpClient(mockHttp);
             domainOverallEventClient.BaseAddress = new Uri("http://localost:5000/api/DomainEvents/");
@@ -93,16 +92,16 @@ namespace Microwave.WebApi.UnitTests
             Id = ev.EntityId;
         }
 
-        public Identity Id { get; set; }
+        public string Id { get; set; }
     }
 
     public class TestEv : IDomainEvent, ISubscribedDomainEvent
     {
-        public TestEv(GuidIdentity entityId)
+        public TestEv(string entityId)
         {
             EntityId = entityId;
         }
 
-        public Identity EntityId { get; }
+        public string EntityId { get; }
     }
 }

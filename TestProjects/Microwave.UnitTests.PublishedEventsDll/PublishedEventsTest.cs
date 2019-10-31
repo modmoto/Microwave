@@ -1,7 +1,5 @@
-using System;
 using System.Collections.Generic;
 using Microwave.Domain.EventSourcing;
-using Microwave.Domain.Identities;
 using Microwave.Queries;
 
 namespace Microwave.UnitTests.PublishedEventsDll
@@ -63,6 +61,6 @@ namespace Microwave.UnitTests.PublishedEventsDll
 
     public class TestEntityThatShouldNotGoIntoReadModelRegistrationEvent : IDomainEvent
     {
-        public Identity EntityId { get; }
+        public string EntityId { get; }
     }
 }

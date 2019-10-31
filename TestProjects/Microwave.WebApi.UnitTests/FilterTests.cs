@@ -111,6 +111,13 @@ namespace Microwave.WebApi.UnitTests
         }
     }
 
+    public class TestError : DomainError
+    {
+        public TestError(string egal) : base(egal)
+        {
+        }
+    }
+
     public enum EnumErrors
     {
         Error1

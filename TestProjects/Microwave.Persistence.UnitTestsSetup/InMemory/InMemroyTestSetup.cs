@@ -14,5 +14,6 @@ namespace Microwave.Persistence.UnitTestsSetup.InMemory
         public override IReadModelRepository ReadModelRepository => new ReadModelRepositoryInMemory();
         public override ISnapShotRepository SnapShotRepository => new SnapShotRepositoryInMemory();
         public override IEventRepository EventRepository => new EventRepositoryInMemory();
+        public override IEventRepository EventRepositoryNewInstance => null;
     }
 }

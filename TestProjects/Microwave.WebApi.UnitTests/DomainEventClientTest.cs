@@ -6,7 +6,6 @@ using Microwave.Discovery;
 using Microwave.Discovery.EventLocations;
 using Microwave.Discovery.ServiceMaps;
 using Microwave.Domain.EventSourcing;
-using Microwave.Domain.Identities;
 using Microwave.Queries;
 using Microwave.Queries.Handler;
 using Microwave.WebApi.Queries;
@@ -75,7 +74,7 @@ namespace Microwave.WebApi.UnitTests
 
     public class Ev2 : IDomainEvent, ISubscribedDomainEvent
     {
-        public Identity EntityId { get; }
+        public string EntityId { get; }
     }
 
     public class IdQuery : ReadModel<Ev2>
@@ -84,7 +83,7 @@ namespace Microwave.WebApi.UnitTests
 
     public class Ev1 : IDomainEvent
     {
-        public Identity EntityId { get; }
+        public string EntityId { get; }
     }
 
     public class Q1 : Query

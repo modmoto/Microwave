@@ -1,4 +1,3 @@
-using Microwave.Domain.Identities;
 using Microwave.Domain.Results;
 
 namespace Microwave.EventStores
@@ -33,7 +32,7 @@ namespace Microwave.EventStores
             return new Ok<T>(value, version);
         }
 
-        public new static EventStoreResult<T> NotFound(Identity notFoundId)
+        public new static EventStoreResult<T> NotFound(string notFoundId)
         {
             return new NotFoundResult<T>(notFoundId);
         }
@@ -48,7 +47,7 @@ namespace Microwave.EventStores
 
     public class NotFoundResult<T> : EventStoreResult<T>
     {
-        public NotFoundResult(Identity notFoundId) : base(new NotFound(typeof(T), notFoundId), default(T), -1)
+        public NotFoundResult(string notFoundId) : base(new NotFound(typeof(T), notFoundId), default(T), -1)
         {
         }
     }

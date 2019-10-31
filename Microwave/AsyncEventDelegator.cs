@@ -96,6 +96,7 @@ namespace Microwave
                             Console.ForegroundColor = currentForeground;
                         }
                     }
+                    // ReSharper disable once FunctionNeverReturns
                 });
         }
 
@@ -106,6 +107,7 @@ namespace Microwave
                 await _discoveryHandler.DiscoverConsumingServices();
                 await Task.Delay(60000);
             }
+            // ReSharper disable once FunctionNeverReturns
         }
     }
 }

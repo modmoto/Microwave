@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Domain.EventSourcing;
-using Microwave.Domain.Identities;
 using Microwave.Domain.Validation;
 
 namespace Microwave.Domain.UnitTests
@@ -14,7 +13,7 @@ namespace Microwave.Domain.UnitTests
         [TestMethod]
         public void CreatOkResult()
         {
-            var domainResult = TestEntity.Create(GuidIdentity.Create());
+            var domainResult = TestEntity.Create(Guid.NewGuid());
 
             Assert.IsTrue(domainResult.IsOk);
             Assert.AreEqual(1, domainResult.DomainEvents.Count());
@@ -23,8 +22,8 @@ namespace Microwave.Domain.UnitTests
         [TestMethod]
         public void CreatErrorResult()
         {
-            var testEntity = new TestEntity(GuidIdentity.Create());
-            var changeId = testEntity.ChangeId(StringIdentity.Create("NotWorking"));
+            var testEntity = new TestEntity(Guid.NewGuid());
+            var changeId = testEntity.ChangeId(null);
 
             Assert.IsFalse(changeId.IsOk);
             Assert.AreEqual(1, changeId.DomainErrors.Count());
@@ -82,55 +81,55 @@ namespace Microwave.Domain.UnitTests
 
     public class TestEntity : Entity
     {
-        public GuidIdentity Identity { get; }
+        public string Identity { get; }
 
-        public TestEntity(GuidIdentity identity)
+        public TestEntity(Guid identity)
         {
-            Identity = identity;
+            Identity = identity.ToString();
         }
 
-        public static DomainResult Create(GuidIdentity identity)
+        public static DomainResult Create(Guid identity)
         {
             return DomainResult.Ok(new EntityCreated(identity));
         }
 
-        public DomainResult ChangeId(Identity identity)
+        public DomainResult ChangeId(string identity)
         {
-            if (identity is StringIdentity) return DomainResult.Error(new CanNotChangeToStringId());
+            if (identity == null) return DomainResult.Error(new CanNotUSeNullId());
             return DomainResult.Ok(new IdChanged(identity));
         }
 
-        public Identity Id { get; set; }
+        public string Id { get; set; }
     }
 
     public class IdChanged : IDomainEvent
     {
-        public Identity Identity { get; }
+        public string Identity { get; }
 
-        public IdChanged(Identity identity)
+        public IdChanged(string identity)
         {
             Identity = identity;
         }
 
-        public Identity EntityId => Identity;
+        public string EntityId => Identity;
     }
 
-    public class CanNotChangeToStringId : DomainError
+    public class CanNotUSeNullId : DomainError
     {
-        public CanNotChangeToStringId() : base("You can not change to a string ID")
+        public CanNotUSeNullId() : base("You can not change to a string ID")
         {
         }
     }
 
     public class EntityCreated : IDomainEvent
     {
-        public GuidIdentity Identity { get; }
+        public Guid Identity { get; }
 
-        public EntityCreated(GuidIdentity identity)
+        public EntityCreated(Guid identity)
         {
             Identity = identity;
         }
 
-        public Identity EntityId => Identity;
+        public string EntityId => Identity.ToString();
     }
 }
