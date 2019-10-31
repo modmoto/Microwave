@@ -25,7 +25,7 @@ namespace Microwave.WebApi.UnitTests
         public async Task ReadModelFeed()
         {
             var mockHttp = new MockHttpMessageHandler();
-            mockHttp.When("http://localost:5000/api/DomainEvents/?lastOverallVersion=0")
+            mockHttp.When("http://localost:5000/api/DomainEvents/?lastVersion=0")
                 .Respond("application/json", "[{ \"domainEventType\": \"UNKNOWN_TYPE\",\"entityStreamVersion\": 12, \"overallVersion\": \"1\", \"domainEvent\": {\"EntityId\" : \"5a8b63c8-0f7f-4de7-a9e5-b6b377aa2180\"}}, { \"domainEventType\": \"TestEv\",\"entityStreamVersion\": 12, \"overallVersion\": \"2\", \"domainEvent\": {\"EntityId\" : \"5a8b63c8-0f7f-4de7-a9e5-b6b377aa2180\" }}]");
 
             var domainOverallEventClient = new HttpClient(mockHttp);
@@ -48,7 +48,7 @@ namespace Microwave.WebApi.UnitTests
         public async Task ReadModelFeed_Exception()
         {
             var mockHttp = new MockHttpMessageHandler();
-            mockHttp.When("http://localost:5000/api/DomainEvents/?lastOverallVersion=0")
+            mockHttp.When("http://localost:5000/api/DomainEvents/?lastVersion=0")
                 .Throw(new HttpRequestException());
             var domainOverallEventClient = new HttpClient(mockHttp);
             domainOverallEventClient.BaseAddress = new Uri("http://localost:5000/api/DomainEvents/");
