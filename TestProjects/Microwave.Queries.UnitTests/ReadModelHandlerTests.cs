@@ -196,7 +196,7 @@ namespace Microwave.Queries.UnitTests
 
     public class FeedMock2 : IEventFeed<ReadModelEventHandler<TestReadModelQuerries>>
     {
-        public Task<IEnumerable<SubscribedDomainEventWrapper>> GetEventsAsync(long since = 0)
+        public Task<IEnumerable<SubscribedDomainEventWrapper>> GetEventsAsync(long lastVersion = 0)
         {
             var domainEventWrapper = new SubscribedDomainEventWrapper
             {
@@ -215,7 +215,7 @@ namespace Microwave.Queries.UnitTests
 
     public class FeedMock5 : IEventFeed<ReadModelEventHandler<TestReadModelQuerries_OnlyOneEventAndVersionIsCounted>>
     {
-        public Task<IEnumerable<SubscribedDomainEventWrapper>> GetEventsAsync(long since = 0)
+        public Task<IEnumerable<SubscribedDomainEventWrapper>> GetEventsAsync(long lastVersion = 0)
         {
             var domainEventWrapper = new SubscribedDomainEventWrapper
             {
@@ -234,7 +234,7 @@ namespace Microwave.Queries.UnitTests
 
     public class FeedMockVersioned : IEventFeed<ReadModelEventHandler<TestReadModelQuerries_VerionedHandle>>
     {
-        public Task<IEnumerable<SubscribedDomainEventWrapper>> GetEventsAsync(long since = 0)
+        public Task<IEnumerable<SubscribedDomainEventWrapper>> GetEventsAsync(long lastVersion = 0)
         {
             var domainEventWrapper = new SubscribedDomainEventWrapper
             {
@@ -253,7 +253,7 @@ namespace Microwave.Queries.UnitTests
 
     public class FeedMock6 : IEventFeed<ReadModelEventHandler<TestReadModelQuerries_TwoParallelFeeds1>>
     {
-        public Task<IEnumerable<SubscribedDomainEventWrapper>> GetEventsAsync(long since = 0)
+        public Task<IEnumerable<SubscribedDomainEventWrapper>> GetEventsAsync(long lastVersion = 0)
         {
             return ReadModelHandlerTests.MakeEvents();
         }
@@ -271,7 +271,7 @@ namespace Microwave.Queries.UnitTests
 
     public class FeedMock7 : IEventFeed<ReadModelEventHandler<TestReadModelQuerries_TwoParallelFeeds2>>
     {
-        public Task<IEnumerable<SubscribedDomainEventWrapper>> GetEventsAsync(long since = 0)
+        public Task<IEnumerable<SubscribedDomainEventWrapper>> GetEventsAsync(long lastVersion = 0)
         {
             return ReadModelHandlerTests.MakeEvents();
         }
@@ -289,7 +289,7 @@ namespace Microwave.Queries.UnitTests
 
     public class FeedMock3 : IEventFeed<ReadModelEventHandler<TestReadModelQuerries>>
     {
-        public Task<IEnumerable<SubscribedDomainEventWrapper>> GetEventsAsync(long since = 0)
+        public Task<IEnumerable<SubscribedDomainEventWrapper>> GetEventsAsync(long lastVersion = 0)
         {
             var domainEventWrapper = new SubscribedDomainEventWrapper
             {
@@ -308,7 +308,7 @@ namespace Microwave.Queries.UnitTests
 
     public class FeedMock4 : IEventFeed<ReadModelEventHandler<TestReadModelQuerries>>
     {
-        public Task<IEnumerable<SubscribedDomainEventWrapper>> GetEventsAsync(long since = 0)
+        public Task<IEnumerable<SubscribedDomainEventWrapper>> GetEventsAsync(long lastVersion = 0)
         {
             var domainEventWrapper = new SubscribedDomainEventWrapper
             {
@@ -327,7 +327,7 @@ namespace Microwave.Queries.UnitTests
 
     public class FeedMock1 : IEventFeed<ReadModelEventHandler<TestReadModelQuerries>>
     {
-        public Task<IEnumerable<SubscribedDomainEventWrapper>> GetEventsAsync(long since = 0)
+        public Task<IEnumerable<SubscribedDomainEventWrapper>> GetEventsAsync(long lastVersion = 0)
         {
             var domainEventWrapper = new SubscribedDomainEventWrapper
             {

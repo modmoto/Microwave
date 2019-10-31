@@ -15,11 +15,11 @@ namespace Microwave.Persistence.InMemory.Eventstores
         private object _lock = new object();
         public long CurrentCache { get; private set; }
 
-        public Task<Result<IEnumerable<DomainEventWrapper>>> LoadEventsByEntity(string entityId, long from = 0)
+        public Task<Result<IEnumerable<DomainEventWrapper>>> LoadEventsByEntity(string entityId, long lastVersion = 0)
         {
             if (entityId == null) return Task.FromResult(Result<IEnumerable<DomainEventWrapper>>.NotFound(null));
             var mongoCollection = _domainEvents;
-            var domainEventDbos = mongoCollection.Where(e => e.DomainEvent.EntityId == entityId && e.Version > from).ToList();
+            var domainEventDbos = mongoCollection.Where(e => e.DomainEvent.EntityId == entityId && e.Version > lastVersion).ToList();
             if (!domainEventDbos.Any())
             {
                 var eventDbos = mongoCollection.FirstOrDefault(e => e.DomainEvent.EntityId == entityId);
@@ -72,18 +72,18 @@ namespace Microwave.Persistence.InMemory.Eventstores
             }
         }
 
-        public Task<Result<IEnumerable<DomainEventWrapper>>> LoadEvents(long since = 0)
+        public Task<Result<IEnumerable<DomainEventWrapper>>> LoadEvents(long lastVersion = 0)
         {
-            var domainEventWrappers = _domainEvents.OrderBy(e => e.GlobalVersion).Where(e => e.GlobalVersion > since);
+            var domainEventWrappers = _domainEvents.OrderBy(e => e.GlobalVersion).Where(e => e.GlobalVersion > lastVersion);
             return Task.FromResult(Result<IEnumerable<DomainEventWrapper>>.Ok(domainEventWrappers));
         }
 
         public Task<Result<IEnumerable<DomainEventWrapper>>> LoadEventsByTypeAsync(string eventType, long
-        tickSince = 0)
+        lastVersion = 0)
         {
             var domainEventWrappers = _domainEvents
                 .OrderBy(e => e.GlobalVersion)
-                .Where(e => e.DomainEventType == eventType && e.GlobalVersion > tickSince);
+                .Where(e => e.DomainEventType == eventType && e.GlobalVersion > lastVersion);
             return Task.FromResult(Result<IEnumerable<DomainEventWrapper>>.Ok(domainEventWrappers));
         }
     }

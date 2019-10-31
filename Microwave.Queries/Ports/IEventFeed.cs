@@ -5,6 +5,6 @@ namespace Microwave.Queries.Ports
 {
     public interface IEventFeed<T>
     {
-        Task<IEnumerable<SubscribedDomainEventWrapper>> GetEventsAsync(long since = 0);
+        Task<IEnumerable<SubscribedDomainEventWrapper>> GetEventsAsync(long lastVersion = 0);
     }
 }

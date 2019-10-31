@@ -52,9 +52,9 @@ namespace Microwave.Queries.UnitTests
         }
 
         #pragma warning disable 1998
-        public async Task<IEnumerable<SubscribedDomainEventWrapper>> GetEventsAsync(long since = 0)
+        public async Task<IEnumerable<SubscribedDomainEventWrapper>> GetEventsAsync(long lastVersion = 0)
         {
-            if (since < _globalVersion)
+            if (lastVersion < _globalVersion)
                 return new List<SubscribedDomainEventWrapper> {_domainEventWrapper};
             return new List<SubscribedDomainEventWrapper>();
         }

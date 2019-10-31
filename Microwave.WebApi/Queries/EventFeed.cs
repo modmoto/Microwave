@@ -20,13 +20,13 @@ namespace Microwave.WebApi.Queries
             _clientFactory = clientFactory;
         }
 
-        public async Task<IEnumerable<SubscribedDomainEventWrapper>> GetEventsAsync(long since = 0)
+        public async Task<IEnumerable<SubscribedDomainEventWrapper>> GetEventsAsync(long lastVersion = 0)
         {
             var client = await _clientFactory.GetClient<T>();
             try
             {
                 if (client.BaseAddress != null) {
-                    var response = await client.GetAsync($"?timeStamp={since}");
+                    var response = await client.GetAsync($"?lastVersion={lastVersion}");
                     if (!response.IsSuccessStatusCode) return new List<SubscribedDomainEventWrapper>();
                     var content = await response.Content.ReadAsStringAsync();
                     var eventsByTypeAsync = _eventFactory.Deserialize(content);

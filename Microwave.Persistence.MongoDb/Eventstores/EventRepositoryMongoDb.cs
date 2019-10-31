@@ -23,11 +23,11 @@ namespace Microwave.Persistence.MongoDb.Eventstores
             _database = mongoDb.Database;
         }
 
-        public async Task<Result<IEnumerable<DomainEventWrapper>>> LoadEventsByEntity(string entityId, long from = 0)
+        public async Task<Result<IEnumerable<DomainEventWrapper>>> LoadEventsByEntity(string entityId, long lastVersion = 0)
         {
             if (entityId == null) return Result<IEnumerable<DomainEventWrapper>>.NotFound(null);
             var mongoCollection = _database.GetCollection<DomainEventDbo>(_eventCollectionName);
-            var domainEventDbos = (await mongoCollection.FindAsync(ev => ev.Key.EntityId == entityId && ev.Key.Version > from)).ToList();
+            var domainEventDbos = (await mongoCollection.FindAsync(ev => ev.Key.EntityId == entityId && ev.Key.Version > lastVersion)).ToList();
             if (!domainEventDbos.Any())
             {
                 var eventDbos = await mongoCollection.Find(ev => ev.Key.EntityId == entityId).FirstOrDefaultAsync();
@@ -48,10 +48,10 @@ namespace Microwave.Persistence.MongoDb.Eventstores
             return Result<IEnumerable<DomainEventWrapper>>.Ok(domainEvents);
         }
 
-        public async Task<Result<IEnumerable<DomainEventWrapper>>> LoadEvents(long tickSince = 0)
+        public async Task<Result<IEnumerable<DomainEventWrapper>>> LoadEvents(long lastVersion = 0)
         {
             var mongoCollection = _database.GetCollection<DomainEventDbo>(_eventCollectionName);
-            var domainEventDbos = (await mongoCollection.FindAsync(ev => ev.GlobalVersion > tickSince)).ToList();
+            var domainEventDbos = (await mongoCollection.FindAsync(ev => ev.GlobalVersion > lastVersion)).ToList();
             if (!domainEventDbos.Any()) return Result<IEnumerable<DomainEventWrapper>>.Ok(new List<DomainEventWrapper>());
 
             var domainEvents = domainEventDbos.Select(dbo =>
@@ -69,10 +69,10 @@ namespace Microwave.Persistence.MongoDb.Eventstores
 
         public async Task<Result<IEnumerable<DomainEventWrapper>>> LoadEventsByTypeAsync(
             string eventType,
-            long tickSince = 0)
+            long lastVersion = 0)
         {
             var mongoCollection = _database.GetCollection<DomainEventDbo>(_eventCollectionName);
-            var domainEventTypeDbos = (await mongoCollection.FindAsync(ev => ev.EventType == eventType && ev.GlobalVersion > tickSince)).ToList();
+            var domainEventTypeDbos = (await mongoCollection.FindAsync(ev => ev.EventType == eventType && ev.GlobalVersion > lastVersion)).ToList();
 
             var domainEvents = domainEventTypeDbos.Select(dbo =>
             {
