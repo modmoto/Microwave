@@ -15,21 +15,21 @@ namespace Microwave.Persistence.MongoDb.Eventstores
         public DomainEventKey Key { get; set; }
 
         public string Id {
-            get => $"{Key.EntityId}_StreamVersion:_{Key.Version}";
+            get => $"{Key.EntityId}_StreamVersion:_{Key.EntityStreamVersion}";
             set => Key = new DomainEventKey
             {
                 EntityId = value.Split(new[] { "_StreamVersion:_" }, StringSplitOptions.None)[0],
-                Version = long.Parse(value.Split(new[] { "_StreamVersion:_" }, StringSplitOptions.None)[1])
+                EntityStreamVersion = long.Parse(value.Split(new[] { "_StreamVersion:_" }, StringSplitOptions.None)[1])
             };
         }
         public IDomainEvent Payload { get; set; }
-        public long GlobalVersion { get; set; }
+        public long OverallVersion { get; set; }
         public string EventType { get; set; }
     }
 
     public class DomainEventKey
     {
         public string EntityId { get; set; }
-        public long Version { get; set; }
+        public long EntityStreamVersion { get; set; }
     }
 }

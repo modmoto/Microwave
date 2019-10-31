@@ -18,7 +18,7 @@ namespace Microwave.Queries.UnitTests
             var dateTimeOffset = 1;
             var domainEventWrapper = new SubscribedDomainEventWrapper
             {
-                GlobalVersion = dateTimeOffset,
+                OverallVersion = dateTimeOffset,
                 DomainEvent = new TestEv2(Guid.NewGuid())
             };
 

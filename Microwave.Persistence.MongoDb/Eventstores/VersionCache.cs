@@ -10,7 +10,7 @@ namespace Microwave.Persistence.MongoDb.Eventstores
         private readonly ConcurrentDictionary<string, long> _cache = new ConcurrentDictionary<string, long>();
         private readonly IMongoDatabase _database;
         private readonly string _eventCollectionName = "DomainEventDbos";
-        public long GlobalVersion { get; private set; }
+        public long OverallVersion { get; private set; }
         private object _lock = new object();
 
         public VersionCache(MicrowaveMongoDb mongoDb)
@@ -18,8 +18,8 @@ namespace Microwave.Persistence.MongoDb.Eventstores
             _database = mongoDb.Database;
             var mongoCollection = _database.GetCollection<DomainEventDbo>(_eventCollectionName);
             var domainEventDbos = mongoCollection.FindAsync(a => true).Result.ToListAsync().Result;
-            var maxGlobalVersion = domainEventDbos.Any() ? domainEventDbos.Max(a => a.GlobalVersion) : 0;
-            GlobalVersion = maxGlobalVersion;
+            var maxGlobalVersion = domainEventDbos.Any() ? domainEventDbos.Max(a => a.OverallVersion) : 0;
+            OverallVersion = maxGlobalVersion;
         }
 
         public async Task<long> Get(string entityId)
@@ -39,7 +39,7 @@ namespace Microwave.Persistence.MongoDb.Eventstores
             var cursorReloaded = await _database.GetCollection<DomainEventDbo>(_eventCollectionName)
                 .FindAsync(v => v.Key.EntityId == entityId);
             var eventDbosReloaded = await cursorReloaded.ToListAsync();
-            var actualVersion = eventDbosReloaded.LastOrDefault()?.Key.Version ?? 0;
+            var actualVersion = eventDbosReloaded.LastOrDefault()?.Key.EntityStreamVersion ?? 0;
             return actualVersion;
         }
 
@@ -59,7 +59,7 @@ namespace Microwave.Persistence.MongoDb.Eventstores
         {
             lock (_lock)
             {
-                GlobalVersion++;
+                OverallVersion++;
             }
         }
     }

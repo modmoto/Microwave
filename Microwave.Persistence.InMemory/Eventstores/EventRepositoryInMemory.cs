@@ -15,11 +15,11 @@ namespace Microwave.Persistence.InMemory.Eventstores
         private object _lock = new object();
         public long CurrentCache { get; private set; }
 
-        public Task<Result<IEnumerable<DomainEventWrapper>>> LoadEventsByEntity(string entityId, long lastVersion = 0)
+        public Task<Result<IEnumerable<DomainEventWrapper>>> LoadEventsByEntity(string entityId, long lastEntityStreamVersion = 0)
         {
             if (entityId == null) return Task.FromResult(Result<IEnumerable<DomainEventWrapper>>.NotFound(null));
             var mongoCollection = _domainEvents;
-            var domainEventDbos = mongoCollection.Where(e => e.DomainEvent.EntityId == entityId && e.Version > lastVersion).ToList();
+            var domainEventDbos = mongoCollection.Where(e => e.DomainEvent.EntityId == entityId && e.EntityStreamVersion > lastEntityStreamVersion).ToList();
             if (!domainEventDbos.Any())
             {
                 var eventDbos = mongoCollection.FirstOrDefault(e => e.DomainEvent.EntityId == entityId);
@@ -31,8 +31,8 @@ namespace Microwave.Persistence.InMemory.Eventstores
             {
                 return new DomainEventWrapper
                 {
-                    GlobalVersion = dbo.GlobalVersion,
-                    Version = dbo.Version,
+                    OverallVersion = dbo.OverallVersion,
+                    EntityStreamVersion = dbo.EntityStreamVersion,
                     DomainEvent = dbo.DomainEvent
                 };
             });
@@ -46,7 +46,7 @@ namespace Microwave.Persistence.InMemory.Eventstores
             {
                 var maxVersion = _domainEvents.
                                      Where(e => e.DomainEvent.EntityId == domainEvents.First().EntityId)
-                                     .OrderBy(e => e.Version).LastOrDefault()?.Version ?? 0;
+                                     .OrderBy(e => e.EntityStreamVersion).LastOrDefault()?.EntityStreamVersion ?? 0;
                 if (maxVersion != currentEntityVersion) return Task.FromResult(
                     Result.ConcurrencyResult(currentEntityVersion, maxVersion));
                 var newVersion = currentEntityVersion;
@@ -57,9 +57,9 @@ namespace Microwave.Persistence.InMemory.Eventstores
                     CurrentCache++;
                     var domainEventWrapper = new DomainEventWrapper
                     {
-                        GlobalVersion = CurrentCache,
+                        OverallVersion = CurrentCache,
                         DomainEvent = domainEvent,
-                        Version = ++newVersion
+                        EntityStreamVersion = ++newVersion
                     };
                     domainEventWrappers.Add(domainEventWrapper);
                 }
@@ -72,18 +72,18 @@ namespace Microwave.Persistence.InMemory.Eventstores
             }
         }
 
-        public Task<Result<IEnumerable<DomainEventWrapper>>> LoadEvents(long lastVersion = 0)
+        public Task<Result<IEnumerable<DomainEventWrapper>>> LoadEvents(long lastOverallVersion = 0)
         {
-            var domainEventWrappers = _domainEvents.OrderBy(e => e.GlobalVersion).Where(e => e.GlobalVersion > lastVersion);
+            var domainEventWrappers = _domainEvents.OrderBy(e => e.OverallVersion).Where(e => e.OverallVersion > lastOverallVersion);
             return Task.FromResult(Result<IEnumerable<DomainEventWrapper>>.Ok(domainEventWrappers));
         }
 
         public Task<Result<IEnumerable<DomainEventWrapper>>> LoadEventsByTypeAsync(string eventType, long
-        lastVersion = 0)
+        lastOverallVersion = 0)
         {
             var domainEventWrappers = _domainEvents
-                .OrderBy(e => e.GlobalVersion)
-                .Where(e => e.DomainEventType == eventType && e.GlobalVersion > lastVersion);
+                .OrderBy(e => e.OverallVersion)
+                .Where(e => e.DomainEventType == eventType && e.OverallVersion > lastOverallVersion);
             return Task.FromResult(Result<IEnumerable<DomainEventWrapper>>.Ok(domainEventWrappers));
         }
     }

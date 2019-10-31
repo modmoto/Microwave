@@ -138,13 +138,13 @@ namespace Microwave.Queries.UnitTests
         {
             var wrapper1 = new SubscribedDomainEventWrapper
             {
-                Version = 12,
+                EntityStreamVersion = 12,
                 DomainEvent = new TestEvnt1(EntityGuid, "testName")
             };
 
             var wrapper2 = new SubscribedDomainEventWrapper
             {
-                Version = 14,
+                EntityStreamVersion = 14,
                 DomainEvent = new TestEvnt2(EntityGuid2)
             };
             var list = new List<SubscribedDomainEventWrapper> {wrapper1, wrapper2};
@@ -200,12 +200,12 @@ namespace Microwave.Queries.UnitTests
         {
             var domainEventWrapper = new SubscribedDomainEventWrapper
             {
-                Version = 12,
+                EntityStreamVersion = 12,
                 DomainEvent = new TestEvnt2(ReadModelHandlerTests.EntityGuid)
             };
             var domainEventWrappe2 = new SubscribedDomainEventWrapper
             {
-                Version = 14,
+                EntityStreamVersion = 14,
                 DomainEvent = new TestEvnt1(ReadModelHandlerTests.EntityGuid, "testName")
             };
             var list = new List<SubscribedDomainEventWrapper> {domainEventWrapper, domainEventWrappe2};
@@ -219,12 +219,12 @@ namespace Microwave.Queries.UnitTests
         {
             var domainEventWrapper = new SubscribedDomainEventWrapper
             {
-                Version = 12,
+                EntityStreamVersion = 12,
                 DomainEvent = new TestEvnt2(ReadModelHandlerTests.EntityGuid)
             };
             var domainEventWrappe2 = new SubscribedDomainEventWrapper
             {
-                Version = 14,
+                EntityStreamVersion = 14,
                 DomainEvent = new TestEvnt1(ReadModelHandlerTests.EntityGuid, "testName")
             };
             var list = new List<SubscribedDomainEventWrapper> {domainEventWrapper, domainEventWrappe2};
@@ -238,12 +238,12 @@ namespace Microwave.Queries.UnitTests
         {
             var domainEventWrapper = new SubscribedDomainEventWrapper
             {
-                Version = 12,
+                EntityStreamVersion = 12,
                 DomainEvent = new TestEvnt2(ReadModelHandlerTests.EntityGuid)
             };
             var domainEventWrappe2 = new SubscribedDomainEventWrapper
             {
-                Version = 14,
+                EntityStreamVersion = 14,
                 DomainEvent = new TestEvnt3(ReadModelHandlerTests.EntityGuid)
             };
             var list = new List<SubscribedDomainEventWrapper> {domainEventWrapper, domainEventWrappe2};
@@ -293,12 +293,12 @@ namespace Microwave.Queries.UnitTests
         {
             var domainEventWrapper = new SubscribedDomainEventWrapper
             {
-                Version = 12,
+                EntityStreamVersion = 12,
                 DomainEvent = new TestEvnt2(ReadModelHandlerTests.EntityGuid)
             };
             var domainEventWrapper2 = new SubscribedDomainEventWrapper
             {
-                Version = 12,
+                EntityStreamVersion = 12,
                 DomainEvent = new TestEvnt2(ReadModelHandlerTests.EntityGuid2)
             };
             var list = new List<SubscribedDomainEventWrapper> {domainEventWrapper, domainEventWrapper2};
@@ -312,12 +312,12 @@ namespace Microwave.Queries.UnitTests
         {
             var domainEventWrapper = new SubscribedDomainEventWrapper
             {
-                Version = 12,
+                EntityStreamVersion = 12,
                 DomainEvent = new TestEvnt2(ReadModelHandlerTests.EntityGuid)
             };
             var domainEventWrapper2 = new SubscribedDomainEventWrapper
             {
-                Version = 12,
+                EntityStreamVersion = 12,
                 DomainEvent = new TestEvnt3(ReadModelHandlerTests.EntityGuid2)
             };
             var list = new List<SubscribedDomainEventWrapper> {domainEventWrapper, domainEventWrapper2};
@@ -331,12 +331,12 @@ namespace Microwave.Queries.UnitTests
         {
             var domainEventWrapper = new SubscribedDomainEventWrapper
             {
-                Version = 15,
+                EntityStreamVersion = 15,
                 DomainEvent = new TestEvnt1(ReadModelHandlerTests.EntityGuid, "ersterName")
             };
             var domainEventWrappe2 = new SubscribedDomainEventWrapper
             {
-                Version = 17,
+                EntityStreamVersion = 17,
                 DomainEvent = new TestEvnt1(ReadModelHandlerTests.EntityGuid, "zweiterName")
             };
             var list = new List<SubscribedDomainEventWrapper> {domainEventWrapper, domainEventWrappe2};

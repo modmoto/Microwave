@@ -31,11 +31,11 @@ namespace Microwave.Persistence.UnitTests.Eventstores
 
             var loadEventsByEntity = await eventRepository.LoadEventsByEntity(newGuid.ToString());
             Assert.AreEqual(3, loadEventsByEntity.Value.Count());
-            Assert.AreEqual(1, loadEventsByEntity.Value.ToList()[0].Version);
+            Assert.AreEqual(1, loadEventsByEntity.Value.ToList()[0].EntityStreamVersion);
             var domainEvent = (TestEvent3) loadEventsByEntity.Value.ToList()[2].DomainEvent;
             Assert.AreEqual(newGuid.ToString(), domainEvent.EntityId);
             Assert.AreEqual("TestName", domainEvent.Name);
-            Assert.AreEqual(2, loadEventsByEntity.Value.ToList()[1].Version);
+            Assert.AreEqual(2, loadEventsByEntity.Value.ToList()[1].EntityStreamVersion);
         }
 
         [DataTestMethod]
@@ -85,10 +85,10 @@ namespace Microwave.Persistence.UnitTests.Eventstores
 
             var loadEventsByEntity = await eventRepository.LoadEventsByEntity(newGuid.ToString());
             Assert.AreEqual(2, loadEventsByEntity.Value.Count());
-            Assert.AreEqual(1, loadEventsByEntity.Value.ToList()[0].GlobalVersion);
-            Assert.AreEqual(2, loadEventsByEntity.Value.ToList()[1].GlobalVersion);
-            Assert.AreEqual(1, loadEventsByEntity.Value.ToList()[0].Version);
-            Assert.AreEqual(2, loadEventsByEntity.Value.ToList()[1].Version);
+            Assert.AreEqual(1, loadEventsByEntity.Value.ToList()[0].OverallVersion);
+            Assert.AreEqual(2, loadEventsByEntity.Value.ToList()[1].OverallVersion);
+            Assert.AreEqual(1, loadEventsByEntity.Value.ToList()[0].EntityStreamVersion);
+            Assert.AreEqual(2, loadEventsByEntity.Value.ToList()[1].EntityStreamVersion);
             Assert.IsTrue(newGuid.ToString() == loadEventsByEntity.Value.ToList()[0].DomainEvent.EntityId);
         }
 
@@ -173,10 +173,10 @@ namespace Microwave.Persistence.UnitTests.Eventstores
 
             Assert.IsTrue(res.Is<Ok>());
             var domainEventWrappers = res.Value.ToList();
-            Assert.AreEqual(1, domainEventWrappers[0].GlobalVersion);
-            Assert.AreEqual(2, domainEventWrappers[1].GlobalVersion);
-            Assert.AreEqual(3, domainEventWrappers[2].GlobalVersion);
-            Assert.AreEqual(4, domainEventWrappers[3].GlobalVersion);
+            Assert.AreEqual(1, domainEventWrappers[0].OverallVersion);
+            Assert.AreEqual(2, domainEventWrappers[1].OverallVersion);
+            Assert.AreEqual(3, domainEventWrappers[2].OverallVersion);
+            Assert.AreEqual(4, domainEventWrappers[3].OverallVersion);
         }
 
 
@@ -202,10 +202,10 @@ namespace Microwave.Persistence.UnitTests.Eventstores
 
             Assert.IsTrue(res.Is<Ok>());
             var domainEventWrappers = res.Value.ToList();
-            Assert.AreEqual(1, domainEventWrappers[0].GlobalVersion);
-            Assert.AreEqual(2, domainEventWrappers[1].GlobalVersion);
-            Assert.AreEqual(3, domainEventWrappers[2].GlobalVersion);
-            Assert.AreEqual(4, domainEventWrappers[3].GlobalVersion);
+            Assert.AreEqual(1, domainEventWrappers[0].OverallVersion);
+            Assert.AreEqual(2, domainEventWrappers[1].OverallVersion);
+            Assert.AreEqual(3, domainEventWrappers[2].OverallVersion);
+            Assert.AreEqual(4, domainEventWrappers[3].OverallVersion);
         }
 
         [DataTestMethod]
@@ -310,7 +310,7 @@ namespace Microwave.Persistence.UnitTests.Eventstores
 
             var result = await eventRepository.LoadEvents();
             Assert.AreEqual(4, result.Value.Count());
-            Assert.AreEqual(1, result.Value.ToList()[0].Version);
+            Assert.AreEqual(1, result.Value.ToList()[0].EntityStreamVersion);
             Assert.AreEqual(newGuid.ToString(), result.Value.ToList()[0].DomainEvent.EntityId);
         }
 
@@ -330,9 +330,9 @@ namespace Microwave.Persistence.UnitTests.Eventstores
 
             var result = await eventRepository.LoadEvents();
             Assert.AreEqual(4, result.Value.Count());
-            Assert.AreEqual(1, result.Value.ToList()[0].Version);
-            Assert.AreEqual(2, result.Value.ToList()[1].Version);
-            Assert.AreEqual(3, result.Value.ToList()[2].Version);
+            Assert.AreEqual(1, result.Value.ToList()[0].EntityStreamVersion);
+            Assert.AreEqual(2, result.Value.ToList()[1].EntityStreamVersion);
+            Assert.AreEqual(3, result.Value.ToList()[2].EntityStreamVersion);
             Assert.AreEqual(newGuid.ToString(), result.Value.ToList()[0].DomainEvent.EntityId);
         }
 
@@ -378,7 +378,7 @@ namespace Microwave.Persistence.UnitTests.Eventstores
 
             var result = await eventRepository.LoadEventsByTypeAsync(typeof(TestEvent1).Name);
             Assert.AreEqual(1, result.Value.Count());
-            Assert.AreEqual(1, result.Value.ToList()[0].Version);
+            Assert.AreEqual(1, result.Value.ToList()[0].EntityStreamVersion);
             Assert.AreEqual(newGuid.ToString(), result.Value.ToList()[0].DomainEvent.EntityId);
             Assert.AreEqual(typeof(TestEvent1), result.Value.ToList()[0].DomainEvent.GetType());
         }
@@ -434,8 +434,8 @@ namespace Microwave.Persistence.UnitTests.Eventstores
             var result = await eventRepository.LoadEventsByTypeAsync(typeof(TestEvent1).Name);
 
             Assert.AreEqual(2, result.Value.Count());
-            Assert.AreEqual(1, result.Value.ToList()[0].Version);
-            Assert.AreEqual(3, result.Value.ToList()[1].Version);
+            Assert.AreEqual(1, result.Value.ToList()[0].EntityStreamVersion);
+            Assert.AreEqual(3, result.Value.ToList()[1].EntityStreamVersion);
             Assert.AreEqual(newGuid.ToString(), result.Value.ToList()[0].DomainEvent.EntityId);
             Assert.AreEqual(typeof(TestEvent1), result.Value.ToList()[0].DomainEvent.GetType());
         }
@@ -460,7 +460,7 @@ namespace Microwave.Persistence.UnitTests.Eventstores
             await eventRepository.AppendAsync(domainEvents, 100);
 
             var result = await eventRepository.LoadEvents();
-            var dateTimeOffset = result.Value.Skip(78).First().GlobalVersion;
+            var dateTimeOffset = result.Value.Skip(78).First().OverallVersion;
 
             Assert.AreEqual(200, result.Value.Count());
 

@@ -23,11 +23,11 @@ namespace Microwave.Persistence.MongoDb.Eventstores
             _database = mongoDb.Database;
         }
 
-        public async Task<Result<IEnumerable<DomainEventWrapper>>> LoadEventsByEntity(string entityId, long lastVersion = 0)
+        public async Task<Result<IEnumerable<DomainEventWrapper>>> LoadEventsByEntity(string entityId, long lastEntityStreamVersion = 0)
         {
             if (entityId == null) return Result<IEnumerable<DomainEventWrapper>>.NotFound(null);
             var mongoCollection = _database.GetCollection<DomainEventDbo>(_eventCollectionName);
-            var domainEventDbos = (await mongoCollection.FindAsync(ev => ev.Key.EntityId == entityId && ev.Key.Version > lastVersion)).ToList();
+            var domainEventDbos = (await mongoCollection.FindAsync(ev => ev.Key.EntityId == entityId && ev.Key.EntityStreamVersion > lastEntityStreamVersion)).ToList();
             if (!domainEventDbos.Any())
             {
                 var eventDbos = await mongoCollection.Find(ev => ev.Key.EntityId == entityId).FirstOrDefaultAsync();
@@ -39,8 +39,8 @@ namespace Microwave.Persistence.MongoDb.Eventstores
             {
                 return new DomainEventWrapper
                 {
-                    GlobalVersion = dbo.GlobalVersion,
-                    Version = dbo.Key.Version,
+                    OverallVersion = dbo.OverallVersion,
+                    EntityStreamVersion = dbo.Key.EntityStreamVersion,
                     DomainEvent = dbo.Payload
                 };
             });
@@ -48,18 +48,18 @@ namespace Microwave.Persistence.MongoDb.Eventstores
             return Result<IEnumerable<DomainEventWrapper>>.Ok(domainEvents);
         }
 
-        public async Task<Result<IEnumerable<DomainEventWrapper>>> LoadEvents(long lastVersion = 0)
+        public async Task<Result<IEnumerable<DomainEventWrapper>>> LoadEvents(long lastOverallVersion = 0)
         {
             var mongoCollection = _database.GetCollection<DomainEventDbo>(_eventCollectionName);
-            var domainEventDbos = (await mongoCollection.FindAsync(ev => ev.GlobalVersion > lastVersion)).ToList();
+            var domainEventDbos = (await mongoCollection.FindAsync(ev => ev.OverallVersion > lastOverallVersion)).ToList();
             if (!domainEventDbos.Any()) return Result<IEnumerable<DomainEventWrapper>>.Ok(new List<DomainEventWrapper>());
 
             var domainEvents = domainEventDbos.Select(dbo =>
             {
                 return new DomainEventWrapper
                 {
-                    GlobalVersion = dbo.GlobalVersion,
-                    Version = dbo.Key.Version,
+                    OverallVersion = dbo.OverallVersion,
+                    EntityStreamVersion = dbo.Key.EntityStreamVersion,
                     DomainEvent = dbo.Payload
                 };
             });
@@ -69,17 +69,17 @@ namespace Microwave.Persistence.MongoDb.Eventstores
 
         public async Task<Result<IEnumerable<DomainEventWrapper>>> LoadEventsByTypeAsync(
             string eventType,
-            long lastVersion = 0)
+            long lastOverallVersion = 0)
         {
             var mongoCollection = _database.GetCollection<DomainEventDbo>(_eventCollectionName);
-            var domainEventTypeDbos = (await mongoCollection.FindAsync(ev => ev.EventType == eventType && ev.GlobalVersion > lastVersion)).ToList();
+            var domainEventTypeDbos = (await mongoCollection.FindAsync(ev => ev.EventType == eventType && ev.OverallVersion > lastOverallVersion)).ToList();
 
             var domainEvents = domainEventTypeDbos.Select(dbo =>
             {
                 return new DomainEventWrapper
                 {
-                    GlobalVersion = dbo.GlobalVersion,
-                    Version = dbo.Key.Version,
+                    OverallVersion = dbo.OverallVersion,
+                    EntityStreamVersion = dbo.Key.EntityStreamVersion,
                     DomainEvent = dbo.Payload
                 };
             });
@@ -105,10 +105,10 @@ namespace Microwave.Persistence.MongoDb.Eventstores
                     return new DomainEventDbo
                     {
                         Payload = domainEvent,
-                        GlobalVersion = _versions.GlobalVersion,
+                        OverallVersion = _versions.OverallVersion,
                         Key = new DomainEventKey
                         {
-                            Version = ++versionTemp,
+                            EntityStreamVersion = ++versionTemp,
                             EntityId = domainEvent.EntityId
                         },
                         EventType = domainEvent.GetType().Name
