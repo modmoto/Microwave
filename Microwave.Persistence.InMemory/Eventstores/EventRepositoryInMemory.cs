@@ -17,8 +17,8 @@ namespace Microwave.Persistence.InMemory.Eventstores
 
             foreach (var evs in groupedEvents)
             {
-                var appendAsync = AppendAsync(evs, 0).Result;
-                appendAsync.Check();
+                var result = Append(evs, 0);
+                result.Check();
             }
         }
 
@@ -57,32 +57,37 @@ namespace Microwave.Persistence.InMemory.Eventstores
         {
             lock (_lock)
             {
-                var maxVersion = _domainEvents
-                     .Where(e => e.DomainEvent.EntityId == domainEvents.First().EntityId)
-                     .OrderBy(e => e.OverallVersion).LastOrDefault()?.EntityStreamVersion ?? 0;
-                if (maxVersion != currentEntityVersion) return Task.FromResult(
-                    Result.ConcurrencyResult(currentEntityVersion, maxVersion));
-                var newVersion = currentEntityVersion;
-
-                var domainEventWrappers = new List<DomainEventWrapper>();
-                foreach (var domainEvent in domainEvents)
-                {
-                    _currentCache++;
-                    var domainEventWrapper = new DomainEventWrapper
-                    {
-                        OverallVersion = _currentCache,
-                        DomainEvent = domainEvent,
-                        EntityStreamVersion = ++newVersion
-                    };
-                    domainEventWrappers.Add(domainEventWrapper);
-                }
-
-                foreach (var eventWrapper in domainEventWrappers)
-                {
-                    _domainEvents.Add(eventWrapper);
-                }
-                return Task.FromResult(Result.Ok());
+                return Task.FromResult(Append(domainEvents, currentEntityVersion));
             }
+        }
+
+        private Result Append(IEnumerable<IDomainEvent> domainEvents, long currentEntityVersion)
+        {
+            var maxVersion = _domainEvents
+                                 .Where(e => e.DomainEvent.EntityId == domainEvents.First().EntityId)
+                                 .OrderBy(e => e.OverallVersion).LastOrDefault()?.EntityStreamVersion ?? 0;
+            if (maxVersion != currentEntityVersion) return Result.ConcurrencyResult(currentEntityVersion, maxVersion);
+            var newVersion = currentEntityVersion;
+
+            var domainEventWrappers = new List<DomainEventWrapper>();
+            foreach (var domainEvent in domainEvents)
+            {
+                _currentCache++;
+                var domainEventWrapper = new DomainEventWrapper
+                {
+                    OverallVersion = _currentCache,
+                    DomainEvent = domainEvent,
+                    EntityStreamVersion = ++newVersion
+                };
+                domainEventWrappers.Add(domainEventWrapper);
+            }
+
+            foreach (var eventWrapper in domainEventWrappers)
+            {
+                _domainEvents.Add(eventWrapper);
+            }
+
+            return Result.Ok();
         }
 
         public Task<Result<IEnumerable<DomainEventWrapper>>> LoadEvents(long lastOverallVersion = 0)
