@@ -11,9 +11,9 @@ namespace Microwave.Persistence.InMemory.Eventstores
         public Task<SnapShotResult<T>> LoadSnapShot<T>(string entityId) where T : new()
         {
             if (entityId == null) return Task.FromResult(SnapShotResult<T>.NotFound(null));
-            if (!_snapShots.TryGetValue(entityId, out var entity)) return Task.FromResult(SnapShotResult<T>
-            .Default());
-            var snapShotWrapper = entity as SnapShotWrapper<T>;
+            if (!_snapShots.TryGetValue(entityId, out var entity))
+                return Task.FromResult(SnapShotResult<T>.Default());
+            var snapShotWrapper = (SnapShotWrapper<T>) entity;
             return Task.FromResult(new SnapShotResult<T>(snapShotWrapper.Entity, snapShotWrapper.Version));
         }
 

@@ -11,7 +11,7 @@ namespace Microwave.Persistence.MongoDb.Eventstores
         private readonly IMongoDatabase _database;
         private readonly string _eventCollectionName = "DomainEventDbos";
         public long OverallVersion { get; private set; }
-        private object _lock = new object();
+        private readonly object _lock = new object();
 
         public VersionCache(MicrowaveMongoDb mongoDb)
         {

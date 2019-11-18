@@ -12,14 +12,17 @@ namespace Microwave.Persistence.InMemory.Eventstores
     public class EventRepositoryInMemory : IEventRepository
     {
         private readonly BlockingCollection<DomainEventWrapper> _domainEvents = new BlockingCollection<DomainEventWrapper>();
-        private object _lock = new object();
-        public long CurrentCache { get; private set; }
+        private readonly object _lock = new object();
+        private long _currentCache;
 
         public Task<Result<IEnumerable<DomainEventWrapper>>> LoadEventsByEntity(string entityId, long lastEntityStreamVersion = 0)
         {
             if (entityId == null) return Task.FromResult(Result<IEnumerable<DomainEventWrapper>>.NotFound(null));
             var mongoCollection = _domainEvents;
-            var domainEventDbos = mongoCollection.Where(e => e.DomainEvent.EntityId == entityId && e.EntityStreamVersion > lastEntityStreamVersion).ToList();
+            var domainEventDbos = mongoCollection
+                .Where(e => e.DomainEvent.EntityId == entityId && e.EntityStreamVersion > lastEntityStreamVersion)
+                .OrderBy(s => s.OverallVersion)
+                .ToList();
             if (!domainEventDbos.Any())
             {
                 var eventDbos = mongoCollection.FirstOrDefault(e => e.DomainEvent.EntityId == entityId);
@@ -44,9 +47,9 @@ namespace Microwave.Persistence.InMemory.Eventstores
         {
             lock (_lock)
             {
-                var maxVersion = _domainEvents.
-                                     Where(e => e.DomainEvent.EntityId == domainEvents.First().EntityId)
-                                     .OrderBy(e => e.EntityStreamVersion).LastOrDefault()?.EntityStreamVersion ?? 0;
+                var maxVersion = _domainEvents
+                     .Where(e => e.DomainEvent.EntityId == domainEvents.First().EntityId)
+                     .OrderBy(e => e.OverallVersion).LastOrDefault()?.EntityStreamVersion ?? 0;
                 if (maxVersion != currentEntityVersion) return Task.FromResult(
                     Result.ConcurrencyResult(currentEntityVersion, maxVersion));
                 var newVersion = currentEntityVersion;
@@ -54,10 +57,10 @@ namespace Microwave.Persistence.InMemory.Eventstores
                 var domainEventWrappers = new List<DomainEventWrapper>();
                 foreach (var domainEvent in domainEvents)
                 {
-                    CurrentCache++;
+                    _currentCache++;
                     var domainEventWrapper = new DomainEventWrapper
                     {
-                        OverallVersion = CurrentCache,
+                        OverallVersion = _currentCache,
                         DomainEvent = domainEvent,
                         EntityStreamVersion = ++newVersion
                     };
@@ -74,7 +77,9 @@ namespace Microwave.Persistence.InMemory.Eventstores
 
         public Task<Result<IEnumerable<DomainEventWrapper>>> LoadEvents(long lastOverallVersion = 0)
         {
-            var domainEventWrappers = _domainEvents.OrderBy(e => e.OverallVersion).Where(e => e.OverallVersion > lastOverallVersion);
+            var domainEventWrappers = _domainEvents
+                .Where(e => e.OverallVersion > lastOverallVersion)
+                .OrderBy(e => e.OverallVersion);
             return Task.FromResult(Result<IEnumerable<DomainEventWrapper>>.Ok(domainEventWrappers));
         }
 
@@ -82,8 +87,8 @@ namespace Microwave.Persistence.InMemory.Eventstores
         lastOverallVersion = 0)
         {
             var domainEventWrappers = _domainEvents
-                .OrderBy(e => e.OverallVersion)
-                .Where(e => e.DomainEventType == eventType && e.OverallVersion > lastOverallVersion);
+                .Where(e => e.DomainEventType == eventType && e.OverallVersion > lastOverallVersion)
+                .OrderBy(e => e.OverallVersion);
             return Task.FromResult(Result<IEnumerable<DomainEventWrapper>>.Ok(domainEventWrappers));
         }
     }

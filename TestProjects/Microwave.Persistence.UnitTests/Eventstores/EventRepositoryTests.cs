@@ -40,6 +40,31 @@ namespace Microwave.Persistence.UnitTests.Eventstores
 
         [DataTestMethod]
         [PersistenceTypeTest]
+        public async Task AddAndLoadEvents_OrderIsCorrect(PersistenceLayerProvider layerProvider)
+        {
+            BsonMapRegistrationHelpers.AddBsonMapFor<TestEvent1>();
+            BsonMapRegistrationHelpers.AddBsonMapFor<TestEvent2>();
+            BsonMapRegistrationHelpers.AddBsonMapFor<TestEvent3>();
+
+            var eventRepository = layerProvider.EventRepository;
+
+            var newGuid = Guid.NewGuid();
+            var events = new List<IDomainEvent> { new TestEvent1(newGuid) };
+            var events2 = new List<IDomainEvent> { new TestEvent2(newGuid), new TestEvent3(newGuid, "TestName")};
+            var res = await eventRepository.AppendAsync(events, 0);
+            var res2 = await eventRepository.AppendAsync(events2, 1);
+            res.Check();
+            res2.Check();
+
+            var loadEventsByEntity = await eventRepository.LoadEventsByEntity(newGuid.ToString());
+            Assert.AreEqual(3, loadEventsByEntity.Value.Count());
+            Assert.AreEqual(1, loadEventsByEntity.Value.ToList()[0].EntityStreamVersion);
+            Assert.AreEqual(2, loadEventsByEntity.Value.ToList()[1].EntityStreamVersion);
+            Assert.AreEqual(3, loadEventsByEntity.Value.ToList()[2].EntityStreamVersion);
+        }
+
+        [DataTestMethod]
+        [PersistenceTypeTest]
         public async Task LoadWithNulls(PersistenceLayerProvider layerProvider)
         {
             var eventRepository = layerProvider.EventRepository;
