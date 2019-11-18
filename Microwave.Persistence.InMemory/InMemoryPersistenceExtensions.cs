@@ -37,6 +37,7 @@ namespace Microwave.Persistence.InMemory
             services.AddSingleton<IReadModelRepository, ReadModelRepositoryInMemory>();
             services.AddSingleton<IEventRepository>(eventRepositoryInMemory);
             services.AddSingleton<ISnapShotRepository, SnapShotRepositoryInMemory>();
+            services.AddSingleton(domainEventSeeding);
 
             return services;
         }
@@ -55,9 +56,7 @@ namespace Microwave.Persistence.InMemory
 
         public void WithEventSeeds(IDomainEvent domainEvent)
         {
-            var events = DomainEventSeeds.ToList();
-            events.Add(domainEvent);
-            DomainEventSeeds = events;
+            WithEventSeeds(new List<IDomainEvent> { domainEvent });
         }
     }
 }
