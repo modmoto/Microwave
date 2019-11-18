@@ -53,7 +53,7 @@ namespace Microwave.Persistence.InMemory
             DomainEventSeeds = events;
         }
 
-        public void WithEventSeed(IDomainEvent domainEvent)
+        public void WithEventSeeds(IDomainEvent domainEvent)
         {
             var events = DomainEventSeeds.ToList();
             events.Add(domainEvent);
