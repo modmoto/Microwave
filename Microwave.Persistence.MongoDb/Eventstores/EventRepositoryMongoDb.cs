@@ -15,7 +15,7 @@ namespace Microwave.Persistence.MongoDb.Eventstores
         private readonly IMongoDatabase _database;
         private readonly string _eventCollectionName = "DomainEventDbos";
         private readonly IVersionCache _versions;
-        private object _lock = new object();
+        private readonly object _lock = new object();
 
         public EventRepositoryMongoDb(MicrowaveMongoDb mongoDb, IVersionCache versions)
         {

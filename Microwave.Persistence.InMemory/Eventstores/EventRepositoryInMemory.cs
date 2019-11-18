@@ -12,8 +12,8 @@ namespace Microwave.Persistence.InMemory.Eventstores
     public class EventRepositoryInMemory : IEventRepository
     {
         private readonly BlockingCollection<DomainEventWrapper> _domainEvents = new BlockingCollection<DomainEventWrapper>();
-        private object _lock = new object();
-        public long CurrentCache { get; private set; }
+        private readonly object _lock = new object();
+        private long _currentCache;
 
         public Task<Result<IEnumerable<DomainEventWrapper>>> LoadEventsByEntity(string entityId, long lastEntityStreamVersion = 0)
         {
@@ -57,10 +57,10 @@ namespace Microwave.Persistence.InMemory.Eventstores
                 var domainEventWrappers = new List<DomainEventWrapper>();
                 foreach (var domainEvent in domainEvents)
                 {
-                    CurrentCache++;
+                    _currentCache++;
                     var domainEventWrapper = new DomainEventWrapper
                     {
-                        OverallVersion = CurrentCache,
+                        OverallVersion = _currentCache,
                         DomainEvent = domainEvent,
                         EntityStreamVersion = ++newVersion
                     };
