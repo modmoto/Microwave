@@ -36,13 +36,16 @@ namespace Microwave.UnitTests
 
             var storeDependencies = collection.AddMicrowave()
                 .AddMicrowavePersistenceLayerInMemory(s =>
-                    s.WithEventSeeds(new TestDomainEvent_PublishedEvent2("testId")));
+                    s.WithEventSeeds(new TestDomainEvent_PublishedEvent2("testId"))
+                    .WithEventSeeds(new TestDomainEvent_PublishedEvent2("testId2")));
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
             var eventStore = buildServiceProvider.GetService<IEventStore>();
             var entity = await eventStore.LoadAsync<TestEntityForSeed>("testId");
+            var entity2 = await eventStore.LoadAsync<TestEntityForSeed>("testId2");
 
             Assert.AreEqual("testId", entity.Value.DomainEventEntityId);
+            Assert.AreEqual("testId2", entity2.Value.DomainEventEntityId);
         }
 
         [TestMethod]

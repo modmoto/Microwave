@@ -47,16 +47,17 @@ namespace Microwave.Persistence.InMemory
     {
         public IEnumerable<IDomainEvent> DomainEventSeeds { get; private set; } = new List<IDomainEvent>();
 
-        public void WithEventSeeds(IEnumerable<IDomainEvent> domainEvents)
+        public DomainEventSeeding WithEventSeeds(IEnumerable<IDomainEvent> domainEvents)
         {
             var events = DomainEventSeeds.ToList();
             events.AddRange(domainEvents);
             DomainEventSeeds = events;
+            return this;
         }
 
-        public void WithEventSeeds(IDomainEvent domainEvent)
+        public DomainEventSeeding WithEventSeeds(IDomainEvent domainEvent)
         {
-            WithEventSeeds(new List<IDomainEvent> { domainEvent });
+            return WithEventSeeds(new List<IDomainEvent> { domainEvent });
         }
     }
 }
