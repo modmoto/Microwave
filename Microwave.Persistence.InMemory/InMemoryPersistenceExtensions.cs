@@ -37,6 +37,7 @@ namespace Microwave.Persistence.InMemory
             services.AddSingleton<IReadModelRepository, ReadModelRepositoryInMemory>();
             services.AddSingleton<IEventRepository>(eventRepositoryInMemory);
             services.AddSingleton<ISnapShotRepository, SnapShotRepositoryInMemory>();
+            services.AddSingleton(domainEventSeeding);
 
             return services;
         }
