@@ -10,8 +10,19 @@ namespace Microwave.Persistence.InMemory.Eventstores
 {
     public class EventRepositoryInMemory : IEventRepository
     {
-        private readonly List<DomainEventWrapper> _domainEvents =
-            new List<DomainEventWrapper>();
+        public EventRepositoryInMemory(IEnumerable<IDomainEvent> domainEvents = null)
+        {
+            var events = domainEvents?.ToList() ?? new List<IDomainEvent>();
+            var groupedEvents = events.GroupBy(de => de.EntityId).ToList();
+
+            foreach (var evs in groupedEvents)
+            {
+                var appendAsync = AppendAsync(evs, 0).Result;
+                appendAsync.Check();
+            }
+        }
+
+        private readonly List<DomainEventWrapper> _domainEvents = new List<DomainEventWrapper>();
         private readonly object _lock = new object();
         private long _currentCache;
 
