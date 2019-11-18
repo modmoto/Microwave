@@ -95,18 +95,18 @@ namespace Microwave.Persistence.MongoDb.Eventstores
             return Result<IEnumerable<DomainEventWrapper>>.Ok(domainEvents);
         }
 
-        public async Task<Result> AppendAsync(IEnumerable<IDomainEvent> domainEvents, long currentEntityVersion)
+        public Task<Result> AppendAsync(IEnumerable<IDomainEvent> domainEvents, long currentEntityVersion)
         {
             lock (_lock)
             {
                 var events = domainEvents.ToList();
-                if (!events.Any()) return Result.Ok();
+                if (!events.Any()) return Task.FromResult(Result.Ok());
 
                 var entityId = events.First().EntityId;
                 var versionTemp = currentEntityVersion;
                 var lastVersion = _versions.Get(entityId).Result;
 
-                if (lastVersion < currentEntityVersion) return Result.ConcurrencyResult(currentEntityVersion, lastVersion);
+                if (lastVersion < currentEntityVersion) return Task.FromResult(Result.ConcurrencyResult(currentEntityVersion, lastVersion));
 
                 var domainEventDbos = events.Select(domainEvent =>
                 {
@@ -135,12 +135,12 @@ namespace Microwave.Persistence.MongoDb.Eventstores
                     if (innerException?.GetType() == typeof(MongoBulkWriteException<DomainEventDbo>))
                     {
                         var actualVersion = _versions.GetForce(entityId).Result;
-                        return Result.ConcurrencyResult(currentEntityVersion, actualVersion);
+                        return Task.FromResult(Result.ConcurrencyResult(currentEntityVersion, actualVersion));
                     }
 
                     throw;
                 }
-                return Result.Ok();
+                return Task.FromResult(Result.Ok());
             }
         }
     }
