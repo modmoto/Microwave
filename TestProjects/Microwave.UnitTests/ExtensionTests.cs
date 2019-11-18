@@ -30,6 +30,22 @@ namespace Microwave.UnitTests
         }
 
         [TestMethod]
+        public async Task AddDiContainerTest_WithSeeding()
+        {
+            var collection = (IServiceCollection) new ServiceCollection();
+
+            var storeDependencies = collection.AddMicrowave()
+                .AddMicrowavePersistenceLayerInMemory(s =>
+                    s.WithEventSeeds(new TestDomainEvent_PublishedEvent2("testId")));
+            var buildServiceProvider = storeDependencies.BuildServiceProvider();
+
+            var eventStore = buildServiceProvider.GetService<IEventStore>();
+            var entity = await eventStore.LoadAsync<TestEntityForSeed>("testId");
+
+            Assert.AreEqual("testId", entity.Value.DomainEventEntityId);
+        }
+
+        [TestMethod]
         public void AddDiContainerTest()
         {
             var collection = (IServiceCollection) new ServiceCollection();

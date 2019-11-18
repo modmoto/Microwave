@@ -51,4 +51,14 @@ namespace Microwave.UnitTests.PublishedEventsDll
 
         public string EntityId { get; }
     }
+
+    public class TestEntityForSeed : Entity, IApply<TestDomainEvent_PublishedEvent2>
+    {
+        public string DomainEventEntityId { get; private set; }
+
+        public void Apply(TestDomainEvent_PublishedEvent2 domainEvent)
+        {
+            DomainEventEntityId = domainEvent.EntityId;
+        }
+    }
 }
