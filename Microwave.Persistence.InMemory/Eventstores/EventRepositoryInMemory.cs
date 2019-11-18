@@ -1,5 +1,4 @@
-﻿using System.Collections.Concurrent;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microwave.Domain.EventSourcing;
@@ -11,21 +10,21 @@ namespace Microwave.Persistence.InMemory.Eventstores
 {
     public class EventRepositoryInMemory : IEventRepository
     {
-        private readonly BlockingCollection<DomainEventWrapper> _domainEvents = new BlockingCollection<DomainEventWrapper>();
+        private readonly List<DomainEventWrapper> _domainEvents =
+            new List<DomainEventWrapper>();
         private readonly object _lock = new object();
         private long _currentCache;
 
         public Task<Result<IEnumerable<DomainEventWrapper>>> LoadEventsByEntity(string entityId, long lastEntityStreamVersion = 0)
         {
             if (entityId == null) return Task.FromResult(Result<IEnumerable<DomainEventWrapper>>.NotFound(null));
-            var mongoCollection = _domainEvents;
-            var domainEventDbos = mongoCollection
+            var domainEventDbos = _domainEvents
                 .Where(e => e.DomainEvent.EntityId == entityId && e.EntityStreamVersion > lastEntityStreamVersion)
                 .OrderBy(s => s.OverallVersion)
                 .ToList();
             if (!domainEventDbos.Any())
             {
-                var eventDbos = mongoCollection.FirstOrDefault(e => e.DomainEvent.EntityId == entityId);
+                var eventDbos = _domainEvents.FirstOrDefault(e => e.DomainEvent.EntityId == entityId);
                 if (eventDbos == null) return Task.FromResult(Result<IEnumerable<DomainEventWrapper>>.NotFound(entityId));
                 return Task.FromResult(Result<IEnumerable<DomainEventWrapper>>.Ok(new List<DomainEventWrapper>()));
             }
