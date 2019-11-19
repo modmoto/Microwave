@@ -67,6 +67,7 @@ namespace Microwave.Persistence.InMemory.Eventstores
         private Result Append(IEnumerable<IDomainEvent> domainEvents, long currentEntityVersion)
         {
             var eventsToAdd = domainEvents.ToList();
+            if (!eventsToAdd.Any()) return Result.Ok();
             var entityId = eventsToAdd.First().EntityId;
             if (!_domainEvents.ContainsKey(entityId))
             {
