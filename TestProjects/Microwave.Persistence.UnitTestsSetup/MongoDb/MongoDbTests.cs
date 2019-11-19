@@ -7,6 +7,7 @@ using Microwave.Domain.EventSourcing;
 using Microwave.Domain.Results;
 using Microwave.EventStores;
 using Microwave.EventStores.Ports;
+using Microwave.EventStores.SnapShots;
 using Microwave.Persistence.MongoDb.Eventstores;
 using MongoDB.Bson.Serialization;
 using Moq;
@@ -52,7 +53,7 @@ namespace Microwave.Persistence.UnitTestsSetup.MongoDb
             snapShotRepo.Setup(re => re.LoadSnapShot<TestEntity>(It.IsAny<string>()))
                 .ReturnsAsync(SnapShotResult<TestEntity>.Default());
 
-            var eventStore = new EventStore(eventRepository, snapShotRepo.Object);
+            var eventStore = new EventStore(eventRepository, snapShotRepo.Object, new SnapShotConfig());
 
             var newGuid = Guid.NewGuid();
 

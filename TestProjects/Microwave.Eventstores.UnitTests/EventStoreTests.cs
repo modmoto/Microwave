@@ -7,6 +7,7 @@ using Microwave.Domain.Exceptions;
 using Microwave.Domain.Results;
 using Microwave.EventStores;
 using Microwave.EventStores.Ports;
+using Microwave.EventStores.SnapShots;
 using Microwave.Persistence.MongoDb.Eventstores;
 using Microwave.Persistence.UnitTestsSetup.MongoDb;
 using Moq;
@@ -19,7 +20,7 @@ namespace Microwave.Eventstores.UnitTests
         [TestMethod]
         public async Task LoadWithNull()
         {
-            var eventStore = new EventStore(null, null);
+            var eventStore = new EventStore(null, null, new SnapShotConfig());
             var loadAsync = await eventStore.LoadAsync<TestEntity>(null);
 
             Assert.IsTrue(loadAsync.Is<NotFound>());
@@ -43,7 +44,7 @@ namespace Microwave.Eventstores.UnitTests
             };
             entityStremRepo.Setup(ev => ev.LoadEventsByEntity(It.IsAny<string>(), It.IsAny<long>()))
                 .ReturnsAsync( Result<IEnumerable<DomainEventWrapper>>.Ok( new[] { domainEventWrapper }));
-            var eventStore = new EventStore(entityStremRepo.Object, snapShotRepo.Object);
+            var eventStore = new EventStore(entityStremRepo.Object, snapShotRepo.Object, new SnapShotConfig());
             var loadAsync = await eventStore.LoadAsync<TestEntity>(entityId.ToString());
 
             Assert.AreEqual(entityId, loadAsync.Value.Id);
@@ -65,7 +66,7 @@ namespace Microwave.Eventstores.UnitTests
             };
             entityStremRepo.Setup(ev => ev.LoadEventsByEntity(It.IsAny<string>(), It.IsAny<long>()))
                 .ReturnsAsync( Result<IEnumerable<DomainEventWrapper>>.Ok( new[] { domainEventWrapper }));
-            var eventStore = new EventStore(entityStremRepo.Object, snapShotRepo.Object);
+            var eventStore = new EventStore(entityStremRepo.Object, snapShotRepo.Object, new SnapShotConfig());
             var loadAsync = await eventStore.LoadAsync<TestEntity_NoIApply>(entityId.ToString());
 
             Assert.AreEqual(Guid.Empty, loadAsync.Value.Id);
@@ -86,7 +87,7 @@ namespace Microwave.Eventstores.UnitTests
             };
             entityStremRepo.Setup(ev => ev.LoadEventsByEntity(It.IsAny<string>(), It.IsAny<long>()))
                 .ReturnsAsync( Result<IEnumerable<DomainEventWrapper>>.Ok( new[] { domainEventWrapper }));
-            var eventStore = new EventStore(entityStremRepo.Object, snapShotRepo.Object);
+            var eventStore = new EventStore(entityStremRepo.Object, snapShotRepo.Object, new SnapShotConfig());
             var loadAsync = await eventStore.LoadAsync<TestEntity_NoIApply>(entityId.ToString());
 
             Assert.AreEqual(Guid.Empty, loadAsync.Value.Id);
@@ -103,7 +104,7 @@ namespace Microwave.Eventstores.UnitTests
             var eventStore = new EventStore(
                 new EventRepositoryMongoDb(EventMongoDb,
                 new VersionCache(EventMongoDb)),
-                snapShotRepo.Object);
+                snapShotRepo.Object, new SnapShotConfig());
 
             await eventStore.AppendAsync(new List<IDomainEvent> {new TestEventEventStore(entityId, "Test")}, 0);
             var loadAsync = await eventStore.LoadAsync<TestEntity>(entityId.ToString());
@@ -124,7 +125,7 @@ namespace Microwave.Eventstores.UnitTests
             snapShotRepo.Setup(re => re.LoadSnapShot<TestEntity>(It.IsAny<string>()))
                 .ReturnsAsync(SnapShotResult<TestEntity>.Default());
             var entityId = Guid.NewGuid();
-            var eventStore = new EventStore(new EventRepositoryMongoDb(EventMongoDb, new VersionCache(EventMongoDb)), snapShotRepo.Object);
+            var eventStore = new EventStore(new EventRepositoryMongoDb(EventMongoDb, new VersionCache(EventMongoDb)), snapShotRepo.Object, new SnapShotConfig());
 
             await eventStore.AppendAsync(new TestEventEventStore(entityId, "Test"), 0);
             var loadAsync = await eventStore.LoadAsync<TestEntity>(entityId.ToString());
@@ -141,7 +142,7 @@ namespace Microwave.Eventstores.UnitTests
                 .ReturnsAsync(SnapShotResult<TestEntity>.Default());
             var entityId = Guid.NewGuid();
             var entityId2 = Guid.NewGuid();
-            var eventStore = new EventStore(new EventRepositoryMongoDb(EventMongoDb, new VersionCache(EventMongoDb)), snapShotRepo.Object);
+            var eventStore = new EventStore(new EventRepositoryMongoDb(EventMongoDb, new VersionCache(EventMongoDb)), snapShotRepo.Object, new SnapShotConfig());
 
             await Assert.ThrowsExceptionAsync<DifferentIdsException>(async () => await eventStore.AppendAsync(new
             List<IDomainEvent> {new
@@ -156,7 +157,7 @@ namespace Microwave.Eventstores.UnitTests
             snapShotRepo.Setup(re => re.LoadSnapShot<TestEntity>(It.IsAny<string>()))
                 .ReturnsAsync(SnapShotResult<TestEntity>.Default());
             var entityId = Guid.NewGuid();
-            var eventStore = new EventStore(new EventRepositoryMongoDb(EventMongoDb, new VersionCache(EventMongoDb)), snapShotRepo.Object);
+            var eventStore = new EventStore(new EventRepositoryMongoDb(EventMongoDb, new VersionCache(EventMongoDb)), snapShotRepo.Object, new SnapShotConfig());
 
             var result = await eventStore.LoadAsync<TestEntity>(entityId.ToString());
             var exception = Assert.ThrowsException<NotFoundException>(() => result.Value);
@@ -172,7 +173,7 @@ namespace Microwave.Eventstores.UnitTests
             snapShotRepo.Setup(re => re.LoadSnapShot<TestEntity>(It.IsAny<string>()))
                 .ReturnsAsync(SnapShotResult<TestEntity>.Default());
             var entityId = Guid.NewGuid();
-            var eventStore = new EventStore(new EventRepositoryMongoDb(EventMongoDb, new VersionCache(EventMongoDb)), snapShotRepo.Object);
+            var eventStore = new EventStore(new EventRepositoryMongoDb(EventMongoDb, new VersionCache(EventMongoDb)), snapShotRepo.Object, new SnapShotConfig());
 
             await eventStore.AppendAsync(new List<IDomainEvent> {new TestEventEventStore(entityId, "Test")}, 0);
             var loadAsync = await eventStore.LoadAsync<TestEntity>(Guid.NewGuid().ToString());

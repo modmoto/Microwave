@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Domain.EventSourcing;
@@ -71,7 +72,8 @@ namespace Microwave.Persistence.UnitTests.Eventstores
             BsonMapRegistrationHelpers.AddBsonMapFor<Event1>();
             BsonMapRegistrationHelpers.AddBsonMapFor<Event2>();
 
-            var eventStore = new EventStore(layerProvider.EventRepository, layerProvider.SnapShotRepository);
+            var eventStore = new EventStore(layerProvider.EventRepository, layerProvider.SnapShotRepository, new
+            SnapShotConfig(new List<ISnapShot> { new SnapShot<User>(1) }));
 
             var entityId = Guid.NewGuid();
             await eventStore.AppendAsync(new List<IDomainEvent>
@@ -86,6 +88,73 @@ namespace Microwave.Persistence.UnitTests.Eventstores
 
             Assert.AreEqual("Peterneu", result.Value.Name);
             Assert.AreEqual(3, result.Version);
+        }
+
+        [TestMethod]
+        [PersistenceTypeTest]
+        public async Task SnapshotIsChangedAfterSavingIt_InMemoryBug(PersistenceLayerProvider layerProvider)
+        {
+            BsonMapRegistrationHelpers.AddBsonMapFor<Event1>();
+            BsonMapRegistrationHelpers.AddBsonMapFor<Event2>();
+
+            var eventStore = new EventStore(layerProvider.EventRepository, layerProvider.SnapShotRepository, new
+            SnapShotConfig(new List<ISnapShot> { new SnapShot<UserWithAutoAply>(2)}));
+
+            var event1 = UserWithAutoAply.Create();
+            var userWithAutoAply = new UserWithAutoAply();
+            userWithAutoAply.Apply(event1);
+            var changeNameEvent1 = userWithAutoAply.AppendName("neuer Name");
+            var changeNameEvent2 = userWithAutoAply.AppendName("neuer Name");
+            var changeNameEvent3 = userWithAutoAply.AppendName("neuer Name");
+
+            var entityId = event1.Id;
+            await eventStore.AppendAsync(new List<IDomainEvent>
+            {
+                event1, changeNameEvent1, changeNameEvent2, changeNameEvent3
+            }, 0);
+
+            var result = await eventStore.LoadAsync<UserWithAutoAply>(entityId.ToString());
+
+            var userLoaded = result.Value;
+            Assert.AreEqual(3, userLoaded.Names.Count());
+            Assert.AreEqual(4, result.Version);
+
+            userLoaded.AppendName("new stuff");
+
+            Assert.AreEqual(4, userLoaded.Names.Count());
+
+            var resultLoadedAgain = await eventStore.LoadAsync<UserWithAutoAply>(entityId.ToString());
+            Assert.AreEqual(3, resultLoadedAgain.Value.Names.Count());
+        }
+    }
+    public class UserWithAutoAply : Entity, IApply<Event2>, IApply<Event1>
+    {
+        public static Event1 Create()
+        {
+            return new Event1(Guid.NewGuid());
+        }
+
+        public Event2 AppendName(string newName)
+        {
+            var event2 = new Event2(Id, newName);
+            Apply(event2);
+            return event2;
+        }
+
+        public Guid Id { get; private set; }
+
+        public IEnumerable<string> Names { get; private set; } = new List<string>();
+
+        public void Apply(Event1 domainEvent)
+        {
+            Id = domainEvent.Id;
+        }
+
+        public void Apply(Event2 domainEvent)
+        {
+            var list = Names.ToList();
+            list.Add(domainEvent.Name);
+            Names = list;
         }
     }
 
