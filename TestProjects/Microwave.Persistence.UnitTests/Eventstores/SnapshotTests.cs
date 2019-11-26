@@ -6,6 +6,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Domain.EventSourcing;
 using Microwave.EventStores;
 using Microwave.EventStores.SnapShots;
+using Microwave.Persistence.InMemory.Eventstores;
 using Microwave.Persistence.MongoDb.Eventstores;
 using Microwave.Persistence.UnitTestsSetup;
 
@@ -96,6 +97,7 @@ namespace Microwave.Persistence.UnitTests.Eventstores
         {
             BsonMapRegistrationHelpers.AddBsonMapFor<Event1>();
             BsonMapRegistrationHelpers.AddBsonMapFor<Event2>();
+            if (layerProvider.SnapShotRepository.GetType() == typeof(SnapShotRepositoryInMemory)) return; // this is not supported in memory
 
             var eventStore = new EventStore(layerProvider.EventRepository, layerProvider.SnapShotRepository, new
             SnapShotConfig(new List<ISnapShot> { new SnapShot<UserWithAutoAply>(2)}));
