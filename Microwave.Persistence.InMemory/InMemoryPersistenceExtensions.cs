@@ -21,16 +21,7 @@ namespace Microwave.Persistence.InMemory
             var domainEventSeeding = new DomainEventSeeding();
             addEventSeeding.Invoke(domainEventSeeding);
 
-            var eventRepositoryInMemory = new EventRepositoryInMemory();
-            var groupedEvents = domainEventSeeding.DomainEventSeeds.GroupBy(de => de.EntityId).ToList();
-
-            foreach (var domainEvents in groupedEvents)
-            {
-                var appendAsync = eventRepositoryInMemory.AppendAsync(domainEvents, 0);
-                appendAsync.Wait();
-                var res = appendAsync.Result;
-                res.Check();
-            }
+            var eventRepositoryInMemory = new EventRepositoryInMemory(domainEventSeeding.DomainEventSeeds);
 
             services.AddSingleton<IStatusRepository, StatusRepositoryInMemory>();
             services.AddSingleton<IVersionRepository, VersionRepositoryInMemory>();
@@ -46,18 +37,17 @@ namespace Microwave.Persistence.InMemory
     {
         public IEnumerable<IDomainEvent> DomainEventSeeds { get; private set; } = new List<IDomainEvent>();
 
-        public void WithEventSeeds(IEnumerable<IDomainEvent> domainEvents)
+        public DomainEventSeeding WithEventSeeds(IEnumerable<IDomainEvent> domainEvents)
         {
             var events = DomainEventSeeds.ToList();
             events.AddRange(domainEvents);
             DomainEventSeeds = events;
+            return this;
         }
 
-        public void WithEventSeed(IDomainEvent domainEvent)
+        public DomainEventSeeding WithEventSeeds(IDomainEvent domainEvent)
         {
-            var events = DomainEventSeeds.ToList();
-            events.Add(domainEvent);
-            DomainEventSeeds = events;
+            return WithEventSeeds(new List<IDomainEvent> { domainEvent });
         }
     }
 }

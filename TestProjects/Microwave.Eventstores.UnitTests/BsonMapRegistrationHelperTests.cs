@@ -6,6 +6,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Domain.EventSourcing;
 using Microwave.EventStores;
 using Microwave.EventStores.Ports;
+using Microwave.EventStores.SnapShots;
 using Microwave.Persistence.MongoDb.Eventstores;
 using Microwave.Persistence.UnitTestsSetup.MongoDb;
 using Moq;
@@ -25,7 +26,7 @@ namespace Microwave.Eventstores.UnitTests
             snapShotRepo.Setup(re => re.LoadSnapShot<TestEntity>(It.IsAny<string>()))
                 .ReturnsAsync(SnapShotResult<TestEntity>.Default());
 
-            var eventStore = new EventStore(eventRepository, snapShotRepo.Object);
+            var eventStore = new EventStore(eventRepository, snapShotRepo.Object, new SnapShotConfig());
 
             var newGuid = Guid.NewGuid();
 
@@ -49,7 +50,7 @@ namespace Microwave.Eventstores.UnitTests
             snapShotRepo.Setup(re => re.LoadSnapShot<TestEntity>(It.IsAny<string>()))
                 .ReturnsAsync(SnapShotResult<TestEntity>.Default());
 
-            var eventStore = new EventStore(eventRepository, snapShotRepo.Object);
+            var eventStore = new EventStore(eventRepository, snapShotRepo.Object, new SnapShotConfig());
 
             var newGuid = Guid.NewGuid();
 
@@ -75,7 +76,7 @@ namespace Microwave.Eventstores.UnitTests
             snapShotRepo.Setup(re => re.LoadSnapShot<TestEntity>(It.IsAny<string>()))
                 .ReturnsAsync(SnapShotResult<TestEntity>.Default());
 
-            var eventStore = new EventStore(eventRepository, snapShotRepo.Object);
+            var eventStore = new EventStore(eventRepository, snapShotRepo.Object, new SnapShotConfig());
 
             await eventStore.AppendAsync(new List<IDomainEvent> { new TestEvent_UnconventionalOderring("Simon", "whatever")},
                 0);
@@ -97,7 +98,7 @@ namespace Microwave.Eventstores.UnitTests
             snapShotRepo.Setup(re => re.LoadSnapShot<TestEntity>(It.IsAny<string>()))
                 .ReturnsAsync(SnapShotResult<TestEntity>.Default());
 
-            var eventStore = new EventStore(eventRepository, snapShotRepo.Object);
+            var eventStore = new EventStore(eventRepository, snapShotRepo.Object, new SnapShotConfig());
 
             await eventStore.AppendAsync(new List<IDomainEvent> {
                     new TestEvent_BsonBug_AutoProperty_NotWithEntityIdName("whatever", "Peter")},
