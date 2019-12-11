@@ -1,5 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Microwave.UI
@@ -16,13 +17,17 @@ namespace Microwave.UI
         public static IApplicationBuilder UseMicrowaveUi(this IApplicationBuilder builder)
         {
             builder.UseRouting();
-            builder.UseEndpoints(endpoints =>
-            {
-                endpoints.MapRazorPages();
-                endpoints.MapControllers();
-            });
+            builder.UseEndpoints(endpoints => AddEnpoints(endpoints));
             builder.UseStaticFiles();
             return builder;
+        }
+
+        [ExcludeFromCodeCoverage]
+        private static IEndpointRouteBuilder AddEnpoints(IEndpointRouteBuilder endpoints)
+        {
+            endpoints.MapRazorPages();
+            endpoints.MapControllers();
+            return endpoints;
         }
     }
 }
