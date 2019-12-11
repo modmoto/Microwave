@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microwave;
+using Microwave.Persistence.InMemory;
 using Microwave.Persistence.MongoDb;
 using Microwave.Queries.Polling;
 using Microwave.UI;
@@ -15,7 +16,7 @@ namespace ReadService1
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc()
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+                .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
             services.AddMicrowaveUi();
             services.AddMicrowave(config =>
@@ -31,15 +32,13 @@ namespace ReadService1
                     config.WithServiceName("ReadService1");
                 });
 
-            services.AddMicrowavePersistenceLayerMongoDb(p =>
-            {
-                p.WithDatabaseName("TestReadService1");
-            });
+            services.AddMicrowavePersistenceLayerInMemory();
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            app.UseMvc();
+            app.UseRouting();
+            app.UseEndpoints(o => o.MapRazorPages());
             app.UseMicrowaveUi();
             app.RunMicrowaveQueries();
         }

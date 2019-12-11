@@ -9,9 +9,9 @@ namespace Microwave.UI
 {
     public class MicrowaveUiConfigureOptions : IPostConfigureOptions<StaticFileOptions>
     {
-        private readonly IHostingEnvironment _environment;
+        private readonly IWebHostEnvironment _environment;
 
-        public MicrowaveUiConfigureOptions(IHostingEnvironment environment)
+        public MicrowaveUiConfigureOptions(IWebHostEnvironment environment)
         {
             _environment = environment;
         }
@@ -20,12 +20,12 @@ namespace Microwave.UI
         {
             options.ContentTypeProvider = options.ContentTypeProvider ?? new FileExtensionContentTypeProvider();
 
-            if (options.FileProvider == null && _environment.WebRootFileProvider == null)
+            if (options.FileProvider == null && _environment.ContentRootFileProvider == null)
             {
                 throw new InvalidOperationException("Missing FileProvider.");
             }
 
-            options.FileProvider = options.FileProvider ?? _environment.WebRootFileProvider;
+            options.FileProvider = options.FileProvider ?? _environment.ContentRootFileProvider;
 
             var filesProvider = new ManifestEmbeddedFileProvider(GetType().Assembly, "Resources");
             options.FileProvider = new CompositeFileProvider(options.FileProvider, filesProvider);

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microwave;
 using Microwave.EventStores.SnapShots;
+using Microwave.Persistence.InMemory;
 using Microwave.Persistence.MongoDb;
 using Microwave.UI;
 using ServerConfig;
@@ -14,7 +15,7 @@ namespace WriteService1
     {
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
             services.AddMicrowaveUi();
 
             services.AddMicrowave(config =>
@@ -25,15 +26,14 @@ namespace WriteService1
                 config.SnapShots.Add(new SnapShot<EntityTest>(3));
             });
 
-            services.AddMicrowavePersistenceLayerMongoDb(p =>
-            {
-                p.WithDatabaseName("TestWriteService1ReadDb");
-            });
+
+            services.AddMicrowavePersistenceLayerInMemory();
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            app.UseMvc();
+            app.UseRouting();
+            app.UseEndpoints(o => o.MapRazorPages());
             app.UseMicrowaveUi();
             app.RunMicrowaveQueries();
         }
