@@ -12,6 +12,12 @@ namespace Microwave.UI
 
         public static IApplicationBuilder UseMicrowaveUi(this IApplicationBuilder builder)
         {
+            builder.UseRouting();
+            builder.UseEndpoints(endpoints =>
+            {
+                endpoints.MapRazorPages();
+                endpoints.MapControllers();
+            });
             builder.UseStaticFiles();
             return builder;
         }

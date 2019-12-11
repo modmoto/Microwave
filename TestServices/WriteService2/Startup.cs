@@ -40,7 +40,7 @@ namespace WriteService2
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             app.UseRouting();
-            app.UseEndpoints(o => o.MapRazorPages());
+            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
             app.UseMicrowaveUi();
             app.RunMicrowaveQueries();
         }
