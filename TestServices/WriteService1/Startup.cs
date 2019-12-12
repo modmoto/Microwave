@@ -1,11 +1,13 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System;
+using System.Collections.Generic;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microwave;
+using Microwave.Domain.EventSourcing;
 using Microwave.EventStores.SnapShots;
 using Microwave.Persistence.InMemory;
-using Microwave.Persistence.MongoDb;
 using Microwave.UI;
 using ServerConfig;
 
@@ -27,14 +29,21 @@ namespace WriteService1
             });
 
 
-            services.AddMicrowavePersistenceLayerInMemory();
+            IEnumerable<IDomainEvent> events = new List<IDomainEvent>
+            {
+                new Event2("ID1", "name1"),
+                new Event2("ID2", "name2")
+            };
+            services.AddMicrowavePersistenceLayerInMemory( o=>
+                o.WithEventSeeds(events));
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             app.UseRouting();
-            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
-            app.UseMicrowaveUi();
+            app.UseEndpoints(endpoints => {
+                endpoints.MapControllers();
+            });app.UseMicrowaveUi();
             app.RunMicrowaveQueries();
         }
     }
