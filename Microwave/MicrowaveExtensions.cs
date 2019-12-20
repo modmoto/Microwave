@@ -294,7 +294,9 @@ namespace Microwave
                 config.Filters.Add(new DomainValidationFilter());
                 config.Filters.Add(new NotFoundFilter());
                 config.Filters.Add(new ConcurrencyViolatedFilter());
-            }).SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
+            })
+                .AddNewtonsoftJson()
+                .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
             return services;
         }
 
