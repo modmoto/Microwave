@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microwave.Domain.Exceptions;
 using Microwave.Domain.Results;
 using Microwave.EventStores;
 
@@ -42,6 +43,12 @@ namespace WriteService1
         public ActionResult WriteEventSecond(Guid guidId)
         {
             return Ok();
+        }
+
+        [HttpGet("notFound")]
+        public ActionResult GetNotFoundException()
+        {
+            throw new NotFoundException(GetType(), "123");
         }
     }
 }
