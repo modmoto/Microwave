@@ -1,7 +1,8 @@
+using Microwave.Domain.EventSourcing;
+
 namespace Microwave.Queries
 {
-    public interface ISubscribedDomainEvent
+    public interface ISubscribedDomainEvent : IIdentifiable
     {
-        string EntityId { get; }
     }
 }

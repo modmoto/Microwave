@@ -25,7 +25,7 @@ namespace Microwave
             {
                 EntityStreamVersion = e.EntityStreamVersion,
                 OverallVersion = e.OverallVersion,
-                DomainEvent = (dynamic) e.DomainEvent
+                DomainEvent = e.DomainEvent
             });
 
             return wrappers;

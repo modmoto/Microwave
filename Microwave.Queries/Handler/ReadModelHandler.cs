@@ -47,7 +47,7 @@ namespace Microwave.Queries.Handler
                 if (result.Is<NotFound>()) continue;
 
                 var readModel = result.Value;
-                readModel.Handle(latestEventDomainEvent, latestEventVersion);
+                readModel.Handle((ISubscribedDomainEvent) latestEventDomainEvent, latestEventVersion);
 
                 if (latestEventVersion < result.Value.Version) latestEventVersion = result.Value.Version;
 
