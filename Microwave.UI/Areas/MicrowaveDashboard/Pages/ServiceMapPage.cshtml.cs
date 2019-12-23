@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microwave.Discovery;
 using Microwave.Discovery.ServiceMaps;
+using Microwave.WebApi;
 
 namespace Microwave.UI.Areas.MicrowaveDashboard.Pages
 {
@@ -88,7 +89,7 @@ namespace Microwave.UI.Areas.MicrowaveDashboard.Pages
 
         public ServiceMapPage(
             IDiscoveryHandler handler,
-            MicrowaveConfiguration configuration) : base(configuration)
+            MicrowaveWebApiConfiguration configuration) : base(configuration)
         {
             _handler = handler;
         }

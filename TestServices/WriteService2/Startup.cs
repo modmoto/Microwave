@@ -10,6 +10,8 @@ using Microwave.Domain.EventSourcing;
 using Microwave.Persistence.InMemory;
 using Microwave.Persistence.MongoDb;
 using Microwave.UI;
+using Microwave.WebApi;
+using Microwave.WebApi.Queries;
 using ReadService1;
 using ServerConfig;
 
@@ -29,6 +31,10 @@ namespace WriteService2
             services.AddMicrowaveUi();
 
             services.AddMicrowave(config =>
+            {
+                config.WithFeedType(typeof(EventFeed<>));
+            });
+            services.AddMicrowaveWebApi(config =>
             {
                 config.WithServiceName("WriteService2");
                 config.ServiceLocations.AddRange(ServiceConfiguration.ServiceAdresses);

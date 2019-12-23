@@ -13,6 +13,7 @@ using Microwave.Queries;
 using Microwave.Queries.Handler;
 using Microwave.Queries.Ports;
 using Microwave.UnitTests.PublishedEventsDll;
+using Microwave.WebApi;
 using Microwave.WebApi.Discovery;
 using Microwave.WebApi.Queries;
 
@@ -34,7 +35,9 @@ namespace Microwave.UnitTests
         {
             var collection = (IServiceCollection) new ServiceCollection();
 
-            var storeDependencies = collection.AddMicrowave()
+            var storeDependencies = collection
+                .AddMicrowave(c => c.WithFeedType(typeof(EventFeed<>)))
+                .AddMicrowaveWebApi()
                 .AddMicrowavePersistenceLayerInMemory(s =>
                     s.WithEventSeeds(new TestDomainEvent_PublishedEvent2("testId"))
                     .WithEventSeeds(new TestDomainEvent_PublishedEvent2("testId2")));
@@ -53,7 +56,10 @@ namespace Microwave.UnitTests
         {
             var collection = (IServiceCollection) new ServiceCollection();
 
-            var storeDependencies = collection.AddMicrowave().AddMicrowavePersistenceLayerInMemory();
+            var storeDependencies = collection
+                .AddMicrowave(c => c.WithFeedType(typeof(EventFeed<>)))
+                .AddMicrowaveWebApi()
+                .AddMicrowavePersistenceLayerInMemory();
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
             var eventDelegateHandlers = buildServiceProvider.GetServices<IAsyncEventHandler>().OrderBy(
@@ -135,7 +141,10 @@ namespace Microwave.UnitTests
         {
             var collection = (IServiceCollection) new ServiceCollection();
 
-            var storeDependencies = collection.AddMicrowave().AddMicrowavePersistenceLayerInMemory();
+            var storeDependencies = collection
+                .AddMicrowave(c => c.WithFeedType(typeof(EventFeed<>)))
+                .AddMicrowaveWebApi()
+                .AddMicrowavePersistenceLayerInMemory();
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
             var eventRegister = buildServiceProvider.GetServices<EventRegistration>().Single();
@@ -152,8 +161,9 @@ namespace Microwave.UnitTests
             var collection = (IServiceCollection) new ServiceCollection();
 
             var storeDependencies = collection
-                .AddMicrowave().AddMicrowavePersistenceLayerInMemory()
-                .AddMicrowave().AddMicrowavePersistenceLayerInMemory();
+                .AddMicrowave(c => c.WithFeedType(typeof(EventFeed<>))).AddMicrowavePersistenceLayerInMemory()
+                .AddMicrowave(c => c.WithFeedType(typeof(EventFeed<>))).AddMicrowavePersistenceLayerInMemory()
+                .AddMicrowaveWebApi();
 
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
@@ -170,7 +180,10 @@ namespace Microwave.UnitTests
         {
             var collection = (IServiceCollection) new ServiceCollection();
 
-            var storeDependencies = collection.AddMicrowave().AddMicrowavePersistenceLayerInMemory();
+            var storeDependencies = collection
+                .AddMicrowave(c => c.WithFeedType(typeof(EventFeed<>)))
+                .AddMicrowaveWebApi()
+                .AddMicrowavePersistenceLayerInMemory();
 
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
@@ -183,7 +196,10 @@ namespace Microwave.UnitTests
         {
             var collection = (IServiceCollection) new ServiceCollection();
 
-            var storeDependencies = collection.AddMicrowave().AddMicrowavePersistenceLayerInMemory();
+            var storeDependencies = collection
+                .AddMicrowave(c => c.WithFeedType(typeof(EventFeed<>)))
+                .AddMicrowaveWebApi()
+                .AddMicrowavePersistenceLayerInMemory();
 
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
@@ -204,7 +220,10 @@ namespace Microwave.UnitTests
         public void AddMicrowaveDependencies_SubscribedEventsCorrect()
         {
             var collection = (IServiceCollection) new ServiceCollection();
-            var storeDependencies = collection.AddMicrowave().AddMicrowavePersistenceLayerInMemory();
+            var storeDependencies = collection
+                .AddMicrowave(c => c.WithFeedType(typeof(EventFeed<>)))
+                .AddMicrowaveWebApi()
+                .AddMicrowavePersistenceLayerInMemory();
 
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
@@ -228,7 +247,7 @@ namespace Microwave.UnitTests
         public void AddMicrowaveDependencies_ReadModelsCorrect()
         {
             var collection = (IServiceCollection) new ServiceCollection();
-            var storeDependencies = collection.AddMicrowave();
+            var storeDependencies = collection.AddMicrowave(c => c.WithFeedType(typeof(EventFeed<>)));
 
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
@@ -243,7 +262,10 @@ namespace Microwave.UnitTests
         public void AddMicrowaveDependencies_DepedencyControllerIsResolved()
         {
             var collection = (IServiceCollection) new ServiceCollection();
-            var storeDependencies = collection.AddMicrowave().AddMicrowavePersistenceLayerInMemory();
+            var storeDependencies = collection.
+                AddMicrowave(c => c.WithFeedType(typeof(EventFeed<>)))
+                .AddMicrowaveWebApi()
+                .AddMicrowavePersistenceLayerInMemory();
 
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
@@ -255,7 +277,7 @@ namespace Microwave.UnitTests
         public void AddMicrowaveDependencies_ServiceNameIsCorrect()
         {
             var collection = (IServiceCollection) new ServiceCollection();
-            var storeDependencies = collection.AddMicrowave(config =>
+            var storeDependencies = collection.AddMicrowaveWebApi(config =>
             {
                 config.WithServiceName("TestService");
             });
@@ -277,10 +299,10 @@ namespace Microwave.UnitTests
         public async Task AddMicrowaveDependencies_RunStarts_DiscoveryFails()
         {
             var collection = (IServiceCollection) new ServiceCollection();
-            var storeDependencies = collection.AddMicrowave(config =>
+            var storeDependencies = collection.AddMicrowaveWebApi(config =>
             {
                 config.ServiceLocations.Add(new Uri("http://localhost:1234"));
-            });
+            }).AddMicrowave(c => c.WithFeedType(typeof(EventFeed<>)));
 
             collection.AddMicrowavePersistenceLayerMongoDb(p =>
             {

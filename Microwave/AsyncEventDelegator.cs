@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Microwave.Discovery;
 using Microwave.Queries.Handler;
 using Microwave.Queries.Polling;
-using Microwave.WebApi.Queries;
 
 namespace Microwave
 {
@@ -80,13 +79,14 @@ namespace Microwave
                             await Task.Delay(timeSpan);
                             await action.Invoke();
                         }
-                        catch (DomainEventNotAssignableToEntityException notAssignableToEntityException)
-                        {
-                            var currentForeground = Console.ForegroundColor;
-                            Console.ForegroundColor = ConsoleColor.Red;
-                            Console.Error.WriteLine(notAssignableToEntityException.Message);
-                            Console.ForegroundColor = currentForeground;
-                        }
+                        // TODO put this back in
+                        // catch (DomainEventNotAssignableToEntityException notAssignableToEntityException)
+                        // {
+                        //     var currentForeground = Console.ForegroundColor;
+                        //     Console.ForegroundColor = ConsoleColor.Red;
+                        //     Console.Error.WriteLine(notAssignableToEntityException.Message);
+                        //     Console.ForegroundColor = currentForeground;
+                        // }
                         catch (Exception e)
                         {
                             var currentForeground = Console.ForegroundColor;

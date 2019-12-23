@@ -9,7 +9,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Microwave.Discovery\Microwave.Discovery.csproj" />
     <ProjectReference Include="..\Microwave.Domain\Microwave.Domain.csproj" />
-    <ProjectReference Include="..\Microwave\Microwave.csproj" />
+    <ProjectReference Include="..\Microwave.WebApi\Microwave.WebApi.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -22,6 +22,10 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" Version="3.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.0" />
   </ItemGroup>
 
 </Project>

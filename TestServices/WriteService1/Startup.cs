@@ -9,6 +9,8 @@ using Microwave.Domain.EventSourcing;
 using Microwave.EventStores.SnapShots;
 using Microwave.Persistence.InMemory;
 using Microwave.UI;
+using Microwave.WebApi;
+using Microwave.WebApi.Queries;
 using ServerConfig;
 
 namespace WriteService1
@@ -21,6 +23,10 @@ namespace WriteService1
             services.AddMicrowaveUi();
 
             services.AddMicrowave(config =>
+            {
+                config.WithFeedType(typeof(EventFeed<>));
+            });
+            services.AddMicrowaveWebApi(config =>
             {
                 config.WithServiceName("WriteService1");
                 config.ServiceLocations.AddRange(ServiceConfiguration.ServiceAdresses);
