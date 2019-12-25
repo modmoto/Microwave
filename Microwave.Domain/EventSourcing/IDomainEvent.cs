@@ -1,10 +1,6 @@
 namespace Microwave.Domain.EventSourcing
 {
-    public interface IDomainEvent : IIdentifiable
-    {
-    }
-
-    public interface IIdentifiable
+    public interface IDomainEvent
     {
         string EntityId { get; }
     }

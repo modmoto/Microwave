@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Domain.EventSourcing;
 using Microwave.Persistence.InMemory.Eventstores;
+using Microwave.Queries;
 using Microwave.Queries.Handler;
 
 namespace Microwave.UnitTests
@@ -12,18 +13,59 @@ namespace Microwave.UnitTests
     public class LocalEventFeedTests
     {
         [TestMethod]
-
-        public async Task EventFeedsParsesEventCorrectly()
+        public async Task EventFeedsParsesEventCorrectly_AsyncEventHandler()
         {
             var eventRepositoryInMemory = new EventRepositoryInMemory();
-            var domainEvents = new List<IDomainEvent> { new UnitTestsPublished.EventPublishedAndSubscribed("123") };
+            var domainEvents = new List<IDomainEvent> { new UnitTestsPublished.EventPublishedAndSubscribed("123",
+            "add") };
             (await eventRepositoryInMemory.AppendAsync(domainEvents, 0)).Check();
             var localEventFeed = new LocalEventFeed<AsyncEventHandler<UnitTestsSubscribed.EventPublishedAndSubscribed>>(eventRepositoryInMemory);
             var eventsAsync = (await localEventFeed.GetEventsAsync()).ToList();
 
-            Assert.AreEqual(
-                typeof(UnitTestsSubscribed.EventPublishedAndSubscribed),
-                eventsAsync.Single().DomainEvent.GetType());
+            var subscribedDomainEvent = eventsAsync.Single().DomainEvent as UnitTestsSubscribed.EventPublishedAndSubscribed;
+            Assert.AreEqual("add", subscribedDomainEvent.Addition);
         }
+
+        [TestMethod]
+        public async Task EventFeedsParsesEventCorrectly_QuerryHandler()
+        {
+            var eventRepositoryInMemory = new EventRepositoryInMemory();
+            var domainEvents = new List<IDomainEvent> { new UnitTestsPublished.EventPublishedAndSubscribed("123",
+                "add") };
+            (await eventRepositoryInMemory.AppendAsync(domainEvents, 0)).Check();
+            var localEventFeed = new LocalEventFeed<QueryEventHandler<QeryForModolith, UnitTestsSubscribed
+            .EventPublishedAndSubscribed>>(eventRepositoryInMemory);
+            var eventsAsync = (await localEventFeed.GetEventsAsync()).ToList();
+
+            var subscribedDomainEvent = eventsAsync.Single().DomainEvent as UnitTestsSubscribed.EventPublishedAndSubscribed;
+            Assert.AreEqual("add", subscribedDomainEvent.Addition);
+        }
+
+        [TestMethod]
+        public async Task EventFeedsParsesEventCorrectly_ReadModel()
+        {
+            var eventRepositoryInMemory = new EventRepositoryInMemory();
+            var domainEvents = new List<IDomainEvent> { new UnitTestsPublished.EventPublishedAndSubscribed("123",
+                "add") };
+            (await eventRepositoryInMemory.AppendAsync(domainEvents, 0)).Check();
+            var localEventFeed = new LocalEventFeed<ReadModelEventHandler<ReadMOdelForModolith>>(eventRepositoryInMemory);
+            var eventsAsync = (await localEventFeed.GetEventsAsync()).ToList();
+
+            var subscribedDomainEvent = eventsAsync.Single().DomainEvent as UnitTestsSubscribed.EventPublishedAndSubscribed;
+            Assert.AreEqual("add", subscribedDomainEvent.Addition);
+        }
+    }
+
+    public class ReadMOdelForModolith :
+        ReadModel<UnitTestsSubscribed.EventPublishedAndSubscribed>,
+        IHandle<UnitTestsSubscribed.EventPublishedAndSubscribed>
+    {
+        public void Handle(UnitTestsSubscribed.EventPublishedAndSubscribed domainEvent)
+        {
+        }
+    }
+
+    public class QeryForModolith : Query
+    {
     }
 }

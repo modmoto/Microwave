@@ -114,14 +114,14 @@ namespace Microwave.UnitTests
 
             var identHandler = buildServiceProvider.GetServices<IReadModelEventHandler>().OrderBy(r => r.GetType()
                 .GetGenericArguments().First().Name).ToList();
-            Assert.AreEqual(6, identHandler.Count);
+            Assert.AreEqual(7, identHandler.Count);
 
-            Assert.IsTrue(identHandler[0] is ReadModelEventHandler<TestIdQuery>);
-            Assert.IsTrue(identHandler[1] is ReadModelEventHandler<TestIdQuery2>);
-            Assert.IsTrue(identHandler[2] is ReadModelEventHandler<TestIdQuerySingle>);
-            Assert.IsTrue(identHandler[3] is ReadModelEventHandler<TestReadModel>);
-            Assert.IsTrue(identHandler[4] is ReadModelEventHandler<TestReadModel_NotImplementingIApply>);
-            Assert.IsTrue(identHandler[5] is ReadModelEventHandler<TestReadModelSubscriptions>);
+            Assert.IsTrue(identHandler[1] is ReadModelEventHandler<TestIdQuery>);
+            Assert.IsTrue(identHandler[2] is ReadModelEventHandler<TestIdQuery2>);
+            Assert.IsTrue(identHandler[3] is ReadModelEventHandler<TestIdQuerySingle>);
+            Assert.IsTrue(identHandler[4] is ReadModelEventHandler<TestReadModel>);
+            Assert.IsTrue(identHandler[5] is ReadModelEventHandler<TestReadModel_NotImplementingIApply>);
+            Assert.IsTrue(identHandler[6] is ReadModelEventHandler<TestReadModelSubscriptions>);
         }
 
         [TestMethod]
@@ -171,8 +171,8 @@ namespace Microwave.UnitTests
             Assert.IsNotNull(eventFeed1);
             var identHandler = buildServiceProvider.GetServices<IReadModelEventHandler>().OrderBy(r => r.GetType()
             .GetGenericArguments().First().Name).ToList();
-            Assert.IsTrue(identHandler[0] is ReadModelEventHandler<TestIdQuery>);
-            Assert.AreEqual(12, identHandler.Count); // double as just checking if no exception is done
+            Assert.IsTrue(identHandler[2] is ReadModelEventHandler<TestIdQuery>);
+            Assert.AreEqual(14, identHandler.Count); // double as just checking if no exception is done
         }
 
         [TestMethod]
@@ -208,9 +208,9 @@ namespace Microwave.UnitTests
             Assert.AreEqual(nameof(TestEntityThatShouldNotGoIntoReadModelRegistrationEvent), publishingEventRegistration[0].Name);
             Assert.AreEqual(nameof(TestDomainEvent_PublishedEvent2), publishingEventRegistration[1].Name);
             Assert.AreEqual(nameof(TestDomainEvent_PublishedEvent1), publishingEventRegistration[2].Name);
-            Assert.AreEqual(nameof(Ev), publishingEventRegistration[3].Name);
+            Assert.AreEqual(nameof(Ev), publishingEventRegistration[4].Name);
 
-            Assert.AreEqual(4, publishingEventRegistration.Count);
+            Assert.AreEqual(5, publishingEventRegistration.Count);
 
             var discoveryController = buildServiceProvider.GetServices<DiscoveryController>().Single();
             Assert.IsNotNull(discoveryController);
@@ -230,14 +230,14 @@ namespace Microwave.UnitTests
             var publishingEventRegistration = buildServiceProvider.GetServices<EventsSubscribedByService>().Single();
             var ihandleAsyncEvents = publishingEventRegistration.Events.OrderBy(r => r.Name).ToList();
             Assert.AreEqual(nameof(Ev), ihandleAsyncEvents[0].Name);
-            Assert.AreEqual(nameof(TestDomainEvent_OnlySubscribedEvent), ihandleAsyncEvents[1].Name);
-            Assert.AreEqual(nameof(TestDomainEvent_OnlySubscribedEvent_HandleAsync), ihandleAsyncEvents[2].Name);
-            Assert.AreEqual(nameof(TestDomainEvent_OnlySubscribedEventForList), ihandleAsyncEvents[3].Name);
-            Assert.AreEqual(nameof(TestDomainEvent_PublishedEvent1), ihandleAsyncEvents[4].Name);
-            Assert.AreEqual(nameof(TestDomainEvent_PublishedEvent2), ihandleAsyncEvents[5].Name);
+            Assert.AreEqual(nameof(TestDomainEvent_OnlySubscribedEvent), ihandleAsyncEvents[2].Name);
+            Assert.AreEqual(nameof(TestDomainEvent_OnlySubscribedEvent_HandleAsync), ihandleAsyncEvents[3].Name);
+            Assert.AreEqual(nameof(TestDomainEvent_OnlySubscribedEventForList), ihandleAsyncEvents[4].Name);
+            Assert.AreEqual(nameof(TestDomainEvent_PublishedEvent1), ihandleAsyncEvents[5].Name);
+            Assert.AreEqual(nameof(TestDomainEvent_PublishedEvent2), ihandleAsyncEvents[6].Name);
 
 
-            Assert.AreEqual(9, ihandleAsyncEvents.Count);
+            Assert.AreEqual(10, ihandleAsyncEvents.Count);
 
             var discoveryController = buildServiceProvider.GetServices<DiscoveryController>().Single();
             Assert.IsNotNull(discoveryController);
@@ -253,9 +253,9 @@ namespace Microwave.UnitTests
 
             var publishingEventRegistration = buildServiceProvider.GetServices<EventsSubscribedByService>().Single();
             var readModelSubscription = publishingEventRegistration.ReadModelSubcriptions.OrderBy(r => r.ReadModelName).ToList();
-            Assert.AreEqual(nameof(TestDomainEvent_PublishedEvent1), readModelSubscription[5].GetsCreatedOn.Name);
-            Assert.AreEqual(nameof(TestReadModelSubscriptions), readModelSubscription[5].ReadModelName);
-            Assert.AreEqual(6, readModelSubscription.Count);
+            Assert.AreEqual(nameof(TestDomainEvent_PublishedEvent1), readModelSubscription[6].GetsCreatedOn.Name);
+            Assert.AreEqual(nameof(TestReadModelSubscriptions), readModelSubscription[6].ReadModelName);
+            Assert.AreEqual(7, readModelSubscription.Count);
         }
 
         [TestMethod]

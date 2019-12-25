@@ -1,17 +1,22 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microwave.Domain.EventSourcing;
 using Microwave.Domain.Results;
 using Microwave.EventStores;
 using Microwave.EventStores.Ports;
+using Microwave.Queries;
 using Microwave.Queries.Handler;
 using Microwave.Queries.Ports;
+using Newtonsoft.Json;
 
 namespace Microwave
 {
     public class LocalEventFeed<T> : IEventFeed<T>
     {
         private readonly IEventRepository _eventRepository;
+        private Type _eventType;
 
         public LocalEventFeed(IEventRepository eventRepository)
         {
@@ -25,10 +30,17 @@ namespace Microwave
             {
                 EntityStreamVersion = e.EntityStreamVersion,
                 OverallVersion = e.OverallVersion,
-                DomainEvent = e.DomainEvent
+                DomainEvent = ParseToSubscribedEvent(e.DomainEvent)
             });
 
             return wrappers;
+        }
+
+        private ISubscribedDomainEvent ParseToSubscribedEvent(IDomainEvent domainEvent)
+        {
+            var serializeObject = JsonConvert.SerializeObject(domainEvent);
+            var deserializeObject = JsonConvert.DeserializeObject(serializeObject, _eventType);
+            return deserializeObject as ISubscribedDomainEvent;
         }
 
         private Task<Result<IEnumerable<DomainEventWrapper>>> LoadEventsAccordingToT(long lastVersion)
@@ -36,14 +48,14 @@ namespace Microwave
             var type = typeof(T);
             if (typeof(IAsyncEventHandler).IsAssignableFrom(type))
             {
-                var eventType = type.GetGenericArguments().First().Name;
-                return _eventRepository.LoadEventsByTypeAsync(eventType, lastVersion);
+                _eventType = type.GetGenericArguments().First();
+                return _eventRepository.LoadEventsByTypeAsync(_eventType.Name, lastVersion);
             }
 
             if (typeof(IQueryEventHandler).IsAssignableFrom(type))
             {
-                var eventType = type.GetGenericArguments().Skip(1).First().Name;
-                return _eventRepository.LoadEventsByTypeAsync(eventType, lastVersion);
+                _eventType = type.GetGenericArguments().Skip(1).First();
+                return _eventRepository.LoadEventsByTypeAsync(_eventType.Name, lastVersion);
             }
 
             return _eventRepository.LoadEvents(lastVersion);
