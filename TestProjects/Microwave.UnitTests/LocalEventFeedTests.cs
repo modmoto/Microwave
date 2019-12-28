@@ -42,6 +42,7 @@ namespace Microwave.UnitTests
         }
 
         [TestMethod]
+        [Ignore]
         public async Task EventFeedsParsesEventCorrectly_ReadModel()
         {
             var eventRepositoryInMemory = new EventRepositoryInMemory();
