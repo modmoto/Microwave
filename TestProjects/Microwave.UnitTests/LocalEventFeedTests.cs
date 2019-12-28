@@ -42,14 +42,13 @@ namespace Microwave.UnitTests
         }
 
         [TestMethod]
-        [Ignore]
         public async Task EventFeedsParsesEventCorrectly_ReadModel()
         {
             var eventRepositoryInMemory = new EventRepositoryInMemory();
             var domainEvents = new List<IDomainEvent> { new UnitTestsPublished.EventPublishedAndSubscribed("123",
                 "add") };
             (await eventRepositoryInMemory.AppendAsync(domainEvents, 0)).Check();
-            var localEventFeed = new LocalEventFeed<ReadModelEventHandler<ReadMOdelForModolith>>(eventRepositoryInMemory);
+            var localEventFeed = new LocalEventFeed<ReadModelEventHandler<ReadModelForModolith>>(eventRepositoryInMemory);
             var eventsAsync = (await localEventFeed.GetEventsAsync()).ToList();
 
             var subscribedDomainEvent = eventsAsync.Single().DomainEvent as UnitTestsSubscribed.EventPublishedAndSubscribed;
@@ -57,7 +56,7 @@ namespace Microwave.UnitTests
         }
     }
 
-    public class ReadMOdelForModolith :
+    public class ReadModelForModolith :
         ReadModel<UnitTestsSubscribed.EventPublishedAndSubscribed>,
         IHandle<UnitTestsSubscribed.EventPublishedAndSubscribed>
     {

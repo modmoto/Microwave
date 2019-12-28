@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microwave.Domain.EventSourcing;
@@ -38,6 +39,18 @@ namespace Microwave
 
         private ISubscribedDomainEvent ParseToSubscribedEvent(IDomainEvent domainEvent)
         {
+            var readModelType = typeof(T).GetGenericArguments().First();
+            if (typeof(ReadModelBase).IsAssignableFrom(readModelType))
+            {
+                var interfaces = readModelType.GetInterfaces();
+                var applicableEvents = interfaces
+                    .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IHandle<>))
+                    .Select(h => h.GetGenericArguments().First());
+                var name = domainEvent.GetType().Name;
+                var subscribedEventType = applicableEvents.First(e => e.Name == name);
+                _eventType = subscribedEventType;
+            }
+
             var serializeObject = JsonConvert.SerializeObject(domainEvent);
             var deserializeObject = JsonConvert.DeserializeObject(serializeObject, _eventType);
             return deserializeObject as ISubscribedDomainEvent;
