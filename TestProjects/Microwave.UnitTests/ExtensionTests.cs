@@ -247,7 +247,7 @@ namespace Microwave.UnitTests
         public void AddMicrowaveDependencies_ReadModelsCorrect()
         {
             var collection = (IServiceCollection) new ServiceCollection();
-            var storeDependencies = collection.AddMicrowave(c => c.WithFeedType(typeof(EventFeed<>)));
+            var storeDependencies = collection.AddMicrowaveWebApi();
 
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 

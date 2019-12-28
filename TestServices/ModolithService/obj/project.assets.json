@@ -1636,7 +1636,6 @@
         "dependencies": {
           "Microsoft.AspNetCore.Http.Abstractions": "1.1.0",
           "Microsoft.Extensions.DependencyInjection.Abstractions": "3.1.0",
-          "Microwave.Discovery": "1.0.0",
           "Microwave.EventStores": "1.0.0",
           "Microwave.Queries": "1.0.0",
           "Newtonsoft.Json": "12.0.3"

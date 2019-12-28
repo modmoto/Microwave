@@ -63,6 +63,8 @@ namespace Microwave.WebApi
             services.AddTransient<IDiscoveryHandler, DiscoveryHandler>();
             services.AddTransient<DiscoveryPoller>();
 
+            services.AddSingleton(new ServiceBaseAddressCollection());
+
             services.AddTransient<IServiceDiscoveryRepository, DiscoveryRepository>();
 
             services.AddTransient<DomainEventController>();
@@ -77,6 +79,7 @@ namespace Microwave.WebApi
             var assemblies = GetAllAssemblies();
 
             AddPublishedEventCollection(services, assemblies, microwaveConfiguration);
+            AddEventAndReadModelSubscriptions(services, assemblies);
 
             foreach (var assembly in assemblies)
             {
@@ -86,6 +89,114 @@ namespace Microwave.WebApi
             services.AddSingleton(eventRegistration);
 
             return services;
+        }
+
+        private static IEnumerable<EventSchema> GetEventsForIHandleAsyncs(Assembly assembly)
+        {
+            var types = assembly.GetTypes();
+            var handleAsyncs = types.Where(ev => ev.GetInterfaces().Any(x =>
+                x.IsGenericType &&
+                x.GetGenericTypeDefinition() == typeof(IHandleAsync<>)));
+            var domainEvents = new List<Type>();
+
+            foreach (var handler in handleAsyncs)
+            {
+                var interfaces = handler.GetInterfaces();
+                var domainEventTypes = interfaces.Where(i =>
+                    i.IsGenericType &&
+                    i.GetGenericArguments().Length == 1
+                    && i.GetGenericTypeDefinition() == typeof(IHandleAsync<>));
+                domainEvents.AddRange(domainEventTypes);
+            }
+
+            return domainEvents.Select(e =>
+            {
+                var propertyInfos = e.GetGenericArguments().First().GetProperties().ToList();
+                var propertyTypes = propertyInfos.Select(p => new PropertyType(p.Name, p.PropertyType.Name));
+                return new EventSchema(e.GetGenericArguments().First().Name, propertyTypes);
+            });
+        }
+
+        private static IEnumerable<EventSchema> GetEventsForQuerys(Assembly assembly)
+        {
+            var types = assembly.GetTypes();
+            var handleAsyncs = types.Where(ev => typeof(Query).IsAssignableFrom(ev) && ev.GetInterfaces().Any(x =>
+                x.IsGenericType &&
+                x.GetGenericTypeDefinition() == typeof(IHandle<>)));
+            var domainEvents = new List<Type>();
+
+            foreach (var handler in handleAsyncs)
+            {
+                var interfaces = handler.GetInterfaces();
+                var domainEventTypes = interfaces.Where(i =>
+                    i.IsGenericType &&
+                    i.GetGenericArguments().Length == 1
+                    && i.GetGenericTypeDefinition() == typeof(IHandle<>));
+                domainEvents.AddRange(domainEventTypes);
+            }
+
+            return domainEvents.Select(e =>
+            {
+                var propertyInfos = e.GetGenericArguments().First().GetProperties().ToList();
+                var propertyTypes = propertyInfos.Select(p => new PropertyType(p.Name, p.PropertyType.Name));
+                return new EventSchema(e.GetGenericArguments().First().Name, propertyTypes);
+            });
+        }
+
+        private static IEnumerable<ReadModelSubscription> GetEventsForReadModelSubscribe(Assembly assembly)
+        {
+            var types = assembly.GetTypes();
+            var readModels = types.Where(ev =>
+                ev.GetInterfaces().Any(x =>
+                    x.IsGenericType &&
+                    x.GetGenericTypeDefinition() == typeof(IHandle<>)) &&
+                typeof(ReadModelBase).IsAssignableFrom(ev)).ToList();
+            var subscriptions = new List<ReadModelSubscription>();
+
+            foreach (var readModel in readModels)
+            {
+                var instance = Activator.CreateInstance(readModel);
+                var model = instance as ReadModelBase;
+                var createdType = model?.GetsCreatedOn;
+                if (createdType == null) throw new InvalidReadModelCreationTypeException(readModel.Name);
+
+                var propertyTypes = createdType.GetProperties().Select(p => new PropertyType(p.Name, p.PropertyType.Name));
+
+                var readModelSubscription = new ReadModelSubscription(
+                    readModel.Name,
+                    new EventSchema(createdType.Name, propertyTypes));
+                subscriptions.Add(readModelSubscription);
+            }
+
+            return subscriptions;
+        }
+
+        private static void AddEventAndReadModelSubscriptions(IServiceCollection services,
+            IEnumerable<Assembly> readModelAndDomainEventAssemblies)
+        {
+            var iHandleAsyncEvents = new List<EventSchema>();
+            var modelAndDomainEventAssemblies = readModelAndDomainEventAssemblies.ToList();
+            foreach (var assembly in modelAndDomainEventAssemblies)
+            {
+                var eventsForPublish = GetEventsForIHandleAsyncs(assembly);
+                var eventsForPublish2 = GetEventsForQuerys(assembly);
+                var notAddedYet = eventsForPublish.Where(e => !iHandleAsyncEvents.Contains(e));
+                iHandleAsyncEvents.AddRange(notAddedYet);
+
+                var notAddedYet2 = eventsForPublish2.Where(e => !iHandleAsyncEvents.Contains(e));
+                iHandleAsyncEvents.AddRange(notAddedYet2);
+            }
+
+            var readModelSubscriptions = new List<ReadModelSubscription>();
+            foreach (var assembly in modelAndDomainEventAssemblies)
+            {
+                var eventsForPublish = GetEventsForReadModelSubscribe(assembly);
+                var notAddedYet = eventsForPublish.Where(e => !readModelSubscriptions.Contains(e));
+                readModelSubscriptions.AddRange(notAddedYet);
+            }
+
+            var subscribedEventCollection = new EventsSubscribedByService(iHandleAsyncEvents, readModelSubscriptions);
+            services.AddSingleton(subscribedEventCollection);
         }
 
         private static IServiceCollection AddMicrowaveMvcExtensions(this IServiceCollection services)
