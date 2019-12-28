@@ -6,7 +6,6 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
-using Microwave.Discovery;
 using Microwave.Discovery.EventLocations;
 using Microwave.EventStores;
 using Microwave.Queries;
@@ -28,14 +27,6 @@ namespace Microwave
             {
                 Task.Delay(10000).Wait();
                 asyncEventDelegator.StartEventPolling();
-            });
-
-            Task.Run(() =>
-            {
-                Task.Delay(10000).Wait();
-                #pragma warning disable 4014
-                asyncEventDelegator.StartDependencyDiscovery();
-                #pragma warning restore 4014
             });
 
             return builder;
@@ -79,7 +70,6 @@ namespace Microwave
 
             var assemblies = GetAllAssemblies();
 
-            services.AddTransient<IDiscoveryHandler, DiscoveryHandler>();
             services.AddSingleton(new ServiceBaseAddressCollection());
 
 

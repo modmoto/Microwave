@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microwave.Discovery;
 using Microwave.Queries.Handler;
 using Microwave.Queries.Polling;
 
@@ -14,20 +13,17 @@ namespace Microwave
         private readonly IEnumerable<IQueryEventHandler> _queryHandlers;
         private readonly IEnumerable<IReadModelEventHandler> _readModelHandlers;
         private readonly IEnumerable<IPollingInterval> _updateEveryAttributes;
-        private readonly IDiscoveryHandler _discoveryHandler;
 
         public AsyncEventDelegator(
             IEnumerable<IAsyncEventHandler> asyncEventHandlers,
             IEnumerable<IQueryEventHandler> queryHandlers,
             IEnumerable<IReadModelEventHandler> readModelHandlers,
-            IDiscoveryHandler discoveryHandler,
             IEnumerable<IPollingInterval> updateEveryAttributes = null)
         {
             _asyncEventHandlers = asyncEventHandlers;
             _queryHandlers = queryHandlers;
             _readModelHandlers = readModelHandlers;
             _updateEveryAttributes = updateEveryAttributes ?? new List<IPollingInterval>();
-            _discoveryHandler = discoveryHandler;
         }
 
         public void StartEventPolling()
@@ -91,16 +87,6 @@ namespace Microwave
                     }
                     // ReSharper disable once FunctionNeverReturns
                 });
-        }
-
-        public async Task StartDependencyDiscovery()
-        {
-            while (true)
-            {
-                await _discoveryHandler.DiscoverConsumingServices();
-                await Task.Delay(60000);
-            }
-            // ReSharper disable once FunctionNeverReturns
         }
     }
 }

@@ -54,6 +54,7 @@ namespace ModolithService
         public void Handle(Event2 domainEvent)
         {
             Counter += 1;
+            Console.WriteLine("jeah called 2");
         }
 
         public int Counter { get; set; }
@@ -63,6 +64,7 @@ namespace ModolithService
     {
         public void Handle(EventNotPublished domainEvent)
         {
+            Console.WriteLine("jeah called");
         }
     }
 

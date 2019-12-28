@@ -272,6 +272,20 @@ namespace Microwave.UnitTests
             var discoveryController = buildServiceProvider.GetServices<DiscoveryController>().Single();
             Assert.IsNotNull(discoveryController);
         }
+
+        [TestMethod]
+        public void AddMicrowaveDependencies_OnlyMicrowaveWithLocalEventFeed()
+        {
+            var collection = (IServiceCollection) new ServiceCollection();
+            var storeDependencies = collection.
+                AddMicrowave(c => c.WithFeedType(typeof(LocalEventFeed<>)))
+                .AddMicrowavePersistenceLayerInMemory();
+
+            var buildServiceProvider = storeDependencies.BuildServiceProvider();
+
+            var discoveryController = buildServiceProvider.GetServices<AsyncEventDelegator>().Single();
+            Assert.IsNotNull(discoveryController);
+        }
         
         [TestMethod]
         public void AddMicrowaveDependencies_ServiceNameIsCorrect()

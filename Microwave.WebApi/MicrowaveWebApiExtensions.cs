@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microwave.Discovery;
@@ -19,6 +21,22 @@ namespace Microwave.WebApi
 {
     public static class MicrowaveWebApiExtensions
     {
+        public static IApplicationBuilder RunMicrowaveServiceDiscovery(this IApplicationBuilder builder)
+        {
+            var serviceScope = builder.ApplicationServices.CreateScope();
+            var asyncEventDelegator = serviceScope.ServiceProvider.GetService<DiscoveryPoller>();
+
+            Task.Run(() =>
+            {
+                Task.Delay(10000).Wait();
+                #pragma warning disable 4014
+                asyncEventDelegator.StartDependencyDiscovery();
+                #pragma warning restore 4014
+            });
+
+            return builder;
+        }
+
         public static IServiceCollection AddMicrowaveWebApi(
             this IServiceCollection services)
         {
@@ -42,6 +60,8 @@ namespace Microwave.WebApi
             services.AddSingleton(microwaveConfiguration.MicrowaveHttpClientFactory);
             services.AddSingleton(new DiscoveryConfiguration { ServiceName = microwaveConfiguration.ServiceName });
 
+            services.AddTransient<IDiscoveryHandler, DiscoveryHandler>();
+            services.AddTransient<DiscoveryPoller>();
 
             services.AddTransient<IServiceDiscoveryRepository, DiscoveryRepository>();
 
