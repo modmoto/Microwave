@@ -24,7 +24,7 @@ namespace Microwave.Persistence.CosmosDb
             _client = _cosmosDb.GetCosmosDbClient();
         }
 
-        public async Task<Result<T>> Load<T>() where T : Query
+        public async Task<Result<T>> LoadAsync<T>() where T : Query
         {
             var name = typeof(T).Name;
             var result = Result<T>.NotFound(StringIdentity.Create(name));
@@ -41,7 +41,7 @@ namespace Microwave.Persistence.CosmosDb
             return result;
         }
 
-        public async Task<ReadModelResult<T>> Load<T>(Identity id) where T : ReadModel
+        public async Task<Result<T>> LoadAsync<T>(Identity id) where T : ReadModelBase
         {
             var name = typeof(T).Name;
             var queryResult = _client.CreateDocumentQuery<ReadModelDbo<T>>(
@@ -51,19 +51,19 @@ namespace Microwave.Persistence.CosmosDb
                 .AsEnumerable().FirstOrDefault();
             if (queryResult == null)
             {
-                return ReadModelResult<T>.NotFound(id);
+                return Result<T>.NotFound(id);
             }
 
-            return ReadModelResult<T>.Ok(queryResult.Payload, id, queryResult.Version);
+            return Result<T>.Ok(queryResult.Payload);
         }
 
-        public async Task<Result> Save<T>(T query) where T : Query
+        public async Task<Result> SaveQueryAsync<T>(T query) where T : Query
         {
-            await _client.UpsertDocumentAsync(UriFactory.CreateDocumentCollectionUri(_cosmosDb.DatabaseId,GetQuerryCollectionName<T>()), query);
+            await _client.UpsertDocumentAsync(UriFactory.CreateDocumentCollectionUri(_cosmosDb.DatabaseId, GetQuerryCollectionName<T>()), query);
             return Result.Ok();
         }
 
-        public async Task<Result> Save<T>(T readModel, Identity identity, long version) where T : ReadModel, new()
+        public async Task<Result> SaveReadModelAsync<T>(T readModel) where T : ReadModelBase, new()
         {
             try
             {
@@ -71,13 +71,14 @@ namespace Microwave.Persistence.CosmosDb
             }
             catch (DocumentClientException)
             {
-                var actualVersion = (await Load<T>(identity)).Version;
-                return Result.ConcurrencyResult(version, actualVersion);
+                var actualVersion = (await LoadAsync<T>(readModel.Identity)).Value.Version;
+                return Result.ConcurrencyResult(readModel.Version, actualVersion);
             }
             return Result.Ok();
         }
 
-        public async Task<Result<IEnumerable<T>>> LoadAll<T>() where T : ReadModel
+
+        public async Task<Result<IEnumerable<T>>> LoadAllAsync<T>() where T : ReadModelBase
         {
             var name = typeof(T).Name;
             var queryResult = _client.CreateDocumentQuery<ReadModelDbo<T>>(

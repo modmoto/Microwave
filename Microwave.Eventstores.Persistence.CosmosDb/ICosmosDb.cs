@@ -11,6 +11,7 @@ namespace Microwave.Persistence.CosmosDb
         string ServiceMapCollectionId { get; }
 
         string StatusCollectionId { get; }
+        string VersionCollectionId { get; }
         DocumentClient GetCosmosDbClient();
     }
 }

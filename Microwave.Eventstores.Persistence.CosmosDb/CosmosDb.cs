@@ -24,6 +24,7 @@ namespace Microwave.Persistence.CosmosDb
         public string SnapshotsCollectionId => "Snapshots";
         public string ServiceMapCollectionId => "ServiceMap";
         public string StatusCollectionId => "Status";
+        public string VersionCollectionId => "Versions";
 
         public async Task InitializeCosmosDb()
         {
@@ -54,6 +55,18 @@ namespace Microwave.Persistence.CosmosDb
                         new UniqueKey {Paths = new Collection<string> {"/Version", "/Id/Id"}}
                     }
             };
+            var versionCollection = new DocumentCollection
+            {
+                Id = VersionCollectionId
+            };
+            //versionCollection.UniqueKeyPolicy = new UniqueKeyPolicy
+            //{
+            //    UniqueKeys =
+            //        new Collection<UniqueKey>
+            //        {
+            //            new UniqueKey {Paths = new Collection<string> {"/Version", "/DomainEventType"}}
+            //        }
+            //};
 
             try
             {
@@ -67,6 +80,9 @@ namespace Microwave.Persistence.CosmosDb
                 await client.CreateDocumentCollectionIfNotExistsAsync(
                     UriFactory.CreateDatabaseUri(DatabaseId),
                     snapShotCollection);
+                await client.CreateDocumentCollectionIfNotExistsAsync(
+                    UriFactory.CreateDatabaseUri(DatabaseId),
+                    versionCollection);
             }
             catch (DocumentClientException e)
             {

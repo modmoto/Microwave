@@ -8,7 +8,7 @@ using Microwave.Queries;
 
 namespace Microwave.Persistence.CosmosDb
 {
-    public class CosmosDbPersistenceLayer : IPersistenceLayer
+    public class CosmosDbPersistenceLayer
     {
         public MicrowaveCosmosDb MicrowaveCosmosDb { get; set; } = new MicrowaveCosmosDb();
 

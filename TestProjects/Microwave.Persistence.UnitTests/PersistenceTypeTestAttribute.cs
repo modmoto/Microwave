@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Reflection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microwave.Persistence.UnitTestsSetup.CosmosDb;
 using Microwave.Persistence.UnitTestsSetup.InMemory;
 using Microwave.Persistence.UnitTestsSetup.MongoDb;
 
@@ -14,6 +15,7 @@ namespace Microwave.Persistence.UnitTests
         {
             yield return new object[] { new MongoDbTestSetup() };
             yield return new object[] { new InMemroyTestSetup() };
+            yield return new object[] { new CosmosDbTestSetup(),  };
         }
 
         public string GetDisplayName(MethodInfo methodInfo, object[] data)

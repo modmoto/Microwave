@@ -7,7 +7,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microwave;
 using Microwave.Persistence.MongoDb;
 using Microwave.UI;
-using ReadService1;
 using ServerConfig;
 
 namespace WriteService2
