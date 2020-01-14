@@ -10,7 +10,6 @@ using Microwave.Domain.EventSourcing;
 using Microwave.Persistence.InMemory;
 using Microwave.Persistence.MongoDb;
 using Microwave.UI;
-using ReadService1;
 using ServerConfig;
 
 namespace WriteService2
