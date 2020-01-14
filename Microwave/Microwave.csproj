@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <DebugType>full</DebugType>
     <RootNamespace>Microwave</RootNamespace>
   </PropertyGroup>
@@ -8,6 +8,14 @@
     <ProjectReference Include="..\Microwave.EventStores\Microwave.EventStores.csproj" />
     <ProjectReference Include="..\Microwave.Queries\Microwave.Queries.csproj" />
     <ProjectReference Include="..\Microwave.WebApi\Microwave.WebApi.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.0" />
   </ItemGroup>
   
 </Project>

@@ -4,10 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Domain.EventSourcing;
-using Microwave.Domain.Identities;
 using Microwave.Domain.Results;
 using Microwave.EventStores;
 using Microwave.EventStores.Ports;
+using Microwave.EventStores.SnapShots;
 using Microwave.Persistence.MongoDb.Eventstores;
 using MongoDB.Bson.Serialization;
 using Moq;
@@ -21,7 +21,7 @@ namespace Microwave.Persistence.UnitTestsSetup.MongoDb
         public async Task AddAndLoadEvents_AutoProperty()
         {
             var eventRepository = new EventRepositoryMongoDb(EventMongoDb, new VersionCache(EventMongoDb));
-            var stringIdentity = StringIdentity.Create("TestId");
+            var stringstring = "TestId";
 
             BsonClassMap.RegisterClassMap<DomainEventWithAutoProperty>(cm =>
             {
@@ -32,14 +32,14 @@ namespace Microwave.Persistence.UnitTestsSetup.MongoDb
 
             await eventRepository.AppendAsync(new List<IDomainEvent>
             {
-                new DomainEventWithAutoProperty(stringIdentity, "TestProperty")
+                new DomainEventWithAutoProperty(stringstring, "TestProperty")
             }, 0);
 
-            var loadEventsByEntity = await eventRepository.LoadEventsByEntity(stringIdentity);
+            var loadEventsByEntity = await eventRepository.LoadEventsByEntity(stringstring);
 
             var loadedEvent = loadEventsByEntity.Value.Single().DomainEvent as DomainEventWithAutoProperty;
-            Assert.AreEqual(loadedEvent.CreateId, stringIdentity);
-            Assert.AreEqual(loadedEvent.EntityId, stringIdentity);
+            Assert.AreEqual(loadedEvent.CreateId, stringstring);
+            Assert.AreEqual(loadedEvent.EntityId, stringstring);
             Assert.AreEqual(loadedEvent.TestProperty, "TestProperty");
         }
 
@@ -50,21 +50,21 @@ namespace Microwave.Persistence.UnitTestsSetup.MongoDb
 
             var eventRepository = new EventRepositoryMongoDb(EventMongoDb, new VersionCache(EventMongoDb));
             var snapShotRepo = new Mock<ISnapShotRepository>();
-            snapShotRepo.Setup(re => re.LoadSnapShot<TestEntity>(It.IsAny<Identity>()))
+            snapShotRepo.Setup(re => re.LoadSnapShot<TestEntity>(It.IsAny<string>()))
                 .ReturnsAsync(SnapShotResult<TestEntity>.Default());
 
-            var eventStore = new EventStore(eventRepository, snapShotRepo.Object);
+            var eventStore = new EventStore(eventRepository, snapShotRepo.Object, new SnapShotConfig());
 
             var newGuid = Guid.NewGuid();
 
             await eventStore.AppendAsync(
-                new List<IDomainEvent> {new TestEventAllOk(GuidIdentity.Create(newGuid), "Simon")},
+                new List<IDomainEvent> {new TestEventAllOk(newGuid, "Simon")},
                 0);
 
             var result = await eventRepository.LoadEvents();
 
             Assert.AreEqual(1, result.Value.Count());
-            Assert.AreEqual(newGuid.ToString(), result.Value.Single().DomainEvent.EntityId.Id);
+            Assert.AreEqual(newGuid.ToString(), result.Value.Single().DomainEvent.EntityId);
             Assert.AreEqual("Simon", ((TestEventAllOk) result.Value.Single().DomainEvent).Name);
         }
 
@@ -74,11 +74,11 @@ namespace Microwave.Persistence.UnitTestsSetup.MongoDb
         {
             var eventRepository = new EventRepositoryMongoDb(EventMongoDb, new VersionCache(EventMongoDb));
 
-            var newGuid = GuidIdentity.Create(Guid.NewGuid());
-            var events = new List<IDomainEvent> { new TestEvent_ParameterCalledWrong(newGuid)};
+            var newGuid = Guid.NewGuid();
+            var events = new List<IDomainEvent> { new TestEvent_ParameterCalledWrong(newGuid.ToString())};
             await eventRepository.AppendAsync(events, 0);
 
-            var loadEventsByEntity = await eventRepository.LoadEventsByEntity(newGuid);
+            var loadEventsByEntity = await eventRepository.LoadEventsByEntity(newGuid.ToString());
             Assert.AreEqual(1, loadEventsByEntity.Value.Count());
             Assert.AreEqual(null, loadEventsByEntity.Value.ToList()[0].DomainEvent.EntityId);
         }
@@ -89,7 +89,7 @@ namespace Microwave.Persistence.UnitTestsSetup.MongoDb
             var eventRepository = new EventRepositoryMongoDb(EventMongoDb, new VersionCache(EventMongoDb));
             var eventRepository2 = new EventRepositoryMongoDb(EventMongoDb, new VersionCache(EventMongoDb));
 
-            var newGuid = GuidIdentity.Create(Guid.NewGuid());
+            var newGuid = Guid.NewGuid();
             var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid)};
             var events2 = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid)};
 
@@ -106,8 +106,8 @@ namespace Microwave.Persistence.UnitTestsSetup.MongoDb
             var eventRepository = new EventRepositoryMongoDb(EventMongoDb, new VersionCache(EventMongoDb));;
             var eventRepository2 = new EventRepositoryMongoDb(EventMongoDb, new VersionCache(EventMongoDb));
 
-            var newGuid = GuidIdentity.Create(Guid.NewGuid());
-            var newGuid2 = GuidIdentity.Create(Guid.NewGuid());
+            var newGuid = Guid.NewGuid();
+            var newGuid2 = Guid.NewGuid();
             var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid)};
             var events2 = new List<IDomainEvent> { new TestEvent1(newGuid2), new TestEvent2(newGuid2)};
 
@@ -123,11 +123,11 @@ namespace Microwave.Persistence.UnitTestsSetup.MongoDb
         {
             var eventRepository = new EventRepositoryMongoDb(EventMongoDb, new VersionCache(EventMongoDb));
 
-            var newGuid = GuidIdentity.Create(Guid.NewGuid());
+            var newGuid = Guid.NewGuid();
             var events = new List<IDomainEvent> { new TestEvent1(newGuid), new TestEvent2(newGuid)};
             await eventRepository.AppendAsync(events, 0);
 
-            var result = await eventRepository.LoadEventsByEntity(newGuid, 3);
+            var result = await eventRepository.LoadEventsByEntity(newGuid.ToString(), 3);
 
             Assert.IsTrue(result.Is<Ok>());
             Assert.AreEqual(0, result.Value.Count());
@@ -136,33 +136,33 @@ namespace Microwave.Persistence.UnitTestsSetup.MongoDb
 
     public class TestEvent1 : IDomainEvent
     {
-        public TestEvent1(Identity entityId)
+        public TestEvent1(Guid id)
         {
-            EntityId = entityId;
+            Id = id;
         }
-
-        public Identity EntityId { get; }
+        public string EntityId => Id.ToString();
+        public Guid Id { get; }
     }
 
     public class TestEvent2 : IDomainEvent
     {
-        public TestEvent2(Identity entityId)
+        public TestEvent2(Guid id)
         {
-            EntityId = entityId;
+            Id = id;
         }
-
-        public Identity EntityId { get; }
+        public string EntityId => Id.ToString();
+        public Guid Id { get; }
     }
 
 
     public class TestEvent_ParameterCalledWrong : IDomainEvent
     {
-        public TestEvent_ParameterCalledWrong(Identity notCalledEntityId)
+        public TestEvent_ParameterCalledWrong(string notCalledEntityId)
         {
             EntityId = notCalledEntityId;
         }
 
-        public Identity EntityId { get; }
+        public string EntityId { get; }
     }
 
     public class TestEntity
@@ -171,24 +171,25 @@ namespace Microwave.Persistence.UnitTestsSetup.MongoDb
 
     public class TestEventAllOk : IDomainEvent
     {
-        public TestEventAllOk(GuidIdentity entityId, string name)
+        public TestEventAllOk(Guid id, string name)
         {
-            EntityId = entityId;
+            Id = id;
             Name = name;
         }
 
-        public Identity EntityId { get; }
+        public string EntityId => Id.ToString();
+        public Guid Id { get; }
         public string Name { get; }
     }
 
     public class DomainEventWithAutoProperty : IDomainEvent
     {
-        public StringIdentity CreateId { get; }
+        public string CreateId { get; }
         public string TestProperty { get; }
 
-        public Identity EntityId => CreateId;
+        public string EntityId => CreateId.ToString();
 
-        public DomainEventWithAutoProperty(StringIdentity createId, string testProperty)
+        public DomainEventWithAutoProperty(string createId, string testProperty)
         {
             CreateId = createId;
             TestProperty = testProperty;

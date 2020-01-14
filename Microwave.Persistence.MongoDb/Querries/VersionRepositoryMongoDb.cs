@@ -16,11 +16,11 @@ namespace Microwave.Persistence.MongoDb.Querries
             _dataBase = dataBase.Database;
         }
 
-        public async Task<DateTimeOffset> GetVersionAsync(string domainEventType)
+        public async Task<long> GetVersionAsync(string domainEventType)
         {
             var mongoCollection = _dataBase.GetCollection<LastProcessedVersionDbo>(_lastProcessedVersions);
             var lastProcessedVersion = (await mongoCollection.FindAsync(version => version.EventType == domainEventType)).FirstOrDefault();
-            if (lastProcessedVersion == null) return DateTimeOffset.MinValue;
+            if (lastProcessedVersion == null) return 0;
             return lastProcessedVersion.LastVersion;
         }
 

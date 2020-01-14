@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microwave.Discovery;
 using Microwave.Discovery.EventLocations;
@@ -15,9 +16,6 @@ using Microwave.EventStores.SnapShots;
 using Microwave.Queries;
 using Microwave.Queries.Handler;
 using Microwave.Queries.Ports;
-using Microwave.WebApi.ApiFormatting;
-using Microwave.WebApi.ApiFormatting.DateTimeOffsets;
-using Microwave.WebApi.ApiFormatting.Identities;
 using Microwave.WebApi.Discovery;
 using Microwave.WebApi.Filters;
 using Microwave.WebApi.Queries;
@@ -296,13 +294,9 @@ namespace Microwave
                 config.Filters.Add(new DomainValidationFilter());
                 config.Filters.Add(new NotFoundFilter());
                 config.Filters.Add(new ConcurrencyViolatedFilter());
-
-                config.OutputFormatters.Insert(0, new NewtonsoftOutputFormatter());
-                config.InputFormatters.Insert(0, new NewtonsoftInputFormatter());
-
-                config.ModelBinderProviders.Insert(0, new IdentityModelBinderProvider());
-                config.ModelBinderProviders.Insert(0, new DateTimeOffsetBinderProvider());
-            });
+            })
+                .AddNewtonsoftJson()
+                .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
             return services;
         }
 

@@ -1,17 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
     <PropertyGroup>
-        <TargetFramework>netcoreapp2.2</TargetFramework>
+        <TargetFramework>netcoreapp3.1</TargetFramework>
         <DebugType>None</DebugType>
         <IsPackable>false</IsPackable>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.AspNetCore.App" />
-        <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
-    </ItemGroup>
-
-    <ItemGroup>
+      <ProjectReference Include="..\..\Microwave.Persistence.InMemory\Microwave.Persistence.InMemory.csproj" />
       <ProjectReference Include="..\..\Microwave.Persistence.MongoDb\Microwave.Persistence.MongoDb.csproj" />
       <ProjectReference Include="..\..\Microwave.UI\Microwave.UI.csproj" />
       <ProjectReference Include="..\..\Microwave\Microwave.csproj" />

@@ -4,9 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Domain.EventSourcing;
-using Microwave.Domain.Identities;
 using Microwave.EventStores;
 using Microwave.EventStores.Ports;
+using Microwave.EventStores.SnapShots;
 using Microwave.Persistence.MongoDb.Eventstores;
 using Microwave.Persistence.UnitTestsSetup.MongoDb;
 using Moq;
@@ -23,20 +23,20 @@ namespace Microwave.Eventstores.UnitTests
 
             var eventRepository = new EventRepositoryMongoDb(EventMongoDb, new VersionCache(EventMongoDb));
             var snapShotRepo = new Mock<ISnapShotRepository>();
-            snapShotRepo.Setup(re => re.LoadSnapShot<TestEntity>(It.IsAny<Identity>()))
+            snapShotRepo.Setup(re => re.LoadSnapShot<TestEntity>(It.IsAny<string>()))
                 .ReturnsAsync(SnapShotResult<TestEntity>.Default());
 
-            var eventStore = new EventStore(eventRepository, snapShotRepo.Object);
+            var eventStore = new EventStore(eventRepository, snapShotRepo.Object, new SnapShotConfig());
 
             var newGuid = Guid.NewGuid();
 
-            await eventStore.AppendAsync(new List<IDomainEvent> { new TestEvent_BsonBug(GuidIdentity.Create(newGuid), "Simon")},
+            await eventStore.AppendAsync(new List<IDomainEvent> { new TestEvent_BsonBug(newGuid, "Simon")},
                 0);
 
             var result = await eventRepository.LoadEvents();
 
             Assert.AreEqual(1, result.Value.Count());
-            Assert.AreEqual(newGuid.ToString(), result.Value.Single().DomainEvent.EntityId.Id);
+            Assert.AreEqual(newGuid.ToString(), result.Value.Single().DomainEvent.EntityId);
             Assert.AreEqual("Simon", ((TestEvent_BsonBug)result.Value.Single().DomainEvent).Name);
         }
 
@@ -47,20 +47,21 @@ namespace Microwave.Eventstores.UnitTests
 
             var eventRepository = new EventRepositoryMongoDb(EventMongoDb, new VersionCache(EventMongoDb));
             var snapShotRepo = new Mock<ISnapShotRepository>();
-            snapShotRepo.Setup(re => re.LoadSnapShot<TestEntity>(It.IsAny<Identity>()))
+            snapShotRepo.Setup(re => re.LoadSnapShot<TestEntity>(It.IsAny<string>()))
                 .ReturnsAsync(SnapShotResult<TestEntity>.Default());
 
-            var eventStore = new EventStore(eventRepository, snapShotRepo.Object);
+            var eventStore = new EventStore(eventRepository, snapShotRepo.Object, new SnapShotConfig());
 
             var newGuid = Guid.NewGuid();
 
-            await eventStore.AppendAsync(new List<IDomainEvent> { new TestEvent_BsonBug_AutoProperty(GuidIdentity.Create(newGuid), "Simon")},
+            await eventStore.AppendAsync(new List<IDomainEvent> { new TestEvent_BsonBug_AutoProperty(newGuid.ToString(),
+            "Simon")},
                 0);
 
             var result = await eventRepository.LoadEvents();
 
             Assert.AreEqual(1, result.Value.Count());
-            Assert.AreEqual(newGuid.ToString(), result.Value.Single().DomainEvent.EntityId.Id);
+            Assert.AreEqual(newGuid.ToString(), result.Value.Single().DomainEvent.EntityId);
             Assert.AreEqual("Simon", ((TestEvent_BsonBug_AutoProperty)result.Value.Single().DomainEvent).Name);
             Assert.AreEqual(newGuid.ToString(), ((TestEvent_BsonBug_AutoProperty)result.Value.Single().DomainEvent).EntityIdAsString);
         }
@@ -72,44 +73,19 @@ namespace Microwave.Eventstores.UnitTests
 
             var eventRepository = new EventRepositoryMongoDb(EventMongoDb, new VersionCache(EventMongoDb));
             var snapShotRepo = new Mock<ISnapShotRepository>();
-            snapShotRepo.Setup(re => re.LoadSnapShot<TestEntity>(It.IsAny<Identity>()))
+            snapShotRepo.Setup(re => re.LoadSnapShot<TestEntity>(It.IsAny<string>()))
                 .ReturnsAsync(SnapShotResult<TestEntity>.Default());
 
-            var eventStore = new EventStore(eventRepository, snapShotRepo.Object);
+            var eventStore = new EventStore(eventRepository, snapShotRepo.Object, new SnapShotConfig());
 
-            await eventStore.AppendAsync(new List<IDomainEvent> { new TestEvent_UnconventionalOderring("Simon", StringIdentity.Create("whatever"))},
+            await eventStore.AppendAsync(new List<IDomainEvent> { new TestEvent_UnconventionalOderring("Simon", "whatever")},
                 0);
 
             var result = await eventRepository.LoadEvents();
 
             Assert.AreEqual(1, result.Value.Count());
-            Assert.AreEqual("whatever", result.Value.Single().DomainEvent.EntityId.Id);
+            Assert.AreEqual("whatever", result.Value.Single().DomainEvent.EntityId);
             Assert.AreEqual("Simon", ((TestEvent_UnconventionalOderring)result.Value.Single().DomainEvent).Name);
-        }
-
-        [TestMethod]
-        public async Task AddEvents_ConstructorBson_TwoIdentitiesInConstructor()
-        {
-            BsonMapRegistrationHelpers.AddBsonMapFor<TestEvent_TwoIdentitiesInConstructor>();
-
-            var eventRepository = new EventRepositoryMongoDb(EventMongoDb, new VersionCache(EventMongoDb));
-            var snapShotRepo = new Mock<ISnapShotRepository>();
-            snapShotRepo.Setup(re => re.LoadSnapShot<TestEntity>(It.IsAny<Identity>()))
-                .ReturnsAsync(SnapShotResult<TestEntity>.Default());
-
-            var eventStore = new EventStore(eventRepository, snapShotRepo.Object);
-
-            var newGuid = Guid.NewGuid();
-            await eventStore.AppendAsync(new List<IDomainEvent> { new TestEvent_TwoIdentitiesInConstructor(StringIdentity
-            .Create("whatever"), GuidIdentity.Create(newGuid))},
-                0);
-
-            var result = await eventRepository.LoadEvents();
-
-            Assert.AreEqual(1, result.Value.Count());
-            Assert.AreEqual("whatever", result.Value.Single().DomainEvent.EntityId.Id);
-            Assert.AreEqual(newGuid.ToString(), ((TestEvent_TwoIdentitiesInConstructor)result.Value.Single().DomainEvent).GuidIdentity
-            .Id);
         }
 
         [TestMethod]
@@ -119,66 +95,54 @@ namespace Microwave.Eventstores.UnitTests
 
             var eventRepository = new EventRepositoryMongoDb(EventMongoDb, new VersionCache(EventMongoDb));
             var snapShotRepo = new Mock<ISnapShotRepository>();
-            snapShotRepo.Setup(re => re.LoadSnapShot<TestEntity>(It.IsAny<Identity>()))
+            snapShotRepo.Setup(re => re.LoadSnapShot<TestEntity>(It.IsAny<string>()))
                 .ReturnsAsync(SnapShotResult<TestEntity>.Default());
 
-            var eventStore = new EventStore(eventRepository, snapShotRepo.Object);
+            var eventStore = new EventStore(eventRepository, snapShotRepo.Object, new SnapShotConfig());
 
-            await eventStore.AppendAsync(new List<IDomainEvent> { new TestEvent_BsonBug_AutoProperty_NotWithEntityIdName(StringIdentity
-                    .Create("whatever"), "Peter")},
+            await eventStore.AppendAsync(new List<IDomainEvent> {
+                    new TestEvent_BsonBug_AutoProperty_NotWithEntityIdName("whatever", "Peter")},
                 0);
 
             var result = await eventRepository.LoadEvents();
 
             Assert.AreEqual(1, result.Value.Count());
             var domainEvent = result.Value.Single().DomainEvent as TestEvent_BsonBug_AutoProperty_NotWithEntityIdName;
-            Assert.AreEqual("whatever", domainEvent.EntityId.Id);
+            Assert.AreEqual("whatever", domainEvent.EntityId);
             Assert.AreEqual("Peter", domainEvent.Name);
         }
     }
 
     public class TestEvent_NotEntityIdDefined : IDomainEvent
     {
-        public TestEvent_NotEntityIdDefined(StringIdentity create, string name)
+        public TestEvent_NotEntityIdDefined(Guid create, string name)
         {
-            EntityId = create;
+            EntityId = create.ToString();
             Name = name;
         }
 
-        public Identity EntityId { get; }
+        public string EntityId { get; }
         public string Name { get; }
     }
 
     public class TestEvent_ParamDefinedWrong : IDomainEvent
     {
-        public TestEvent_ParamDefinedWrong(StringIdentity entityId, string name_NOT_DEFINED_RIGHT)
+        public TestEvent_ParamDefinedWrong(Guid entityId, string name_NOT_DEFINED_RIGHT)
         {
-            EntityId = entityId;
+            EntityId = entityId.ToString();
             Name = name_NOT_DEFINED_RIGHT;
         }
 
-        public Identity EntityId { get; }
+        public string EntityId { get; }
         public string Name { get; }
-    }
-
-    public class TestEvent_TwoIdentitiesInConstructor : IDomainEvent
-    {
-        public TestEvent_TwoIdentitiesInConstructor(StringIdentity entityId, GuidIdentity guidIdentity)
-        {
-            EntityId = entityId;
-            GuidIdentity = guidIdentity;
-        }
-
-        public Identity EntityId { get; }
-        public GuidIdentity GuidIdentity { get; }
     }
 
     public class TestEvent_UnconventionalOderring : IDomainEvent
     {
-        public Identity EntityId { get; }
+        public string EntityId { get; }
         public string Name { get; }
 
-        public TestEvent_UnconventionalOderring(string name, StringIdentity entityId)
+        public TestEvent_UnconventionalOderring(string name, string entityId)
         {
             EntityId = entityId;
             Name = name;
@@ -189,40 +153,41 @@ namespace Microwave.Eventstores.UnitTests
     {
         public string Name { get; }
 
-        public TestEvent_BsonBug(GuidIdentity entityId, string name)
+        public TestEvent_BsonBug(Guid id, string name)
         {
             Name = name;
-            EntityId = entityId;
+            Id = id;
         }
 
-        public Identity EntityId { get; }
+        public string EntityId => Id.ToString();
+        public Guid Id { get; }
     }
 
     public class TestEvent_BsonBug_AutoProperty : IDomainEvent
     {
         public string Name { get; }
 
-        public TestEvent_BsonBug_AutoProperty(GuidIdentity entityId, string name)
+        public TestEvent_BsonBug_AutoProperty(string entityId, string name)
         {
             Name = name;
             EntityId = entityId;
         }
 
-        public Identity EntityId { get; }
-        public string EntityIdAsString => EntityId.Id;
+        public string EntityId { get; }
+        public string EntityIdAsString => EntityId;
     }
 
     public class TestEvent_BsonBug_AutoProperty_NotWithEntityIdName : IDomainEvent
     {
-        public StringIdentity AutoPropertyId { get; }
+        public string AutoPropertyId { get; }
         public string Name { get; }
 
-        public TestEvent_BsonBug_AutoProperty_NotWithEntityIdName(StringIdentity autoPropertyId, string name)
+        public TestEvent_BsonBug_AutoProperty_NotWithEntityIdName(string autoPropertyId, string name)
         {
             AutoPropertyId = autoPropertyId;
             Name = name;
         }
 
-        public Identity EntityId => AutoPropertyId;
+        public string EntityId => AutoPropertyId;
     }
 }

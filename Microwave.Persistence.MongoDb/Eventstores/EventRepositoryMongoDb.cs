@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microwave.Domain.EventSourcing;
-using Microwave.Domain.Identities;
 using Microwave.Domain.Results;
 using Microwave.EventStores;
 using Microwave.EventStores.Ports;
@@ -16,6 +15,7 @@ namespace Microwave.Persistence.MongoDb.Eventstores
         private readonly IMongoDatabase _database;
         private readonly string _eventCollectionName = "DomainEventDbos";
         private readonly IVersionCache _versions;
+        private readonly object _lock = new object();
 
         public EventRepositoryMongoDb(MicrowaveMongoDb mongoDb, IVersionCache versions)
         {
@@ -23,14 +23,17 @@ namespace Microwave.Persistence.MongoDb.Eventstores
             _database = mongoDb.Database;
         }
 
-        public async Task<Result<IEnumerable<DomainEventWrapper>>> LoadEventsByEntity(Identity entityId, long from = 0)
+        public async Task<Result<IEnumerable<DomainEventWrapper>>> LoadEventsByEntity(string entityId, long lastEntityStreamVersion = 0)
         {
             if (entityId == null) return Result<IEnumerable<DomainEventWrapper>>.NotFound(null);
             var mongoCollection = _database.GetCollection<DomainEventDbo>(_eventCollectionName);
-            var domainEventDbos = (await mongoCollection.FindAsync(ev => ev.Key.EntityId == entityId.Id && ev.Key.Version > from)).ToList();
+            var domainEventDbos = await mongoCollection
+                .Find(ev => ev.Key.EntityId == entityId && ev.Key.EntityStreamVersion > lastEntityStreamVersion)
+                .SortBy(s => s.OverallVersion)
+                .ToListAsync();
             if (!domainEventDbos.Any())
             {
-                var eventDbos = await mongoCollection.Find(ev => ev.Key.EntityId == entityId.Id).FirstOrDefaultAsync();
+                var eventDbos = await mongoCollection.Find(ev => ev.Key.EntityId == entityId).FirstOrDefaultAsync();
                 if (eventDbos == null) return Result<IEnumerable<DomainEventWrapper>>.NotFound(entityId);
                 return Result<IEnumerable<DomainEventWrapper>>.Ok(new List<DomainEventWrapper>());
             }
@@ -39,8 +42,8 @@ namespace Microwave.Persistence.MongoDb.Eventstores
             {
                 return new DomainEventWrapper
                 {
-                    Created = dbo.Created,
-                    Version = dbo.Key.Version,
+                    OverallVersion = dbo.OverallVersion,
+                    EntityStreamVersion = dbo.Key.EntityStreamVersion,
                     DomainEvent = dbo.Payload
                 };
             });
@@ -48,19 +51,21 @@ namespace Microwave.Persistence.MongoDb.Eventstores
             return Result<IEnumerable<DomainEventWrapper>>.Ok(domainEvents);
         }
 
-        public async Task<Result<IEnumerable<DomainEventWrapper>>> LoadEvents(DateTimeOffset tickSince = default(DateTimeOffset))
+        public async Task<Result<IEnumerable<DomainEventWrapper>>> LoadEvents(long lastOverallVersion = 0)
         {
-            if (tickSince == default(DateTimeOffset)) tickSince = DateTimeOffset.MinValue;
             var mongoCollection = _database.GetCollection<DomainEventDbo>(_eventCollectionName);
-            var domainEventDbos = (await mongoCollection.FindAsync(ev => ev.Created > tickSince)).ToList();
+            var domainEventDbos = await mongoCollection
+                .Find(ev => ev.OverallVersion > lastOverallVersion)
+                .SortBy(s => s.OverallVersion)
+                .ToListAsync();
             if (!domainEventDbos.Any()) return Result<IEnumerable<DomainEventWrapper>>.Ok(new List<DomainEventWrapper>());
 
             var domainEvents = domainEventDbos.Select(dbo =>
             {
                 return new DomainEventWrapper
                 {
-                    Created = dbo.Created,
-                    Version = dbo.Key.Version,
+                    OverallVersion = dbo.OverallVersion,
+                    EntityStreamVersion = dbo.Key.EntityStreamVersion,
                     DomainEvent = dbo.Payload
                 };
             });
@@ -68,61 +73,75 @@ namespace Microwave.Persistence.MongoDb.Eventstores
             return Result<IEnumerable<DomainEventWrapper>>.Ok(domainEvents);
         }
 
-        public async Task<Result<IEnumerable<DomainEventWrapper>>> LoadEventsByTypeAsync(string eventType, DateTimeOffset tickSince = default(DateTimeOffset))
+        public async Task<Result<IEnumerable<DomainEventWrapper>>> LoadEventsByTypeAsync(
+            string eventType,
+            long lastOverallVersion = 0)
         {
-            if (tickSince == default(DateTimeOffset)) tickSince = DateTimeOffset.MinValue;
             var mongoCollection = _database.GetCollection<DomainEventDbo>(_eventCollectionName);
-            var domainEventTypeDbos = (await mongoCollection.FindAsync(ev => ev.EventType == eventType && ev.Created > tickSince)).ToList();
+            var domainEventTypeDbos = await mongoCollection
+                .Find(ev => ev.EventType == eventType && ev.OverallVersion > lastOverallVersion)
+                .SortBy(s => s.OverallVersion)
+                .ToListAsync();
 
             var domainEvents = domainEventTypeDbos.Select(dbo =>
             {
                 return new DomainEventWrapper
                 {
-                    Created = dbo.Created,
-                    Version = dbo.Key.Version,
+                    OverallVersion = dbo.OverallVersion,
+                    EntityStreamVersion = dbo.Key.EntityStreamVersion,
                     DomainEvent = dbo.Payload
                 };
             });
             return Result<IEnumerable<DomainEventWrapper>>.Ok(domainEvents);
         }
 
-        public async Task<Result> AppendAsync(IEnumerable<IDomainEvent> domainEvents, long currentEntityVersion)
+        public Task<Result> AppendAsync(IEnumerable<IDomainEvent> domainEvents, long currentEntityVersion)
         {
-            var events = domainEvents.ToList();
-            if (!events.Any()) return Result.Ok();
-
-            var entityId = events.First().EntityId;
-            var versionTemp = currentEntityVersion;
-            var lastVersion = await _versions.Get(entityId);
-
-            if (lastVersion < currentEntityVersion) return Result.ConcurrencyResult(currentEntityVersion, lastVersion);
-
-            var domainEventDbos = events.Select(domainEvent =>
+            lock (_lock)
             {
-                return new DomainEventDbo
+                var events = domainEvents.ToList();
+                if (!events.Any()) return Task.FromResult(Result.Ok());
+
+                var entityId = events.First().EntityId;
+                var versionTemp = currentEntityVersion;
+                var lastVersion = _versions.Get(entityId).Result;
+
+                if (lastVersion < currentEntityVersion) return Task.FromResult(Result.ConcurrencyResult(currentEntityVersion, lastVersion));
+
+                var domainEventDbos = events.Select(domainEvent =>
                 {
-                    Payload = domainEvent,
-                    Created = DateTimeOffset.Now,
-                    Key = new DomainEventKey
+                    _versions.CountUpGlobalVersion();
+                    return new DomainEventDbo
                     {
-                        Version = ++versionTemp,
-                        EntityId = domainEvent.EntityId.Id
-                    },
-                    EventType = domainEvent.GetType().Name
-                };
-            }).ToList();
+                        Payload = domainEvent,
+                        OverallVersion = _versions.OverallVersion,
+                        Key = new DomainEventKey
+                        {
+                            EntityStreamVersion = ++versionTemp,
+                            EntityId = domainEvent.EntityId
+                        },
+                        EventType = domainEvent.GetType().Name
+                    };
+                }).ToList();
 
-            try
-            {
-                await _database.GetCollection<DomainEventDbo>(_eventCollectionName).InsertManyAsync(domainEventDbos);
-                _versions.Update(entityId, versionTemp);
+                try
+                {
+                    _database.GetCollection<DomainEventDbo>(_eventCollectionName).InsertManyAsync(domainEventDbos).Wait();
+                    _versions.Update(entityId, versionTemp);
+                }
+                catch (AggregateException aggregateException)
+                {
+                    var innerException = aggregateException.InnerExceptions.SingleOrDefault();
+                    if (innerException?.GetType() == typeof(MongoBulkWriteException<DomainEventDbo>))
+                    {
+                        var actualVersion = _versions.GetForce(entityId).Result;
+                        return Task.FromResult(Result.ConcurrencyResult(currentEntityVersion, actualVersion));
+                    }
+
+                    throw;
+                }
+                return Task.FromResult(Result.Ok());
             }
-            catch (MongoBulkWriteException)
-            {
-                var actualVersion = await _versions.GetForce(entityId);
-                return Result.ConcurrencyResult(currentEntityVersion, actualVersion);
-            }
-            return Result.Ok();
         }
     }
 }

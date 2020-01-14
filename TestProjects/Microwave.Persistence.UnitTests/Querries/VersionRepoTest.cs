@@ -1,4 +1,3 @@
-using System;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Persistence.UnitTestsSetup;
@@ -15,7 +14,7 @@ namespace Microwave.Persistence.UnitTests.Querries
         {
             var versionRepository = layerProvider.VersionRepository;
 
-            var dateTimeOffset = DateTimeOffset.Now;
+            var dateTimeOffset = 0;
             await versionRepository.SaveVersion(new LastProcessedVersion("Type", dateTimeOffset));
             await versionRepository.SaveVersion(new LastProcessedVersion("Type", dateTimeOffset));
 
@@ -29,7 +28,7 @@ namespace Microwave.Persistence.UnitTests.Querries
         {
             var versionRepository = layerProvider.VersionRepository;
             var count = await versionRepository.GetVersionAsync(null);
-            Assert.AreEqual(DateTimeOffset.MinValue, count);
+            Assert.AreEqual(0, count);
         }
     }
 }

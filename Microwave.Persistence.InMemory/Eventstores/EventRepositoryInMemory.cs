@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microwave.Domain.EventSourcing;
-using Microwave.Domain.Identities;
 using Microwave.Domain.Results;
 using Microwave.EventStores;
 using Microwave.EventStores.Ports;
@@ -13,17 +11,34 @@ namespace Microwave.Persistence.InMemory.Eventstores
 {
     public class EventRepositoryInMemory : IEventRepository
     {
-        private readonly BlockingCollection<DomainEventWrapper> _domainEvents = new BlockingCollection<DomainEventWrapper>();
+        public EventRepositoryInMemory(IEnumerable<IDomainEvent> domainEvents = null)
+        {
+            var events = domainEvents?.ToList() ?? new List<IDomainEvent>();
+            var groupedEvents = events.GroupBy(de => de.EntityId).ToList();
 
-        public Task<Result<IEnumerable<DomainEventWrapper>>> LoadEventsByEntity(Identity entityId, long from = 0)
+            foreach (var evs in groupedEvents)
+            {
+                var result = Append(evs, 0);
+                result.Check();
+            }
+        }
+
+        private readonly ConcurrentDictionary<string, IEnumerable<DomainEventWrapper>> _domainEvents =
+            new ConcurrentDictionary<string, IEnumerable<DomainEventWrapper>>();
+        private readonly object _lock = new object();
+        private long _currentCache;
+
+        public Task<Result<IEnumerable<DomainEventWrapper>>> LoadEventsByEntity(string entityId, long lastEntityStreamVersion = 0)
         {
             if (entityId == null) return Task.FromResult(Result<IEnumerable<DomainEventWrapper>>.NotFound(null));
-            var mongoCollection = _domainEvents;
-            var domainEventDbos = mongoCollection.Where(e => e.DomainEvent.EntityId == entityId && e.Version > from).ToList();
+            if (!_domainEvents.TryGetValue(entityId, out var eventsOfEntity))
+                return Task.FromResult(Result<IEnumerable<DomainEventWrapper>>.NotFound(entityId));
+            var domainEventDbos = eventsOfEntity
+                .Where(e => e.EntityStreamVersion > lastEntityStreamVersion)
+                .OrderBy(s => s.OverallVersion)
+                .ToList();
             if (!domainEventDbos.Any())
             {
-                var eventDbos = mongoCollection.FirstOrDefault(e => e.DomainEvent.EntityId == entityId);
-                if (eventDbos == null) return Task.FromResult(Result<IEnumerable<DomainEventWrapper>>.NotFound(entityId));
                 return Task.FromResult(Result<IEnumerable<DomainEventWrapper>>.Ok(new List<DomainEventWrapper>()));
             }
 
@@ -31,56 +46,75 @@ namespace Microwave.Persistence.InMemory.Eventstores
             {
                 return new DomainEventWrapper
                 {
-                    Created = dbo.Created,
-                    Version = dbo.Version,
+                    OverallVersion = dbo.OverallVersion,
+                    EntityStreamVersion = dbo.EntityStreamVersion,
                     DomainEvent = dbo.DomainEvent
                 };
             });
 
             return Task.FromResult(Result<IEnumerable<DomainEventWrapper>>.Ok(domainEvents));
+
         }
 
         public Task<Result> AppendAsync(IEnumerable<IDomainEvent> domainEvents, long currentEntityVersion)
         {
-            var maxVersion = _domainEvents.
-                                 Where(e => e.DomainEvent.EntityId == domainEvents.First().EntityId)
-                                 .OrderBy(e => e.Version).LastOrDefault()?.Version ?? 0;
-            if (maxVersion != currentEntityVersion) return Task.FromResult(
-                Result.ConcurrencyResult(currentEntityVersion, maxVersion));
+            lock (_lock)
+            {
+                return Task.FromResult(Append(domainEvents, currentEntityVersion));
+            }
+        }
+
+        private Result Append(IEnumerable<IDomainEvent> domainEvents, long currentEntityVersion)
+        {
+            var eventsToAdd = domainEvents.ToList();
+            if (!eventsToAdd.Any()) return Result.Ok();
+            var entityId = eventsToAdd.First().EntityId;
+            if (!_domainEvents.ContainsKey(entityId))
+            {
+                _domainEvents[entityId] = new List<DomainEventWrapper>();
+            }
+
+            var eventWrappers = _domainEvents[entityId].ToList();
+            var maxVersion = eventWrappers.OrderBy(e => e.OverallVersion)
+                                 .LastOrDefault()?
+                                 .EntityStreamVersion ?? 0;
+            if (maxVersion != currentEntityVersion) return Result.ConcurrencyResult(currentEntityVersion, maxVersion);
             var newVersion = currentEntityVersion;
 
             var domainEventWrappers = new List<DomainEventWrapper>();
-            foreach (var domainEvent in domainEvents)
+            domainEventWrappers.AddRange(eventWrappers);
+            foreach (var domainEvent in eventsToAdd)
             {
-                Task.Delay(1);
+                _currentCache++;
                 var domainEventWrapper = new DomainEventWrapper
                 {
-                    Created = DateTimeOffset.Now,
+                    OverallVersion = _currentCache,
                     DomainEvent = domainEvent,
-                    Version = ++newVersion
+                    EntityStreamVersion = ++newVersion
                 };
                 domainEventWrappers.Add(domainEventWrapper);
             }
 
-            foreach (var eventWrapper in domainEventWrappers)
-            {
-                _domainEvents.Add(eventWrapper);
-            }
-            return Task.FromResult(Result.Ok());
+            _domainEvents[entityId] = domainEventWrappers;
+            return Result.Ok();
         }
 
-        public Task<Result<IEnumerable<DomainEventWrapper>>> LoadEvents(DateTimeOffset tickSince = default(DateTimeOffset))
+        public Task<Result<IEnumerable<DomainEventWrapper>>> LoadEvents(long lastOverallVersion = 0)
         {
-            var domainEventWrappers = _domainEvents.OrderBy(e => e.Created).Where(e => e.Created > tickSince);
+            var domainEvents = _domainEvents.SelectMany(e => e.Value);
+            var domainEventWrappers = domainEvents
+                .Where(e => e.OverallVersion > lastOverallVersion)
+                .OrderBy(e => e.OverallVersion);
             return Task.FromResult(Result<IEnumerable<DomainEventWrapper>>.Ok(domainEventWrappers));
         }
 
-        public Task<Result<IEnumerable<DomainEventWrapper>>> LoadEventsByTypeAsync(string eventType, DateTimeOffset
-        tickSince = default(DateTimeOffset))
+        public Task<Result<IEnumerable<DomainEventWrapper>>> LoadEventsByTypeAsync(string eventType, long
+        lastOverallVersion = 0)
         {
-            var domainEventWrappers = _domainEvents
-                .OrderBy(e => e.Created)
-                .Where(e => e.DomainEventType == eventType && e.Created > tickSince);
+            var domainEvents = _domainEvents.SelectMany(e => e.Value);
+            var domainEventWrappers = domainEvents
+                .Where(e => e.DomainEventType == eventType && e.OverallVersion > lastOverallVersion)
+                .OrderBy(e => e.OverallVersion);
             return Task.FromResult(Result<IEnumerable<DomainEventWrapper>>.Ok(domainEventWrappers));
         }
     }

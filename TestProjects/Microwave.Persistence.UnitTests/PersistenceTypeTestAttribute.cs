@@ -21,7 +21,11 @@ namespace Microwave.Persistence.UnitTests
         public string GetDisplayName(MethodInfo methodInfo, object[] data)
         {
             if (data != null)
-                return string.Format(CultureInfo.CurrentCulture, "Integration - {0} ({1})", methodInfo.Name, string.Join(",", data));
+                return string.Format(CultureInfo.CurrentCulture,
+                    "Integration - {0} ({1})",
+                    methodInfo.Name,
+                    string.Join(",",
+                        data));
 
             return null;
         }

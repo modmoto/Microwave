@@ -12,5 +12,6 @@ namespace Microwave.Persistence.UnitTestsSetup
         public abstract IReadModelRepository ReadModelRepository { get; }
         public abstract ISnapShotRepository SnapShotRepository { get; }
         public abstract IEventRepository EventRepository { get; }
+        public abstract IEventRepository EventRepositoryNewInstance { get; }
     }
 }

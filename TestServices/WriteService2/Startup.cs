@@ -1,10 +1,13 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Collections.Generic;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 using Microwave;
+using Microwave.Domain.EventSourcing;
+using Microwave.Persistence.InMemory;
 using Microwave.Persistence.MongoDb;
 using Microwave.UI;
 using ServerConfig;
@@ -21,7 +24,7 @@ namespace WriteService2
                     .AddRequirements(new ApiKeyRequirement())
                     .Build();
                 config.Filters.Add(new AuthorizeFilter(policy));
-            }).SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            }).SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
             services.AddMicrowaveUi();
 
             services.AddMicrowave(config =>
@@ -31,15 +34,20 @@ namespace WriteService2
                 config.WithHttpClientFactory(new MyMicrowaveHttpClientFactory());
             });
 
-            services.AddMicrowavePersistenceLayerMongoDb(p =>
+
+            IEnumerable<IDomainEvent> events = new List<IDomainEvent>
             {
-                p.WithDatabaseName("TestWriteService2ReadDb");
-            });
+                new Event4("Event4")
+            };
+            services.AddMicrowavePersistenceLayerInMemory(o => o.WithEventSeeds(events));
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            app.UseMvc();
+            app.UseRouting();
+            app.UseEndpoints(endpoints => {
+                endpoints.MapControllers();
+            });
             app.UseMicrowaveUi();
             app.RunMicrowaveQueries();
         }

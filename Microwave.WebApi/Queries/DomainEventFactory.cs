@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using Microwave.Queries;
 using Microwave.Queries.Ports;
-using Microwave.WebApi.ApiFormatting.Identities;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -25,7 +24,6 @@ namespace Microwave.WebApi.Queries
         public IEnumerable<SubscribedDomainEventWrapper> Deserialize(string serializeObject)
         {
             JsonSerializer serializer = new JsonSerializer();
-            serializer.Converters.Add(new IdentityConverter());
             var jArray = JsonConvert.DeserializeObject<JArray>(serializeObject);
             foreach (var jToken in jArray)
             {
@@ -33,9 +31,8 @@ namespace Microwave.WebApi.Queries
                 var value = jObject.GetValue(nameof(SubscribedDomainEventWrapper.DomainEventType), StringComparison.OrdinalIgnoreCase).Value<string>();
                 if (!_eventTypeRegistration.ContainsKey(value)) continue;
                 var type = _eventTypeRegistration[value];
-                var version = jObject.GetValue(nameof(SubscribedDomainEventWrapper.Version), StringComparison.OrdinalIgnoreCase).Value<long>();
-                var created = (DateTimeOffset) jObject.GetValue(nameof(SubscribedDomainEventWrapper.Created), StringComparison
-                .OrdinalIgnoreCase);
+                var version = jObject.GetValue(nameof(SubscribedDomainEventWrapper.EntityStreamVersion), StringComparison.OrdinalIgnoreCase).Value<long>();
+                var globalVersion = jObject.GetValue(nameof(SubscribedDomainEventWrapper.OverallVersion), StringComparison.OrdinalIgnoreCase).Value<long>();
                 var domainEventJObject = jObject.GetValue(nameof(SubscribedDomainEventWrapper.DomainEvent), StringComparison
                 .OrdinalIgnoreCase);
                 var domainevent = (ISubscribedDomainEvent) domainEventJObject.ToObject(type, serializer);
@@ -43,8 +40,8 @@ namespace Microwave.WebApi.Queries
                 if (domainevent.EntityId == null) throw new DomainEventNotAssignableToEntityException(domainevent);
                 yield return new SubscribedDomainEventWrapper
                 {
-                    Created = created,
-                    Version = version,
+                    OverallVersion = globalVersion,
+                    EntityStreamVersion = version,
                     DomainEvent = domainevent
                 };
             }

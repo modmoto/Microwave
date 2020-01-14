@@ -6,8 +6,8 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Discovery;
 using Microwave.Discovery.EventLocations;
 using Microwave.Domain.EventSourcing;
-using Microwave.Domain.Identities;
 using Microwave.EventStores;
+using Microwave.Persistence.InMemory;
 using Microwave.Persistence.MongoDb;
 using Microwave.Queries;
 using Microwave.Queries.Handler;
@@ -15,7 +15,6 @@ using Microwave.Queries.Ports;
 using Microwave.UnitTests.PublishedEventsDll;
 using Microwave.WebApi.Discovery;
 using Microwave.WebApi.Queries;
-using MongoDB.Bson.Serialization;
 
 namespace Microwave.UnitTests
 {
@@ -31,11 +30,30 @@ namespace Microwave.UnitTests
         }
 
         [TestMethod]
+        public async Task AddDiContainerTest_WithSeeding()
+        {
+            var collection = (IServiceCollection) new ServiceCollection();
+
+            var storeDependencies = collection.AddMicrowave()
+                .AddMicrowavePersistenceLayerInMemory(s =>
+                    s.WithEventSeeds(new TestDomainEvent_PublishedEvent2("testId"))
+                    .WithEventSeeds(new TestDomainEvent_PublishedEvent2("testId2")));
+            var buildServiceProvider = storeDependencies.BuildServiceProvider();
+
+            var eventStore = buildServiceProvider.GetService<IEventStore>();
+            var entity = await eventStore.LoadAsync<TestEntityForSeed>("testId");
+            var entity2 = await eventStore.LoadAsync<TestEntityForSeed>("testId2");
+
+            Assert.AreEqual("testId", entity.Value.DomainEventEntityId);
+            Assert.AreEqual("testId2", entity2.Value.DomainEventEntityId);
+        }
+
+        [TestMethod]
         public void AddDiContainerTest()
         {
             var collection = (IServiceCollection) new ServiceCollection();
 
-            var storeDependencies = collection.AddMicrowave().AddMicrowavePersistenceLayerMongoDb();
+            var storeDependencies = collection.AddMicrowave().AddMicrowavePersistenceLayerInMemory();
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
             var eventDelegateHandlers = buildServiceProvider.GetServices<IAsyncEventHandler>().OrderBy(
@@ -117,7 +135,7 @@ namespace Microwave.UnitTests
         {
             var collection = (IServiceCollection) new ServiceCollection();
 
-            var storeDependencies = collection.AddMicrowave().AddMicrowavePersistenceLayerMongoDb();
+            var storeDependencies = collection.AddMicrowave().AddMicrowavePersistenceLayerInMemory();
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
             var eventRegister = buildServiceProvider.GetServices<EventRegistration>().Single();
@@ -134,8 +152,8 @@ namespace Microwave.UnitTests
             var collection = (IServiceCollection) new ServiceCollection();
 
             var storeDependencies = collection
-                .AddMicrowave().AddMicrowavePersistenceLayerMongoDb()
-                .AddMicrowave().AddMicrowavePersistenceLayerMongoDb();
+                .AddMicrowave().AddMicrowavePersistenceLayerInMemory()
+                .AddMicrowave().AddMicrowavePersistenceLayerInMemory();
 
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
@@ -152,15 +170,12 @@ namespace Microwave.UnitTests
         {
             var collection = (IServiceCollection) new ServiceCollection();
 
-            var storeDependencies = collection.AddMicrowave().AddMicrowavePersistenceLayerMongoDb();
+            var storeDependencies = collection.AddMicrowave().AddMicrowavePersistenceLayerInMemory();
 
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
             var store = buildServiceProvider.GetServices<IEventStore>().FirstOrDefault();
             Assert.IsNotNull(store);
-
-            Assert.IsTrue(BsonClassMap.IsClassMapRegistered(typeof(TestDomainEvent_PublishedEvent1)));
-            Assert.IsTrue(BsonClassMap.IsClassMapRegistered(typeof(TestDomainEvent_PublishedEvent2)));
         }
 
         [TestMethod]
@@ -168,7 +183,7 @@ namespace Microwave.UnitTests
         {
             var collection = (IServiceCollection) new ServiceCollection();
 
-            var storeDependencies = collection.AddMicrowave().AddMicrowavePersistenceLayerMongoDb();
+            var storeDependencies = collection.AddMicrowave().AddMicrowavePersistenceLayerInMemory();
 
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
@@ -189,7 +204,7 @@ namespace Microwave.UnitTests
         public void AddMicrowaveDependencies_SubscribedEventsCorrect()
         {
             var collection = (IServiceCollection) new ServiceCollection();
-            var storeDependencies = collection.AddMicrowave().AddMicrowavePersistenceLayerMongoDb();
+            var storeDependencies = collection.AddMicrowave().AddMicrowavePersistenceLayerInMemory();
 
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
@@ -228,7 +243,7 @@ namespace Microwave.UnitTests
         public void AddMicrowaveDependencies_DepedencyControllerIsResolved()
         {
             var collection = (IServiceCollection) new ServiceCollection();
-            var storeDependencies = collection.AddMicrowave().AddMicrowavePersistenceLayerMongoDb();
+            var storeDependencies = collection.AddMicrowave().AddMicrowavePersistenceLayerInMemory();
 
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
@@ -311,13 +326,13 @@ namespace Microwave.UnitTests
 
     public class TestDomainEvent3 : ISubscribedDomainEvent
     {
-        public TestDomainEvent3(Identity entityId, int age)
+        public TestDomainEvent3(string entityId, int age)
         {
             EntityId = entityId;
             Age = age;
         }
 
-        public Identity EntityId { get; }
+        public string EntityId { get; }
         public int Age { get; }
     }
 
@@ -376,25 +391,25 @@ namespace Microwave.UnitTests
 
     public class TestDomainEvent2 : ISubscribedDomainEvent
     {
-        public TestDomainEvent2(GuidIdentity entityId, string otherName)
+        public TestDomainEvent2(string entityId, string otherName)
         {
             EntityId = entityId;
             OtherName = otherName;
         }
 
-        public Identity EntityId { get; }
+        public string EntityId { get; }
         public string OtherName { get; }
     }
 
     public class TestDomainEvent1 : ISubscribedDomainEvent
     {
-        public TestDomainEvent1(GuidIdentity entityId, string name)
+        public TestDomainEvent1(string entityId, string name)
         {
             EntityId = entityId;
             Name = name;
         }
 
-        public Identity EntityId { get; }
+        public string EntityId { get; }
         public string Name { get; }
     }
 
@@ -407,21 +422,21 @@ namespace Microwave.UnitTests
 
     public class Ev : IDomainEvent, ISubscribedDomainEvent
     {
-        public Ev(Identity entityId)
+        public Ev(string entityId)
         {
             EntityId = entityId;
         }
 
-        public Identity EntityId { get; }
+        public string EntityId { get; }
     }
 
     public class TestDomainEvent_OnlySubscribedEventForList : ISubscribedDomainEvent
     {
-        public TestDomainEvent_OnlySubscribedEventForList(Identity entityId)
+        public TestDomainEvent_OnlySubscribedEventForList(string entityId)
         {
             EntityId = entityId;
         }
 
-        public Identity EntityId { get; }
+        public string EntityId { get; }
     }
 }

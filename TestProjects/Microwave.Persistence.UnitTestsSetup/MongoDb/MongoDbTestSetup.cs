@@ -17,6 +17,7 @@ namespace Microwave.Persistence.UnitTestsSetup.MongoDb
                 .WithConnectionString(
                     "mongodb+srv://mongoDbTestUser:meinTestPw@cluster0-xhbcb.azure.mongodb.net/test?retryWrites=true&w=majority")
                 .WithDatabaseName("MicrowaveIntegrationTest");
+
             EventMongoDb.Database.Client.DropDatabase("MicrowaveIntegrationTest");
         }
 
@@ -25,8 +26,15 @@ namespace Microwave.Persistence.UnitTestsSetup.MongoDb
         public override IStatusRepository StatusRepository => new StatusRepositoryMongoDb(EventMongoDb, new CacheThatNeverHasAnything());
         public override IReadModelRepository ReadModelRepository => new ReadModelRepositoryMongoDb(EventMongoDb);
         public override ISnapShotRepository SnapShotRepository => new SnapShotRepositoryMongoDb(EventMongoDb);
-        public override IEventRepository EventRepository => new EventRepositoryMongoDb(EventMongoDb, new VersionCache
-        (EventMongoDb));
+        public override IEventRepository EventRepository => new EventRepositoryMongoDb(
+            EventMongoDb,
+            new VersionCache
+            (EventMongoDb));
+
+        public override IEventRepository EventRepositoryNewInstance => new EventRepositoryMongoDb(
+            EventMongoDb,
+            new VersionCache
+            (EventMongoDb));
     }
 
     public class CacheThatNeverHasAnything : IEventLocationCache

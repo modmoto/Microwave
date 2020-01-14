@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFramework>netstandard2.0</TargetFramework>
+        <TargetFramework>netcoreapp3.1</TargetFramework>
         <DebugType>full</DebugType>
     </PropertyGroup>
     <ItemGroup>
@@ -8,9 +8,12 @@
       <ProjectReference Include="..\Microwave.EventStores\Microwave.EventStores.csproj" />
       <ProjectReference Include="..\Microwave.Queries\Microwave.Queries.csproj" />
     </ItemGroup>
+    
     <ItemGroup>
-        <PackageReference Include="Microsoft.AspNetCore.Mvc">
-            <Version>2.2.0</Version>
-        </PackageReference>
+        <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     </ItemGroup>
 </Project>

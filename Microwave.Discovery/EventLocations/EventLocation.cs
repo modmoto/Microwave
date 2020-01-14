@@ -50,6 +50,16 @@ namespace Microwave.Discovery.EventLocations
             }
         }
 
+        public EventLocation(
+            IEnumerable<MicrowaveServiceNode> services,
+            IEnumerable<EventSchema> unresolvedEventSubscriptions,
+            IEnumerable<ReadModelSubscription> unresolvedReadModeSubscriptions)
+        {
+            Services = services;
+            UnresolvedEventSubscriptions = unresolvedEventSubscriptions;
+            UnresolvedReadModeSubscriptions = unresolvedReadModeSubscriptions;
+        }
+
         private static List<PropertyType> GetDiffOfProperties(EventSchema relevantEvent, EventsPublishedByService service)
         {
             var eventSchemata = service.PublishedEventTypes.Single(ev => ev.Equals(relevantEvent));
@@ -65,16 +75,6 @@ namespace Microwave.Discovery.EventLocations
         public static EventLocation Default()
         {
             return new EventLocation(new List<MicrowaveServiceNode>(), new List<EventSchema>(), new List<ReadModelSubscription>());
-        }
-
-        public EventLocation(
-            IEnumerable<MicrowaveServiceNode> services,
-            IEnumerable<EventSchema> unresolvedEventSubscriptions,
-            IEnumerable<ReadModelSubscription> unresolvedReadModeSubscriptions)
-        {
-            Services = services;
-            UnresolvedEventSubscriptions = unresolvedEventSubscriptions;
-            UnresolvedReadModeSubscriptions = unresolvedReadModeSubscriptions;
         }
 
         public MicrowaveServiceNode GetServiceForEvent(Type eventType)

@@ -1,6 +1,5 @@
 using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microwave.Domain.Identities;
 
 namespace Microwave.Queries.UnitTests
 {
@@ -12,10 +11,10 @@ namespace Microwave.Queries.UnitTests
         {
             var readModelTestForQuery = new ReadModelTestForQuery();
 
-            var guidIdentity = GuidIdentity.Create();
-            readModelTestForQuery.Handle(new TestEv(guidIdentity), 12);
+            var guidstring = Guid.NewGuid();
+            readModelTestForQuery.Handle(new TestEv(guidstring), 12);
 
-            Assert.AreEqual(guidIdentity, readModelTestForQuery.EntityId);
+            Assert.AreEqual(guidstring.ToString(), readModelTestForQuery.EntityId);
         }
 
         [TestMethod]
@@ -23,10 +22,10 @@ namespace Microwave.Queries.UnitTests
         {
             var readModelTestForQuery = new ReadModelTestForQuery();
 
-            var guidIdentity = GuidIdentity.Create();
-            readModelTestForQuery.Handle(new TestEv2(guidIdentity), 14);
+            var guidstring = Guid.NewGuid();
+            readModelTestForQuery.Handle(new TestEv2(guidstring), 14);
 
-            Assert.AreEqual(guidIdentity, readModelTestForQuery.EntityId);
+            Assert.AreEqual(guidstring.ToString(), readModelTestForQuery.EntityId);
             Assert.AreEqual(14, readModelTestForQuery.InnerVersion);
         }
     }
@@ -46,6 +45,6 @@ namespace Microwave.Queries.UnitTests
 
         public long InnerVersion { get; set; }
 
-        public Identity EntityId { get; set; }
+        public string EntityId { get; set; }
     }
 }

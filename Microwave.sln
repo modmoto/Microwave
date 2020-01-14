@@ -53,6 +53,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microwave.Persistence.InMem
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microwave.Persistence.UnitTestsSetup", "TestProjects\Microwave.Persistence.UnitTestsSetup\Microwave.Persistence.UnitTestsSetup.csproj", "{A1C79B11-FAAB-4D3F-822F-08C93C16D4BE}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionItems", "{D103C273-860A-4AAA-B77A-8F537BCFDD26}"
+ProjectSection(SolutionItems) = preProject
+	LICENSE = LICENSE
+	MicrowaveOverview.svg = MicrowaveOverview.svg
+	README.md = README.md
+	version.yaml = version.yaml
+	.gitignore = .gitignore
+EndProjectSection
+EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microwave.Persistence.CosmosDb", "Microwave.Eventstores.Persistence.CosmosDb\Microwave.Persistence.CosmosDb.csproj", "{0A4D3089-A5D1-4D3C-9F11-BD1D0E4DFC0C}"
 EndProject
 Global

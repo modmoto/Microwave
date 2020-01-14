@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microwave.Domain.EventSourcing;
-using Microwave.Domain.Identities;
 using Microwave.Domain.Results;
 using Microwave.EventStores.Ports;
 using Microwave.EventStores.SnapShots;
@@ -18,7 +18,7 @@ namespace Microwave.EventStores
         public EventStore(
             IEventRepository eventRepository,
             ISnapShotRepository snapShotRepository,
-            ISnapShotConfig snapShotConfig = null)
+            ISnapShotConfig snapShotConfig)
         {
             _eventRepository = eventRepository;
             _snapShotRepository = snapShotRepository;
@@ -39,7 +39,7 @@ namespace Microwave.EventStores
             return AppendAsync(new[] {domainEvent}, entityVersion);
         }
 
-        public async Task<EventStoreResult<T>> LoadAsync<T>(Identity entityId) where T : IApply, new()
+        public async Task<EventStoreResult<T>> LoadAsync<T>(string entityId) where T : IApply, new()
         {
             if (entityId == null) return EventStoreResult<T>.NotFound(null);
             var snapShot = await _snapShotRepository.LoadSnapShot<T>(entityId);
@@ -48,10 +48,15 @@ namespace Microwave.EventStores
             if (result.Is<NotFound>()) return EventStoreResult<T>.NotFound(entityId);
             var domainEventWrappers = result.Value.ToList();
             entity.Apply(domainEventWrappers.Select(ev => ev.DomainEvent));
-            var version = domainEventWrappers.LastOrDefault()?.Version ?? snapShot.Version;
+            var version = domainEventWrappers.LastOrDefault()?.EntityStreamVersion ?? snapShot.Version;
             if (_snapShotConfig.NeedSnapshot<T>(snapShot.Version, version))
                 await _snapShotRepository.SaveSnapShot(new SnapShotWrapper<T>(entity, entityId, version));
             return EventStoreResult<T>.Ok(entity, version);
+        }
+
+        public async Task<EventStoreResult<T>> LoadAsync<T>(Guid entityId) where T : IApply, new()
+        {
+            return await LoadAsync<T>(entityId.ToString());
         }
     }
 }
