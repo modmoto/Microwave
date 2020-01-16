@@ -8,6 +8,7 @@ namespace Microwave.Persistence.InMemory.Querries
     {
         private readonly ConcurrentDictionary<string, long> _versionDictionray =
             new ConcurrentDictionary<string, long>();
+
         public Task<long> GetVersionAsync(string domainEventType)
         {
             if (domainEventType == null) return Task.FromResult(0L);
