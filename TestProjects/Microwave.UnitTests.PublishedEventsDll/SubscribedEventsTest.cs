@@ -7,7 +7,7 @@ namespace Microwave.UnitTests.PublishedEventsDll
     {
         public Task HandleAsync(TestDomainEvent_PublishedEvent1 domainEvent)
         {
-            return null;
+            return Task.CompletedTask;
         }
     }
 
@@ -19,7 +19,7 @@ namespace Microwave.UnitTests.PublishedEventsDll
     {
         public Task HandleAsync(TestDomainEvent_PublishedEvent1 domainEvent)
         {
-            return null;
+            return Task.CompletedTask;
         }
     }
 
@@ -27,7 +27,7 @@ namespace Microwave.UnitTests.PublishedEventsDll
     {
         public Task HandleAsync(TestDomainEvent_PublishedEvent2 domainEvent)
         {
-            return null;
+            return Task.CompletedTask;
         }
     }
 

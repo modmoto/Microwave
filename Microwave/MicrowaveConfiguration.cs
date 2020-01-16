@@ -1,27 +1,22 @@
-﻿using System.Collections.Generic;
-using Microwave.EventStores.SnapShots;
-using Microwave.Queries.Polling;
-using Microwave.WebApi;
+using System;
+using System.Linq;
+using Microwave.Queries.Ports;
 
 namespace Microwave
 {
     public class MicrowaveConfiguration
     {
-        public string ServiceName { get; private set; }
-        public ServiceBaseAddressCollection ServiceLocations { get; } = new ServiceBaseAddressCollection();
-        public IMicrowaveHttpClientFactory MicrowaveHttpClientFactory { get; private set; } = new DefaultMicrowaveHttpClientFactory();
-
-        public void WithHttpClientFactory(IMicrowaveHttpClientFactory clientFactory)
+        public void WithFeedType(Type feedType)
         {
-            MicrowaveHttpClientFactory = clientFactory;
+            var interfaces = feedType.GetInterfaces();
+            var feedInterfaceType = typeof(IEventFeed<>);
+            var interfaceNames = interfaces.Select(i => i.Name);
+            if (!interfaceNames.Contains(feedInterfaceType.Name))
+            {
+                throw new ProvidedTypeIsNoEventFeedException(feedType);
+            }
+            FeedType = feedType;
         }
-
-        public IList<ISnapShot> SnapShots { get; } = new List<ISnapShot>();
-        public IList<IPollingInterval> PollingIntervals { get; } = new List<IPollingInterval>();
-
-        public void WithServiceName(string serviceName)
-        {
-            ServiceName = serviceName;
-        }
+        public Type FeedType { get; private set; }
     }
 }

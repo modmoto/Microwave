@@ -1,21 +1,20 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <DebugType>full</DebugType>
     <RootNamespace>Microwave</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Microwave.EventStores\Microwave.EventStores.csproj" />
     <ProjectReference Include="..\Microwave.Queries\Microwave.Queries.csproj" />
-    <ProjectReference Include="..\Microwave.WebApi\Microwave.WebApi.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="1.1.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="3.1.0.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
   </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.0" />
-  </ItemGroup>
-  
 </Project>

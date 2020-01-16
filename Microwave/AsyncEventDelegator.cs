@@ -2,10 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microwave.Discovery;
 using Microwave.Queries.Handler;
 using Microwave.Queries.Polling;
-using Microwave.WebApi.Queries;
 
 namespace Microwave
 {
@@ -15,20 +13,17 @@ namespace Microwave
         private readonly IEnumerable<IQueryEventHandler> _queryHandlers;
         private readonly IEnumerable<IReadModelEventHandler> _readModelHandlers;
         private readonly IEnumerable<IPollingInterval> _updateEveryAttributes;
-        private readonly IDiscoveryHandler _discoveryHandler;
 
         public AsyncEventDelegator(
             IEnumerable<IAsyncEventHandler> asyncEventHandlers,
             IEnumerable<IQueryEventHandler> queryHandlers,
             IEnumerable<IReadModelEventHandler> readModelHandlers,
-            IDiscoveryHandler discoveryHandler,
             IEnumerable<IPollingInterval> updateEveryAttributes = null)
         {
             _asyncEventHandlers = asyncEventHandlers;
             _queryHandlers = queryHandlers;
             _readModelHandlers = readModelHandlers;
             _updateEveryAttributes = updateEveryAttributes ?? new List<IPollingInterval>();
-            _discoveryHandler = discoveryHandler;
         }
 
         public void StartEventPolling()
@@ -80,34 +75,18 @@ namespace Microwave
                             await Task.Delay(timeSpan);
                             await action.Invoke();
                         }
-                        catch (DomainEventNotAssignableToEntityException notAssignableToEntityException)
-                        {
-                            var currentForeground = Console.ForegroundColor;
-                            Console.ForegroundColor = ConsoleColor.Red;
-                            Console.Error.WriteLine(notAssignableToEntityException.Message);
-                            Console.ForegroundColor = currentForeground;
-                        }
                         catch (Exception e)
                         {
                             var currentForeground = Console.ForegroundColor;
                             Console.ForegroundColor = ConsoleColor.Red;
                             Console.Error.WriteLine("Exception was thrown during a Async Handler, this queue is stuck now");
+                            Console.Error.WriteLine(e.Message);
                             Console.Error.WriteLine(e.ToString());
                             Console.ForegroundColor = currentForeground;
                         }
                     }
                     // ReSharper disable once FunctionNeverReturns
                 });
-        }
-
-        public async Task StartDependencyDiscovery()
-        {
-            while (true)
-            {
-                await _discoveryHandler.DiscoverConsumingServices();
-                await Task.Delay(60000);
-            }
-            // ReSharper disable once FunctionNeverReturns
         }
     }
 }

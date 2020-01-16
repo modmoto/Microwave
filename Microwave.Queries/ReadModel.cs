@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 [assembly: InternalsVisibleTo("Microwave.Persistence.UnitTests")]
 namespace Microwave.Queries
 {
-    public abstract class ReadModel<T> : ReadModelBase
+    public abstract class ReadModel<T> : ReadModelBase where T : ISubscribedDomainEvent
     {
         public override Type GetsCreatedOn => typeof(T);
         public override long Version { get; internal set; }

@@ -38,7 +38,7 @@ namespace Microwave.UnitTests.PublishedEventsDll
     {
         public Task HandleAsync(TestDomainEvent_OnlySubscribedEvent_HandleAsync domainEvent)
         {
-            return null;
+            return Task.CompletedTask;
         }
     }
     

@@ -14,6 +14,7 @@ using Microwave.Discovery;
 using Microwave.Discovery.EventLocations;
 using Microwave.Discovery.ServiceMaps;
 using Microwave.UI.Areas.MicrowaveDashboard.Pages;
+using Microwave.WebApi;
 using Moq;
 
 namespace Microwave.UI.UnitTests
@@ -32,7 +33,7 @@ namespace Microwave.UI.UnitTests
 
             mock.Setup(m => m.GetPublishedEvents()).ReturnsAsync(EventsPublishedByService.Reachable(new
             ServiceEndPoint(null), new List<EventSchema>()));
-            var indexModel = new IndexModel(mock.Object, new MicrowaveConfiguration());
+            var indexModel = new IndexModel(mock.Object, new MicrowaveWebApiConfiguration());
 
             await indexModel.OnGetAsync();
 
@@ -51,7 +52,7 @@ namespace Microwave.UI.UnitTests
             mock.Setup(m => m.GetPublishedEvents()).ReturnsAsync(EventsPublishedByService.Reachable(new
                 ServiceEndPoint(null), new List<EventSchema>()));
 
-            var indexModel = new IndexModel(mock.Object, new MicrowaveConfiguration());
+            var indexModel = new IndexModel(mock.Object, new MicrowaveWebApiConfiguration());
 
             await indexModel.OnGetAsync();
 
@@ -62,7 +63,7 @@ namespace Microwave.UI.UnitTests
         public async Task Discover()
         {
             var mock = new Mock<IDiscoveryHandler>();
-            var indexModel = new IndexModel(mock.Object, new MicrowaveConfiguration());
+            var indexModel = new IndexModel(mock.Object, new MicrowaveWebApiConfiguration());
 
             await indexModel.OnPostAsync();
 
