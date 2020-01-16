@@ -9,6 +9,7 @@ using Microwave.EventStores.SnapShots;
 using Microwave.Persistence.InMemory.Eventstores;
 using Microwave.Persistence.MongoDb.Eventstores;
 using Microwave.Persistence.UnitTestsSetup;
+using Microwave.Queries;
 
 namespace Microwave.Persistence.UnitTests.Eventstores
 {
@@ -182,7 +183,7 @@ namespace Microwave.Persistence.UnitTests.Eventstores
         }
     }
 
-    public class Event1 : IDomainEvent
+    public class Event1 : IDomainEvent, ISubscribedDomainEvent
     {
         public Event1(Guid id)
         {

@@ -27,12 +27,17 @@ namespace Microwave
         public async Task<IEnumerable<SubscribedDomainEventWrapper>> GetEventsAsync(long lastVersion = 0)
         {
             var loadEvents = await LoadEventsAccordingToT(lastVersion);
-            var wrappers = loadEvents.Value.Select(e => new SubscribedDomainEventWrapper
+            var wrappers = loadEvents.Value.Select(e =>
             {
-                EntityStreamVersion = e.EntityStreamVersion,
-                OverallVersion = e.OverallVersion,
-                DomainEvent = ParseToSubscribedEvent(e.DomainEvent)
-            });
+                var subscribedDomainEvent = ParseToSubscribedEvent(e.DomainEvent);
+                if (subscribedDomainEvent == null) return null;
+                return new SubscribedDomainEventWrapper
+                {
+                    EntityStreamVersion = e.EntityStreamVersion,
+                    OverallVersion = e.OverallVersion,
+                    DomainEvent = subscribedDomainEvent
+                };
+            }).Where(e => e != null);
 
             return wrappers;
         }
@@ -47,7 +52,8 @@ namespace Microwave
                     .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IHandle<>))
                     .Select(h => h.GetGenericArguments().First());
                 var name = domainEvent.GetType().Name;
-                var subscribedEventType = applicableEvents.First(e => e.Name == name);
+                var subscribedEventType = applicableEvents.FirstOrDefault(e => e.Name == name);
+                if (subscribedEventType == null) return null;
                 _eventType = subscribedEventType;
             }
 

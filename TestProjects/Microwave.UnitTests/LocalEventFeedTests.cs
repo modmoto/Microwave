@@ -27,6 +27,19 @@ namespace Microwave.UnitTests
         }
 
         [TestMethod]
+        public async Task EventFeedsParsesEventCorrectly_NotBeingSubscribedEvent()
+        {
+            var eventRepositoryInMemory = new EventRepositoryInMemory();
+            var domainEvents = new List<IDomainEvent> { new UnitTestsPublished.EventPublishedAndSubscribed("123",
+                "add")};
+            (await eventRepositoryInMemory.AppendAsync(domainEvents, 0)).Check();
+            var localEventFeed = new LocalEventFeed<ReadModelEventHandler<ReadModelWithNotSubbedEvent>>(eventRepositoryInMemory);
+            var eventsAsync = (await localEventFeed.GetEventsAsync()).ToList();
+
+            Assert.AreEqual(0, eventsAsync.Count);
+        }
+
+        [TestMethod]
         public async Task EventFeedsParsesEventCorrectly_QuerryHandler()
         {
             var eventRepositoryInMemory = new EventRepositoryInMemory();
@@ -61,6 +74,15 @@ namespace Microwave.UnitTests
         IHandle<UnitTestsSubscribed.EventPublishedAndSubscribed>
     {
         public void Handle(UnitTestsSubscribed.EventPublishedAndSubscribed domainEvent)
+        {
+        }
+    }
+
+    public class ReadModelWithNotSubbedEvent :
+        ReadModel<EventOnlySubbed>,
+        IHandle<EventOnlySubbed>
+    {
+        public void Handle(EventOnlySubbed domainEvent)
         {
         }
     }
