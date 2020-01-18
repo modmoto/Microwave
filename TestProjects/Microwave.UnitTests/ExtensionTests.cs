@@ -125,6 +125,48 @@ namespace Microwave.UnitTests
         }
 
         [TestMethod]
+        public void AddLocationsNotEmpty_ExtensionMethod()
+        {
+            var collection = (IServiceCollection) new ServiceCollection();
+
+            var serviceBaseAddressCollection = new ServiceBaseAddressCollection
+            {
+                new Uri("http://ard.de")
+            };
+            var storeDependencies = collection
+                .AddMicrowave(c => c.WithFeedType(typeof(EventFeed<>)))
+                .AddMicrowaveWebApi(c =>
+                {
+                    c.WithServiceLocations(serviceBaseAddressCollection);
+                })
+                .AddMicrowavePersistenceLayerInMemory();
+
+            var buildServiceProvider = storeDependencies.BuildServiceProvider();
+            var addressesFromDi = buildServiceProvider.GetService<ServiceBaseAddressCollection>();
+
+            Assert.AreEqual(1, addressesFromDi.Count);
+        }
+
+        [TestMethod]
+        public void AddLocationsNotEmpty_AddOnList()
+        {
+            var collection = (IServiceCollection) new ServiceCollection();
+
+            var storeDependencies = collection
+                .AddMicrowave(c => c.WithFeedType(typeof(EventFeed<>)))
+                .AddMicrowaveWebApi(c =>
+                {
+                    c.ServiceLocations.Add(new Uri("http://ard.de"));
+                })
+                .AddMicrowavePersistenceLayerInMemory();
+
+            var buildServiceProvider = storeDependencies.BuildServiceProvider();
+            var addressesFromDi = buildServiceProvider.GetService<ServiceBaseAddressCollection>();
+
+            Assert.AreEqual(1, addressesFromDi.Count);
+        }
+
+        [TestMethod]
         public void EventRegistrationIsCorrect_OneAssembly()
         {
             var collection = (IServiceCollection) new ServiceCollection();
