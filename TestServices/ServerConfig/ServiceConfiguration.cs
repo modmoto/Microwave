@@ -1,5 +1,4 @@
 ﻿using System;
-using Microwave;
 using Microwave.Discovery;
 
 namespace ServerConfig
