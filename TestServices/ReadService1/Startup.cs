@@ -48,6 +48,7 @@ namespace ReadService1
             });
             app.UseMicrowaveUi();
             app.RunMicrowaveQueries();
+            app.RunMicrowaveServiceDiscovery();
         }
     }
 }

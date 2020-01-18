@@ -48,8 +48,10 @@ namespace WriteService1
             app.UseRouting();
             app.UseEndpoints(endpoints => {
                 endpoints.MapControllers();
-            });app.UseMicrowaveUi();
+            });
+            app.UseMicrowaveUi();
             app.RunMicrowaveQueries();
+            app.RunMicrowaveServiceDiscovery();
         }
     }
 }
