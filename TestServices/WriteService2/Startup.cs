@@ -8,7 +8,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microwave;
 using Microwave.Domain.EventSourcing;
 using Microwave.Persistence.InMemory;
-using Microwave.Persistence.MongoDb;
 using Microwave.UI;
 using Microwave.WebApi;
 using Microwave.WebApi.Queries;

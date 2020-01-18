@@ -63,8 +63,6 @@ namespace Microwave.WebApi
             services.AddTransient<IDiscoveryHandler, DiscoveryHandler>();
             services.AddTransient<DiscoveryPoller>();
 
-            services.AddSingleton(new ServiceBaseAddressCollection());
-
             services.AddTransient<IServiceDiscoveryRepository, DiscoveryRepository>();
 
             services.AddTransient<DomainEventController>();

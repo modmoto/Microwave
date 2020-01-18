@@ -2,10 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microwave.Discovery;
 using Microwave.Queries.Handler;
 using Microwave.Queries.Polling;
-using Moq;
 
 namespace Microwave.UnitTests
 {
