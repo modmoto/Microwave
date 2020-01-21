@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Microwave.Queries.Handler;
 using Microwave.Queries.Polling;
 
@@ -12,17 +13,20 @@ namespace Microwave
         private readonly IEnumerable<IAsyncEventHandler> _asyncEventHandlers;
         private readonly IEnumerable<IQueryEventHandler> _queryHandlers;
         private readonly IEnumerable<IReadModelEventHandler> _readModelHandlers;
+        private readonly ILogger<AsyncEventDelegator> _logger;
         private readonly IEnumerable<IPollingInterval> _updateEveryAttributes;
 
         public AsyncEventDelegator(
             IEnumerable<IAsyncEventHandler> asyncEventHandlers,
             IEnumerable<IQueryEventHandler> queryHandlers,
             IEnumerable<IReadModelEventHandler> readModelHandlers,
+            ILogger<AsyncEventDelegator> logger = null,
             IEnumerable<IPollingInterval> updateEveryAttributes = null)
         {
             _asyncEventHandlers = asyncEventHandlers;
             _queryHandlers = queryHandlers;
             _readModelHandlers = readModelHandlers;
+            _logger = logger;
             _updateEveryAttributes = updateEveryAttributes ?? new List<IPollingInterval>();
         }
 
@@ -77,12 +81,7 @@ namespace Microwave
                         }
                         catch (Exception e)
                         {
-                            var currentForeground = Console.ForegroundColor;
-                            Console.ForegroundColor = ConsoleColor.Red;
-                            Console.Error.WriteLine("Exception was thrown during a Async Handler, this queue is stuck now");
-                            Console.Error.WriteLine(e.Message);
-                            Console.Error.WriteLine(e.ToString());
-                            Console.ForegroundColor = currentForeground;
+                            _logger?.LogError(e, "Microwave: Exception was thrown during a Async Handler, this queue is stuck now");
                         }
                     }
                     // ReSharper disable once FunctionNeverReturns
