@@ -19,10 +19,10 @@ namespace Microwave.WebApi
         {
             while (true)
             {
-                _logger.LogInformation("Updating Service Discovery...");
+                _logger.LogInformation("Microwave: Updating Service Discovery...");
                 await _discoveryHandler.DiscoverConsumingServices();
+                _logger.LogInformation("Microwave: Finish Service Discovery.");
                 await Task.Delay(60000);
-                _logger.LogInformation("Finish Service Discovery.");
             }
             // ReSharper disable once FunctionNeverReturns
         }
