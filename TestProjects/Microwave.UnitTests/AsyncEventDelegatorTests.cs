@@ -25,7 +25,7 @@ namespace Microwave.UnitTests
         public void RunMockWithoutAttribute_ReadModelHandler()
         {
             var asyncEventDelegator = new AsyncEventDelegator(new List<IAsyncEventHandler>(), new
-                List<IQueryEventHandler>(), new List<IReadModelEventHandler> { new RmHandlerMock() }, null, new
+                List<IQueryEventHandler>(), new List<IReadModelEventHandler> { new RmHandlerMock<IPollingInterval>() }, null, new
                 List<IPollingInterval>
             {
                 new PollingInterval<AsyncHandlerImplemented>(3)
@@ -38,7 +38,8 @@ namespace Microwave.UnitTests
         public void RunMockWithoutAttribute_QueryHandler()
         {
             var asyncEventDelegator = new AsyncEventDelegator(new List<IAsyncEventHandler>(), new
-                List<IQueryEventHandler> { new QHandlerMock() }, new List<IReadModelEventHandler>(), null, new
+                List<IQueryEventHandler> { new QHandlerMock<IPollingInterval, TestQuery1>() }, new
+                List<IReadModelEventHandler>(), null, new
                 List<IPollingInterval>
             {
                 new PollingInterval<AsyncHandlerImplemented>(3)
@@ -61,7 +62,7 @@ namespace Microwave.UnitTests
         }
     }
 
-    public class RmHandlerMock : IReadModelEventHandler
+    public class RmHandlerMock<T> : IReadModelEventHandler
     {
         public Task Update()
         {
@@ -69,7 +70,7 @@ namespace Microwave.UnitTests
         }
     }
 
-    public class QHandlerMock : IQueryEventHandler
+    public class QHandlerMock<TQuerry, TEvent>  : IQueryEventHandler
     {
         public Task Update()
         {
