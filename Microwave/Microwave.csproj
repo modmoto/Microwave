@@ -6,14 +6,12 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Microwave.EventStores\Microwave.EventStores.csproj" />
+    <ProjectReference Include="..\Microwave.Logging\Microwave.Logging.csproj" />
     <ProjectReference Include="..\Microwave.Queries\Microwave.Queries.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="1.1.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="3.1.0.0" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="3.1.1" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
   </ItemGroup>
 

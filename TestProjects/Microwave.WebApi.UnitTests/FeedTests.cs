@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Domain.EventSourcing;
+using Microwave.Logging;
 using Microwave.Queries;
 using Microwave.Queries.Handler;
 using Microwave.WebApi.Queries;
@@ -36,7 +37,7 @@ namespace Microwave.WebApi.UnitTests
             var domainEventFactory = new DomainEventFactory(_eventTypeRegistration);
             var readModelFeed = new EventFeed<ReadModelEventHandler<TestReadModel>>(
                 domainEventFactory,
-                factoryMock.Object);
+                factoryMock.Object, new MicrowaveLogger<EventFeed<ReadModelEventHandler<TestReadModel>>>());
             var domainEvents = await readModelFeed.GetEventsAsync();
             var domainEventWrappers = domainEvents.ToList();
             Assert.AreEqual(1, domainEventWrappers.Count);
@@ -57,7 +58,8 @@ namespace Microwave.WebApi.UnitTests
             factoryMock.Setup(m => m.GetClient<ReadModelEventHandler<TestReadModel>>()).ReturnsAsync(domainOverallEventClient);
 
             var domainEventFactory = new DomainEventFactory(_eventTypeRegistration);
-            var readModelFeed = new EventFeed<ReadModelEventHandler<TestReadModel>>(domainEventFactory, factoryMock.Object);
+            var readModelFeed = new EventFeed<ReadModelEventHandler<TestReadModel>>(domainEventFactory, factoryMock
+            .Object, new MicrowaveLogger<EventFeed<ReadModelEventHandler<TestReadModel>>>());
             var domainEvents = await readModelFeed.GetEventsAsync();
             var domainEventWrappers = domainEvents.ToList();
 
@@ -77,7 +79,8 @@ namespace Microwave.WebApi.UnitTests
             factoryMock.Setup(m => m.GetClient<ReadModelEventHandler<TestReadModel>>()).ReturnsAsync(domainOverallEventClient);
 
             var domainEventFactory = new DomainEventFactory(_eventTypeRegistration);
-            var readModelFeed = new EventFeed<ReadModelEventHandler<TestReadModel>>(domainEventFactory, factoryMock.Object);
+            var readModelFeed = new EventFeed<ReadModelEventHandler<TestReadModel>>(domainEventFactory, factoryMock
+            .Object, new MicrowaveLogger<EventFeed<ReadModelEventHandler<TestReadModel>>>());
             var domainEvents = await readModelFeed.GetEventsAsync();
             var domainEventWrappers = domainEvents.ToList();
 

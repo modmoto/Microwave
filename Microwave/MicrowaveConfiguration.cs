@@ -1,12 +1,13 @@
 using System;
 using System.Linq;
+using Microwave.Logging;
 using Microwave.Queries.Ports;
 
 namespace Microwave
 {
     public class MicrowaveConfiguration
     {
-        public void WithFeedType(Type feedType)
+        public MicrowaveConfiguration WithFeedType(Type feedType)
         {
             var interfaces = feedType.GetInterfaces();
             var feedInterfaceType = typeof(IEventFeed<>);
@@ -16,7 +17,16 @@ namespace Microwave
                 throw new ProvidedTypeIsNoEventFeedException(feedType);
             }
             FeedType = feedType;
+            return this;
         }
-        public Type FeedType { get; private set; }
+
+        public MicrowaveConfiguration WithLogLevel(MicrowaveLogLevel logLevel)
+        {
+            LogLevel = new MicrowaveLogLevelType(logLevel);
+            return this;
+        }
+
+        public Type FeedType { get; private set; } = typeof(LocalEventFeed<>);
+        public MicrowaveLogLevelType LogLevel { get; private set; } = new MicrowaveLogLevelType(MicrowaveLogLevel.None);
     }
 }

@@ -6,6 +6,7 @@
     <ItemGroup>
       <ProjectReference Include="..\Microwave.Discovery\Microwave.Discovery.csproj" />
       <ProjectReference Include="..\Microwave.EventStores\Microwave.EventStores.csproj" />
+      <ProjectReference Include="..\Microwave.Logging\Microwave.Logging.csproj" />
       <ProjectReference Include="..\Microwave.Queries\Microwave.Queries.csproj" />
     </ItemGroup>
     
@@ -15,9 +16,7 @@
 
     <ItemGroup>
         <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.1" />
     </ItemGroup>
 
-    <ItemGroup>
-        <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.0" />
-    </ItemGroup>
 </Project>

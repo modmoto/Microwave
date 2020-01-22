@@ -56,6 +56,7 @@ namespace WriteService2
             });
             app.UseMicrowaveUi();
             app.RunMicrowaveQueries();
+            app.RunMicrowaveServiceDiscovery();
         }
     }
 }

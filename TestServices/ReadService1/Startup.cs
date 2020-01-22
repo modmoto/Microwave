@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microwave;
+using Microwave.Logging;
 using Microwave.Persistence.InMemory;
 using Microwave.Queries.Polling;
 using Microwave.UI;
@@ -22,7 +23,8 @@ namespace ReadService1
             services.AddMicrowaveUi();
             services.AddMicrowave(config =>
             {
-                config.WithFeedType(typeof(EventFeed<>));
+                config.WithFeedType(typeof(EventFeed<>))
+                    .WithLogLevel(MicrowaveLogLevel.Info);
             });
             services.AddMicrowaveWebApi(config =>
             {
@@ -48,6 +50,7 @@ namespace ReadService1
             });
             app.UseMicrowaveUi();
             app.RunMicrowaveQueries();
+            app.RunMicrowaveServiceDiscovery();
         }
     }
 }
