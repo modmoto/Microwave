@@ -18,4 +18,11 @@
       <ProjectReference Include="..\..\Microwave.Logging\Microwave.Logging.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+        <PackageReference Include="coverlet.msbuild" Version="2.8.0">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+        </PackageReference>
+    </ItemGroup>
+    
 </Project>
