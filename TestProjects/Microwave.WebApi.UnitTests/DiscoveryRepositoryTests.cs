@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Discovery.EventLocations;
 using Microwave.Discovery.ServiceMaps;
+using Microwave.Logging;
 using Microwave.WebApi.Discovery;
 using Moq;
 using Newtonsoft.Json;
@@ -34,7 +35,7 @@ namespace Microwave.WebApi.UnitTests
 
             var mock = new Mock<IDiscoveryClientFactory>();
             mock.Setup(m => m.GetClient(It.IsAny<Uri>())).ReturnsAsync(client);
-            var serviceDiscoveryRepository = new DiscoveryRepository(mock.Object);
+            var serviceDiscoveryRepository = new DiscoveryRepository(mock.Object, new MicrowaveLogger<DiscoveryRepository>());
             var serviceAdress = new Uri("http://localhost:5000/");
             var publishedEventTypes = serviceDiscoveryRepository.GetPublishedEventTypes(serviceAdress);
 
@@ -67,7 +68,7 @@ namespace Microwave.WebApi.UnitTests
 
             var mock = new Mock<IDiscoveryClientFactory>();
             mock.Setup(m => m.GetClient(It.IsAny<Uri>())).ReturnsAsync(client);
-            var serviceDiscoveryRepository = new DiscoveryRepository(mock.Object);
+            var serviceDiscoveryRepository = new DiscoveryRepository(mock.Object, new MicrowaveLogger<DiscoveryRepository>());
             var serviceAddress = new Uri("http://localhost:5000/");
 
             var serviceNode = await serviceDiscoveryRepository.GetDependantServices(serviceAddress);
@@ -93,7 +94,7 @@ namespace Microwave.WebApi.UnitTests
 
             var mock = new Mock<IDiscoveryClientFactory>();
             mock.Setup(m => m.GetClient(It.IsAny<Uri>())).ReturnsAsync(client);
-            var serviceDiscoveryRepository = new DiscoveryRepository(mock.Object);
+            var serviceDiscoveryRepository = new DiscoveryRepository(mock.Object, new MicrowaveLogger<DiscoveryRepository>());
             var serviceAddress = new Uri("http://localhost:5000/");
 
             var serviceNode = await serviceDiscoveryRepository.GetDependantServices(serviceAddress);

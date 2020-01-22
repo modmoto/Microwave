@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microwave.EventStores;
+using Microwave.Logging;
 using Microwave.Queries;
 using Microwave.Queries.Handler;
 using Microwave.Queries.Ports;
@@ -44,7 +45,8 @@ namespace Microwave
             services.AddTransient<IEventStore, EventStore>();
 
             services.AddTransient<AsyncEventDelegator>();
-
+            services.AddSingleton(typeof(IMicrowaveLogger<>), typeof(MicrowaveLogger<>));
+            services.AddSingleton(microwaveConfiguration.LogLevel);
 
             foreach (var assembly in assemblies)
             {

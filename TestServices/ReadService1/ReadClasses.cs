@@ -11,7 +11,7 @@ namespace ReadService1
     {
         public Task HandleAsync(Event2 domainEvent)
         {
-            Console.WriteLine($"{DateTime.UtcNow.Second} Event2 was handled in Fast Handler");
+            Console.WriteLine($"{DateTime.UtcNow} Event2 was handled in Fast Handler");
             return Task.CompletedTask;
         }
 

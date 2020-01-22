@@ -1,15 +1,17 @@
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 using Microwave.Discovery;
+using Microwave.Logging;
 
 namespace Microwave.WebApi
 {
     public class DiscoveryPoller
     {
         private readonly IDiscoveryHandler _discoveryHandler;
-        private readonly ILogger<DiscoveryPoller> _logger;
+        private readonly IMicrowaveLogger<DiscoveryPoller> _logger;
 
-        public DiscoveryPoller(IDiscoveryHandler discoveryHandler, ILogger<DiscoveryPoller> logger)
+        public DiscoveryPoller(
+            IDiscoveryHandler discoveryHandler,
+            IMicrowaveLogger<DiscoveryPoller> logger)
         {
             _discoveryHandler = discoveryHandler;
             _logger = logger;
