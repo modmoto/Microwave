@@ -28,7 +28,7 @@ namespace Microwave.WebApi
                 {
                     Console.WriteLine($"_____ start wait:");
 
-                    Task.Delay(10000).Wait();
+                    await Task.Delay(10000);
 
                     Console.WriteLine($"_____ end wait:");
                     await _discoveryHandler.DiscoverConsumingServices();
