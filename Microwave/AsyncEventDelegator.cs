@@ -15,7 +15,7 @@ namespace Microwave
         private readonly IEnumerable<IReadModelEventHandler> _readModelHandlers;
         private readonly IMicrowaveLogger<AsyncEventDelegator> _logger;
         private readonly IEnumerable<IPollingInterval> _updateEveryAttributes;
-        private readonly IEnumerable<Task> _tasks = new List<Task>();
+        public IEnumerable<Task> Tasks { get; private set; } = new List<Task>();
 
         public AsyncEventDelegator(
             IEnumerable<IAsyncEventHandler> asyncEventHandlers,
@@ -29,6 +29,11 @@ namespace Microwave
             _readModelHandlers = readModelHandlers;
             _logger = logger ?? new MicrowaveLogger<AsyncEventDelegator>();
             _updateEveryAttributes = updateEveryAttributes ?? new List<IPollingInterval>();
+        }
+
+        public void Reset()
+        {
+            Tasks = new List<Task>();
         }
 
         public void StartEventPolling()
@@ -112,7 +117,7 @@ namespace Microwave
                 // ReSharper disable once FunctionNeverReturns
             });
             task.Start();
-            _tasks.Append(task);
+            Tasks.Append(task);
         }
     }
 }

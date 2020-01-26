@@ -9,7 +9,7 @@ namespace Microwave.WebApi
     {
         private readonly IDiscoveryHandler _discoveryHandler;
         private readonly IMicrowaveLogger<DiscoveryPoller> _logger;
-        private Task _pollTask;
+        public Task PollTask { get; private set; }
 
         public DiscoveryPoller(
             IDiscoveryHandler discoveryHandler,
@@ -21,7 +21,7 @@ namespace Microwave.WebApi
         
         public void StartDependencyDiscovery()
         {
-            _pollTask = new Task(() =>
+            PollTask = new Task(() =>
             {
                 while (true)
                 {
@@ -38,7 +38,7 @@ namespace Microwave.WebApi
                 }
                 // ReSharper disable once FunctionNeverReturns
             });
-            _pollTask.Start();
+            PollTask.Start();
         }
     }
 }
