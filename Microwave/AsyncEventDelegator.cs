@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Microwave.Logging;
 using Microwave.Queries.Handler;
@@ -10,12 +11,12 @@ namespace Microwave
 {
     public class AsyncEventDelegator
     {
-        private readonly IEnumerable<IAsyncEventHandler> _asyncEventHandlers;
-        private readonly IEnumerable<IQueryEventHandler> _queryHandlers;
-        private readonly IEnumerable<IReadModelEventHandler> _readModelHandlers;
+        private readonly List<IAsyncEventHandler> _asyncEventHandlers;
+        private readonly List<IQueryEventHandler> _queryHandlers;
+        private readonly List<IReadModelEventHandler> _readModelHandlers;
         private readonly IMicrowaveLogger<AsyncEventDelegator> _logger;
         private readonly IEnumerable<IPollingInterval> _updateEveryAttributes;
-        public IEnumerable<Task> Tasks { get; private set; } = new List<Task>();
+        public IList<ConfiguredTaskAwaitable> Tasks { get; private set; } = new List<ConfiguredTaskAwaitable>();
 
         public AsyncEventDelegator(
             IEnumerable<IAsyncEventHandler> asyncEventHandlers,
@@ -24,34 +25,34 @@ namespace Microwave
             IMicrowaveLogger<AsyncEventDelegator> logger = null,
             IEnumerable<IPollingInterval> updateEveryAttributes = null)
         {
-            _asyncEventHandlers = asyncEventHandlers;
-            _queryHandlers = queryHandlers;
-            _readModelHandlers = readModelHandlers;
+            _asyncEventHandlers = asyncEventHandlers.ToList();
+            _queryHandlers = queryHandlers.ToList();
+            _readModelHandlers = readModelHandlers.ToList();
             _logger = logger ?? new MicrowaveLogger<AsyncEventDelegator>();
             _updateEveryAttributes = updateEveryAttributes ?? new List<IPollingInterval>();
         }
 
         public void Reset()
         {
-            Tasks = new List<Task>();
+            Tasks = new List<ConfiguredTaskAwaitable>();
         }
 
         public void StartEventPolling()
         {
             #pragma warning disable 4014
-            Console.WriteLine($"Start threads for {_queryHandlers.Count()} QuerryHandlers");
+            Console.WriteLine($"Start threads for {_queryHandlers.Count} QuerryHandlers");
             foreach (var handler in _queryHandlers) StartThreadForHandlingUpdates(
                 () => handler.Update(),
                 GetTimingAttribute(handler),
                 GetInterestingName(handler));
 
-            Console.WriteLine($"Start threads for {_queryHandlers.Count()} ReadModelHandlers");
+            Console.WriteLine($"Start threads for {_queryHandlers.Count} ReadModelHandlers");
             foreach (var handler in _readModelHandlers) StartThreadForHandlingUpdates(
                 () => handler.Update(),
                 GetTimingAttribute(handler),
                 GetInterestingName(handler));
 
-            Console.WriteLine($"Start threads for {_queryHandlers.Count()} AsyncEventHandlers");
+            Console.WriteLine($"Start threads for {_queryHandlers.Count} AsyncEventHandlers");
             foreach (var handler in _asyncEventHandlers) StartThreadForHandlingUpdates(
                 () => handler.Update(),
                 GetUpdateEveryAttribute(handler.HandlerClassType),
@@ -93,7 +94,7 @@ namespace Microwave
 
         private void StartThreadForHandlingUpdates(Func<Task> action, IPollingInterval config, Type loggingType)
         {
-            var task = new Task(async () =>
+            var task = Task.Run(async () =>
             {
                 while (true)
                 {
@@ -115,9 +116,8 @@ namespace Microwave
                 }
 
                 // ReSharper disable once FunctionNeverReturns
-            });
-            task.Start();
-            Tasks.Append(task);
+            }).ConfigureAwait(false);
+            Tasks.Add(task);
         }
     }
 }

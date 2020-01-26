@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Microwave.Discovery;
 using Microwave.Logging;
@@ -9,7 +10,7 @@ namespace Microwave.WebApi
     {
         private readonly IDiscoveryHandler _discoveryHandler;
         private readonly IMicrowaveLogger<DiscoveryPoller> _logger;
-        public Task PollTask { get; private set; }
+        public ConfiguredTaskAwaitable PollTask { get; private set; }
 
         public DiscoveryPoller(
             IDiscoveryHandler discoveryHandler,
@@ -21,7 +22,7 @@ namespace Microwave.WebApi
         
         public void StartDependencyDiscovery()
         {
-            PollTask = new Task(() =>
+            PollTask = Task.Run(async () =>
             {
                 while (true)
                 {
@@ -30,15 +31,14 @@ namespace Microwave.WebApi
                     Task.Delay(10000).Wait();
 
                     Console.WriteLine($"_____ end wait:");
-                    _discoveryHandler.DiscoverConsumingServices();
+                    await _discoveryHandler.DiscoverConsumingServices();
 
-                    Task.Delay(50000);
+                    await Task.Delay(50000);
 
                     Console.WriteLine($"_____ end poll wait:");
                 }
                 // ReSharper disable once FunctionNeverReturns
-            });
-            PollTask.Start();
+            }).ConfigureAwait(false);
         }
     }
 }
