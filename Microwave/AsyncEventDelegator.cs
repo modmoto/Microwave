@@ -88,28 +88,30 @@ namespace Microwave
 
         private void StartThreadForHandlingUpdates(Func<Task> action, IPollingInterval config, Type loggingType)
         {
-            var task = Task.Run(async () =>
+            var task = new Task(async () =>
+            {
+                while (true)
                 {
-                    while (true)
+                    try
                     {
-                        try
-                        {
-                            var now = DateTime.UtcNow;
-                            var nextTrigger = config.Next;
-                            var timeSpan = nextTrigger - now;
-                            await Task.Delay(timeSpan);
-                            Console.WriteLine($"Start handling events for {loggingType.Name}");
-                            await action.Invoke();
-                            Console.WriteLine($"sucessfully handled events for {loggingType.Name}");
-                        }
-                        catch (Exception e)
-                        {
-                            _logger.LogWarning(e, "Microwave: Exception was thrown during a Async Handler, this queue is stuck now");
-                        }
+                        var now = DateTime.UtcNow;
+                        var nextTrigger = config.Next;
+                        var timeSpan = nextTrigger - now;
+                        await Task.Delay(timeSpan);
+                        Console.WriteLine($"Start handling events for {loggingType.Name}");
+                        await action.Invoke();
+                        Console.WriteLine($"sucessfully handled events for {loggingType.Name}");
                     }
-                    // ReSharper disable once FunctionNeverReturns
-                });
+                    catch (Exception e)
+                    {
+                        _logger.LogWarning(e,
+                            "Microwave: Exception was thrown during a Async Handler, this queue is stuck now");
+                    }
+                }
 
+                // ReSharper disable once FunctionNeverReturns
+            });
+            task.Start();
             _tasks.Append(task);
         }
     }

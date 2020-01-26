@@ -21,7 +21,7 @@ namespace Microwave.WebApi
         
         public void StartDependencyDiscovery()
         {
-            _pollTask = Task.Run(() =>
+            _pollTask = new Task(() =>
             {
                 while (true)
                 {
@@ -38,6 +38,7 @@ namespace Microwave.WebApi
                 }
                 // ReSharper disable once FunctionNeverReturns
             });
+            _pollTask.Start();
         }
     }
 }
