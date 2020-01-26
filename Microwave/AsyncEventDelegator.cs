@@ -94,7 +94,7 @@ namespace Microwave
 
         private void StartThreadForHandlingUpdates(Func<Task> action, IPollingInterval config, Type loggingType)
         {
-            var task = Task.Run(async () =>
+            var task = Task.Factory.StartNew(async () =>
             {
                 while (true)
                 {
@@ -116,7 +116,7 @@ namespace Microwave
                 }
 
                 // ReSharper disable once FunctionNeverReturns
-            }).ConfigureAwait(false);
+            }, TaskCreationOptions.LongRunning).ConfigureAwait(false);
             Tasks.Add(task);
         }
     }

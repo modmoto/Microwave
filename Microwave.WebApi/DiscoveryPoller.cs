@@ -22,7 +22,7 @@ namespace Microwave.WebApi
         
         public void StartDependencyDiscovery()
         {
-            PollTask = Task.Run(async () =>
+            PollTask = Task.Factory.StartNew(async () =>
             {
                 while (true)
                 {
@@ -38,7 +38,7 @@ namespace Microwave.WebApi
                     Console.WriteLine($"_____ end poll wait:");
                 }
                 // ReSharper disable once FunctionNeverReturns
-            }).ConfigureAwait(false);
+            }, TaskCreationOptions.LongRunning).ConfigureAwait(false);
         }
     }
 }
