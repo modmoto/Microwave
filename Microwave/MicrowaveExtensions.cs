@@ -50,7 +50,7 @@ namespace Microwave
 
             services.AddTransient<IEventStore, EventStore>();
 
-            services.AddTransient<AsyncEventDelegator>();
+            services.AddSingleton<AsyncEventDelegator>();
             services.AddSingleton(typeof(IMicrowaveLogger<>), typeof(MicrowaveLogger<>));
             services.AddSingleton(microwaveConfiguration.LogLevel);
 

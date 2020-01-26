@@ -69,7 +69,7 @@ namespace Microwave.WebApi
             services.AddSingleton(new DiscoveryConfiguration { ServiceName = microwaveConfiguration.ServiceName });
 
             services.AddTransient<IDiscoveryHandler, DiscoveryHandler>();
-            services.AddTransient<DiscoveryPoller>();
+            services.AddSingleton<DiscoveryPoller>();
 
             services.AddTransient<IServiceDiscoveryRepository, DiscoveryRepository>();
 
