@@ -26,11 +26,19 @@ namespace Microwave.WebApi
             var serviceScope = builder.ApplicationServices.CreateScope();
             var asyncEventDelegator = serviceScope.ServiceProvider.GetService<DiscoveryPoller>();
 
+            Console.WriteLine($"_____ dishHandler resolved: {asyncEventDelegator.GetType()}");
             Task.Run(() =>
             {
+                Console.WriteLine($"_____ start wait:");
+
                 Task.Delay(10000).Wait();
+
+                Console.WriteLine($"_____ end wait:");
                 #pragma warning disable 4014
                 asyncEventDelegator.StartDependencyDiscovery();
+
+
+                Console.WriteLine($"_____ end poll wait:");
                 #pragma warning restore 4014
             });
 

@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using Microwave.Discovery;
 using Microwave.Logging;
@@ -21,9 +22,9 @@ namespace Microwave.WebApi
         {
             while (true)
             {
-                _logger.LogInformation("Microwave: Updating Service Discovery...");
+                Console.WriteLine("Microwave: Updating Service Discovery...");
                 await _discoveryHandler.DiscoverConsumingServices();
-                _logger.LogInformation("Microwave: Finish Service Discovery.");
+                Console.WriteLine("Microwave: Finish Service Discovery.");
                 await Task.Delay(60000);
             }
             // ReSharper disable once FunctionNeverReturns

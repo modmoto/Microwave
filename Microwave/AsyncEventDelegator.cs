@@ -33,19 +33,19 @@ namespace Microwave
         public void StartEventPolling()
         {
             #pragma warning disable 4014
-            _logger.LogInformation($"Start threads for {_queryHandlers.Count()} QuerryHandlers");
+            Console.WriteLine($"Start threads for {_queryHandlers.Count()} QuerryHandlers");
             foreach (var handler in _queryHandlers) StartThreadForHandlingUpdates(
                 () => handler.Update(),
                 GetTimingAttribute(handler),
                 GetInterestingName(handler));
 
-            _logger.LogInformation($"Start threads for {_queryHandlers.Count()} ReadModelHandlers");
+            Console.WriteLine($"Start threads for {_queryHandlers.Count()} ReadModelHandlers");
             foreach (var handler in _readModelHandlers) StartThreadForHandlingUpdates(
                 () => handler.Update(),
                 GetTimingAttribute(handler),
                 GetInterestingName(handler));
 
-            _logger.LogInformation($"Start threads for {_queryHandlers.Count()} AsyncEventHandlers");
+            Console.WriteLine($"Start threads for {_queryHandlers.Count()} AsyncEventHandlers");
             foreach (var handler in _asyncEventHandlers) StartThreadForHandlingUpdates(
                 () => handler.Update(),
                 GetUpdateEveryAttribute(handler.HandlerClassType),
@@ -97,9 +97,9 @@ namespace Microwave
                             var nextTrigger = config.Next;
                             var timeSpan = nextTrigger - now;
                             await Task.Delay(timeSpan);
-                            _logger.LogInformation($"Start handling events for {loggingType.Name}");
+                            Console.WriteLine($"Start handling events for {loggingType.Name}");
                             await action.Invoke();
-                            _logger.LogInformation($"sucessfully handled events for {loggingType.Name}");
+                            Console.WriteLine($"sucessfully handled events for {loggingType.Name}");
                         }
                         catch (Exception e)
                         {

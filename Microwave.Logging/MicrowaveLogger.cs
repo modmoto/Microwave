@@ -27,7 +27,7 @@ namespace Microwave.Logging
         {
             if (_logLevel <= MicrowaveLogLevel.Info)
             {
-                _logger.LogInformation($"Microwave: {message}");
+                Console.WriteLine($"Microwave: {message}");
             }
         }
 
