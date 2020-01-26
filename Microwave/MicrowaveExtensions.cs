@@ -23,18 +23,7 @@ namespace Microwave
             var serviceScope = builder.ApplicationServices.CreateScope();
             var asyncEventDelegator = serviceScope.ServiceProvider.GetService<AsyncEventDelegator>();
             Console.WriteLine($"_____ delegatorResolved: {asyncEventDelegator.GetType()}");
-            Task.Run(() =>
-            {
-
-                Console.WriteLine($"_____ start wait");
-                Task.Delay(10000).Wait();
-
-                Console.WriteLine($"_____ end wait");
-                asyncEventDelegator.StartEventPolling();
-
-                Console.WriteLine($"_____ endpolling");
-            });
-
+            asyncEventDelegator.StartEventPolling();
             return builder;
         }
 
