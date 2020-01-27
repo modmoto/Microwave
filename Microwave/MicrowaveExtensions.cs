@@ -43,6 +43,7 @@ namespace Microwave
             services.AddSingleton(typeof(IMicrowaveLogger<>), typeof(MicrowaveLogger<>));
             services.AddSingleton(microwaveConfiguration.LogLevel);
 
+
             foreach (var assembly in assemblies)
             {
                 services.AddQuerryHandling(assembly);
@@ -64,9 +65,11 @@ namespace Microwave
                 {
                     var assemblyName = AssemblyName.GetAssemblyName(path);
                     assemblies.Add(AppDomain.CurrentDomain.Load(assemblyName));
+                    Console.WriteLine($"ADDED ASS {assemblyName} on {path}");
                 }
                 catch (FileNotFoundException)
                 {
+                    Console.WriteLine($"did not find {path}");
                 }
             });
             return assemblies;
@@ -93,6 +96,8 @@ namespace Microwave
 
                     //handler
                     services.AddTransient(iHandleType, genericHandler);
+
+                    Console.WriteLine($"Added qhandler for {query.Name}");
                 }
             }
 
@@ -130,12 +135,17 @@ namespace Microwave
                         var handleAsyncInstance = s.GetRequiredService(handleAsync);
                         var constructorInfo = genericHandler.GetConstructors().Single();
                         var createdHandlerInstance = constructorInfo.Invoke(new [] { versionRepo, feedInstance, handleAsyncInstance });
+
+                        Console.WriteLine($"Added async handlers for {domainEventType}");
                         return createdHandlerInstance;
+
                     });
 
                     //handleAsyncs
                     var handleAsyncTypeWithEvent = handleAsyncType.MakeGenericType(domainEventType);
                     services.AddTransient(handleAsyncTypeWithEvent, handleAsync);
+
+                    Console.WriteLine($"Added other async type {handleAsync.Name}");
                 }
             }
 
@@ -160,6 +170,8 @@ namespace Microwave
 
                 //handler
                 services.AddTransient(interfaceReadModelHandler, genericReadModelHandler);
+
+                Console.WriteLine($"Added rm handlers for {readModel.Name}");
             }
 
             return services;
