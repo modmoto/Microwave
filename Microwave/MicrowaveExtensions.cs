@@ -82,12 +82,11 @@ namespace Microwave
                     services.AddTransient(feedInterface, feed);
 
                     //handler
-                    services.AddSingleton(genericHandler);
-                    services.AddSingleton(provider =>
-                    {
-                        var requiredService = provider.GetRequiredService(genericHandler) as IQueryEventHandler;
-                        return new QueryBackgroundService(requiredService);
-                    });
+                    services.AddTransient(genericHandler);
+
+                    var backGroundTaskType = typeof(BackgroundService<>);
+                    var task = backGroundTaskType.MakeGenericType(genericHandler);
+                    services.AddSingleton(task);
                 }
             }
 
@@ -117,7 +116,7 @@ namespace Microwave
                     services.AddTransient(feedInterface, feed);
 
                     //handler
-                    services.AddSingleton(s =>
+                    services.AddTransient(s =>
                     {
                         var versionRepo = s.GetRequiredService<IVersionRepository>();
                         var feedInstance = s.GetRequiredService(feedInterface);
@@ -128,12 +127,10 @@ namespace Microwave
                         return createdHandlerInstance;
 
                     });
-                    services.AddSingleton(provider =>
-                    {
-                        var requiredService = provider.GetRequiredService(genericHandler) as IAsyncEventHandler;
-                        return new AsyncEventBackgroundService(requiredService);
-                    });
 
+                    var backGroundTaskType = typeof(BackgroundService<>);
+                    var task = backGroundTaskType.MakeGenericType(genericHandler);
+                    services.AddSingleton(task);
 
                     //handleAsyncs
                     var handleAsyncTypeWithEvent = handleAsyncType.MakeGenericType(domainEventType);
@@ -160,12 +157,10 @@ namespace Microwave
                 services.AddTransient(feedInterface, feed);
 
                 //handler
-                services.AddSingleton(genericReadModelHandler);
-                services.AddSingleton(provider =>
-                {
-                    var requiredService = provider.GetRequiredService(genericReadModelHandler) as IReadModelEventHandler;
-                    return new ReadModelBackgroundService(requiredService);
-                });
+                services.AddTransient(genericReadModelHandler);
+                var backGroundTaskType = typeof(BackgroundService<>);
+                var task = backGroundTaskType.MakeGenericType(genericReadModelHandler);
+                services.AddSingleton(task);
             }
 
             return services;
