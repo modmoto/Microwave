@@ -10,7 +10,7 @@ namespace Microwave.WebApi
     {
         private readonly IDiscoveryHandler _discoveryHandler;
         private readonly IMicrowaveLogger<DiscoveryPoller> _logger;
-        public ConfiguredTaskAwaitable<Task> PollTask { get; private set; }
+        public ConfiguredTaskAwaitable PollTask { get; private set; }
 
         public DiscoveryPoller(
             IDiscoveryHandler discoveryHandler,

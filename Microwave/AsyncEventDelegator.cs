@@ -16,7 +16,7 @@ namespace Microwave
         private readonly List<IReadModelEventHandler> _readModelHandlers;
         private readonly IMicrowaveLogger<AsyncEventDelegator> _logger;
         private readonly IEnumerable<IPollingInterval> _updateEveryAttributes;
-        public IList<ConfiguredTaskAwaitable<Task>> Tasks { get; private set; } = new List<ConfiguredTaskAwaitable<Task>>();
+        public IList<ConfiguredTaskAwaitable> Tasks { get; private set; } = new List<ConfiguredTaskAwaitable>();
 
         public AsyncEventDelegator(
             IEnumerable<IAsyncEventHandler> asyncEventHandlers,
@@ -34,7 +34,7 @@ namespace Microwave
 
         public void Reset()
         {
-            Tasks = new List<ConfiguredTaskAwaitable<Task>>();
+            Tasks = new List<ConfiguredTaskAwaitable>();
         }
 
         public void StartEventPolling()
