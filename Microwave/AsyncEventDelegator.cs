@@ -16,8 +16,6 @@ namespace Microwave
         private readonly List<IReadModelEventHandler> _readModelHandlers;
         private readonly IMicrowaveLogger<AsyncEventDelegator> _logger;
         private readonly IEnumerable<IPollingInterval> _updateEveryAttributes;
-        public IList<ConfiguredTaskAwaitable<Task>> Tasks { get; private set; } = new List<ConfiguredTaskAwaitable<Task>>();
-
         public AsyncEventDelegator(
             IEnumerable<IAsyncEventHandler> asyncEventHandlers,
             IEnumerable<IQueryEventHandler> queryHandlers,
@@ -30,11 +28,6 @@ namespace Microwave
             _readModelHandlers = readModelHandlers.ToList();
             _logger = logger ?? new MicrowaveLogger<AsyncEventDelegator>();
             _updateEveryAttributes = updateEveryAttributes ?? new List<IPollingInterval>();
-        }
-
-        public void Reset()
-        {
-            Tasks = new List<ConfiguredTaskAwaitable<Task>>();
         }
 
         public void StartEventPolling()
@@ -94,7 +87,7 @@ namespace Microwave
 
         private void StartThreadForHandlingUpdates(Func<Task> action, IPollingInterval config, Type loggingType)
         {
-            var task = Task.Factory.StartNew(async () =>
+            Task.Factory.StartNew(async () =>
             {
                 while (true)
                 {
@@ -117,7 +110,6 @@ namespace Microwave
 
                 // ReSharper disable once FunctionNeverReturns
             }, TaskCreationOptions.LongRunning).ConfigureAwait(false);
-            Tasks.Add(task);
         }
     }
 }
