@@ -22,23 +22,24 @@ namespace Microwave.WebApi
         
         public void StartDependencyDiscovery()
         {
-            PollTask = Task.Factory.StartNew(async () =>
+            for (int i = 0; i < 5; i++)
             {
-                while (true)
+                Console.WriteLine($"_____ start wait:");
+
+                Task.Delay(10000).Wait();
+
+                Console.WriteLine($"_____ end wait:");
+                _discoveryHandler.DiscoverConsumingServices().Wait();
+                var microwaveServiceNodes = _discoveryHandler.GetConsumingServices().Result.Services;
+
+                foreach (var serviceNode in microwaveServiceNodes)
                 {
-                    Console.WriteLine($"_____ start wait:");
-
-                    await Task.Delay(10000);
-
-                    Console.WriteLine($"_____ end wait:");
-                    await _discoveryHandler.DiscoverConsumingServices();
-
-                    await Task.Delay(50000);
-
-                    Console.WriteLine($"_____ end poll wait:");
+                    Console.WriteLine(serviceNode.ServiceEndPoint);
                 }
-                // ReSharper disable once FunctionNeverReturns
-            }, TaskCreationOptions.LongRunning).ConfigureAwait(false);
+                // Task.Delay(50000).Wait();
+
+                Console.WriteLine($"_____ end poll wait:");
+            }
         }
     }
 }
