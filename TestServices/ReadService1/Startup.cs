@@ -49,7 +49,6 @@ namespace ReadService1
                 endpoints.MapControllers();
             });
             app.UseMicrowaveUi();
-            app.RunMicrowaveQueries();
             app.RunMicrowaveServiceDiscovery();
         }
     }

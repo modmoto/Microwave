@@ -39,7 +39,6 @@ namespace ModolithService
                 endpoints.MapControllers();
             });
             app.UseMicrowaveUi();
-            app.RunMicrowaveQueries();
         }
     }
 }

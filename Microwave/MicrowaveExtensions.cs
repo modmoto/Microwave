@@ -18,15 +18,6 @@ namespace Microwave
     {
         private static Type _genericTypeOfFeed;
 
-        public static IApplicationBuilder RunMicrowaveQueries(this IApplicationBuilder builder)
-        {
-            var serviceScope = builder.ApplicationServices.CreateScope();
-            var asyncEventDelegator = serviceScope.ServiceProvider.GetService<AsyncEventDelegator>();
-            Console.WriteLine($"_____ delegatorResolved: {asyncEventDelegator.GetType()}");
-            asyncEventDelegator.StartEventPolling();
-            return builder;
-        }
-
         public static IServiceCollection AddMicrowave(
             this IServiceCollection services,
             Action<MicrowaveConfiguration> addConfiguration)
@@ -39,7 +30,6 @@ namespace Microwave
 
             services.AddTransient<IEventStore, EventStore>();
 
-            services.AddSingleton<AsyncEventDelegator>();
             services.AddSingleton(typeof(IMicrowaveLogger<>), typeof(MicrowaveLogger<>));
             services.AddSingleton(microwaveConfiguration.LogLevel);
 
@@ -65,11 +55,9 @@ namespace Microwave
                 {
                     var assemblyName = AssemblyName.GetAssemblyName(path);
                     assemblies.Add(AppDomain.CurrentDomain.Load(assemblyName));
-                    Console.WriteLine($"ADDED ASS {assemblyName} on {path}");
                 }
                 catch (FileNotFoundException)
                 {
-                    Console.WriteLine($"did not find {path}");
                 }
             });
             return assemblies;
@@ -80,7 +68,6 @@ namespace Microwave
             var queryInterfaces = assembly.GetTypes().Where(ImplementsIhandleInterfaceAndQuerry);
             var genericInterfaceTypeOfFeed = typeof(IEventFeed<>);
             var genericTypeOfHandler = typeof(QueryEventHandler<,>);
-            var iHandleType = typeof(IQueryEventHandler);
 
             foreach (var query in queryInterfaces)
             {
@@ -95,9 +82,12 @@ namespace Microwave
                     services.AddTransient(feedInterface, feed);
 
                     //handler
-                    services.AddTransient(iHandleType, genericHandler);
-
-                    Console.WriteLine($"Added qhandler for {query.Name}");
+                    services.AddSingleton(genericHandler);
+                    services.AddSingleton(provider =>
+                    {
+                        var requiredService = provider.GetRequiredService(genericHandler) as IQueryEventHandler;
+                        return new QueryBackgroundService(requiredService);
+                    });
                 }
             }
 
@@ -110,7 +100,6 @@ namespace Microwave
             var handleAsyncInterfaces = assembly.GetTypes().Where(ImplementsIhandleAsyncInterface);
             var genericInterfaceTypeOfFeed = typeof(IEventFeed<>);
             var genericTypeOfHandler = typeof(AsyncEventHandler<>);
-            var genericTypeOfHandlerInterface = typeof(IAsyncEventHandler);
             var handleAsyncType = typeof(IHandleAsync<>);
 
             foreach (var handleAsync in handleAsyncInterfaces)
@@ -128,7 +117,7 @@ namespace Microwave
                     services.AddTransient(feedInterface, feed);
 
                     //handler
-                    services.AddTransient(genericTypeOfHandlerInterface, s =>
+                    services.AddSingleton(s =>
                     {
                         var versionRepo = s.GetRequiredService<IVersionRepository>();
                         var feedInstance = s.GetRequiredService(feedInterface);
@@ -136,16 +125,19 @@ namespace Microwave
                         var constructorInfo = genericHandler.GetConstructors().Single();
                         var createdHandlerInstance = constructorInfo.Invoke(new [] { versionRepo, feedInstance, handleAsyncInstance });
 
-                        Console.WriteLine($"Added async handlers for {domainEventType}");
                         return createdHandlerInstance;
 
                     });
+                    services.AddSingleton(provider =>
+                    {
+                        var requiredService = provider.GetRequiredService(genericHandler) as IAsyncEventHandler;
+                        return new AsyncEventBackgroundService(requiredService);
+                    });
+
 
                     //handleAsyncs
                     var handleAsyncTypeWithEvent = handleAsyncType.MakeGenericType(domainEventType);
                     services.AddTransient(handleAsyncTypeWithEvent, handleAsync);
-
-                    Console.WriteLine($"Added other async type {handleAsync.Name}");
                 }
             }
 
@@ -157,7 +149,6 @@ namespace Microwave
             var readModels = assembly.GetTypes().Where(ImplementsIhandleInterfaceAndReadModel).ToList();
             var genericInterfaceTypeOfFeed = typeof(IEventFeed<>);
             var genericTypeOfHandler = typeof(ReadModelEventHandler<>);
-            var interfaceReadModelHandler = typeof(IReadModelEventHandler);
 
             foreach (var readModel in readModels)
             {
@@ -169,9 +160,12 @@ namespace Microwave
                 services.AddTransient(feedInterface, feed);
 
                 //handler
-                services.AddTransient(interfaceReadModelHandler, genericReadModelHandler);
-
-                Console.WriteLine($"Added rm handlers for {readModel.Name}");
+                services.AddSingleton(genericReadModelHandler);
+                services.AddSingleton(provider =>
+                {
+                    var requiredService = provider.GetRequiredService(genericReadModelHandler) as IReadModelEventHandler;
+                    return new ReadModelBackgroundService(requiredService);
+                });
             }
 
             return services;

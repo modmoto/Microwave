@@ -55,7 +55,6 @@ namespace WriteService2
                 endpoints.MapControllers();
             });
             app.UseMicrowaveUi();
-            app.RunMicrowaveQueries();
             app.RunMicrowaveServiceDiscovery();
         }
     }

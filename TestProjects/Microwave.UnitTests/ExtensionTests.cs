@@ -325,7 +325,7 @@ namespace Microwave.UnitTests
 
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
-            var discoveryController = buildServiceProvider.GetServices<AsyncEventDelegator>().Single();
+            var discoveryController = buildServiceProvider.GetServices<DiscoveryController>().Single();
             Assert.IsNotNull(discoveryController);
         }
         
