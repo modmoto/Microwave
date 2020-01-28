@@ -1,8 +1,8 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 
 namespace Microwave.Queries.Handler
 {
-    public interface IQueryEventHandler
+    public interface IEventHandler
     {
         Task Update();
     }

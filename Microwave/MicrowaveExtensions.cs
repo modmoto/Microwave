@@ -135,14 +135,14 @@ namespace Microwave
 
                     });
 
+                    var backGroundTaskType = typeof(BackgroundService<>);
+                    var task = backGroundTaskType.MakeGenericType(genericHandler);
+                    services.AddSingleton(typeof(IHostedService), task);
+                    services.AddPollingIntervalIfNotExisting(genericHandler);
+
                     //handleAsyncs
                     var handleAsyncTypeWithEvent = handleAsyncType.MakeGenericType(domainEventType);
                     services.AddTransient(handleAsyncTypeWithEvent, handleAsync);
-
-                    var backGroundTaskType = typeof(BackgroundService<>);
-                    var task = backGroundTaskType.MakeGenericType(handleAsync);
-                    services.AddSingleton(typeof(IHostedService), task);
-                    services.AddPollingIntervalIfNotExisting(handleAsync);
                 }
             }
 

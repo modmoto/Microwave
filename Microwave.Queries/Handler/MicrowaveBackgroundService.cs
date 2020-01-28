@@ -8,7 +8,7 @@ using Microwave.Queries.Polling;
 namespace Microwave.Queries.Handler
 {
 
-    public class BackgroundService<T> : IHostedService
+    public class BackgroundService<T> : IHostedService where T : IEventHandler
     {
         private readonly IServiceScopeFactory _serviceScopeFactory;
         private readonly PollingInterval<T> _pollingInterval;
@@ -66,10 +66,7 @@ namespace Microwave.Queries.Handler
                 using (var scope = _serviceScopeFactory.CreateScope())
                 {
                     var service = scope.ServiceProvider.GetService<T>();
-
-                    if (service is IAsyncEventHandler asynchandler) await asynchandler.Update();
-                    if (service is IQueryEventHandler queryHandler) await queryHandler.Update();
-                    if (service is IReadModelEventHandler readModelhandler) await readModelhandler.Update();
+                    await service.Update();
                 }
             }
             while (!stoppingToken.IsCancellationRequested);

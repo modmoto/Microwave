@@ -5,7 +5,7 @@ using Microwave.Queries.Ports;
 
 namespace Microwave.Queries.Handler
 {
-    public class QueryEventHandler<TQuerry, TEvent> : IQueryEventHandler where TQuerry : Query, new()
+    public class QueryEventHandler<TQuerry, TEvent> : IEventHandler  where TQuerry : Query, new()
     {
         private readonly IReadModelRepository _readModelRepository;
         private readonly IEventFeed<QueryEventHandler<TQuerry, TEvent>> _eventFeed;
