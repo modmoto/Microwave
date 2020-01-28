@@ -31,14 +31,14 @@ namespace Microwave.WebApi.Queries
             {
                 if (client.BaseAddress != null) {
                     var response = await client.GetAsync($"?lastVersion={lastVersion}");
-                    Console.WriteLine($"Response for Event Call was {response.StatusCode}");
+                    _logger.LogInformation($"Response for Event Call was {response.StatusCode}");
                     if (!response.IsSuccessStatusCode) return new List<SubscribedDomainEventWrapper>();
                     var content = await response.Content.ReadAsStringAsync();
                     var eventsByTypeAsync = _eventFactory.Deserialize(content).ToList();
-                    Console.WriteLine($"Retrieved {eventsByTypeAsync.Count} events");
+                    _logger.LogInformation($"Retrieved {eventsByTypeAsync.Count} events");
                     return eventsByTypeAsync;
                 }
-                Console.WriteLine($"Base Adress was null, call avoided");
+                _logger.LogInformation($"Base Adress was null, call avoided");
             }
             catch (HttpRequestException e)
             {
