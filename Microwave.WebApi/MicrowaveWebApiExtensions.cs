@@ -43,7 +43,7 @@ namespace Microwave.WebApi
 
             services.AddTransient<IDiscoveryHandler, DiscoveryHandler>();
             services.AddSingleton<IHostedService, MicrowaveBackgroundService<DiscoveryPoller>>();
-            services.AddSingleton(new PollingInterval<DiscoveryPoller>("* * * * 1"));
+            services.AddSingleton(new PollingInterval<DiscoveryPoller>("*/1 * * * *"));
 
             services.AddTransient<IServiceDiscoveryRepository, DiscoveryRepository>();
 

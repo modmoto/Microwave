@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -59,14 +60,21 @@ namespace Microwave.Queries.Handler
         {
             do
             {
-                var now = DateTime.UtcNow;
-                var nextTrigger = _pollingInterval.Next;
-                var timeSpan = nextTrigger - now;
-                await Task.Delay(timeSpan);
-                using (var scope = _serviceScopeFactory.CreateScope())
+                try
                 {
-                    var service = scope.ServiceProvider.GetService<T>();
-                    await service.Update();
+                    var now = DateTime.UtcNow;
+                    var nextTrigger = _pollingInterval.Next;
+                    var timeSpan = nextTrigger - now;
+                    await Task.Delay(timeSpan);
+                    using (var scope = _serviceScopeFactory.CreateScope())
+                    {
+                        var service = scope.ServiceProvider.GetService<T>();
+                        await service.Update();
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine($"Microwave: Error occured in async handler of {typeof(T).GetGenericArguments().First().Name}, Exception: {e.Message}");
                 }
             }
             while (!stoppingToken.IsCancellationRequested);
