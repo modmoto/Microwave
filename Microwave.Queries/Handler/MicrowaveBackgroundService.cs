@@ -1,29 +1,26 @@
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microwave.Queries.Handler;
+using Microwave.Queries.Polling;
 
-namespace Microwave
+namespace Microwave.Queries.Handler
 {
 
     public class BackgroundService<T> : IHostedService
     {
         private readonly IServiceScopeFactory _serviceScopeFactory;
+        private readonly PollingInterval<T> _pollingInterval;
 
-        // protected readonly IPollingInterval UpdateEvery;
         private Task _executingTask;
         private readonly CancellationTokenSource _stoppingCts = new CancellationTokenSource();
 
-        public BackgroundService(IServiceScopeFactory serviceScopeFactory)
+        public BackgroundService(IServiceScopeFactory serviceScopeFactory, PollingInterval<T> pollingInterval)
         {
             _serviceScopeFactory = serviceScopeFactory;
+            _pollingInterval = pollingInterval;
         }
-
-        // public BackgroundService(IEnumerable<IPollingInterval> updateEveryAttributes)
-        // {
-        //     UpdateEvery = updateEveryAttributes.FirstOrDefault(u => u.AsyncCallType == HandlerType) ?? new PollingInterval<Type>();
-        // }
 
         public virtual Task StartAsync(CancellationToken cancellationToken)
         {
@@ -59,11 +56,10 @@ namespace Microwave
         {
             do
             {
-                // var now = DateTime.UtcNow;
-                // var nextTrigger = UpdateEvery.Next;
-                // var timeSpan = nextTrigger - now;
-                // await Task.Delay(timeSpan);
-                await Task.Delay(1000);
+                var now = DateTime.UtcNow;
+                var nextTrigger = _pollingInterval.Next;
+                var timeSpan = nextTrigger - now;
+                await Task.Delay(timeSpan);
                 using (var scope = _serviceScopeFactory.CreateScope())
                 {
                     var service = scope.ServiceProvider.GetService<T>();
