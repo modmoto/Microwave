@@ -38,7 +38,6 @@ namespace Microwave
             services.AddSingleton(typeof(IMicrowaveLogger<>), typeof(MicrowaveLogger<>));
             services.AddSingleton(microwaveConfiguration.LogLevel);
 
-
             foreach (var assembly in assemblies)
             {
                 services.AddQuerryHandling(assembly);
@@ -89,7 +88,7 @@ namespace Microwave
                     //handler
                     services.AddTransient(genericHandler);
 
-                    var backGroundTaskType = typeof(BackgroundService<>);
+                    var backGroundTaskType = typeof(MicrowaveBackgroundService<>);
                     var task = backGroundTaskType.MakeGenericType(genericHandler);
                     services.AddSingleton(typeof(IHostedService), task);
 
@@ -135,7 +134,7 @@ namespace Microwave
 
                     });
 
-                    var backGroundTaskType = typeof(BackgroundService<>);
+                    var backGroundTaskType = typeof(MicrowaveBackgroundService<>);
                     var task = backGroundTaskType.MakeGenericType(genericHandler);
                     services.AddSingleton(typeof(IHostedService), task);
                     services.AddPollingIntervalIfNotExisting(genericHandler);
@@ -167,7 +166,7 @@ namespace Microwave
                 //handler
                 services.AddTransient(genericReadModelHandler);
 
-                var backGroundTaskType = typeof(BackgroundService<>);
+                var backGroundTaskType = typeof(MicrowaveBackgroundService<>);
                 var task = backGroundTaskType.MakeGenericType(genericReadModelHandler);
                 services.AddSingleton(typeof(IHostedService), task);
                 services.AddPollingIntervalIfNotExisting(genericReadModelHandler);
@@ -183,9 +182,9 @@ namespace Microwave
             var constructors = makeGenericType.GetConstructors();
             var constructorInfos = constructors.First(c =>
                 c.GetParameters().SingleOrDefault()?.ParameterType == typeof(int));
-            var intervall = constructorInfos.Invoke(new object[] { 1 });
-            var newInterval = _pollingIntervalls.FirstOrDefault(p => p.AsyncCallType == pollType) ?? intervall;
-            services.AddSingleton(newInterval);
+            var interval = constructorInfos.Invoke(new object[] { 1 });
+            var newInterval = _pollingIntervalls.FirstOrDefault(p => p.AsyncCallType == pollType) ?? interval;
+            services.AddSingleton(makeGenericType, newInterval);
         }
 
         private static bool ImplementsIhandleAsyncInterface(Type myType)

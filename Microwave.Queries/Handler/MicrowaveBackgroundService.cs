@@ -8,7 +8,7 @@ using Microwave.Queries.Polling;
 namespace Microwave.Queries.Handler
 {
 
-    public class BackgroundService<T> : IHostedService where T : IEventHandler
+    public class MicrowaveBackgroundService<T> : IHostedService where T : IEventHandler
     {
         private readonly IServiceScopeFactory _serviceScopeFactory;
         private readonly PollingInterval<T> _pollingInterval;
@@ -16,7 +16,7 @@ namespace Microwave.Queries.Handler
         private Task _executingTask;
         private readonly CancellationTokenSource _stoppingCts = new CancellationTokenSource();
 
-        public BackgroundService(IServiceScopeFactory serviceScopeFactory)
+        public MicrowaveBackgroundService(IServiceScopeFactory serviceScopeFactory)
         {
             _serviceScopeFactory = serviceScopeFactory;
             using (var scope = _serviceScopeFactory.CreateScope())
