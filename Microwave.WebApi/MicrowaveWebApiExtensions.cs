@@ -46,9 +46,6 @@ namespace Microwave.WebApi
 
             services.AddMicrowaveMvcExtensions();
 
-            services.AddSingleton<ISnapShotConfig>(new SnapShotConfig(microwaveConfiguration.SnapShots));
-            services.AddSingleton(microwaveConfiguration.PollingIntervals);
-
             services.AddSingleton(microwaveConfiguration);
             services.AddSingleton(microwaveConfiguration.ServiceLocations);
             services.AddSingleton(microwaveConfiguration.MicrowaveHttpClientFactory);

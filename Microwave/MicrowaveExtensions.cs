@@ -6,9 +6,11 @@ using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microwave.EventStores;
+using Microwave.EventStores.SnapShots;
 using Microwave.Logging;
 using Microwave.Queries;
 using Microwave.Queries.Handler;
+using Microwave.Queries.Polling;
 using Microwave.Queries.Ports;
 
 namespace Microwave
@@ -16,6 +18,7 @@ namespace Microwave
     public static class MicrowaveExtensions
     {
         private static Type _genericTypeOfFeed;
+        private static IList<IPollingInterval> _pollingIntervalls;
 
         public static IServiceCollection AddMicrowave(
             this IServiceCollection services,
@@ -24,8 +27,11 @@ namespace Microwave
             var microwaveConfiguration = new MicrowaveConfiguration();
             addConfiguration.Invoke(microwaveConfiguration);
             _genericTypeOfFeed = microwaveConfiguration.FeedType;
+            _pollingIntervalls = microwaveConfiguration.PollingIntervals;
 
             var assemblies = GetAllAssemblies();
+
+            services.AddSingleton<ISnapShotConfig>(new SnapShotConfig(microwaveConfiguration.SnapShots));
 
             services.AddTransient<IEventStore, EventStore>();
 
@@ -86,6 +92,8 @@ namespace Microwave
                     var backGroundTaskType = typeof(BackgroundService<>);
                     var task = backGroundTaskType.MakeGenericType(genericHandler);
                     services.AddSingleton(typeof(IHostedService), task);
+
+                    services.AddPollingIntervalIfNotExisting(genericHandler);
                 }
             }
 
@@ -127,13 +135,14 @@ namespace Microwave
 
                     });
 
-                    var backGroundTaskType = typeof(BackgroundService<>);
-                    var task = backGroundTaskType.MakeGenericType(genericHandler);
-                    services.AddSingleton(typeof(IHostedService), task);
-
                     //handleAsyncs
                     var handleAsyncTypeWithEvent = handleAsyncType.MakeGenericType(domainEventType);
                     services.AddTransient(handleAsyncTypeWithEvent, handleAsync);
+
+                    var backGroundTaskType = typeof(BackgroundService<>);
+                    var task = backGroundTaskType.MakeGenericType(handleAsync);
+                    services.AddSingleton(typeof(IHostedService), task);
+                    services.AddPollingIntervalIfNotExisting(handleAsync);
                 }
             }
 
@@ -161,9 +170,22 @@ namespace Microwave
                 var backGroundTaskType = typeof(BackgroundService<>);
                 var task = backGroundTaskType.MakeGenericType(genericReadModelHandler);
                 services.AddSingleton(typeof(IHostedService), task);
+                services.AddPollingIntervalIfNotExisting(genericReadModelHandler);
             }
 
             return services;
+        }
+
+        private static void AddPollingIntervalIfNotExisting(this IServiceCollection services, Type pollType)
+        {
+            var type = typeof(PollingInterval<>);
+            var makeGenericType = type.MakeGenericType(pollType);
+            var constructors = makeGenericType.GetConstructors();
+            var constructorInfos = constructors.First(c =>
+                c.GetParameters().SingleOrDefault()?.ParameterType == typeof(int));
+            var intervall = constructorInfos.Invoke(new object[] { 1 });
+            var newInterval = _pollingIntervalls.FirstOrDefault(p => p.AsyncCallType == pollType) ?? intervall;
+            services.AddSingleton(newInterval);
         }
 
         private static bool ImplementsIhandleAsyncInterface(Type myType)

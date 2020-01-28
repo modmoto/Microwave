@@ -16,10 +16,13 @@ namespace Microwave.Queries.Handler
         private Task _executingTask;
         private readonly CancellationTokenSource _stoppingCts = new CancellationTokenSource();
 
-        public BackgroundService(IServiceScopeFactory serviceScopeFactory, PollingInterval<T> pollingInterval)
+        public BackgroundService(IServiceScopeFactory serviceScopeFactory)
         {
             _serviceScopeFactory = serviceScopeFactory;
-            _pollingInterval = pollingInterval;
+            using (var scope = _serviceScopeFactory.CreateScope())
+            {
+                _pollingInterval = scope.ServiceProvider.GetService<PollingInterval<T>>();
+            }
         }
 
         public virtual Task StartAsync(CancellationToken cancellationToken)
