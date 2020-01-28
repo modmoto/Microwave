@@ -42,6 +42,7 @@ namespace Microwave.WebApi
             services.AddSingleton(new DiscoveryConfiguration { ServiceName = microwaveConfiguration.ServiceName });
 
             services.AddTransient<IDiscoveryHandler, DiscoveryHandler>();
+            services.AddTransient<DiscoveryPoller>();
             services.AddSingleton<IHostedService, MicrowaveBackgroundService<DiscoveryPoller>>();
             services.AddSingleton(new PollingInterval<DiscoveryPoller>("*/1 * * * *"));
 

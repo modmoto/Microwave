@@ -64,13 +64,13 @@ namespace Microwave
         private Task<Result<IEnumerable<DomainEventWrapper>>> LoadEventsAccordingToT(long lastVersion)
         {
             var type = typeof(T);
-            if (typeof(AsyncEventHandler<>).IsAssignableFrom(type))
+            if (type.GetGenericTypeDefinition() == typeof(AsyncEventHandler<>))
             {
                 _eventType = type.GetGenericArguments().First();
                 return _eventRepository.LoadEventsByTypeAsync(_eventType.Name, lastVersion);
             }
 
-            if (typeof(QueryEventHandler<,>).IsAssignableFrom(type))
+            if (type.GetGenericTypeDefinition() == typeof(QueryEventHandler<,>))
             {
                 _eventType = type.GetGenericArguments().Skip(1).First();
                 return _eventRepository.LoadEventsByTypeAsync(_eventType.Name, lastVersion);

@@ -27,7 +27,7 @@ namespace Microwave.WebApi.Queries
         {
             var eventLocation = await _statusRepository.GetEventLocation();
             var type = typeof(T);
-            if (typeof(AsyncEventHandler<>).IsAssignableFrom(type))
+            if (type.GetGenericTypeDefinition() == typeof(AsyncEventHandler<>))
             {
                 var eventType = type.GetGenericArguments().First();
                 var domainEventLocation = eventLocation.GetServiceForEvent(eventType);
@@ -38,7 +38,7 @@ namespace Microwave.WebApi.Queries
                 return httpClient;
             }
 
-            if (typeof(QueryEventHandler<,>).IsAssignableFrom(type))
+            if (type.GetGenericTypeDefinition() == typeof(QueryEventHandler<,>))
             {
                 var eventType = type.GetGenericArguments().Skip(1).First();
                 var consumingService = eventLocation.GetServiceForEvent(eventType);

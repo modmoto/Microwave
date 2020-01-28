@@ -21,6 +21,13 @@ namespace Microwave
         private static IList<IPollingInterval> _pollingIntervalls;
 
         public static IServiceCollection AddMicrowave(
+            this IServiceCollection services)
+        {
+            services.AddMicrowave(c => c.WithFeedType(typeof(LocalEventFeed<>)));
+            return services;
+        }
+
+        public static IServiceCollection AddMicrowave(
             this IServiceCollection services,
             Action<MicrowaveConfiguration> addConfiguration)
         {
