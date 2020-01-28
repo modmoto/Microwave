@@ -12,7 +12,7 @@ namespace Microwave.Logging.UnitTests
         public void LogTrace_Null()
         {
             var microwaveLogger = new MicrowaveLogger<TestClassLog>();
-            microwaveLogger.LogInformation("whatever");
+            microwaveLogger.LogTrace("whatever");
         }
 
         [TestMethod]
@@ -21,7 +21,7 @@ namespace Microwave.Logging.UnitTests
             var microwaveLogger = CreateMicrowaveLogger(MicrowaveLogLevel.None);
             var message = "whatever";
 
-            microwaveLogger.LogInformation(message);
+            microwaveLogger.LogTrace(message);
             microwaveLogger.LogWarning(new Exception(), message);
         }
 
@@ -31,7 +31,7 @@ namespace Microwave.Logging.UnitTests
             var microwaveLogger = CreateMicrowaveLogger(MicrowaveLogLevel.Info);
             var message = "whatever";
 
-            microwaveLogger.LogInformation(message);
+            microwaveLogger.LogTrace(message);
         }
 
         [TestMethod]

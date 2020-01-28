@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using Microwave.Discovery;
-using Microwave.EventStores.SnapShots;
-using Microwave.Queries.Polling;
+﻿using Microwave.Discovery;
 
 namespace Microwave.WebApi
 {

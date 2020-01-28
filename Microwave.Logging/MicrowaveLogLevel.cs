@@ -2,9 +2,10 @@ namespace Microwave.Logging
 {
     public enum MicrowaveLogLevel
     {
+        Trace = 1,
         Info = 2,
         Warning = 3,
-        None = 5,
+        None = 5
     }
 
     public class MicrowaveLogLevelType

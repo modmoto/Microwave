@@ -23,11 +23,11 @@ namespace Microwave.Logging
             _logger = new Logger<T>(new NullLoggerFactory());
         }
 
-        public void LogInformation(string message)
+        public void LogTrace(string message)
         {
-            if (_logLevel <= MicrowaveLogLevel.Info)
+            if (_logLevel <= MicrowaveLogLevel.Trace)
             {
-                _logger.LogInformation($"Microwave: {message}");
+                _logger.LogTrace($"Microwave: {message}");
             }
         }
 

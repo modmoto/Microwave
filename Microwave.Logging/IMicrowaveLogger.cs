@@ -4,7 +4,7 @@ namespace Microwave.Logging
 {
     public interface IMicrowaveLogger<T>
     {
-        void LogInformation(string message);
+        void LogTrace(string message);
         void LogWarning(Exception exception, string message);
     }
 }

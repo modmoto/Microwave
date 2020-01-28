@@ -31,7 +31,7 @@ namespace Microwave.WebApi.Discovery
             try
             {
                 var response = await client.GetAsync("Dicovery/PublishedEvents");
-                _logger.LogInformation($"Response for Servicediscovery was {response.StatusCode}");
+                _logger.LogTrace($"Response for Servicediscovery was {response.StatusCode}");
                 if (!response.IsSuccessStatusCode) return EventsPublishedByService.NotReachable(new ServiceEndPoint(serviceAdress));
                 var content = await response.Content.ReadAsStringAsync();
                 var events = JsonConvert.DeserializeObject<PublishedEventsByServiceDto>(content);
@@ -56,7 +56,7 @@ namespace Microwave.WebApi.Discovery
             try
             {
                 var response = await client.GetAsync("Dicovery/ServiceDependencies");
-                _logger.LogInformation($"Response for Servicedependencies was {response.StatusCode}");
+                _logger.LogTrace($"Response for Servicedependencies was {response.StatusCode}");
                 if (!response.IsSuccessStatusCode) return MicrowaveServiceNode.UnreachableMicrowaveServiceNode(new ServiceEndPoint(serviceAddress), new List<ServiceEndPoint>());
                 var content = await response.Content.ReadAsStringAsync();
                 var remoteNode = JsonConvert.DeserializeObject<MicrowaveServiceNodeDto>(content);
