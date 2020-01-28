@@ -129,7 +129,7 @@ namespace Microwave
                     services.AddTransient(feedInterface, feed);
 
                     //handler
-                    services.AddTransient(s =>
+                    services.AddTransient(genericHandler, s =>
                     {
                         var versionRepo = s.GetRequiredService<IVersionRepository>();
                         var feedInstance = s.GetRequiredService(feedInterface);

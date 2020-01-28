@@ -82,9 +82,9 @@ namespace Microwave.UnitTests
                 .AddMicrowavePersistenceLayerInMemory();
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
-            // Assert.AreEqual(typeof(TestEventHandler), buildServiceProvider.GetServices<AsyncEventHandler<TestDomainEvent1>>().First().HandlerClassType);
-            // Assert.AreEqual(typeof(TestEventHandler), buildServiceProvider.GetService<AsyncEventHandler<TestDomainEvent2>>().HandlerClassType);
-            // Assert.AreEqual(typeof(TestEventHandler2), buildServiceProvider.GetServices<AsyncEventHandler<TestDomainEvent1>>().Skip(1).First().HandlerClassType);
+            Assert.AreEqual(typeof(TestEventHandler), buildServiceProvider.GetServices<AsyncEventHandler<TestDomainEvent1>>().First().HandlerClassType);
+            Assert.AreEqual(typeof(TestEventHandler), buildServiceProvider.GetService<AsyncEventHandler<TestDomainEvent2>>().HandlerClassType);
+            Assert.AreEqual(typeof(TestEventHandler2), buildServiceProvider.GetServices<AsyncEventHandler<TestDomainEvent1>>().Skip(1).First().HandlerClassType);
 
             var handleAsync1 = buildServiceProvider.GetServices<IHandleAsync<TestDomainEvent1>>();
             var handleAsync2 = buildServiceProvider.GetServices<IHandleAsync<TestDomainEvent2>>();
@@ -118,19 +118,19 @@ namespace Microwave.UnitTests
             Assert.IsTrue(eventOverallClients3 is EventFeed<ReadModelEventHandler<TestIdQuerySingle>>);
             Assert.IsTrue(eventOverallClients4 is EventFeed<ReadModelEventHandler<TestIdQuery2>>);
 
-            // Assert.IsNull(buildServiceProvider.GetService<QueryEventHandler<TestQueryOnlyOneSubscribedEvent, TestDomainEvent_OnlySubscribedEventForList>>());
-            // Assert.IsNull(buildServiceProvider.GetService<QueryEventHandler<TestQueryOnlyOneSubscribedEvent, TestDomainEvent_OnlySubscribedEventForList>>());
-            // Assert.IsNull(buildServiceProvider.GetService<QueryEventHandler<TestQuery2, TestDomainEvent1>>());
-            // Assert.IsNull(buildServiceProvider.GetService<QueryEventHandler<TestQuery1, TestDomainEvent1>>());
-            // Assert.IsNull(buildServiceProvider.GetService<QueryEventHandler<TestQuery1, TestDomainEvent2>>());
-            // Assert.IsNull(buildServiceProvider.GetService<QueryEventHandler<TestQuerry_NotImplementingIApply, TestDomainEvent_OnlySubscribedEvent>>());
+            Assert.IsNotNull(buildServiceProvider.GetService<QueryEventHandler<TestQueryOnlyOneSubscribedEvent, TestDomainEvent_OnlySubscribedEventForList>>());
+            Assert.IsNotNull(buildServiceProvider.GetService<QueryEventHandler<TestQueryOnlyOneSubscribedEvent, TestDomainEvent_OnlySubscribedEventForList>>());
+            Assert.IsNotNull(buildServiceProvider.GetService<QueryEventHandler<TestQuery2, TestDomainEvent1>>());
+            Assert.IsNotNull(buildServiceProvider.GetService<QueryEventHandler<TestQuery1, TestDomainEvent1>>());
+            Assert.IsNotNull(buildServiceProvider.GetService<QueryEventHandler<TestQuery1, TestDomainEvent2>>());
+            Assert.IsNotNull(buildServiceProvider.GetService<QueryEventHandler<TestQuerry_NotImplementingIApply, TestDomainEvent_OnlySubscribedEvent>>());
 
-            // Assert.IsNull(buildServiceProvider.GetService<ReadModelEventHandler<TestIdQuery>>());
-            // Assert.IsNull(buildServiceProvider.GetService<ReadModelEventHandler<TestIdQuery2>>());
-            // Assert.IsNull(buildServiceProvider.GetService<ReadModelEventHandler<TestIdQuerySingle>>());
-            // Assert.IsNull(buildServiceProvider.GetService<ReadModelEventHandler<TestReadModel>>());
-            // Assert.IsNull(buildServiceProvider.GetService<ReadModelEventHandler<TestReadModel_NotImplementingIApply>>());
-            // Assert.IsNull(buildServiceProvider.GetService<ReadModelEventHandler<TestReadModelSubscriptions>>());
+            Assert.IsNotNull(buildServiceProvider.GetService<ReadModelEventHandler<TestIdQuery>>());
+            Assert.IsNotNull(buildServiceProvider.GetService<ReadModelEventHandler<TestIdQuery2>>());
+            Assert.IsNotNull(buildServiceProvider.GetService<ReadModelEventHandler<TestIdQuerySingle>>());
+            Assert.IsNotNull(buildServiceProvider.GetService<ReadModelEventHandler<TestReadModel>>());
+            Assert.IsNotNull(buildServiceProvider.GetService<ReadModelEventHandler<TestReadModel_NotImplementingIApply>>());
+            Assert.IsNotNull(buildServiceProvider.GetService<ReadModelEventHandler<TestReadModelSubscriptions>>());
         }
 
         [TestMethod]
