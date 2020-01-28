@@ -7,7 +7,7 @@ using Microwave.Queries.Handler;
 namespace Microwave
 {
 
-    public abstract class BackgroundService<T> : IHostedService
+    public class BackgroundService<T> : IHostedService
     {
         private readonly IServiceScopeFactory _serviceScopeFactory;
 

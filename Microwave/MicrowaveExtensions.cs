@@ -158,6 +158,7 @@ namespace Microwave
 
                 //handler
                 services.AddTransient(genericReadModelHandler);
+
                 var backGroundTaskType = typeof(BackgroundService<>);
                 var task = backGroundTaskType.MakeGenericType(genericReadModelHandler);
                 services.AddSingleton(task);
