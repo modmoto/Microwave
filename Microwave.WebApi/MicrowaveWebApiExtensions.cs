@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microwave.Discovery;
 using Microwave.Discovery.EventLocations;
 using Microwave.Discovery.ServiceMaps;
@@ -41,7 +42,7 @@ namespace Microwave.WebApi
             services.AddSingleton(new DiscoveryConfiguration { ServiceName = microwaveConfiguration.ServiceName });
 
             services.AddTransient<IDiscoveryHandler, DiscoveryHandler>();
-            services.AddSingleton<MicrowaveBackgroundService<DiscoveryPoller>>();
+            services.AddSingleton<IHostedService, MicrowaveBackgroundService<DiscoveryPoller>>();
             services.AddSingleton(new PollingInterval<DiscoveryPoller>("* * * * 1"));
 
             services.AddTransient<IServiceDiscoveryRepository, DiscoveryRepository>();
