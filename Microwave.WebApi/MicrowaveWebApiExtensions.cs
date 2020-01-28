@@ -13,6 +13,8 @@ using Microwave.Discovery.ServiceMaps;
 using Microwave.Domain.EventSourcing;
 using Microwave.EventStores.SnapShots;
 using Microwave.Queries;
+using Microwave.Queries.Handler;
+using Microwave.Queries.Polling;
 using Microwave.WebApi.Discovery;
 using Microwave.WebApi.Filters;
 using Microwave.WebApi.Queries;
@@ -21,16 +23,6 @@ namespace Microwave.WebApi
 {
     public static class MicrowaveWebApiExtensions
     {
-        public static IApplicationBuilder RunMicrowaveServiceDiscovery(this IApplicationBuilder builder)
-        {
-            var serviceScope = builder.ApplicationServices.CreateScope();
-            var asyncEventDelegator = serviceScope.ServiceProvider.GetService<DiscoveryPoller>();
-
-            Console.WriteLine($"_____ dishHandler resolved: {asyncEventDelegator.GetType()}");
-            asyncEventDelegator.StartDependencyDiscovery();
-            return builder;
-        }
-
         public static IServiceCollection AddMicrowaveWebApi(
             this IServiceCollection services)
         {
@@ -52,7 +44,8 @@ namespace Microwave.WebApi
             services.AddSingleton(new DiscoveryConfiguration { ServiceName = microwaveConfiguration.ServiceName });
 
             services.AddTransient<IDiscoveryHandler, DiscoveryHandler>();
-            services.AddSingleton<DiscoveryPoller>();
+            services.AddSingleton<MicrowaveBackgroundService<DiscoveryPoller>>();
+            services.AddSingleton(new PollingInterval<DiscoveryPoller>("* * * * 1"));
 
             services.AddTransient<IServiceDiscoveryRepository, DiscoveryRepository>();
 
