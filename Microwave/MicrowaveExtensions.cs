@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microwave.EventStores;
 using Microwave.Logging;
 using Microwave.Queries;
@@ -86,7 +85,7 @@ namespace Microwave
 
                     var backGroundTaskType = typeof(BackgroundService<>);
                     var task = backGroundTaskType.MakeGenericType(genericHandler);
-                    services.AddSingleton(task);
+                    services.AddSingleton(typeof(IHostedService), task);
                 }
             }
 
@@ -130,7 +129,7 @@ namespace Microwave
 
                     var backGroundTaskType = typeof(BackgroundService<>);
                     var task = backGroundTaskType.MakeGenericType(genericHandler);
-                    services.AddSingleton(task);
+                    services.AddSingleton(typeof(IHostedService), task);
 
                     //handleAsyncs
                     var handleAsyncTypeWithEvent = handleAsyncType.MakeGenericType(domainEventType);
@@ -161,7 +160,7 @@ namespace Microwave
 
                 var backGroundTaskType = typeof(BackgroundService<>);
                 var task = backGroundTaskType.MakeGenericType(genericReadModelHandler);
-                services.AddSingleton(task);
+                services.AddSingleton(typeof(IHostedService), task);
             }
 
             return services;

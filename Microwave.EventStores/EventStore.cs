@@ -18,7 +18,7 @@ namespace Microwave.EventStores
         public EventStore(
             IEventRepository eventRepository,
             ISnapShotRepository snapShotRepository,
-            ISnapShotConfig snapShotConfig)
+            ISnapShotConfig snapShotConfig = null)
         {
             _eventRepository = eventRepository;
             _snapShotRepository = snapShotRepository;
