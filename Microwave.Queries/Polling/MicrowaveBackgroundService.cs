@@ -4,9 +4,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microwave.Queries.Polling;
+using Microwave.Logging;
+using Microwave.Queries.Handler;
 
-namespace Microwave.Queries.Handler
+namespace Microwave.Queries.Polling
 {
 
     public class MicrowaveBackgroundService<T> : IHostedService where T : IEventHandler
@@ -74,7 +75,11 @@ namespace Microwave.Queries.Handler
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine($"Microwave: Error occured in async handler of {typeof(T).GetGenericArguments().First().Name}, Exception: {e.Message}");
+                    using (var scope = _serviceScopeFactory.CreateScope())
+                    {
+                        var logger = scope.ServiceProvider.GetService<IMicrowaveLogger<MicrowaveBackgroundService<T>>>();
+                        logger.LogWarning(e, $"Microwave: Error occured in async handler of {typeof(T).GetGenericArguments().First().Name}");
+                    }
                 }
             }
             while (!stoppingToken.IsCancellationRequested);
