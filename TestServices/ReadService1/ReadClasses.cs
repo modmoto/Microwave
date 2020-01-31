@@ -11,13 +11,13 @@ namespace ReadService1
     {
         public Task HandleAsync(Event2 domainEvent)
         {
-            Console.WriteLine($"{DateTime.UtcNow} Event2 was handled in Fast Handler");
+            Console.WriteLine($"HandleAsync2 Working!");
             return Task.CompletedTask;
         }
 
         public Task HandleAsync(Event4 domainEvent)
         {
-            Console.WriteLine("Event4 was handled");
+            Console.WriteLine($"HandleAsync3 Working!");
             return Task.CompletedTask;
         }
 
@@ -32,7 +32,7 @@ namespace ReadService1
     {
         public Task HandleAsync(Event2 domainEvent)
         {
-            Console.WriteLine($"{DateTime.UtcNow.Second} Event2 was handled in Sloooooow Handler 10 secs");
+            Console.WriteLine($"HandleAsync Working!");
             return Task.CompletedTask;
         }
     }
@@ -51,7 +51,7 @@ namespace ReadService1
     {
         public void Handle(Event2 domainEvent)
         {
-            Console.WriteLine($"{DateTime.UtcNow.Second} jeah 25 secs");
+            Console.WriteLine($"RM Working!");
         }
 
         public void Handle(Event4 domainEvent)
@@ -63,6 +63,7 @@ namespace ReadService1
     {
         public void Handle(Event2 domainEvent)
         {
+            Console.WriteLine($"Querry Working!");
             Counter += 1;
         }
 
