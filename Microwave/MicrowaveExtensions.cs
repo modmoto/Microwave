@@ -111,7 +111,7 @@ namespace Microwave
         {
             var handleAsyncInterfaces = assembly.GetTypes().Where(ImplementsIhandleAsyncInterface);
             var genericInterfaceTypeOfFeed = typeof(IEventFeed<>);
-            var genericTypeOfHandler = typeof(AsyncEventHandler<>);
+            var genericTypeOfHandler = typeof(AsyncEventHandler<,>);
             var handleAsyncType = typeof(IHandleAsync<>);
 
             foreach (var handleAsync in handleAsyncInterfaces)
@@ -123,7 +123,7 @@ namespace Microwave
                 {
                     //feed
                     var domainEventType = iHandleEvent.GenericTypeArguments.Single();
-                    var genericHandler = genericTypeOfHandler.MakeGenericType(domainEventType);
+                    var genericHandler = genericTypeOfHandler.MakeGenericType(domainEventType, handleAsync);
                     var feed = _genericTypeOfFeed.MakeGenericType(genericHandler);
                     var feedInterface = genericInterfaceTypeOfFeed.MakeGenericType(genericHandler);
                     services.AddTransient(feedInterface, feed);
@@ -138,7 +138,6 @@ namespace Microwave
                         var createdHandlerInstance = constructorInfo.Invoke(new [] { versionRepo, feedInstance, handleAsyncInstance });
 
                         return createdHandlerInstance;
-
                     });
 
                     var backGroundTaskType = typeof(MicrowaveBackgroundService<>);
