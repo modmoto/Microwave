@@ -19,7 +19,7 @@ namespace Microwave.UnitTests
             var domainEvents = new List<IDomainEvent> { new UnitTestsPublished.EventPublishedAndSubscribed("123",
             "add") };
             (await eventRepositoryInMemory.AppendAsync(domainEvents, 0)).Check();
-            var localEventFeed = new LocalEventFeed<AsyncEventHandler<UnitTestsSubscribed.EventPublishedAndSubscribed>>(eventRepositoryInMemory);
+            var localEventFeed = new LocalEventFeed<AsyncEventHandler<UnitTestsSubscribed.EventPublishedAndSubscribed, bool>>(eventRepositoryInMemory);
             var eventsAsync = (await localEventFeed.GetEventsAsync()).ToList();
 
             var subscribedDomainEvent = eventsAsync.Single().DomainEvent as UnitTestsSubscribed.EventPublishedAndSubscribed;
