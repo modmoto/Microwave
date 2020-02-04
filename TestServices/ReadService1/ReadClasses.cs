@@ -11,13 +11,13 @@ namespace ReadService1
     {
         public Task HandleAsync(Event2 domainEvent)
         {
-            Console.WriteLine($"HandleAsync2 Working!");
+            Console.WriteLine($"HandleAsync2 for Event2  Working!");
             return Task.CompletedTask;
         }
 
         public Task HandleAsync(Event4 domainEvent)
         {
-            Console.WriteLine($"HandleAsync3 Working!");
+            Console.WriteLine($"HandleAsync3 for Event4  Working!");
             return Task.CompletedTask;
         }
 
@@ -32,7 +32,7 @@ namespace ReadService1
     {
         public Task HandleAsync(Event2 domainEvent)
         {
-            Console.WriteLine($"HandleAsync Working!");
+            Console.WriteLine($"HandleAsync for Event2 Working!");
             return Task.CompletedTask;
         }
     }
