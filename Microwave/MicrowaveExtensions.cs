@@ -123,7 +123,7 @@ namespace Microwave
                 {
                     //feed
                     var domainEventType = iHandleEvent.GenericTypeArguments.Single();
-                    var genericHandler = genericTypeOfHandler.MakeGenericType(domainEventType, handleAsync);
+                    var genericHandler = genericTypeOfHandler.MakeGenericType(handleAsync, domainEventType);
                     var feed = _genericTypeOfFeed.MakeGenericType(genericHandler);
                     var feedInterface = genericInterfaceTypeOfFeed.MakeGenericType(genericHandler);
                     services.AddTransient(feedInterface, feed);

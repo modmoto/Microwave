@@ -5,17 +5,17 @@ using Microwave.Queries.Ports;
 
 namespace Microwave.Queries.Handler
 {
-    public class AsyncEventHandler<TSubscribedDomainEvent, TConcreteHandlerType>
+    public class AsyncEventHandler<TConcreteHandlerType, TSubscribedDomainEvent>
         : IEventHandler where TSubscribedDomainEvent : ISubscribedDomainEvent
     {
-        private readonly IEventFeed<AsyncEventHandler<TSubscribedDomainEvent, TConcreteHandlerType>>  _eventFeed;
+        private readonly IEventFeed<AsyncEventHandler<TConcreteHandlerType, TSubscribedDomainEvent>>  _eventFeed;
         private readonly IHandleAsync<TSubscribedDomainEvent> _handler;
         private readonly IVersionRepository _versionRepository;
         public Type HandlerClassType => _handler.GetType();
 
         public AsyncEventHandler(
             IVersionRepository versionRepository,
-            IEventFeed<AsyncEventHandler<TSubscribedDomainEvent, TConcreteHandlerType>> eventFeed,
+            IEventFeed<AsyncEventHandler<TConcreteHandlerType, TSubscribedDomainEvent>> eventFeed,
             IHandleAsync<TSubscribedDomainEvent> handler)
         {
             _versionRepository = versionRepository;

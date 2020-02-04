@@ -64,7 +64,7 @@ namespace Microwave.UnitTests
                 .AddMicrowavePersistenceLayerInMemory();
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
-            Assert.IsNotNull(buildServiceProvider.GetService<PollingInterval<AsyncEventHandler<TestDomainEvent1, TestEventHandler>>>());
+            Assert.IsNotNull(buildServiceProvider.GetService<PollingInterval<AsyncEventHandler<TestEventHandler, TestDomainEvent1>>>());
             Assert.IsNotNull(buildServiceProvider.GetService<PollingInterval<ReadModelEventHandler<TestIdQuery2>>>());
             Assert.IsNotNull(buildServiceProvider.GetService<PollingInterval<QueryEventHandler<TestQuery1, TestDomainEvent1>>>());
             Assert.IsNotNull(buildServiceProvider.GetService<PollingInterval<QueryEventHandler<TestQuery1, TestDomainEvent2>>>());
@@ -82,8 +82,8 @@ namespace Microwave.UnitTests
                 .AddMicrowavePersistenceLayerInMemory();
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
-            Assert.AreEqual(typeof(TestEventHandler), buildServiceProvider.GetService<AsyncEventHandler<TestDomainEvent1, TestEventHandler>>().HandlerClassType);
-            Assert.AreEqual(typeof(TestEventHandler), buildServiceProvider.GetService<AsyncEventHandler<TestDomainEvent2, TestEventHandler>>().HandlerClassType);
+            Assert.AreEqual(typeof(TestEventHandler), buildServiceProvider.GetService<AsyncEventHandler<TestEventHandler, TestDomainEvent1>>().HandlerClassType);
+            Assert.AreEqual(typeof(TestEventHandler), buildServiceProvider.GetService<AsyncEventHandler<TestEventHandler, TestDomainEvent2>>().HandlerClassType);
 
             var handleAsync1 = buildServiceProvider.GetServices<IHandleAsync<TestDomainEvent1>>();
             var handleAsync2 = buildServiceProvider.GetServices<IHandleAsync<TestDomainEvent2>>();
@@ -103,8 +103,8 @@ namespace Microwave.UnitTests
             Assert.IsNotNull(queryFeed2);
             Assert.IsNotNull(queryFeed3);
 
-            var eventFeeds = buildServiceProvider.GetServices<IEventFeed<AsyncEventHandler<TestDomainEvent1, TestEventHandler>>>().FirstOrDefault();
-            var eventFeeds2 = buildServiceProvider.GetServices<IEventFeed<AsyncEventHandler<TestDomainEvent2, TestEventHandler>>>().FirstOrDefault();
+            var eventFeeds = buildServiceProvider.GetServices<IEventFeed<AsyncEventHandler<TestEventHandler, TestDomainEvent1>>>().FirstOrDefault();
+            var eventFeeds2 = buildServiceProvider.GetServices<IEventFeed<AsyncEventHandler<TestEventHandler, TestDomainEvent2>>>().FirstOrDefault();
             Assert.IsNotNull(eventFeeds);
             Assert.IsNotNull(eventFeeds2);
 
@@ -217,7 +217,7 @@ namespace Microwave.UnitTests
 
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
-            var eventFeed1 = buildServiceProvider.GetServices<IEventFeed<AsyncEventHandler<TestDomainEvent1, TestEventHandler>>>().FirstOrDefault();
+            var eventFeed1 = buildServiceProvider.GetServices<IEventFeed<AsyncEventHandler<TestEventHandler, TestDomainEvent1>>>().FirstOrDefault();
             Assert.IsNotNull(eventFeed1); // double as just checking if no exception is done
         }
 

@@ -24,11 +24,11 @@ namespace Microwave.Queries.UnitTests
 
             var handleAsync = new Handler1();
             var handleAsync2 = new Handler2();
-            var eventDelegateHandler1 = new AsyncEventHandler<TestEv2, Handler1>(
+            var eventDelegateHandler1 = new AsyncEventHandler<Handler1, TestEv2>(
                 new VersionRepositoryMongoDb(EventMongoDb),
                 new EventFeedMock(dateTimeOffset, domainEventWrapper), handleAsync);
 
-            var eventDelegateHandler2 = new AsyncEventHandler<TestEv2, Handler1>(
+            var eventDelegateHandler2 = new AsyncEventHandler<Handler1, TestEv2>(
                 new VersionRepositoryMongoDb(EventMongoDb),
                 new EventFeedMock(dateTimeOffset, domainEventWrapper), handleAsync2);
 
@@ -40,7 +40,7 @@ namespace Microwave.Queries.UnitTests
         }
     }
 
-    public class EventFeedMock : IEventFeed<AsyncEventHandler<TestEv2, Handler1>>
+    public class EventFeedMock : IEventFeed<AsyncEventHandler<Handler1, TestEv2>>
     {
         private readonly long _globalVersion;
         private readonly SubscribedDomainEventWrapper _domainEventWrapper;
