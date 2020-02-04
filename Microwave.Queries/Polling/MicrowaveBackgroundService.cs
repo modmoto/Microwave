@@ -9,7 +9,6 @@ using Microwave.Queries.Handler;
 
 namespace Microwave.Queries.Polling
 {
-
     public class MicrowaveBackgroundService<T> : IHostedService where T : IEventHandler
     {
         private readonly IServiceScopeFactory _serviceScopeFactory;
@@ -17,6 +16,7 @@ namespace Microwave.Queries.Polling
 
         private Task _executingTask;
         private readonly CancellationTokenSource _stoppingCts = new CancellationTokenSource();
+        public CancellationToken CancellationToken { get; private set; }
 
         public MicrowaveBackgroundService(IServiceScopeFactory serviceScopeFactory)
         {
@@ -52,13 +52,13 @@ namespace Microwave.Queries.Polling
             }
             finally
             {
-                await Task.WhenAny(_executingTask, Task.Delay(Timeout.Infinite,
-                    cancellationToken));
+                await Task.WhenAny(_executingTask, Task.Delay(Timeout.Infinite, cancellationToken));
             }
         }
 
         protected virtual async Task ExecuteAsync(CancellationToken stoppingToken)
         {
+            CancellationToken = stoppingToken;
             do
             {
                 try
@@ -66,12 +66,12 @@ namespace Microwave.Queries.Polling
                     var now = DateTime.UtcNow;
                     var nextTrigger = _pollingInterval.Next;
                     var timeSpan = nextTrigger - now;
-                    await Task.Delay(timeSpan);
                     using (var scope = _serviceScopeFactory.CreateScope())
                     {
                         var service = scope.ServiceProvider.GetService<T>();
                         await service.Update();
                     }
+                    await Task.Delay(timeSpan, stoppingToken);
                 }
                 catch (Exception e)
                 {

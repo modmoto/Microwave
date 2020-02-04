@@ -1,0 +1,18 @@
+@page
+@model Microwave.UI.Areas.MicrowaveDashboard.Pages.JobsPage
+
+@{
+    ViewData["ServiceName"] = Model.ServiceName;
+    ViewData["ServiceNameAndTitle"] = Model.ServiceName + " - Jobs";
+}
+
+<div>
+<div class="container">
+    <ul class="list-group p-3">
+        @foreach (var job in Model.Jobs)
+        {
+            <li class="list-group-item">@job.GenericType @job.HandlerName @job.EventName</li>
+        }
+    </ul>
+</div>
+</div>
