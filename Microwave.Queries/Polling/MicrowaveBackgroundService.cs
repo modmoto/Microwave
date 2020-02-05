@@ -54,7 +54,7 @@ namespace Microwave.Queries.Polling
             }
         }
 
-        public async Task ExecuteAsync(CancellationToken stoppingToken)
+        private async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             do
             {
