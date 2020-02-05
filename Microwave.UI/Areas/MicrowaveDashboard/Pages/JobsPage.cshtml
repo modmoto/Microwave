@@ -11,7 +11,16 @@
     <ul class="list-group p-3">
         @foreach (var job in Model.Jobs)
         {
-            <li class="list-group-item">@job.GenericType @job.HandlerName @job.EventName</li>
+            <li class="list-group-item d-flex">
+                <div>
+                    <div class="float-left">
+                        @job.GenericType @job.HandlerName @job.EventName
+                    </div>
+                    <form class="ml-auto float-right" method="post">
+                        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Trigger now</button>
+                    </form>
+                </div>
+            </li>
         }
     </ul>
 </div>

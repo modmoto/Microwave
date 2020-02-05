@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
 using Microwave.Queries.Polling;
 using Microwave.WebApi;
@@ -17,6 +19,10 @@ namespace Microwave.UI.Areas.MicrowaveDashboard.Pages
                                    => new JobDto(j));
         }
 
+        public async Task<IActionResult> OnPostAsync()
+        {
+            return Redirect("JobsPage");
+        }
         public IEnumerable<JobDto> Jobs { get; }
     }
 
