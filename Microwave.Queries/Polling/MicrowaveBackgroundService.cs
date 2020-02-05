@@ -16,8 +16,6 @@ namespace Microwave.Queries.Polling
 
         private Task _executingTask;
         private readonly CancellationTokenSource _stoppingCts = new CancellationTokenSource();
-        public CancellationToken CancellationToken { get; private set; }
-
         public MicrowaveBackgroundService(IServiceScopeFactory serviceScopeFactory)
         {
             _serviceScopeFactory = serviceScopeFactory;
@@ -27,7 +25,7 @@ namespace Microwave.Queries.Polling
             }
         }
 
-        public virtual Task StartAsync(CancellationToken cancellationToken)
+        public Task StartAsync(CancellationToken cancellationToken)
         {
             _executingTask = ExecuteAsync(_stoppingCts.Token);
 
@@ -39,7 +37,7 @@ namespace Microwave.Queries.Polling
             return Task.CompletedTask;
         }
 
-        public virtual async Task StopAsync(CancellationToken cancellationToken)
+        public async Task StopAsync(CancellationToken cancellationToken)
         {
             if (_executingTask == null)
             {
@@ -56,9 +54,8 @@ namespace Microwave.Queries.Polling
             }
         }
 
-        protected virtual async Task ExecuteAsync(CancellationToken stoppingToken)
+        public async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            CancellationToken = stoppingToken;
             do
             {
                 try
