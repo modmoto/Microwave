@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -11,9 +12,9 @@ namespace Microwave.UI.Areas.MicrowaveDashboard.Pages
 {
     public class JobsPage : MicrowavePageModel
     {
-        private readonly IEnumerable<IHostedService> _jobs;
+        private readonly IEnumerable<IMicrowaveBackgroundService> _jobs;
 
-        public JobsPage(MicrowaveWebApiConfiguration configuration, IEnumerable<IHostedService> jobs) : base
+        public JobsPage(MicrowaveWebApiConfiguration configuration, IEnumerable<IMicrowaveBackgroundService> jobs) : base
         (configuration)
         {
             _jobs = jobs;
@@ -22,15 +23,11 @@ namespace Microwave.UI.Areas.MicrowaveDashboard.Pages
         public async Task<IActionResult> OnPostAsync(int index)
         {
             var hostedService = _jobs.ToList()[index];
-            await hostedService.StopAsync(CancellationToken.None);
-            await hostedService.StartAsync(CancellationToken.None);
+            await hostedService.RunAsync();
             return Redirect("JobsPage");
         }
 
-        public IEnumerable<JobDto> Jobs => _jobs.Where(j => j.GetType().IsGenericType
-                                                            && j.GetType().GetGenericTypeDefinition() ==
-                                                            typeof(MicrowaveBackgroundService<>)
-                                                            && j.GetType().GetGenericArguments().First() !=
+        public IEnumerable<JobDto> Jobs => _jobs.Where(j => j.GetType().GetGenericArguments().First() !=
                                                             typeof(DiscoveryPoller)).Select((j, index) => new JobDto
                                                             (j, index));
     }
@@ -41,14 +38,16 @@ namespace Microwave.UI.Areas.MicrowaveDashboard.Pages
         public string GenericType { get; }
         public string HandlerName { get; }
         public string EventName { get; }
+        public DateTime NextRun { get; }
 
-        public JobDto(IHostedService hostedService, int index)
+        public JobDto(IMicrowaveBackgroundService hostedService, int index)
         {
             Index = index;
             GenericType = hostedService.GetType().GetGenericArguments().First().GetGenericTypeDefinition().Name;
             var genericHandler = hostedService.GetType().GetGenericArguments().First();
             HandlerName = genericHandler.GetGenericArguments().FirstOrDefault()?.Name;
             EventName = genericHandler.GetGenericArguments().LastOrDefault()?.Name;
+            NextRun = hostedService.NextRun;
         }
     }
 }

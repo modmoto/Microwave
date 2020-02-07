@@ -98,6 +98,7 @@ namespace Microwave
                     var backGroundTaskType = typeof(MicrowaveBackgroundService<>);
                     var task = backGroundTaskType.MakeGenericType(genericHandler);
                     services.AddSingleton(typeof(IHostedService), task);
+                    services.AddSingleton(typeof(IMicrowaveBackgroundService), task);
 
                     services.AddPollingIntervalIfNotExisting(genericHandler);
                 }
@@ -143,6 +144,7 @@ namespace Microwave
                     var backGroundTaskType = typeof(MicrowaveBackgroundService<>);
                     var task = backGroundTaskType.MakeGenericType(genericHandler);
                     services.AddSingleton(typeof(IHostedService), task);
+                    services.AddSingleton(typeof(IMicrowaveBackgroundService), task);
                     services.AddPollingIntervalIfNotExisting(genericHandler);
 
                     //handleAsyncs
@@ -175,6 +177,7 @@ namespace Microwave
                 var backGroundTaskType = typeof(MicrowaveBackgroundService<>);
                 var task = backGroundTaskType.MakeGenericType(genericReadModelHandler);
                 services.AddSingleton(typeof(IHostedService), task);
+                services.AddSingleton(typeof(IMicrowaveBackgroundService), task);
                 services.AddPollingIntervalIfNotExisting(genericReadModelHandler);
             }
 

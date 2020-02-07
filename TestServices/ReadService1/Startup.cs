@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microwave;
 using Microwave.Logging;
 using Microwave.Persistence.InMemory;
+using Microwave.Queries.Handler;
 using Microwave.Queries.Polling;
 using Microwave.UI;
 using Microwave.WebApi;
@@ -26,7 +27,7 @@ namespace ReadService1
                 config.WithFeedType(typeof(EventFeed<>))
                     .WithLogLevel(MicrowaveLogLevel.Info);
                 //
-                // config.PollingIntervals.Add(new PollingInterval<Handler2>(10));
+                config.PollingIntervals.Add(new PollingInterval<AsyncEventHandler<Handler2, Event2>>("0 0 1 * *"));
                 // config.PollingIntervals.Add(new PollingInterval<ReadModel1>(25));
                 // config.PollingIntervals.Add(new PollingInterval<Querry1>(5));
             });

@@ -59,12 +59,13 @@ namespace Microwave.UnitTests
             var collection = (IServiceCollection) new ServiceCollection();
 
             var storeDependencies = collection
-                .AddMicrowave()
+                .AddMicrowave(c => c.PollingIntervals.Add(new  PollingInterval<AsyncEventHandler<TestEventHandler, TestDomainEvent1>>("0 0 1 1 *")))
                 .AddMicrowaveWebApi()
                 .AddMicrowavePersistenceLayerInMemory();
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
-            Assert.IsNotNull(buildServiceProvider.GetService<PollingInterval<AsyncEventHandler<TestEventHandler, TestDomainEvent1>>>());
+            var pollingInterval = buildServiceProvider.GetService<PollingInterval<AsyncEventHandler<TestEventHandler, TestDomainEvent1>>>();
+            Assert.IsNotNull(pollingInterval);
             Assert.IsNotNull(buildServiceProvider.GetService<PollingInterval<ReadModelEventHandler<TestIdQuery2>>>());
             Assert.IsNotNull(buildServiceProvider.GetService<PollingInterval<QueryEventHandler<TestQuery1, TestDomainEvent1>>>());
             Assert.IsNotNull(buildServiceProvider.GetService<PollingInterval<QueryEventHandler<TestQuery1, TestDomainEvent2>>>());

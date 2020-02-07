@@ -16,9 +16,14 @@
                     <div class="pt-2 float-left">
                         @job.GenericType @job.HandlerName @job.EventName
                     </div>
-                    <form class="ml-auto float-right" method="post">
-                        <button class="btn btn-outline-success my-2 my-sm-0" type="submit" name="index" value=@job.Index>Trigger now</button>
-                    </form>
+                    <div class="ml-auto float-right">
+                        <div class="pt-2 pr-2 text-secondary float-left">
+                            next run: @job.NextRun
+                        </div>
+                        <form class="float-right" method="post">
+                            <button class="btn btn-outline-success my-2 my-sm-0" type="submit" name="index" value=@job.Index>Trigger now</button>
+                        </form>
+                    </div>
                 </div>
             </li>
         }
