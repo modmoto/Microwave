@@ -63,6 +63,11 @@ namespace Microwave.Queries.Polling
                     var now = DateTime.UtcNow;
                     var nextTrigger = _pollingInterval.Next;
                     var timeSpan = nextTrigger - now;
+                    using (var scope = _serviceScopeFactory.CreateScope())
+                    {
+                        var logger = scope.ServiceProvider.GetService<IMicrowaveLogger<MicrowaveBackgroundService<T>>>();
+                        logger.LogTrace($"Waiting for {timeSpan} in {typeof(T).GetGenericArguments().First().Name}");
+                    }
                     await Task.Delay(timeSpan, stoppingToken);
                     await RunAsync();
                 }
@@ -71,7 +76,7 @@ namespace Microwave.Queries.Polling
                     using (var scope = _serviceScopeFactory.CreateScope())
                     {
                         var logger = scope.ServiceProvider.GetService<IMicrowaveLogger<MicrowaveBackgroundService<T>>>();
-                        logger.LogWarning(e, $"Microwave: Error occured in async handler of {typeof(T).GetGenericArguments().First().Name}");
+                        logger.LogWarning(e, $"Error occured in async handler of {typeof(T).GetGenericArguments().First().Name}");
                     }
                 }
             }
