@@ -18,6 +18,7 @@
       <ProjectReference Include="..\..\Microwave.Discovery\Microwave.Discovery.csproj" />
       <ProjectReference Include="..\..\Microwave.UI\Microwave.UI.csproj" />
       <ProjectReference Include="..\..\Microwave\Microwave.csproj" />
+      <ProjectReference Include="..\Microwave.UnitTests\Microwave.UnitTests.csproj" />
     </ItemGroup>
 
     <ItemGroup>

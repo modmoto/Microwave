@@ -16,6 +16,7 @@ namespace Microwave.Queries.Polling
 
         private Task _executingTask;
         private readonly CancellationTokenSource _stoppingCts = new CancellationTokenSource();
+
         public MicrowaveBackgroundService(IServiceScopeFactory serviceScopeFactory)
         {
             _serviceScopeFactory = serviceScopeFactory;
@@ -66,7 +67,7 @@ namespace Microwave.Queries.Polling
                     using (var scope = _serviceScopeFactory.CreateScope())
                     {
                         var logger = scope.ServiceProvider.GetService<IMicrowaveLogger<MicrowaveBackgroundService<T>>>();
-                        logger.LogTrace($"Waiting for {timeSpan} in {typeof(T).GetGenericArguments().First().Name}");
+                        logger.LogTrace($"Waiting for {timeSpan.TotalMilliseconds} in {typeof(T).Name}");
                     }
                     await Task.Delay(timeSpan, stoppingToken);
                     await RunAsync();
@@ -76,7 +77,7 @@ namespace Microwave.Queries.Polling
                     using (var scope = _serviceScopeFactory.CreateScope())
                     {
                         var logger = scope.ServiceProvider.GetService<IMicrowaveLogger<MicrowaveBackgroundService<T>>>();
-                        logger.LogWarning(e, $"Error occured in async handler of {typeof(T).GetGenericArguments().First().Name}");
+                        logger.LogWarning(e, $"Error occured in async handler of {typeof(T).Name}");
                     }
                 }
             }

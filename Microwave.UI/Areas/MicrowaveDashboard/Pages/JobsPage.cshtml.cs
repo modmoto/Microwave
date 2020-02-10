@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -30,24 +29,5 @@ namespace Microwave.UI.Areas.MicrowaveDashboard.Pages
         public IEnumerable<JobDto> Jobs => _jobs.Where(j => j.GetType().GetGenericArguments().First() !=
                                                             typeof(DiscoveryPoller)).Select((j, index) => new JobDto
                                                             (j, index));
-    }
-
-    public class JobDto
-    {
-        public int Index { get; }
-        public string GenericType { get; }
-        public string HandlerName { get; }
-        public string EventName { get; }
-        public DateTime NextRun { get; }
-
-        public JobDto(IMicrowaveBackgroundService hostedService, int index)
-        {
-            Index = index;
-            GenericType = hostedService.GetType().GetGenericArguments().First().GetGenericTypeDefinition().Name;
-            var genericHandler = hostedService.GetType().GetGenericArguments().First();
-            HandlerName = genericHandler.GetGenericArguments().FirstOrDefault()?.Name;
-            EventName = genericHandler.GetGenericArguments().LastOrDefault()?.Name;
-            NextRun = hostedService.NextRun;
-        }
     }
 }
