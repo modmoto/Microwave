@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microwave.Logging;
 using Microwave.Queries.Handler;
 
@@ -68,9 +69,12 @@ namespace Microwave.Queries.Polling
                     {
                         var logger = scope.ServiceProvider.GetService<IMicrowaveLogger<MicrowaveBackgroundService<T>>>();
                         logger.LogTrace($"Waiting for {timeSpan.TotalMilliseconds} in {typeof(T).Name}");
+
+                        await Task.Delay(timeSpan, stoppingToken);
+                        logger.LogTrace($"Stop Wait, token is: {stoppingToken.IsCancellationRequested}");
+                        await RunAsync();
+                        logger.LogTrace($"run async done, token is: {stoppingToken.IsCancellationRequested}");
                     }
-                    await Task.Delay(timeSpan, stoppingToken);
-                    await RunAsync();
                 }
                 catch (Exception e)
                 {
@@ -82,6 +86,11 @@ namespace Microwave.Queries.Polling
                 }
             }
             while (!stoppingToken.IsCancellationRequested);
+            using (var scope = _serviceScopeFactory.CreateScope())
+            {
+                var logger = scope.ServiceProvider.GetService<IMicrowaveLogger<MicrowaveBackgroundService<T>>>();
+                logger.LogTrace($"returning from handler  {typeof(T).Name}");
+            }
         }
 
         public async Task RunAsync()
