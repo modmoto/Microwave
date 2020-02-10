@@ -70,9 +70,9 @@ namespace Microwave.Queries.Polling
                         var logger = scope.ServiceProvider.GetService<IMicrowaveLogger<MicrowaveBackgroundService<T>>>();
                         logger.LogTrace($"Waiting for {timeSpan.TotalMilliseconds} in {typeof(T).Name}");
 
-                        await Task.Delay(timeSpan, stoppingToken);
+                        Task.Delay(timeSpan, stoppingToken).Wait(stoppingToken);
                         logger.LogTrace($"Stop Wait, token is: {stoppingToken.IsCancellationRequested}");
-                        await RunAsync();
+                        RunAsync().Wait(stoppingToken);
                         logger.LogTrace($"run async done, token is: {stoppingToken.IsCancellationRequested}");
                     }
                 }
