@@ -31,13 +31,11 @@ namespace Microwave.Queries.Handler
             var latestEvents = await _eventFeed.GetEventsAsync(lastVersion);
             foreach (var latestEvent in latestEvents)
             {
-                var methodInfos = handleType.GetMethods();
-                var methodInfo = methodInfos.FirstOrDefault(m => m.GetParameters().Length == 1
-                                                                 && m.Name == "HandleAsync"
-                                                                 && m.GetParameters().First().ParameterType == latestEvent.DomainEvent.GetType());
-                if (methodInfo == null) continue;
-                await (Task) methodInfo.Invoke(_handler, new object[] { latestEvent.DomainEvent });
-                await _versionRepository.SaveVersion(new LastProcessedVersion(domainEventType, latestEvent.OverallVersion));
+                if (latestEvent.DomainEvent is TSubscribedDomainEvent domainEvent)
+                {
+                    await _handler.HandleAsync(domainEvent);
+                    await _versionRepository.SaveVersion(new LastProcessedVersion(domainEventType, latestEvent.OverallVersion));
+                }
             }
         }
     }
