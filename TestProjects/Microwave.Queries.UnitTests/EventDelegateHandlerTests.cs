@@ -35,7 +35,7 @@ namespace Microwave.Queries.UnitTests
             versionRepo.Setup(repo => repo.GetVersionAsync(It.IsAny<string>())).ReturnsAsync(0);
             var handler = new Handler();
             var eventDelegateHandler = new AsyncEventHandler<Handler, TestEv>(versionRepo.Object, mock.Object, handler);
-            await eventDelegateHandler.Update();
+            await eventDelegateHandler.UpdateAsync();
             Assert.AreEqual(1, handler.WasCalled);
         }
 
@@ -60,7 +60,7 @@ namespace Microwave.Queries.UnitTests
             var queryRepository = new ReadModelRepositoryMongoDb(EventMongoDb);
 
             var eventDelegateHandler = new QueryEventHandler<TestQ, TestEv>(queryRepository, versionRepo.Object, mock.Object);
-            await eventDelegateHandler.Update();
+            await eventDelegateHandler.UpdateAsync();
 
             var result = await queryRepository.LoadAsync<TestQ>();
             Assert.AreEqual(1, result.Value.WasCalled);

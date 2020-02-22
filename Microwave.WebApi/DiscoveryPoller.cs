@@ -14,7 +14,7 @@ namespace Microwave.WebApi
             _discoveryHandler = discoveryHandler;
         }
 
-        public async Task Update()
+        public async Task UpdateAsync()
         {
             await _discoveryHandler.DiscoverConsumingServices();
         }

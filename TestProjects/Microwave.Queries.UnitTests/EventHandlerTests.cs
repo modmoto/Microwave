@@ -32,8 +32,8 @@ namespace Microwave.Queries.UnitTests
                 new VersionRepositoryMongoDb(EventMongoDb),
                 new EventFeedMock(dateTimeOffset, domainEventWrapper), handleAsync2);
 
-            await eventDelegateHandler1.Update();
-            await eventDelegateHandler2.Update();
+            await eventDelegateHandler1.UpdateAsync();
+            await eventDelegateHandler2.UpdateAsync();
 
             Assert.AreEqual(1, handleAsync.TimesCalled);
             Assert.AreEqual(1, handleAsync2.TimesCalled);

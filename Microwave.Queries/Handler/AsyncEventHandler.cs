@@ -23,7 +23,7 @@ namespace Microwave.Queries.Handler
             _handler = handler;
         }
 
-        public async Task Update()
+        public async Task UpdateAsync()
         {
             var handleType = _handler.GetType();
             var domainEventType = $"{handleType.Name}-{typeof(TSubscribedDomainEvent).Name}";

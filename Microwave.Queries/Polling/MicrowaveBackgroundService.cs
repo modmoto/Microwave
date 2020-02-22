@@ -101,7 +101,7 @@ namespace Microwave.Queries.Polling
             using (var scope = _serviceScopeFactory.CreateScope())
             {
                 var service = scope.ServiceProvider.GetService<T>();
-                await service.Update();
+                await service.UpdateAsync();
             }
         }
 

@@ -21,7 +21,7 @@ namespace Microwave.Queries.Handler
             _eventFeed = eventFeed;
         }
 
-        public async Task Update()
+        public async Task UpdateAsync()
         {
             var domainEventType = $"QuerryHandler-{typeof(TQuerry).Name}-{typeof(TEvent).Name}";
             var lastVersion = await _versionRepository.GetVersionAsync(domainEventType);
