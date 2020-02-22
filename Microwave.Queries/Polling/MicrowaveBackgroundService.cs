@@ -62,14 +62,17 @@ namespace Microwave.Queries.Polling
             {
                 try
                 {
-                    var now = DateTime.UtcNow;
-                    var nextTrigger = _pollingInterval.Next;
-                    var timeSpan = nextTrigger - now;
                     using (var scope = _serviceScopeFactory.CreateScope())
                     {
                         var logger = scope.ServiceProvider.GetService<IMicrowaveLogger<MicrowaveBackgroundService<T>>>();
-                        logger.LogTrace($"Waiting for {timeSpan.TotalMilliseconds} in {typeof(T).Name}");
+                        logger.LogTrace("logger reolve");
+                        var now = DateTime.UtcNow;
+                        logger.LogTrace($"now: {now}");
 
+                        var nextTrigger = _pollingInterval.Next;
+                        logger.LogTrace($"next: {nextTrigger}");
+                        var timeSpan = nextTrigger - now;
+                        logger.LogTrace($"Waiting for {timeSpan.TotalMilliseconds} in {typeof(T).Name}");
                         await Task.Delay(timeSpan, stoppingToken);
                         logger.LogTrace($"Stop Wait, token is: {stoppingToken.IsCancellationRequested}");
                         await RunAsync();
