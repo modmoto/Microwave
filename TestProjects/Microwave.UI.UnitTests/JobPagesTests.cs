@@ -12,7 +12,8 @@ namespace Microwave.UI.UnitTests
         [TestMethod]
         public void JobdtoConstructor()
         {
-            var jobDto = new JobDto(new MicrowaveBackgroundService<AsyncEventHandler<TestEventHandler, TestDomainEvent1>>(null), 1);
+            var jobDto = new JobDto(new MicrowaveBackgroundService<AsyncEventHandler<TestEventHandler,
+            TestDomainEvent1>>(null, new PollingInterval<AsyncEventHandler<TestEventHandler, TestDomainEvent1>>()), 1);
 
             Assert.AreEqual(jobDto.Index, 1);
             Assert.AreEqual(jobDto.EventName, nameof(TestDomainEvent1));

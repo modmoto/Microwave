@@ -15,7 +15,8 @@ namespace Microwave.UI.Areas.MicrowaveDashboard.Pages
         public JobDto(IMicrowaveBackgroundService hostedService, int index)
         {
             Index = index;
-            GenericType = hostedService.GetType().GetGenericArguments().First().GetGenericTypeDefinition().Name;
+            var name = hostedService.GetType().GetGenericArguments().First().GetGenericTypeDefinition().Name;
+            GenericType = name.Substring(0, name.Length - 2);
             var genericHandler = hostedService.GetType().GetGenericArguments().First();
             HandlerName = genericHandler.GetGenericArguments().FirstOrDefault()?.Name;
             EventName = genericHandler.GetGenericArguments().LastOrDefault()?.Name;
