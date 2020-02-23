@@ -79,11 +79,6 @@ namespace Microwave.Queries.Polling
                 }
             }
             while (!stoppingToken.IsCancellationRequested);
-            using (var scope = _serviceScopeFactory.CreateScope())
-            {
-                var logger = scope.ServiceProvider.GetService<IMicrowaveLogger<MicrowaveBackgroundService<T>>>();
-                logger.LogTrace($"returning from handler  {typeof(T).Name}");
-            }
         }
 
         public async Task RunAsync()
