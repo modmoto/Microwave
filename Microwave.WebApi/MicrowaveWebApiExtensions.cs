@@ -11,7 +11,6 @@ using Microwave.Discovery.EventLocations;
 using Microwave.Discovery.ServiceMaps;
 using Microwave.Domain.EventSourcing;
 using Microwave.Queries;
-using Microwave.Queries.Handler;
 using Microwave.Queries.Polling;
 using Microwave.WebApi.Discovery;
 using Microwave.WebApi.Filters;
