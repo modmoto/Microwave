@@ -37,7 +37,7 @@ namespace Microwave.WebApi.Queries
                     _logger.LogTrace($"Retrieved {eventsByTypeAsync.Count} events");
                     return eventsByTypeAsync;
                 }
-                _logger.LogTrace($"Base Adress was null, call avoided");
+                _logger.LogTrace("Base Address not found, call avoided");
             }
             catch (HttpRequestException e)
             {

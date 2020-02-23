@@ -39,6 +39,7 @@ namespace Microwave.Queries.UnitTests
 
             backgroundService.StartAsync(CancellationToken.None);
             backgroundService.RunAsync();
+            backgroundService.StopAsync(CancellationToken.None);
         }
     }
 
