@@ -6,7 +6,6 @@ using Microwave.Queries.Polling;
 using Microwave.UI.Areas.MicrowaveDashboard.Pages;
 using Microwave.UnitTests;
 using Microwave.WebApi;
-using Moq;
 
 namespace Microwave.UI.UnitTests
 {

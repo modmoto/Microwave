@@ -3,11 +3,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microwave.Persistence.InMemory.Eventstores;
-using Microwave.Persistence.InMemory.Querries;
 using Microwave.Queries.Handler;
 using Microwave.Queries.Polling;
-using Microwave.Queries.Ports;
 using Moq;
 
 namespace Microwave.Queries.UnitTests
