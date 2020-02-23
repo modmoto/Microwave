@@ -19,6 +19,7 @@ namespace Microwave.UI.UnitTests
             Assert.AreEqual(jobDto.EventName, nameof(TestDomainEvent1));
             Assert.AreEqual(jobDto.HandlerName, nameof(TestEventHandler));
             Assert.AreEqual(jobDto.GenericType, "AsyncEventHandler");
+            Assert.IsNotNull(jobDto.NextRun);
         }
     }
 }
