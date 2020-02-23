@@ -46,7 +46,7 @@ namespace Microwave.Queries.UnitTests
     {
         public Task HandleAsync(TestEv2 domainEvent)
         {
-            throw new System.NotImplementedException();
+            throw new Exception();
         }
     }
 }
