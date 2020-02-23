@@ -3,8 +3,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microwave.Persistence.InMemory.Eventstores;
+using Microwave.Persistence.InMemory.Querries;
 using Microwave.Queries.Handler;
 using Microwave.Queries.Polling;
+using Microwave.Queries.Ports;
 using Moq;
 
 namespace Microwave.Queries.UnitTests
@@ -43,14 +46,14 @@ namespace Microwave.Queries.UnitTests
         }
 
         private MicrowaveBackgroundService<AsyncEventHandler<THandler, TEvent>> CreateBackGroundServiceFo<THandler, TEvent>()
-            where TEvent : ISubscribedDomainEvent
+            where TEvent : ISubscribedDomainEvent where THandler : new()
         {
             var pollingInterval = new PollingInterval<AsyncEventHandler<THandler, TEvent>>();
             var serviceScopeFactory = new Mock<IServiceScopeFactory>();
             var scope = new Mock<IServiceScope>();
             var provider = new Mock<IServiceProvider>();
             provider.Setup(p => p.GetService(typeof(AsyncEventHandler<THandler, TEvent>)))
-                .Returns(new HandlerThatThrowException());
+                .Returns(new HandlerMock());
             scope.Setup(s => s.ServiceProvider).Returns(provider.Object);
             serviceScopeFactory.Setup(s => s.CreateScope()).Returns(scope.Object);
             var backgroundService =
@@ -60,9 +63,17 @@ namespace Microwave.Queries.UnitTests
         }
     }
 
-    public class HandlerThatThrowException : IHandleAsync<TestEv2>
+    internal class HandlerMock : IEventHandler
     {
-        public Task HandleAsync(TestEv2 domainEvent)
+        public Task UpdateAsync()
+        {
+            return Task.CompletedTask;
+        }
+    }
+
+    public class HandlerThatThrowException : IEventHandler
+    {
+        public Task UpdateAsync()
         {
             throw new Exception();
         }
