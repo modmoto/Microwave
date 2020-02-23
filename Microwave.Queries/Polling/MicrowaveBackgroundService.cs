@@ -55,23 +55,12 @@ namespace Microwave.Queries.Polling
         {
             do
             {
-                try
-                {
-                    var now = DateTime.UtcNow;
+                var now = DateTime.UtcNow;
 
-                    var nextTrigger = _pollingInterval.Next;
-                    var timeSpan = nextTrigger - now;
-                    await Task.Delay(timeSpan, stoppingToken);
-                    await RunAsync();
-                }
-                catch (Exception e)
-                {
-                    using (var scope = _serviceScopeFactory.CreateScope())
-                    {
-                        var logger = scope.ServiceProvider.GetService<IMicrowaveLogger<MicrowaveBackgroundService<T>>>();
-                        logger.LogWarning(e, $"Error occured in async handler of {typeof(T).Name}");
-                    }
-                }
+                var nextTrigger = _pollingInterval.Next;
+                var timeSpan = nextTrigger - now;
+                await Task.Delay(timeSpan, stoppingToken);
+                await RunAsync();
             }
             while (!stoppingToken.IsCancellationRequested);
         }
@@ -80,8 +69,16 @@ namespace Microwave.Queries.Polling
         {
             using (var scope = _serviceScopeFactory.CreateScope())
             {
-                var service = scope.ServiceProvider.GetService<T>();
-                await service.UpdateAsync();
+                try
+                {
+                    var service = scope.ServiceProvider.GetService<T>();
+                    await service.UpdateAsync();
+                }
+                catch (Exception e)
+                {
+                    var logger = scope.ServiceProvider.GetService<IMicrowaveLogger<MicrowaveBackgroundService<T>>>();
+                    logger.LogWarning(e, $"Error occured in async handler of {typeof(T).Name}");
+                }
             }
         }
 
