@@ -28,7 +28,7 @@ namespace Microwave.Logging.UnitTests
         [TestMethod]
         public void LogInformation()
         {
-            var microwaveLogger = CreateMicrowaveLogger(MicrowaveLogLevel.Info);
+            var microwaveLogger = CreateMicrowaveLogger(MicrowaveLogLevel.Trace);
             var message = "whatever";
 
             microwaveLogger.LogTrace(message);
