@@ -24,8 +24,12 @@ namespace Microwave.UI.Areas.MicrowaveDashboard.Pages
             return Redirect("JobsPage");
         }
 
-        public IEnumerable<JobDto> Jobs => _jobs.Where(j => j.GetType().GetGenericArguments().First() !=
-                                                            typeof(DiscoveryPoller)).Select((j, index) => new JobDto
+        public IEnumerable<JobDto> Jobs => _jobs.Where(j =>
+        {
+            var jobType = j.GetType();
+            var memberInfo = jobType.GetGenericArguments().First();
+            return memberInfo != typeof(DiscoveryPoller);
+        }).Select((j, index) => new JobDto
                                                             (j, index));
     }
 }
