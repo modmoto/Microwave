@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Discovery;
 using Microwave.Discovery.EventLocations;
@@ -11,6 +12,7 @@ using Microwave.Persistence.InMemory;
 using Microwave.Persistence.MongoDb;
 using Microwave.Queries;
 using Microwave.Queries.Handler;
+using Microwave.Queries.Polling;
 using Microwave.Queries.Ports;
 using Microwave.UnitTests.PublishedEventsDll;
 using Microwave.WebApi;
@@ -52,6 +54,48 @@ namespace Microwave.UnitTests
         }
 
         [TestMethod]
+        public void AddDiContainerTest_CorrectPollIntervalls()
+        {
+            var collection = (IServiceCollection) new ServiceCollection();
+
+            var storeDependencies = collection
+                .AddMicrowave()
+                .AddMicrowaveWebApi()
+                .AddMicrowavePersistenceLayerInMemory();
+            var buildServiceProvider = storeDependencies.BuildServiceProvider();
+
+            Assert.IsNotNull(buildServiceProvider.GetService<PollingInterval<AsyncEventHandler<TestEventHandler, TestDomainEvent1>>>());
+            Assert.IsNotNull(buildServiceProvider.GetService<PollingInterval<ReadModelEventHandler<TestIdQuery2>>>());
+            Assert.IsNotNull(buildServiceProvider.GetService<PollingInterval<QueryEventHandler<TestQuery1, TestDomainEvent1>>>());
+            Assert.IsNotNull(buildServiceProvider.GetService<PollingInterval<QueryEventHandler<TestQuery1, TestDomainEvent2>>>());
+            Assert.IsNull(buildServiceProvider.GetService<PollingInterval<QueryEventHandler<TestQuery2, TestDomainEvent2>>>());
+        }
+
+        [TestMethod]
+        public void AddDiContainerTest_CorrectPollIntervalls_AsyncHandler()
+        {
+            var collection = (IServiceCollection) new ServiceCollection();
+
+            var storeDependencies = collection
+                .AddMicrowave(c => c.PollingIntervals.Add(new PollingInterval<TestEventHandler>("0 0 1 1 *")))
+                .AddMicrowaveWebApi()
+                .AddMicrowavePersistenceLayerInMemory();
+            var buildServiceProvider = storeDependencies.BuildServiceProvider();
+
+            var pollingInterval1 = buildServiceProvider.GetService<PollingInterval<AsyncEventHandler<TestEventHandler, TestDomainEvent1>>>();
+            var pollingInterval2 = buildServiceProvider.GetService<PollingInterval<AsyncEventHandler<TestEventHandler, TestDomainEvent2>>>();
+            Assert.AreEqual(1, pollingInterval1.Next.Day);
+            Assert.AreEqual(1, pollingInterval1.Next.Month);
+            Assert.AreEqual(0, pollingInterval1.Next.Hour);
+            Assert.AreEqual(0, pollingInterval1.Next.Minute);
+
+            Assert.AreEqual(1, pollingInterval2.Next.Day);
+            Assert.AreEqual(1, pollingInterval2.Next.Month);
+            Assert.AreEqual(0, pollingInterval2.Next.Hour);
+            Assert.AreEqual(0, pollingInterval2.Next.Minute);
+        }
+
+        [TestMethod]
         public void AddDiContainerTest()
         {
             var collection = (IServiceCollection) new ServiceCollection();
@@ -62,13 +106,8 @@ namespace Microwave.UnitTests
                 .AddMicrowavePersistenceLayerInMemory();
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
-            var eventDelegateHandlers = buildServiceProvider.GetServices<IAsyncEventHandler>().OrderBy(
-                s => s.HandlerClassType.ToString()).ToList();
-            Assert.AreEqual(7, eventDelegateHandlers.Count);
-
-            Assert.AreEqual(typeof(TestEventHandler), eventDelegateHandlers[4].HandlerClassType);
-            Assert.AreEqual(typeof(TestEventHandler), eventDelegateHandlers[5].HandlerClassType);
-            Assert.AreEqual(typeof(TestEventHandler2), eventDelegateHandlers[6].HandlerClassType);
+            Assert.AreEqual(typeof(TestEventHandler), buildServiceProvider.GetService<AsyncEventHandler<TestEventHandler, TestDomainEvent1>>().HandlerClassType);
+            Assert.AreEqual(typeof(TestEventHandler), buildServiceProvider.GetService<AsyncEventHandler<TestEventHandler, TestDomainEvent2>>().HandlerClassType);
 
             var handleAsync1 = buildServiceProvider.GetServices<IHandleAsync<TestDomainEvent1>>();
             var handleAsync2 = buildServiceProvider.GetServices<IHandleAsync<TestDomainEvent2>>();
@@ -88,8 +127,8 @@ namespace Microwave.UnitTests
             Assert.IsNotNull(queryFeed2);
             Assert.IsNotNull(queryFeed3);
 
-            var eventFeeds = buildServiceProvider.GetServices<IEventFeed<AsyncEventHandler<TestDomainEvent1>>>().FirstOrDefault();
-            var eventFeeds2 = buildServiceProvider.GetServices<IEventFeed<AsyncEventHandler<TestDomainEvent2>>>().FirstOrDefault();
+            var eventFeeds = buildServiceProvider.GetServices<IEventFeed<AsyncEventHandler<TestEventHandler, TestDomainEvent1>>>().FirstOrDefault();
+            var eventFeeds2 = buildServiceProvider.GetServices<IEventFeed<AsyncEventHandler<TestEventHandler, TestDomainEvent2>>>().FirstOrDefault();
             Assert.IsNotNull(eventFeeds);
             Assert.IsNotNull(eventFeeds2);
 
@@ -102,26 +141,19 @@ namespace Microwave.UnitTests
             Assert.IsTrue(eventOverallClients3 is EventFeed<ReadModelEventHandler<TestIdQuerySingle>>);
             Assert.IsTrue(eventOverallClients4 is EventFeed<ReadModelEventHandler<TestIdQuery2>>);
 
-            var queryEventHandlers = buildServiceProvider.GetServices<IQueryEventHandler>().ToList();
-            var qHandler1 = queryEventHandlers.OrderByDescending(e => e
-            .GetType().GetGenericArguments().First().Name).ToList();
-            Assert.AreEqual(5, qHandler1.Count);
-            Assert.IsTrue(qHandler1[0] is QueryEventHandler<TestQueryOnlyOneSubscribedEvent, TestDomainEvent_OnlySubscribedEventForList>);
-            Assert.IsTrue(qHandler1[1] is QueryEventHandler<TestQuery2, TestDomainEvent1>);
-            Assert.IsTrue(qHandler1[2] is QueryEventHandler<TestQuery1, TestDomainEvent1>);
-            Assert.IsTrue(qHandler1[3] is QueryEventHandler<TestQuery1, TestDomainEvent2>);
-            Assert.IsTrue(qHandler1[4] is QueryEventHandler<TestQuerry_NotImplementingIApply, TestDomainEvent_OnlySubscribedEvent>);
+            Assert.IsNotNull(buildServiceProvider.GetService<QueryEventHandler<TestQueryOnlyOneSubscribedEvent, TestDomainEvent_OnlySubscribedEventForList>>());
+            Assert.IsNotNull(buildServiceProvider.GetService<QueryEventHandler<TestQueryOnlyOneSubscribedEvent, TestDomainEvent_OnlySubscribedEventForList>>());
+            Assert.IsNotNull(buildServiceProvider.GetService<QueryEventHandler<TestQuery2, TestDomainEvent1>>());
+            Assert.IsNotNull(buildServiceProvider.GetService<QueryEventHandler<TestQuery1, TestDomainEvent1>>());
+            Assert.IsNotNull(buildServiceProvider.GetService<QueryEventHandler<TestQuery1, TestDomainEvent2>>());
+            Assert.IsNotNull(buildServiceProvider.GetService<QueryEventHandler<TestQuerry_NotImplementingIApply, TestDomainEvent_OnlySubscribedEvent>>());
 
-            var identHandler = buildServiceProvider.GetServices<IReadModelEventHandler>().OrderBy(r => r.GetType()
-                .GetGenericArguments().First().Name).ToList();
-            Assert.AreEqual(8, identHandler.Count);
-
-            Assert.IsTrue(identHandler[2] is ReadModelEventHandler<TestIdQuery>);
-            Assert.IsTrue(identHandler[3] is ReadModelEventHandler<TestIdQuery2>);
-            Assert.IsTrue(identHandler[4] is ReadModelEventHandler<TestIdQuerySingle>);
-            Assert.IsTrue(identHandler[5] is ReadModelEventHandler<TestReadModel>);
-            Assert.IsTrue(identHandler[6] is ReadModelEventHandler<TestReadModel_NotImplementingIApply>);
-            Assert.IsTrue(identHandler[7] is ReadModelEventHandler<TestReadModelSubscriptions>);
+            Assert.IsNotNull(buildServiceProvider.GetService<ReadModelEventHandler<TestIdQuery>>());
+            Assert.IsNotNull(buildServiceProvider.GetService<ReadModelEventHandler<TestIdQuery2>>());
+            Assert.IsNotNull(buildServiceProvider.GetService<ReadModelEventHandler<TestIdQuerySingle>>());
+            Assert.IsNotNull(buildServiceProvider.GetService<ReadModelEventHandler<TestReadModel>>());
+            Assert.IsNotNull(buildServiceProvider.GetService<ReadModelEventHandler<TestReadModel_NotImplementingIApply>>());
+            Assert.IsNotNull(buildServiceProvider.GetService<ReadModelEventHandler<TestReadModelSubscriptions>>());
         }
 
         [TestMethod]
@@ -172,7 +204,7 @@ namespace Microwave.UnitTests
             var collection = (IServiceCollection) new ServiceCollection();
 
             var eventRegister = new EventRegistration();
-            var storeDependencies = collection.AddDomainEventRegistration(typeof(TestDomainEvent1).Assembly, eventRegister);
+            collection.AddDomainEventRegistration(typeof(TestDomainEvent1).Assembly, eventRegister);
 
             Assert.AreEqual(eventRegister[nameof(TestDomainEvent1)], typeof(TestDomainEvent1)); // IHandleAsyncEvent
             Assert.AreEqual(eventRegister[nameof(TestDomainEvent2)], typeof(TestDomainEvent2)); // QuerryEvent
@@ -209,12 +241,8 @@ namespace Microwave.UnitTests
 
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
-            var eventFeed1 = buildServiceProvider.GetServices<IEventFeed<AsyncEventHandler<TestDomainEvent1>>>().FirstOrDefault();
-            Assert.IsNotNull(eventFeed1);
-            var identHandler = buildServiceProvider.GetServices<IReadModelEventHandler>().OrderBy(r => r.GetType()
-            .GetGenericArguments().First().Name).ToList();
-            Assert.IsTrue(identHandler[4] is ReadModelEventHandler<TestIdQuery>);
-            Assert.AreEqual(16, identHandler.Count); // double as just checking if no exception is done
+            var eventFeed1 = buildServiceProvider.GetServices<IEventFeed<AsyncEventHandler<TestEventHandler, TestDomainEvent1>>>().FirstOrDefault();
+            Assert.IsNotNull(eventFeed1); // double as just checking if no exception is done
         }
 
         [TestMethod]
@@ -231,6 +259,21 @@ namespace Microwave.UnitTests
 
             var store = buildServiceProvider.GetServices<IEventStore>().FirstOrDefault();
             Assert.IsNotNull(store);
+        }
+
+        [TestMethod]
+        public void AddMicrowaveDependencies_PollerIsRegistered()
+        {
+            var collection = (IServiceCollection) new ServiceCollection();
+
+            var storeDependencies = collection
+                .AddMicrowave()
+                .AddMicrowaveWebApi()
+                .AddMicrowavePersistenceLayerInMemory();
+
+            var buildServiceProvider = storeDependencies.BuildServiceProvider();
+
+            Assert.IsNotNull(buildServiceProvider.GetServices<DiscoveryPoller>());
         }
 
         [TestMethod]
@@ -325,8 +368,7 @@ namespace Microwave.UnitTests
 
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
-            var discoveryController = buildServiceProvider.GetServices<AsyncEventDelegator>().Single();
-            Assert.IsNotNull(discoveryController);
+            Assert.IsTrue(buildServiceProvider.GetServices<IHostedService>().Count() > 1);
         }
         
         [TestMethod]

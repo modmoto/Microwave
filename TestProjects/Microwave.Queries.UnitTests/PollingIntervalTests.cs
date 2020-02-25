@@ -1,4 +1,5 @@
 using System;
+using System.Reflection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microwave.Queries.Exceptions;
 using Microwave.Queries.Polling;
@@ -6,7 +7,7 @@ using Microwave.Queries.Polling;
 namespace Microwave.Queries.UnitTests
 {
     [TestClass]
-    public class UpdateAfterAttributeTests
+    public class PollingIntervalTests
     {
         [TestMethod]
         public void Constructor()
@@ -48,12 +49,30 @@ namespace Microwave.Queries.UnitTests
         [DataRow(15, 17, 30, 0)]
         [DataRow(15, 58, 0, 1)]
         [DataRow(5, 3, 5, 0)]
+        [DataRow(60, 0, 0, 1)]
+        [DataRow(25, 50, 0, 1)]
         public void AttributeCombinationTests(int secondsInput, int secondsForTest, int secondsOutput, int minuteOffset)
         {
-            var updateEveryAttribute = new PollingInterval<FakeThing>(secondsInput, secondsForTest);
+            var updateEveryAttribute = CreatPolInterval(secondsInput, secondsForTest);
             var dateTime = updateEveryAttribute.Next;
-            Assert.AreEqual(dateTime.Second, secondsOutput);
-            Assert.AreEqual(dateTime.Minute, minuteOffset);
+            Assert.AreEqual(secondsOutput, dateTime.Second);
+            Assert.AreEqual(minuteOffset, dateTime.Minute);
+        }
+
+        private PollingInterval<FakeThing> CreatPolInterval(in int secondsInput, in int secondsForTest)
+        {
+            var pollingInterval = new PollingInterval<FakeThing>();
+            var type = typeof(PollingInterval<FakeThing>);
+            var nowTime = new DateTime(1, 1, 1, 1, 0, secondsForTest);
+            var second = secondsInput;
+
+            var nowtTimeField = type.GetField("_nowTime", BindingFlags.Instance | BindingFlags.NonPublic);
+            var secondField = type.GetField("_second", BindingFlags.Instance | BindingFlags.NonPublic);
+
+            nowtTimeField.SetValue(pollingInterval, nowTime);
+            secondField.SetValue(pollingInterval, second);
+
+            return pollingInterval;
         }
     }
 

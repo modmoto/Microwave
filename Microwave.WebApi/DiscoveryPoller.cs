@@ -1,32 +1,22 @@
 using System.Threading.Tasks;
 using Microwave.Discovery;
-using Microwave.Logging;
+using Microwave.Queries.Handler;
 
 namespace Microwave.WebApi
 {
-    public class DiscoveryPoller
+    public class DiscoveryPoller : IEventHandler
     {
         private readonly IDiscoveryHandler _discoveryHandler;
-        private readonly IMicrowaveLogger<DiscoveryPoller> _logger;
 
         public DiscoveryPoller(
-            IDiscoveryHandler discoveryHandler,
-            IMicrowaveLogger<DiscoveryPoller> logger)
+            IDiscoveryHandler discoveryHandler)
         {
             _discoveryHandler = discoveryHandler;
-            _logger = logger;
         }
-        
-        public async Task StartDependencyDiscovery()
+
+        public async Task UpdateAsync()
         {
-            while (true)
-            {
-                _logger.LogInformation("Microwave: Updating Service Discovery...");
-                await _discoveryHandler.DiscoverConsumingServices();
-                _logger.LogInformation("Microwave: Finish Service Discovery.");
-                await Task.Delay(60000);
-            }
-            // ReSharper disable once FunctionNeverReturns
+            await _discoveryHandler.DiscoverConsumingServices();
         }
     }
 }

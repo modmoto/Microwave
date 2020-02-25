@@ -27,7 +27,8 @@ namespace ModolithService
             {
                 c.WithEventSeeds(new List<IDomainEvent>
                 {
-                    new Event2("123", "name")
+                    new Event2("123", "name"),
+                    new Event2("123", "name"),
                 });
             });
         }
@@ -39,7 +40,6 @@ namespace ModolithService
                 endpoints.MapControllers();
             });
             app.UseMicrowaveUi();
-            app.RunMicrowaveQueries();
         }
     }
 }

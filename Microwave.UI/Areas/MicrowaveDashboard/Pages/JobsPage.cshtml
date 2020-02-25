@@ -1,0 +1,78 @@
+@page
+@model Microwave.UI.Areas.MicrowaveDashboard.Pages.JobsPage
+
+@{
+    ViewData["ServiceName"] = Model.ServiceName;
+    ViewData["ServiceNameAndTitle"] = Model.ServiceName + " - Jobs";
+}
+
+<div>
+<div class="container">
+
+    <h5 class="pt-3">Async Handlers:</h5>
+    <ul class="list-group pl-3 pr-3">
+        @foreach (var job in Model.AsyncHandlers)
+        {
+            <li class="list-group-item">
+                <div class="d-flex">
+                    <div class="pt-2 float-left">
+                        @job.HandlerName – @job.EventName
+                    </div>
+                    <div class="ml-auto float-right">
+                        <div class="pt-2 pr-2 text-secondary float-left">
+                            next run: @job.NextRun
+                        </div>
+                        <form class="float-right" method="post">
+                            <button class="btn btn-outline-success my-2 my-sm-0" type="submit" name="index" value=@job.Index>Trigger now</button>
+                        </form>
+                    </div>
+                </div>
+            </li>
+        }
+    </ul>
+
+    <h5 class="pt-3">Readmodels:</h5>
+    <ul class="list-group pl-3 pr-3">
+            @foreach (var job in Model.ReadModelHandlers)
+            {
+                <li class="list-group-item">
+                    <div class="d-flex">
+                        <div class="pt-2 float-left">
+                            @job.HandlerName – @job.EventName
+                        </div>
+                        <div class="ml-auto float-right">
+                            <div class="pt-2 pr-2 text-secondary float-left">
+                                next run: @job.NextRun
+                            </div>
+                            <form class="float-right" method="post">
+                                <button class="btn btn-outline-success my-2 my-sm-0" type="submit" name="index" value=@job.Index>Trigger now</button>
+                            </form>
+                        </div>
+                    </div>
+                </li>
+            }
+        </ul>
+
+        <h5 class="pt-3">Querries:</h5>
+        <ul class="list-group pl-3 pr-3 pb-3">
+                @foreach (var job in Model.QueryHandlers)
+                {
+                    <li class="list-group-item">
+                        <div class="d-flex">
+                            <div class="pt-2 float-left">
+                                @job.HandlerName – @job.EventName
+                            </div>
+                            <div class="ml-auto float-right">
+                                <div class="pt-2 pr-2 text-secondary float-left">
+                                    next run: @job.NextRun
+                                </div>
+                                <form class="float-right" method="post">
+                                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit" name="index" value=@job.Index>Trigger now</button>
+                                </form>
+                            </div>
+                        </div>
+                    </li>
+                }
+            </ul>
+</div>
+</div>

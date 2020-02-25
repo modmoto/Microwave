@@ -27,25 +27,14 @@ namespace Microwave.WebApi.Queries
         {
             var eventLocation = await _statusRepository.GetEventLocation();
             var type = typeof(T);
-            if (typeof(IAsyncEventHandler).IsAssignableFrom(type))
+            if (type.GetGenericTypeDefinition() == typeof(AsyncEventHandler<,>)
+                || type.GetGenericTypeDefinition() == typeof(QueryEventHandler<,>))
             {
-                var eventType = type.GetGenericArguments().First();
+                var eventType = type.GetGenericArguments().Last();
                 var domainEventLocation = eventLocation.GetServiceForEvent(eventType);
                 if (domainEventLocation == null) return DefaultHttpClient();
-                var httpClient = await _httpClientFactory.CreateHttpClient(domainEventLocation.ServiceEndPoint
-                .ServiceBaseAddress);
+                var httpClient = await _httpClientFactory.CreateHttpClient(domainEventLocation.ServiceEndPoint.ServiceBaseAddress);
                 httpClient.BaseAddress = new Uri(domainEventLocation.ServiceEndPoint.ServiceBaseAddress + $"Api/DomainEventTypeStreams/{eventType.Name}");
-                return httpClient;
-            }
-
-            if (typeof(IQueryEventHandler).IsAssignableFrom(type))
-            {
-                var eventType = type.GetGenericArguments().Skip(1).First();
-                var consumingService = eventLocation.GetServiceForEvent(eventType);
-                if (consumingService == null) return DefaultHttpClient();
-                var httpClient = await _httpClientFactory.CreateHttpClient(consumingService.ServiceEndPoint
-                    .ServiceBaseAddress);
-                httpClient.BaseAddress = new Uri(consumingService.ServiceEndPoint.ServiceBaseAddress + $"Api/DomainEventTypeStreams/{eventType.Name}");
                 return httpClient;
             }
             else
@@ -53,8 +42,7 @@ namespace Microwave.WebApi.Queries
                 var readModelType = type.GetGenericArguments().First();
                 var subscriberEventAndReadmodelConfig = eventLocation.GetServiceForReadModel(readModelType);
                 if (subscriberEventAndReadmodelConfig == null) return DefaultHttpClient();
-                var httpClient = await _httpClientFactory.CreateHttpClient(subscriberEventAndReadmodelConfig
-                    .ServiceEndPoint.ServiceBaseAddress);
+                var httpClient = await _httpClientFactory.CreateHttpClient(subscriberEventAndReadmodelConfig.ServiceEndPoint.ServiceBaseAddress);
                 httpClient.BaseAddress = new Uri(subscriberEventAndReadmodelConfig.ServiceEndPoint.ServiceBaseAddress + "Api/DomainEvents");
                 return httpClient;
             }

@@ -5,7 +5,7 @@ using Microwave.Queries.Ports;
 
 namespace Microwave.Queries.Handler
 {
-    public class QueryEventHandler<TQuerry, TEvent> : IQueryEventHandler where TQuerry : Query, new()
+    public class QueryEventHandler<TQuerry, TEvent> : IEventHandler  where TQuerry : Query, new()
     {
         private readonly IReadModelRepository _readModelRepository;
         private readonly IEventFeed<QueryEventHandler<TQuerry, TEvent>> _eventFeed;
@@ -21,7 +21,7 @@ namespace Microwave.Queries.Handler
             _eventFeed = eventFeed;
         }
 
-        public async Task Update()
+        public async Task UpdateAsync()
         {
             var domainEventType = $"QuerryHandler-{typeof(TQuerry).Name}-{typeof(TEvent).Name}";
             var lastVersion = await _versionRepository.GetVersionAsync(domainEventType);

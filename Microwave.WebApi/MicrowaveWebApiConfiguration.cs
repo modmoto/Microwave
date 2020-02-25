@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using Microwave.Discovery;
-using Microwave.EventStores.SnapShots;
-using Microwave.Queries.Polling;
+﻿using Microwave.Discovery;
 
 namespace Microwave.WebApi
 {
@@ -15,9 +12,6 @@ namespace Microwave.WebApi
         {
             MicrowaveHttpClientFactory = clientFactory;
         }
-
-        public IList<ISnapShot> SnapShots { get; } = new List<ISnapShot>();
-        public IList<IPollingInterval> PollingIntervals { get; } = new List<IPollingInterval>();
 
         public void WithServiceName(string serviceName)
         {

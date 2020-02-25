@@ -3,33 +3,29 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microwave.EventStores;
+using Microwave.EventStores.SnapShots;
 using Microwave.Logging;
 using Microwave.Queries;
 using Microwave.Queries.Handler;
+using Microwave.Queries.Polling;
 using Microwave.Queries.Ports;
+using NCrontab;
 
 namespace Microwave
 {
     public static class MicrowaveExtensions
     {
         private static Type _genericTypeOfFeed;
+        private static IList<IPollingInterval> _pollingIntervalls;
 
-        public static IApplicationBuilder RunMicrowaveQueries(this IApplicationBuilder builder)
+        public static IServiceCollection AddMicrowave(
+            this IServiceCollection services)
         {
-            var serviceScope = builder.ApplicationServices.CreateScope();
-            var asyncEventDelegator = serviceScope.ServiceProvider.GetService<AsyncEventDelegator>();
-
-            Task.Run(() =>
-            {
-                Task.Delay(10000).Wait();
-                asyncEventDelegator.StartEventPolling();
-            });
-
-            return builder;
+            services.AddMicrowave(c => c.WithFeedType(typeof(LocalEventFeed<>)));
+            return services;
         }
 
         public static IServiceCollection AddMicrowave(
@@ -39,12 +35,14 @@ namespace Microwave
             var microwaveConfiguration = new MicrowaveConfiguration();
             addConfiguration.Invoke(microwaveConfiguration);
             _genericTypeOfFeed = microwaveConfiguration.FeedType;
+            _pollingIntervalls = microwaveConfiguration.PollingIntervals;
 
             var assemblies = GetAllAssemblies();
 
+            services.AddSingleton<ISnapShotConfig>(new SnapShotConfig(microwaveConfiguration.SnapShots));
+
             services.AddTransient<IEventStore, EventStore>();
 
-            services.AddTransient<AsyncEventDelegator>();
             services.AddSingleton(typeof(IMicrowaveLogger<>), typeof(MicrowaveLogger<>));
             services.AddSingleton(microwaveConfiguration.LogLevel);
 
@@ -82,7 +80,6 @@ namespace Microwave
             var queryInterfaces = assembly.GetTypes().Where(ImplementsIhandleInterfaceAndQuerry);
             var genericInterfaceTypeOfFeed = typeof(IEventFeed<>);
             var genericTypeOfHandler = typeof(QueryEventHandler<,>);
-            var iHandleType = typeof(IQueryEventHandler);
 
             foreach (var query in queryInterfaces)
             {
@@ -97,7 +94,14 @@ namespace Microwave
                     services.AddTransient(feedInterface, feed);
 
                     //handler
-                    services.AddTransient(iHandleType, genericHandler);
+                    services.AddTransient(genericHandler);
+
+                    var backGroundTaskType = typeof(MicrowaveBackgroundService<>);
+                    var task = backGroundTaskType.MakeGenericType(genericHandler);
+                    services.AddSingleton(typeof(IHostedService), task);
+                    services.AddSingleton(typeof(IMicrowaveBackgroundService), task);
+
+                    services.AddPollingIntervalIfNotExisting(genericHandler);
                 }
             }
 
@@ -109,8 +113,7 @@ namespace Microwave
         {
             var handleAsyncInterfaces = assembly.GetTypes().Where(ImplementsIhandleAsyncInterface);
             var genericInterfaceTypeOfFeed = typeof(IEventFeed<>);
-            var genericTypeOfHandler = typeof(AsyncEventHandler<>);
-            var genericTypeOfHandlerInterface = typeof(IAsyncEventHandler);
+            var genericTypeOfHandler = typeof(AsyncEventHandler<,>);
             var handleAsyncType = typeof(IHandleAsync<>);
 
             foreach (var handleAsync in handleAsyncInterfaces)
@@ -122,21 +125,28 @@ namespace Microwave
                 {
                     //feed
                     var domainEventType = iHandleEvent.GenericTypeArguments.Single();
-                    var genericHandler = genericTypeOfHandler.MakeGenericType(domainEventType);
+                    var genericHandler = genericTypeOfHandler.MakeGenericType(handleAsync, domainEventType);
                     var feed = _genericTypeOfFeed.MakeGenericType(genericHandler);
                     var feedInterface = genericInterfaceTypeOfFeed.MakeGenericType(genericHandler);
                     services.AddTransient(feedInterface, feed);
 
                     //handler
-                    services.AddTransient(genericTypeOfHandlerInterface, s =>
+                    services.AddTransient(genericHandler, s =>
                     {
                         var versionRepo = s.GetRequiredService<IVersionRepository>();
                         var feedInstance = s.GetRequiredService(feedInterface);
                         var handleAsyncInstance = s.GetRequiredService(handleAsync);
                         var constructorInfo = genericHandler.GetConstructors().Single();
                         var createdHandlerInstance = constructorInfo.Invoke(new [] { versionRepo, feedInstance, handleAsyncInstance });
+
                         return createdHandlerInstance;
                     });
+
+                    var backGroundTaskType = typeof(MicrowaveBackgroundService<>);
+                    var task = backGroundTaskType.MakeGenericType(genericHandler);
+                    services.AddSingleton(typeof(IHostedService), task);
+                    services.AddSingleton(typeof(IMicrowaveBackgroundService), task);
+                    services.AddPollingIntervalIfNotExisting(genericHandler);
 
                     //handleAsyncs
                     var handleAsyncTypeWithEvent = handleAsyncType.MakeGenericType(domainEventType);
@@ -152,7 +162,6 @@ namespace Microwave
             var readModels = assembly.GetTypes().Where(ImplementsIhandleInterfaceAndReadModel).ToList();
             var genericInterfaceTypeOfFeed = typeof(IEventFeed<>);
             var genericTypeOfHandler = typeof(ReadModelEventHandler<>);
-            var interfaceReadModelHandler = typeof(IReadModelEventHandler);
 
             foreach (var readModel in readModels)
             {
@@ -164,10 +173,67 @@ namespace Microwave
                 services.AddTransient(feedInterface, feed);
 
                 //handler
-                services.AddTransient(interfaceReadModelHandler, genericReadModelHandler);
+                services.AddTransient(genericReadModelHandler);
+
+                var backGroundTaskType = typeof(MicrowaveBackgroundService<>);
+                var task = backGroundTaskType.MakeGenericType(genericReadModelHandler);
+                services.AddSingleton(typeof(IHostedService), task);
+                services.AddSingleton(typeof(IMicrowaveBackgroundService), task);
+                services.AddPollingIntervalIfNotExisting(genericReadModelHandler);
             }
 
             return services;
+        }
+
+        private static void AddPollingIntervalIfNotExisting(this IServiceCollection services, Type pollType)
+        {
+            var concreteHandlerClass = pollType.GetGenericArguments().First();
+            var pollingInterval = _pollingIntervalls.FirstOrDefault(p => p.AsyncCallType == concreteHandlerClass);
+            var parsedPollType = CreatePollTypeWith(pollType, pollingInterval);
+            services.AddSingleton(parsedPollType.GetType(), parsedPollType);
+        }
+
+        private static IPollingInterval CreatePollTypeWith(Type pollType, IPollingInterval intervalToCopyFrom)
+        {
+            if (intervalToCopyFrom == null)
+            {
+                return MakeInterval(pollType, 1);
+            }
+            var cronField = intervalToCopyFrom.GetType().GetField("_cronNotation", BindingFlags.NonPublic | BindingFlags.Instance);
+            var secondsField = intervalToCopyFrom.GetType().GetField("_second", BindingFlags.NonPublic | BindingFlags.Instance);
+            var cron = (CrontabSchedule) cronField.GetValue(intervalToCopyFrom);
+            var seconds = (int) secondsField.GetValue(intervalToCopyFrom);
+            var interval = MakeInterval(pollType, cron, seconds);
+            return interval;
+        }
+
+        private static IPollingInterval MakeInterval(Type pollType, CrontabSchedule schedule, int seconds)
+        {
+            if (schedule == null) return MakeInterval(pollType, seconds);
+            return MakeInterval(pollType, schedule);
+        }
+
+        private static IPollingInterval MakeInterval(Type pollType, int seconds)
+        {
+            var type = typeof(PollingInterval<>);
+            var makeGenericType = type.MakeGenericType(pollType);
+            var constructors = makeGenericType.GetConstructors();
+            var constructorInfos = constructors.First(c =>
+                c.GetParameters().SingleOrDefault()?.ParameterType == typeof(int));
+            var interval = constructorInfos.Invoke(new object[] {seconds});
+            return (IPollingInterval) interval;
+        }
+
+        private static IPollingInterval MakeInterval(Type pollType, CrontabSchedule schedule)
+        {
+            var type = typeof(PollingInterval<>);
+            var makeGenericType = type.MakeGenericType(pollType);
+            var constructors = makeGenericType.GetConstructors();
+            var constructorInfos = constructors.First(c =>
+                c.GetParameters().SingleOrDefault()?.ParameterType == typeof(string));
+            var cronNotationRaw = schedule.ToString();
+            var interval = constructorInfos.Invoke(new object[] {cronNotationRaw});
+            return (IPollingInterval) interval;
         }
 
         private static bool ImplementsIhandleAsyncInterface(Type myType)

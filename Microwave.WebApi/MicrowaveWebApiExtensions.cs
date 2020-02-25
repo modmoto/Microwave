@@ -3,16 +3,15 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microwave.Discovery;
 using Microwave.Discovery.EventLocations;
 using Microwave.Discovery.ServiceMaps;
 using Microwave.Domain.EventSourcing;
-using Microwave.EventStores.SnapShots;
 using Microwave.Queries;
+using Microwave.Queries.Polling;
 using Microwave.WebApi.Discovery;
 using Microwave.WebApi.Filters;
 using Microwave.WebApi.Queries;
@@ -21,22 +20,6 @@ namespace Microwave.WebApi
 {
     public static class MicrowaveWebApiExtensions
     {
-        public static IApplicationBuilder RunMicrowaveServiceDiscovery(this IApplicationBuilder builder)
-        {
-            var serviceScope = builder.ApplicationServices.CreateScope();
-            var asyncEventDelegator = serviceScope.ServiceProvider.GetService<DiscoveryPoller>();
-
-            Task.Run(() =>
-            {
-                Task.Delay(10000).Wait();
-                #pragma warning disable 4014
-                asyncEventDelegator.StartDependencyDiscovery();
-                #pragma warning restore 4014
-            });
-
-            return builder;
-        }
-
         public static IServiceCollection AddMicrowaveWebApi(
             this IServiceCollection services)
         {
@@ -52,9 +35,6 @@ namespace Microwave.WebApi
 
             services.AddMicrowaveMvcExtensions();
 
-            services.AddSingleton<ISnapShotConfig>(new SnapShotConfig(microwaveConfiguration.SnapShots));
-            services.AddSingleton(microwaveConfiguration.PollingIntervals);
-
             services.AddSingleton(microwaveConfiguration);
             services.AddSingleton(microwaveConfiguration.ServiceLocations);
             services.AddSingleton(microwaveConfiguration.MicrowaveHttpClientFactory);
@@ -62,6 +42,8 @@ namespace Microwave.WebApi
 
             services.AddTransient<IDiscoveryHandler, DiscoveryHandler>();
             services.AddTransient<DiscoveryPoller>();
+            services.AddSingleton<IHostedService, MicrowaveBackgroundService<DiscoveryPoller>>();
+            services.AddSingleton(new PollingInterval<DiscoveryPoller>("*/1 * * * *"));
 
             services.AddTransient<IServiceDiscoveryRepository, DiscoveryRepository>();
 

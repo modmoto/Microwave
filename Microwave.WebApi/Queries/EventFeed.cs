@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -31,14 +30,14 @@ namespace Microwave.WebApi.Queries
             {
                 if (client.BaseAddress != null) {
                     var response = await client.GetAsync($"?lastVersion={lastVersion}");
-                    _logger.LogInformation($"Response for Event Call was {response.StatusCode}");
+                    _logger.LogTrace($"Response for Event Call was {response.StatusCode}");
                     if (!response.IsSuccessStatusCode) return new List<SubscribedDomainEventWrapper>();
                     var content = await response.Content.ReadAsStringAsync();
                     var eventsByTypeAsync = _eventFactory.Deserialize(content).ToList();
-                    _logger.LogInformation($"Retrieved {eventsByTypeAsync.Count} events");
+                    _logger.LogTrace($"Retrieved {eventsByTypeAsync.Count} events");
                     return eventsByTypeAsync;
                 }
-                _logger.LogInformation($"Base Adress was null, call avoided");
+                _logger.LogTrace("Base Address not found, call avoided");
             }
             catch (HttpRequestException e)
             {

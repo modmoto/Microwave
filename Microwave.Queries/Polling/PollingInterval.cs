@@ -23,7 +23,7 @@ namespace Microwave.Queries.Polling
                 var secondsAfterLastHappening = baseTime.Second % _second;
                 var nextSecondHappening = baseTime.Second - secondsAfterLastHappening + _second;
 
-                return nextSecondHappening == 60
+                return nextSecondHappening >= 60
                     ? NextFullMinute(baseTime)
                     : NextTimeWithSecond(baseTime, nextSecondHappening);
             }
@@ -63,12 +63,6 @@ namespace Microwave.Queries.Polling
             if (second < 1 || second > 60) throw new InvalidTimeNotationException();
 
             _second = second;
-        }
-
-        public PollingInterval(int secondsInput, int secondsForTest)
-        {
-            _nowTime = new DateTime(1, 1, 1, 1, 0, secondsForTest);
-            _second = secondsInput;
         }
     }
 }

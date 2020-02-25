@@ -5,12 +5,7 @@ using Microwave.Queries.Ports;
 
 namespace Microwave.Queries.Handler
 {
-    public interface IReadModelEventHandler
-    {
-        Task Update();
-    }
-
-    public class ReadModelEventHandler<T> : IReadModelEventHandler where T : ReadModelBase, new()
+    public class ReadModelEventHandler<T> : IEventHandler where T : ReadModelBase, new()
     {
         private readonly IReadModelRepository _readModelRepository;
         private readonly IEventFeed<ReadModelEventHandler<T>> _eventFeed;
@@ -26,7 +21,7 @@ namespace Microwave.Queries.Handler
             _eventFeed = eventFeed;
         }
 
-        public async Task Update()
+        public async Task UpdateAsync()
         {
             var redaModelVersionCounter = $"ReadModelVersion-{typeof(T).Name}";
             var lastVersion = await _versionRepository.GetVersionAsync(redaModelVersionCounter);

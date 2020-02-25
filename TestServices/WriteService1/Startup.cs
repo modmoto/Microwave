@@ -24,13 +24,13 @@ namespace WriteService1
             services.AddMicrowave(config =>
             {
                 config.WithFeedType(typeof(EventFeed<>));
+                config.SnapShots.Add(new SnapShot<EntityTest>(3));
             });
             services.AddMicrowaveWebApi(config =>
             {
                 config.WithServiceName("WriteService1");
                 config.ServiceLocations.AddRange(ServiceConfiguration.ServiceAdresses);
                 config.WithHttpClientFactory(new MyMicrowaveHttpClientFactory());
-                config.SnapShots.Add(new SnapShot<EntityTest>(3));
             });
 
 
@@ -50,8 +50,6 @@ namespace WriteService1
                 endpoints.MapControllers();
             });
             app.UseMicrowaveUi();
-            app.RunMicrowaveQueries();
-            app.RunMicrowaveServiceDiscovery();
         }
     }
 }

@@ -5,8 +5,10 @@
     </PropertyGroup>
     <ItemGroup>
       <ProjectReference Include="..\Microwave.Domain\Microwave.Domain.csproj" />
+      <ProjectReference Include="..\Microwave.Logging\Microwave.Logging.csproj" />
     </ItemGroup>
     <ItemGroup>
       <PackageReference Include="NCrontab" Version="3.3.1" />
+      <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="3.1.0" />
     </ItemGroup>
 </Project>

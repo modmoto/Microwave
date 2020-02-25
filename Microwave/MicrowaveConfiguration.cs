@@ -1,6 +1,9 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using Microwave.EventStores.SnapShots;
 using Microwave.Logging;
+using Microwave.Queries.Polling;
 using Microwave.Queries.Ports;
 
 namespace Microwave
@@ -25,6 +28,10 @@ namespace Microwave
             LogLevel = new MicrowaveLogLevelType(logLevel);
             return this;
         }
+
+
+        public IList<ISnapShot> SnapShots { get; } = new List<ISnapShot>();
+        public IList<IPollingInterval> PollingIntervals { get; } = new List<IPollingInterval>();
 
         public Type FeedType { get; private set; } = typeof(LocalEventFeed<>);
         public MicrowaveLogLevelType LogLevel { get; private set; } = new MicrowaveLogLevelType(MicrowaveLogLevel.None);

@@ -23,7 +23,7 @@ namespace Microwave.Queries.UnitTests
 
             var readModelHandler = new ReadModelEventHandler<TestReadModelQuerries>(queryRepository,
                 new VersionRepositoryMongoDb(EventMongoDb), new FeedMock2());
-            await readModelHandler.Update();
+            await readModelHandler.UpdateAsync();
 
             var result = await queryRepository.LoadAsync<TestReadModelQuerries>(EntityGuid.ToString());
             Assert.AreEqual(EntityGuid.ToString(), result.Value.Id);
@@ -42,7 +42,7 @@ namespace Microwave.Queries.UnitTests
             var readModelHandler = new ReadModelEventHandler<TestReadModelQuerries>(queryRepository,
                 new VersionRepositoryMongoDb(EventMongoDb), new FeedMock3());
 
-            await readModelHandler.Update();
+            await readModelHandler.UpdateAsync();
 
             var result = await queryRepository.LoadAsync<TestReadModelQuerries>(EntityGuid.ToString());
             var result2 = await queryRepository.LoadAsync<TestReadModelQuerries>(EntityGuid2.ToString());
@@ -60,7 +60,7 @@ namespace Microwave.Queries.UnitTests
 
             var readModelHandler = new ReadModelEventHandler<TestReadModelQuerries>(queryRepository, new VersionRepositoryMongoDb(EventMongoDb), new FeedMock4());
 
-            await readModelHandler.Update();
+            await readModelHandler.UpdateAsync();
 
             var result = await queryRepository.LoadAsync<TestReadModelQuerries>(EntityGuid.ToString());
             var result2 = await queryRepository.LoadAsync<TestReadModelQuerries>(EntityGuid2.ToString());
@@ -81,7 +81,7 @@ namespace Microwave.Queries.UnitTests
                 new VersionRepositoryMongoDb(EventMongoDb),
                 new FeedMock5());
 
-            await readModelHandler.Update();
+            await readModelHandler.UpdateAsync();
 
             var result = await queryRepository.LoadAsync<TestReadModelQuerries_OnlyOneEventAndVersionIsCounted>
             (EntityGuid.ToString());
@@ -102,8 +102,8 @@ namespace Microwave.Queries.UnitTests
 
             var readModelHandler2 = new ReadModelEventHandler<TestReadModelQuerries_TwoParallelFeeds2>(queryRepository, new VersionRepositoryMongoDb(EventMongoDb), new FeedMock7());
 
-            await readModelHandler.Update();
-            await readModelHandler2.Update();
+            await readModelHandler.UpdateAsync();
+            await readModelHandler2.UpdateAsync();
 
             var result = await queryRepository.LoadAsync<TestReadModelQuerries_TwoParallelFeeds1>(EntityGuid.ToString());
             var result2 = await queryRepository.LoadAsync<TestReadModelQuerries_TwoParallelFeeds2>(EntityGuid2.ToString());
@@ -123,7 +123,7 @@ namespace Microwave.Queries.UnitTests
                 new VersionRepositoryMongoDb(EventMongoDb),
                 new FeedMockVersioned());
 
-            await readModelHandler.Update();
+            await readModelHandler.UpdateAsync();
 
             var result = await queryRepository.LoadAsync<TestReadModelQuerries_VerionedHandle>(EntityGuid.ToString());
             Assert.AreEqual(EntityGuid.ToString(), result.Value.EntityId);
