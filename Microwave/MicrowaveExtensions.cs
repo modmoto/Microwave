@@ -187,13 +187,10 @@ namespace Microwave
 
         private static void AddPollingIntervalIfNotExisting(this IServiceCollection services, Type pollType)
         {
-            if (pollType.IsGenericType && pollType.GetGenericTypeDefinition() == typeof(AsyncEventHandler<,>))
-            {
-                var concreteHandlerClass = pollType.GetGenericArguments().First();
-                var pollingInterval = _pollingIntervalls.FirstOrDefault(p => p.AsyncCallType == concreteHandlerClass);
-                var parsedPollType = CreatePollTypeWith(pollType, pollingInterval);
-                services.AddSingleton(parsedPollType.GetType(), parsedPollType);
-            }
+            var concreteHandlerClass = pollType.GetGenericArguments().First();
+            var pollingInterval = _pollingIntervalls.FirstOrDefault(p => p.AsyncCallType == concreteHandlerClass);
+            var parsedPollType = CreatePollTypeWith(pollType, pollingInterval);
+            services.AddSingleton(parsedPollType.GetType(), parsedPollType);
         }
 
         private static IPollingInterval CreatePollTypeWith(Type pollType, IPollingInterval intervalToCopyFrom)
