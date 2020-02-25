@@ -59,17 +59,40 @@ namespace Microwave.UnitTests
             var collection = (IServiceCollection) new ServiceCollection();
 
             var storeDependencies = collection
-                .AddMicrowave(c => c.PollingIntervals.Add(new  PollingInterval<AsyncEventHandler<TestEventHandler, TestDomainEvent1>>("0 0 1 1 *")))
+                .AddMicrowave()
                 .AddMicrowaveWebApi()
                 .AddMicrowavePersistenceLayerInMemory();
             var buildServiceProvider = storeDependencies.BuildServiceProvider();
 
-            var pollingInterval = buildServiceProvider.GetService<PollingInterval<AsyncEventHandler<TestEventHandler, TestDomainEvent1>>>();
-            Assert.IsNotNull(pollingInterval);
+            Assert.IsNotNull(buildServiceProvider.GetService<PollingInterval<AsyncEventHandler<TestEventHandler, TestDomainEvent1>>>());
             Assert.IsNotNull(buildServiceProvider.GetService<PollingInterval<ReadModelEventHandler<TestIdQuery2>>>());
             Assert.IsNotNull(buildServiceProvider.GetService<PollingInterval<QueryEventHandler<TestQuery1, TestDomainEvent1>>>());
             Assert.IsNotNull(buildServiceProvider.GetService<PollingInterval<QueryEventHandler<TestQuery1, TestDomainEvent2>>>());
             Assert.IsNull(buildServiceProvider.GetService<PollingInterval<QueryEventHandler<TestQuery2, TestDomainEvent2>>>());
+        }
+
+        [TestMethod]
+        public void AddDiContainerTest_CorrectPollIntervalls_AsyncHandler()
+        {
+            var collection = (IServiceCollection) new ServiceCollection();
+
+            var storeDependencies = collection
+                .AddMicrowave(c => c.PollingIntervals.Add(new PollingInterval<TestEventHandler>("0 0 1 1 *")))
+                .AddMicrowaveWebApi()
+                .AddMicrowavePersistenceLayerInMemory();
+            var buildServiceProvider = storeDependencies.BuildServiceProvider();
+
+            var pollingInterval1 = buildServiceProvider.GetService<PollingInterval<AsyncEventHandler<TestEventHandler, TestDomainEvent1>>>();
+            var pollingInterval2 = buildServiceProvider.GetService<PollingInterval<AsyncEventHandler<TestEventHandler, TestDomainEvent2>>>();
+            Assert.AreEqual(1, pollingInterval1.Next.Day);
+            Assert.AreEqual(1, pollingInterval1.Next.Month);
+            Assert.AreEqual(0, pollingInterval1.Next.Hour);
+            Assert.AreEqual(0, pollingInterval1.Next.Minute);
+
+            Assert.AreEqual(1, pollingInterval2.Next.Day);
+            Assert.AreEqual(1, pollingInterval2.Next.Month);
+            Assert.AreEqual(0, pollingInterval2.Next.Hour);
+            Assert.AreEqual(0, pollingInterval2.Next.Minute);
         }
 
         [TestMethod]
@@ -181,7 +204,7 @@ namespace Microwave.UnitTests
             var collection = (IServiceCollection) new ServiceCollection();
 
             var eventRegister = new EventRegistration();
-            var storeDependencies = collection.AddDomainEventRegistration(typeof(TestDomainEvent1).Assembly, eventRegister);
+            collection.AddDomainEventRegistration(typeof(TestDomainEvent1).Assembly, eventRegister);
 
             Assert.AreEqual(eventRegister[nameof(TestDomainEvent1)], typeof(TestDomainEvent1)); // IHandleAsyncEvent
             Assert.AreEqual(eventRegister[nameof(TestDomainEvent2)], typeof(TestDomainEvent2)); // QuerryEvent

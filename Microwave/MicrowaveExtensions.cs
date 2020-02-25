@@ -12,6 +12,7 @@ using Microwave.Queries;
 using Microwave.Queries.Handler;
 using Microwave.Queries.Polling;
 using Microwave.Queries.Ports;
+using NCrontab;
 
 namespace Microwave
 {
@@ -186,14 +187,56 @@ namespace Microwave
 
         private static void AddPollingIntervalIfNotExisting(this IServiceCollection services, Type pollType)
         {
+            if (pollType.IsGenericType && pollType.GetGenericTypeDefinition() == typeof(AsyncEventHandler<,>))
+            {
+                var concreteHandlerClass = pollType.GetGenericArguments().First();
+                var pollingInterval = _pollingIntervalls.FirstOrDefault(p => p.AsyncCallType == concreteHandlerClass);
+                var parsedPollType = CreatePollTypeWith(pollType, pollingInterval);
+                services.AddSingleton(parsedPollType.GetType(), parsedPollType);
+            }
+        }
+
+        private static IPollingInterval CreatePollTypeWith(Type pollType, IPollingInterval intervalToCopyFrom)
+        {
+            if (intervalToCopyFrom == null)
+            {
+                return MakeInterval(pollType, 1);
+            }
+            var cronField = intervalToCopyFrom.GetType().GetField("_cronNotation", BindingFlags.NonPublic | BindingFlags.Instance);
+            var secondsField = intervalToCopyFrom.GetType().GetField("_second", BindingFlags.NonPublic | BindingFlags.Instance);
+            var cron = (CrontabSchedule) cronField.GetValue(intervalToCopyFrom);
+            var seconds = (int) secondsField.GetValue(intervalToCopyFrom);
+            var interval = MakeInterval(pollType, cron, seconds);
+            return interval;
+        }
+
+        private static IPollingInterval MakeInterval(Type pollType, CrontabSchedule schedule, int seconds)
+        {
+            if (schedule == null) return MakeInterval(pollType, seconds);
+            return MakeInterval(pollType, schedule);
+        }
+
+        private static IPollingInterval MakeInterval(Type pollType, int seconds)
+        {
             var type = typeof(PollingInterval<>);
             var makeGenericType = type.MakeGenericType(pollType);
             var constructors = makeGenericType.GetConstructors();
             var constructorInfos = constructors.First(c =>
                 c.GetParameters().SingleOrDefault()?.ParameterType == typeof(int));
-            var interval = constructorInfos.Invoke(new object[] { 1 });
-            var newInterval = _pollingIntervalls.FirstOrDefault(p => p.AsyncCallType == pollType) ?? interval;
-            services.AddSingleton(makeGenericType, newInterval);
+            var interval = constructorInfos.Invoke(new object[] {seconds});
+            return (IPollingInterval) interval;
+        }
+
+        private static IPollingInterval MakeInterval(Type pollType, CrontabSchedule schedule)
+        {
+            var type = typeof(PollingInterval<>);
+            var makeGenericType = type.MakeGenericType(pollType);
+            var constructors = makeGenericType.GetConstructors();
+            var constructorInfos = constructors.First(c =>
+                c.GetParameters().SingleOrDefault()?.ParameterType == typeof(string));
+            var cronNotationRaw = schedule.ToString();
+            var interval = constructorInfos.Invoke(new object[] {cronNotationRaw});
+            return (IPollingInterval) interval;
         }
 
         private static bool ImplementsIhandleAsyncInterface(Type myType)
