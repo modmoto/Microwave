@@ -11,7 +11,7 @@ namespace Microwave.Queries.Polling
         private readonly int _second;
 
         private readonly CrontabSchedule _cronNotation;
-        private readonly DateTime? _nowTime;
+        private readonly DateTime? _nowTime = DateTime.Now;
 
         public DateTime Next
         {
